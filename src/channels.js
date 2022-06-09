@@ -4,5 +4,5 @@
 // Parameters: integer authUserId, string name, boolean isPublic 
 // Temporary Return: concation of parameters
 function channelsCreateV1(authUserId, name, isPublic) {
-    return authUserId + name + isPublic;
+    return 'authUserId' + 'name' + 'isPublic';
 }
