@@ -3,5 +3,5 @@
 //Parameters: int authUserId
 //Stub Returns: int authUserId
 function channelsListAllV1(authUserId) {
-    return authUserId;
+    return 'authUserId';
 }
