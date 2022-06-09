@@ -4,5 +4,5 @@
 // Parameters: string email, string password
 // Temporary Return: concation of parameters
 function authLoginV1(email, password) {
-    return email + password;
+    return 'email' + 'password';
 }
