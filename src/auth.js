@@ -4,5 +4,5 @@
 // Parameters: string email, string password, string nameFirst, string nameLast 
 // Temporary Return: concation of parameters
 function authRegisterV1(email, password, nameFirst, nameLast) {
-    return email + password + nameFirst + nameLast;
+    return 'email' + 'password' + 'nameFirst' + 'nameLast';
 }
