@@ -1,3 +1,9 @@
+
+function channelInviteV1(authUserId, channelId, uId) {
+    return 'authUserId' + 'channelId' + 'uId';
+  }
+  
+
 /* 
 @param {authUserId} is a integer
 @param {channelId} is a integer
@@ -7,3 +13,4 @@
 function channelJoinV1(authUserId, channelId) {
     return 'authUserId' + 'channelId';
 };
+
