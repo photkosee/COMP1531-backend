@@ -4,6 +4,6 @@
 @returns {string} concatenating of params
 */
 
-function channelDetailsV1(authUserId, channelId) {
+function channelJoinV1(authUserId, channelId) {
     return 'authUserId' + 'channelId';
 };
