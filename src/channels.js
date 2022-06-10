@@ -1,4 +1,11 @@
 
+//Luke Yang 9/6/2022
+//Stub function for channelsListAllV1
+//Parameters: int authUserId
+//Stub Returns: int authUserId
+function channelsListAllV1(authUserId) {
+    return 'authUserId';
+}
 //Stub function code for channelsListV1
 //Parameters: int authUserId
 //Stub Returns: int authUserId
@@ -12,5 +19,6 @@ function channelsListV1(authUserId) {
 // Temporary Return: concation of parameters
 function channelsCreateV1(authUserId, name, isPublic) {
     return 'authUserId' + 'name' + 'isPublic';
+
 
 }
