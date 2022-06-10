@@ -1,4 +1,4 @@
-function channelsListAllV1(authUserId) {
+function channelsListallV1(authUserId) {
 	/*
 		Function channelsListAllV1 (waiting for details in future tasks)
 		
