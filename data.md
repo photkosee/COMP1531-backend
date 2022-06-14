@@ -3,35 +3,31 @@
 // You may also add a short description explaining your design
 ```
 
-users =
-[
+let data = {
+  'users': [
     {
-        uId: 1,
-        nameFirst: 'Mridul',
-        nameLast: 'Singh',
-        email: 'mriduls907@gmail.com',
-        password: 'singhMr1dul',
-        handleStr: nameFirst,
-        description: 'Love eating',
+        'authUserId': integer,
+        'nameFirst': 'string',
+        'nameLast': 'string',
+        'email': 'string',
+        'password': 'string',
+        'handleStr': 'string',
+        'permission_id': [listOfAllChannelIds],
     },
+  ],
+  'channels': [
     {
-        uId: 2,
-        nameFirst: 'Hayden',
-        nameLast: 'Smith',
-        email: 'hayhay123@gmail.com',
-        password: 'smithH@yden',
-        handleStr: nameFirst,
-        description: 'Love sleeping',
-    }
-];
- 
-channels =
-[
-    {
-        channelId: 1,
-        name: 'F09A_CRUNCHIE',
-        authUserId: [1, 2],
-        description: 'Creating ✨ 🍫  UNSW Treats 🍬 ✨ together',
-        isPublic: false,
-    }
-];
+      'channel_id': integer,
+      'name': 'string',
+      'ownerMembers': [ownerMembersauthUserId],
+      'allMembers': [allMembersauthUserId],
+      'isPublic': boolean,
+      'messages': [{
+        'messageId': integer,
+        'message': 'string',
+        'authUserId' : integer,
+        'timeCreated': 'string',
+      }],
+    },
+  ],
+};

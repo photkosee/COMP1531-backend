@@ -1,5 +1,32 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data = {};
+let data = {
+  // 'users': [
+  //   {
+  //       'authUserId': integer,
+  //       'nameFirst': 'string',
+  //       'nameLast': 'string',
+  //       'email': 'string',
+  //       'password': 'string',
+  //       'handleStr': 'string',
+  //       'permission_id': [listOfAllChannelIds],
+  //   },
+  // ],
+  // 'channels': [
+  //   {
+  //     'channel_id': integer,
+  //     'name': 'string',
+  //     'ownerMembers': [ownerMembersauthUserId],
+  //     'allMembers': [allMembersauthUserId],
+  //     'isPublic': boolean,
+  //     'messages': [{
+  //       'messageId': integer,
+  //       'message': 'string',
+  //       'authUserId' : integer,
+  //       'timeCreated': 'string',
+  //     }],
+  //   },
+  // ],
+};
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
