@@ -1,5 +1,5 @@
 import { clearV1 } from './other';
-import { authRegisterV1 } from './auth';
+import { authRegisterV1, authLoginV1 } from './auth';
 
 describe('Tests Cases for authRegisterV1', () => {
     
@@ -142,4 +142,62 @@ describe('Tests Cases for authRegisterV1', () => {
 
     });
 
+});
+
+
+describe('Tests Cases for authLoginV1', () => {
+
+    test('Testing with email that does not belong to a existing user', () => {
+        clearV1();
+        
+        authRegisterV1('mridul@gmail.com', 'egas@12234#As', 'Mridul', 'Singh');
+        authRegisterV1('anand.dev@gmail.com', 'egas@12234#As', 'Anand', 'Dev');
+
+        const login1 = authLoginV1("singh@unsw.edu.au", "egas@12234#As");
+        const login2 = authLoginV1("", "wg12234#rgds");
+        const login3 = authLoginV1(" ", "ewgas@122Aass");
+        const login4 = authLoginV1("anand.dev@gmail.com ", "egas@12wert5");
+        const login5 = authLoginV1("anand dev@gmail.com", "egas@12wert5");
+        const login6 = authLoginV1(" anand.dev@gmail.com", "egas@12wert5");
+
+        expect(login1).toMatchObject({error: 'error'});
+        expect(login2).toMatchObject({error: 'error'});
+        expect(login3).toMatchObject({error: 'error'});
+        expect(login4).toMatchObject({error: 'error'});
+        expect(login5).toMatchObject({error: 'error'});
+        expect(login6).toMatchObject({error: 'error'});
+    });
+
+
+    test('Testing with invalid password but valid email', () => {
+        clearV1();
+        
+        authRegisterV1('mridul@gmail.com', 'egas@12234#As', 'Mridul', 'Singh');
+        authRegisterV1('anand.dev@gmail.com', 'bhdb#945bjkdvb', 'Anand', 'Dev');
+
+        const login1 = authLoginV1("mridul@gmail.com", "egas@ 12234#As");
+        const login2 = authLoginV1("mridul@gmail.com", "egas@12234#As ");
+        const login3 = authLoginV1("anand.dev@gmail.com", " bhdb#945bjkdvb");
+        const login4 = authLoginV1("anand.dev@gmail.com", "kawjwrgi83746");
+
+        expect(login1).toMatchObject({error: 'error'});
+        expect(login2).toMatchObject({error: 'error'});
+        expect(login3).toMatchObject({error: 'error'});
+        expect(login4).toMatchObject({error: 'error'});
+    });
+
+
+    test('Testing with both valid email and password', () => {
+        clearV1();
+        
+        authRegisterV1('mridul@gmail.com', 'egas@12234#As', 'Mridul', 'Singh');
+        authRegisterV1('anand.dev@gmail.com', 'bhdb#945bjkdvb', 'Anand', 'Dev');
+
+        const login1 = authLoginV1("mridul@gmail.com", "egas@12234#As");
+        const login2 = authLoginV1("anand.dev@gmail.com", "bhdb#945bjkdvb");
+
+        expect(login1).toMatchObject({authUserId: 1});
+        expect(login2).toMatchObject({authUserId: 2});
+    });
+    
 });
