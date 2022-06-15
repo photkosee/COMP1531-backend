@@ -60,7 +60,9 @@ function channelDetailsV1(authUserId, channelId) {
 			string: a combined of authUserId and channelId
 			
 	*/
-    return 'authUserId' + 'channelId';
+    return {
+		object: 'i am an object',
+	};
 };
 
 export { channelMessagesV1, channelInviteV1, channelJoinV1, channelDetailsV1 };
