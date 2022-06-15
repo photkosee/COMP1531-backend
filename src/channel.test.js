@@ -81,7 +81,6 @@ function clearAndSetData() {
 
 }
 
-
 function expectValid() {
     return {
         'name': 'FO9A_CRUNCHIE',
