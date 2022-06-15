@@ -62,3 +62,6 @@ function channelDetailsV1(authUserId, channelId) {
 	*/
     return 'authUserId' + 'channelId';
 };
+
+export { channelMessagesV1, channelInviteV1, channelJoinV1, channelDetailsV1 };
+
