@@ -20,6 +20,17 @@ describe('Tests Cases for authRegisterV1', () => {
 
     });
 
+
+    test('Testing for same email entered', () => {
+        clearV1();
+
+        authRegisterV1('mridul@gmail.com', 'egas@12234#As', 'Mridul', 'Singh');
+        const user = authRegisterV1('mridul@gmail.com', 'as@1w4#As', 'Mridul Anand', 'Singh');
+
+        expect(user).toMatchObject({error: 'error'});
+    });
+
+
     test('Testing for wrong email format', () => {
         clearV1();
         
@@ -31,6 +42,7 @@ describe('Tests Cases for authRegisterV1', () => {
         const user6 = authRegisterV1('jack#node@mail.com', 'denodsd@234#As', 'jack', 'node');
         const user7 = authRegisterV1('denode@unsw#mail.com', 'sgrz#34#As', 'denode', 'issac');
         const user8 = authRegisterV1('arther@mail..com', 'Mas@1qegf$#As', 'arther', 'zefri');
+        const user9 = authRegisterV1('donald tram@gmail.com', 'Mas@1qegf$#As', 'donald', 'tram');
 
         expect(user1).toMatchObject({error: 'error'});
         expect(user2).toMatchObject({error: 'error'});
@@ -40,6 +52,7 @@ describe('Tests Cases for authRegisterV1', () => {
         expect(user6).toMatchObject({error: 'error'});
         expect(user7).toMatchObject({error: 'error'});
         expect(user8).toMatchObject({error: 'error'});
+        expect(user9).toMatchObject({error: 'error'});
 
     });
 
