@@ -1,71 +1,60 @@
 // Jacinta 15 June 2020
 // channelDetailsV1 Jest tests
 
-import { channelMessagesV1, channelInviteV1, channelJoinV1, channelDetailsV1 } from './channel.js';
-import { getData, setData } from './dataStore.js'; 
-import { authRegisterV1, authLoginV1 } from './auth.js';
-import { channelsListallV1, channelsListV1, channelsCreateV1 } from './channels.js';
+import { channelJoinV1, channelDetailsV1 } from './channel.js';
+import { authRegisterV1 } from './auth.js';
+import { channelsCreateV1 } from './channels.js';
 import { clearV1 } from './other.js';
 
 
 test ('channelDetailsV1: valid userId and valid channelId', () => {
-    const channelId = clearAndSetData();
+    
+    clearV1();
 
-    expect(channelDetailsV1(1, channelId)).toMatchObject(
+    const authUserId1 = authRegisterV1('mal1@', 'one', 'One', 'Number');
+    const authUserId2 = authRegisterV1('mal2@', 'two', 'Two', 'Number');
+    const authUserId3 = authRegisterV1('mal3@', 'three', 'Three', 'Number');
+
+    const channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', false);
+    channelJoinV1(authUserId2, channelId);
+
+    expect(channelDetailsV1(authUserId1, channelId)).toMatchObject(
         {
         'name': 'FO9A_CRUNCHIE',
         'isPublic': false,
         'ownerMembers': [ 1 ],
         'allMembers': [ 1, 2 ],
         }
-    );
+    ); // user is owner, valid channelId
+
+    expect(channelDetailsV1(authUserId2, channelId)).toMatchObject(        
+        {
+        'name': 'FO9A_CRUNCHIE',
+        'isPublic': false,
+        'ownerMembers': [ 1 ],
+        'allMembers': [ 1, 2 ],
+        }
+    ); // user is member but not owner, valid channelId
+
 });
 
-test ('channelDetailsV1: valid userId and non-existent channelId', () => {
-    const channelId = clearAndSetData();
-
-    expect(channelDetailsV1(1, 99)).toMatchObject({error: 'error'});
-});
-
-test ('channelDetailsV1: non-existent userId and valid channelId', () => {
-    const channelId = clearAndSetData();
-
-    expect(channelDetailsV1(9, 10)).toMatchObject({error: 'error'});
-});
-
-test ('channelDetailsV1: invalid userId and valid channelId', () => {
-    const channelId = clearAndSetData();
-
-    expect(channelDetailsV1('abc', 10)).toMatchObject({error: 'error'});
-});
-
-test ('channelDetailsV1: valid userId and invalid channelId', () => {
-    const channelId = clearAndSetData();
-
-    expect(channelDetailsV1(1, 'abc')).toMatchObject({error: 'error'});
-});
-
-test ('channelDetailsV1: valid userId but not member', () => {
-    const channelId = clearAndSetData();
-
-    expect(channelDetailsV1(3, 10)).toMatchObject({error: 'error'});
-});
-
-function clearAndSetData() {
-
+test ('channelDetailsV1: return error tests', () => {
     clearV1();
 
-    // Users 1, 2 and 3
     const authUserId1 = authRegisterV1('mal1@', 'one', 'One', 'Number');
     const authUserId2 = authRegisterV1('mal2@', 'two', 'Two', 'Number');
     const authUserId3 = authRegisterV1('mal3@', 'three', 'Three', 'Number');
 
-    // Create channel FO9A_CRUNCHIE
-    // Admin: User 1
-    // Members: User 1, User 2
     const channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', false);
     channelJoinV1(authUserId2, channelId);
+    
+    expect(channelDetailsV1(9, channelId)).toMatchObject({error: 'error'}); // non-existent userId and valid channelId
+    expect(channelDetailsV1(authUserId1, 99)).toMatchObject({error: 'error'}); // valid userId and non-existent channelId
 
-    return channelId;
-}
+    expect(channelDetailsV1('abc', channelId)).toMatchObject({error: 'error'}); // invalid userId and valid channelId
+    expect(channelDetailsV1(authUserId1, 'abc')).toMatchObject({error: 'error'}); // valid userId and invalid channelId
+
+    expect(channelDetailsV1(authUserId3, channelId)).toMatchObject({error: 'error'}); // valid userId but not member
+});
+
 
