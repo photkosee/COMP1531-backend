@@ -1,5 +1,7 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 let data = {
+  'users': [],
+  'channels': []
   // 'users': [
   //   {
   //       'authUserId': integer,
@@ -8,7 +10,7 @@ let data = {
   //       'email': 'string',
   //       'password': 'string',
   //       'handleStr': 'string',
-  //       'permission_id': [listOfAllChannelIds],
+  //       'permission_id': integer,
   //   },
   // ],
   // 'channels': [
