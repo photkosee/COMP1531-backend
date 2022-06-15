@@ -44,7 +44,9 @@ function channelJoinV1(authUserId, channelId) {
 			string: a combined of authUserId and channelId
 			
 	*/
-    return 'authUserId' + 'channelId';
+    return {
+		object: 'object',
+	};
 };
 
 
@@ -60,5 +62,10 @@ function channelDetailsV1(authUserId, channelId) {
 			string: a combined of authUserId and channelId
 			
 	*/
-    return 'authUserId' + 'channelId';
+    return {
+		object: 'object',
+	};
 };
+
+export { channelMessagesV1, channelInviteV1, channelJoinV1, channelDetailsV1 };
+

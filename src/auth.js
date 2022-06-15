@@ -30,3 +30,5 @@ function authLoginV1(email, password) {
 	*/
     return 'email' + 'password';
 };
+
+export { authRegisterV1, authLoginV1 };
