@@ -2,40 +2,49 @@
 // Test for userProfileV1
 
 import { authRegisterV1 } from './auth.js';
+import { userProfileV1 } from './userProfileV1.js';
 import { clearV1 } from './other.js';
 
-description ('Tests for userProfileV1', () => {
+describe('Tests for userProfileV1', () => {
 
-    test('Valid user') {
+    test('Valid user and authorised user', () => {
         clearV1();
 
-        const userId = authRegisterV1('jacinta@gmail.com', 'password', 'Jacinta', 'Chang');
+        const authUserId = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
+        const userId = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
 
-        expect(userProfileV1(userId)).toMatchObject(
+
+        expect(userProfileV1(authUserId,userId)).toMatchObject(
             {
                 'authUserId': userId,
-                'nameFirst': 'Jacinta',
-                'nameLast': 'Chang',
-                'email': 'jacinta@gmail.com',
+                'nameFirst': 'User',
+                'nameLast': 'Last',
+                'email': 'user@gmail.com',
                 'password': 'password',
             }
         );
-    }
-
-    test('Non-existent User Id', () => {
-        clearV1();
-
-        const userId = authRegisterV1('jacinta@gmail.com', 'password', 'Jacinta', 'Chang');
-        const dummyUserId = userId + 1;
-
-        expect(userProfileV1(dummyUserId)).toMatchObject({error: 'error'});
     });
 
-    test('Invalid User Id', () => {
+    test('Non-existent  Id', () => {
         clearV1();
 
-        const userId = authRegisterV1('jacinta@gmail.com', 'password', 'Jacinta', 'Chang');
+        const authUserId = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
+        const userId = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
 
-        expect(userProfileV1('0')).toMatchObject({error: 'error'});
+        const dummyUserId = userId * authUserId * authUserId;
+        const dummyAuthUserId = authUserId * userId * userId;
+
+        expect(userProfileV1(authUserId, dummyUserId)).toMatchObject({error: 'error'});
+        expect(userProfileV1(dummyAuthUserId, userId)).toMatchObject({error: 'error'});
+    });
+
+    test('Invalid  Id', () => {
+        clearV1();
+
+        const authUserId = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
+        const userId = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
+
+        expect(userProfileV1(authUserId, '0')).toMatchObject({error: 'error'});
+        expect(userProfileV1('0', userId)).toMatchObject({error: 'error'});
     });
 });
