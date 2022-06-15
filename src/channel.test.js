@@ -1,9 +1,11 @@
 // Jacinta 15 June 2020
 // channelDetailsV1 Jest tests
 
-import { channelDetailsV1 } from './channel.js';
-import { getData, setData } from './dataStore'; 
-import { clearV1 } from './other';
+import { channelMessagesV1, channelInviteV1, channelJoinV1, channelDetailsV1 } from './channel.js';
+import { getData, setData } from './dataStore.js'; 
+import { authRegisterV1, authLoginV1 } from './auth.js';
+import { channelsListallV1, channelsListV1, channelsCreateV1 } from './channels.js';
+import { clearV1 } from './other.js';
 
 
 test ('channelDetailsV1: valid userId and valid channelId', () => {
@@ -58,27 +60,13 @@ function clearAndSetData() {
 
     clearV1();
 
-    const data = {
-        'users': [
-            {
-                'authUserId': 1,
-            },
-            {
-                'autherUserId': 3,
-            }
-        ],
-        'channels': [
-            {
-                'channel_id': 10,
-                'name': 'F09A_CRUNCHIE',
-                'isPublic': false,
-                'ownerMembers': [ 1 ],
-                'allMembers': [ 1, 2 ],
-            },
-        ],
-    };
-    setData(data);
+    // Users 1 and 3
+    const authUserId1 = authRegisterV1('z1111@gmail.com', 'one', 'One', 'Number');
+    const authUserId3 = authRegisterV1('z3333', 'three', 'Three', 'Number');
 
+    // Create channel FO9A_CRUNCHIE
+    const channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', false);
+    channelJoinV1(authUserId3, channelId);
 }
 
 function expectValid() {

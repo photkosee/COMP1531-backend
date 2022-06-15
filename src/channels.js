@@ -43,3 +43,5 @@ function channelsCreateV1(authUserId, name, isPublic) {
 	*/
     return 'authUserId' + 'name' + 'isPublic';
 };
+
+export { channelsListallV1, channelsListV1, channelsCreateV1 };
