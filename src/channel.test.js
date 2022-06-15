@@ -47,9 +47,12 @@ test ('channelDetailsV1: return error tests', () => {
 
     const channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', false);
     channelJoinV1(authUserId2, channelId);
+
+    const dummyUserId = authUserId1 * authUserId2 * authUserId3;
+    const dummyChannelId = channelId + 1;
     
-    expect(channelDetailsV1(9, channelId)).toMatchObject({error: 'error'}); // non-existent userId and valid channelId
-    expect(channelDetailsV1(authUserId1, 99)).toMatchObject({error: 'error'}); // valid userId and non-existent channelId
+    expect(channelDetailsV1(dummyUserId, channelId)).toMatchObject({error: 'error'}); // non-existent userId and valid channelId
+    expect(channelDetailsV1(authUserId1, dummyChannelId)).toMatchObject({error: 'error'}); // valid userId and non-existent channelId
 
     expect(channelDetailsV1('abc', channelId)).toMatchObject({error: 'error'}); // invalid userId and valid channelId
     expect(channelDetailsV1(authUserId1, 'abc')).toMatchObject({error: 'error'}); // valid userId and invalid channelId
