@@ -60,7 +60,7 @@ describe('Tests Cases for authRegisterV1', () => {
         const user4 = authRegisterV1('ali..saund@mail.com', 'Mskdbg$234#As', 'ali', 'saund');
         const user5 = authRegisterV1('.saurab@mail.com', 'sauussf244#As', 'saurabh', 'gurjar');
         const user6 = authRegisterV1('jack#node@mail.com', 'denodsd@234#As', 'jack', 'node');
-        const user7 = authRegisterV1('denode@unsw#mail.com', 'sgrz#34#As', 'denode', 'issac');
+        const user7 = authRegisterV1('den_ode@unsw#mail.com', 'sgrz#34#As', 'denode', 'issac');
         const user8 = authRegisterV1('arther@mail..com', 'Mas@1qegf$#As', 'arther', 'zefri');
         const user9 = authRegisterV1('donald tram@gmail.com', 'Mas@1qegf$#As', 'donald', 'tram');
 
@@ -102,7 +102,7 @@ describe('Tests Cases for authRegisterV1', () => {
         expect(user1).toMatchObject({error: 'error'});
         expect(user2).toMatchObject({error: 'error'});
         expect(user3).toMatchObject({error: 'error'});
-        expect(user4).toMatchObject({authUserId: 4});
+        expect(user4).toMatchObject({authUserId: 1});
 
     });
 
