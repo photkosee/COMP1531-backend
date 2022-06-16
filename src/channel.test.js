@@ -35,8 +35,8 @@ describe ('Test cases for channelJoinV1', () => {
         const userId1 = authRegisterV1('mal1@', 'one', 'One', 'Number');
         const userId2 = authRegisterV1('mal2@', 'two', 'Two', 'Number');
         const channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', false);
-        const dummyChannelId = channelId + 1;
-        const dummyUserId = userId1 * userId2;
+        const dummyChannelId = channelId + '1';
+        const dummyUserId = userId1 + userId2;
 
         expect(channelJoinV1(userId2, dummyChannelId)).toMatchObject({error: 'error'});
         expect(channelJoinV1(dummyUserId, channelId)).toMatchObject({error: 'error'});
