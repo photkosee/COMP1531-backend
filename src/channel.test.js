@@ -11,9 +11,9 @@ describe('Tests for channelDetailsV1', () => {
         
         clearV1();
 
-        const authUserId1 = authRegisterV1('mal1@', 'one', 'One', 'Number');
-        const authUserId2 = authRegisterV1('mal2@', 'two', 'Two', 'Number');
-        const authUserId3 = authRegisterV1('mal3@', 'three', 'Three', 'Number');
+        const authUserId1 = authRegisterV1('mal1@email.com', 'one', 'One', 'Number');
+        const authUserId2 = authRegisterV1('mal2@email.com', 'two', 'Two', 'Number');
+        const authUserId3 = authRegisterV1('mal3@email.com', 'three', 'Three', 'Number');
 
         const channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', false);
         channelJoinV1(authUserId2, channelId);
@@ -41,9 +41,9 @@ describe('Tests for channelDetailsV1', () => {
     test ('Return error tests', () => {
         clearV1();
 
-        const authUserId1 = authRegisterV1('mal1@', 'one', 'One', 'Number');
-        const authUserId2 = authRegisterV1('mal2@', 'two', 'Two', 'Number');
-        const authUserId3 = authRegisterV1('mal3@', 'three', 'Three', 'Number');
+        const authUserId1 = authRegisterV1('mal1@email.com', 'one', 'One', 'Number');
+        const authUserId2 = authRegisterV1('mal2@email.com', 'two', 'Two', 'Number');
+        const authUserId3 = authRegisterV1('mal3@email.com', 'three', 'Three', 'Number');
 
         const channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', false);
         channelJoinV1(authUserId2, channelId);
