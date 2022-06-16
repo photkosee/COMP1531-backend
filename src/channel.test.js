@@ -42,21 +42,124 @@ describe ('Test cases for channelMessagesV1', () => {
 
     test ('invalid channel', () => {
         clearV1();
-        const userId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1');
+        const userId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId;
         expect(channelMessagesV1(userId1, -1, 0)).toMatchObject({ error: 'error' });
         expect(channelMessagesV1(-1, -1, 0)).toMatchObject({ error: 'error'});
     });
 
     test ('start is invalid (greater than no. messages) (start<0)', () => {
-        const userId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1');
-        const userId2 = authRegisterV1('user2@bar.com', '123456', 'first2', 'last2');
-        const channel1 = channelsCreateV1(userId1, 'channel1', true); 
+        const userId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId;
+        const userId2 = authRegisterV1('user2@bar.com', '123456', 'first2', 'last2').authUserId;
+        const channel1 = channelsCreateV1(userId1, 'channel1', true).channelId; 
+        const channel2 = channelsCreateV1(userId2, 'channel2', true);
+        channel2.messages = [{
+            'messageId': 0,
+            'message': 'message1',
+            'authUserId' : userId2,
+            'timeCreated': '2016-06-03T23:15:33.008Z',
+        }]
+
+        expect(channelMessagesV1(userId1, channel1, -1)).toMatchObject({ error: 'error' }); //start < 0
+        expect(channelMessagesV1(userId2,channel2.channelId, 2)).toMatchObject({ error: 'error' }); // start > no. msg
+
         
 
     });
 
-    test ('authUserId not in channel or invalid', () => {
+    test ('check no. of messages in return is correct', () => {
+        const userId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId;
+        const channel1 = channelsCreateV1(userId1, 'channel1', true);
+        for (let i = 0; i < 67; i++) {
+            channel1.messages[i] = [{
+                messageId: i,
+                message: 'message' + i,
+                authUserId : userId1,
+                timeCreated: '2016-06-03T23:15:33.008Z',
+            }]
+        }
 
+        expect(channelMessagesV1(userId1, channel1.channelId, 0).messages).toHaveLength(50);
+        expect(channelMessagesV1(userId1, channel1.channelId, 0).end).toBe(50);
+        expect(channelMessagesV1(userId1, channel1.channelId, 0).start).toBe(0);
+
+        expect(channelMessagesV1(userId1, channel1.channelId, 47).messages).toHaveLength(20); 
+        expect(channelMessagesV1(userId1, channel1.channelId, 47).end).toBe(-1);
+        expect(channelMessagesV1(userId1, channel1.channelId, 47).start).toBe(47);
+    })
+    
+
+    test ('authUserId not in channel or invalid', () => {
+        const userId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId;
+        const userId2 = authRegisterV1('user2@bar.com', '123456', 'first2', 'last2').authUserId;
+        const channel1 = channelsCreateV1(userId1, 'channel1', true);
+
+        expect(channelMessagesV1(userId2, channel1.channelId, 0)).toMatchObject({ error: 'error' }); //not in channel
+        expect(channelMessagesV1(-1, channel1.channelId, 0)).toMatchObject({ error: 'error' }); //invalid uId
+    });
+
+    test ('Check if message output is correct (no.<50)', () => {
+        const userId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId;
+        const channel1 = channelsCreateV1(userId1, 'channel1', true);
+        for (let i = 0; i < 3; i++) {
+            channel1.messages[i] = [{
+                messageId: i,
+                message: 'message' + i,
+                authUserId : userId1,
+                timeCreated: '2016-06-03T23:15:33.008Z',
+            }]
+        }
+        expect(channelMessagesV1(userId1, channel1.channelId, 0).end).toBe(50);
+        expect(channelMessagesV1(userId1, channel1.channelId, 0).messages).toMatchObject(
+            [{
+                messageId: 0,
+                message: 'message0',
+                authUserId: 1,
+                timeCreated: '2016-06-03T23:15:33.008Z'
+            },
+            {
+                messageId: 1,
+                message: 'message1',
+                authUserId: 1,
+                timeCreated: '2016-06-03T23:15:33.008Z'
+            },
+            {
+                messageId: 2,
+                message: 'message2',
+                authUserId: 1,
+                timeCreated: '2016-06-03T23:15:33.008Z'
+            }]
+        );
+            
+    });    
+
+    test ('Check if message output is correct (no.>50)', () => {
+        const userId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId;
+        const channel1 = channelsCreateV1(userId1, 'channel1', true);
+        for (let i = 0; i < 52; i++) {
+            channel1.messages[i] = [{
+                messageId: i,
+                message: 'message' + i,
+                authUserId: userId1,
+                timeCreated: '2016-06-03T23:15:33.008Z',
+            }]
+        }
+        expect(channelMessagesV1(userId1, channel1.channelId, 50).start).toBe(50);
+        expect(channelMessagesV1(userId1, channel1.channelId, 50).end).toBe(-1);
+        expect(channelMessagesV1(userId1, channel1.channelId, 50).messages).toMatchObject(
+            [{
+                messageId: 50,
+                message: 'message50',
+                authUserId: 1,
+                timeCreated: '2016-06-03T23:15:33.008Z'
+            },
+            {
+                messageId: 51,
+                message: 'message51',
+                authUserId: 1,
+                timeCreated: '2016-06-03T23:15:33.008Z'
+            }]
+        );
+            
     });
 
 });
