@@ -3,7 +3,7 @@ import { authRegisterV1, authLoginV1 } from './auth.js'
 import { clearV1 } from './other';
 import validator from 'validator';
 
-test('Testing listing all channels', () => {
+test('Testing listing channels', () => {
     clearV1();
     validator.isEmail('mal@gmail.com');
     validator.isEmail('mal2@gmail.com');
@@ -15,48 +15,33 @@ test('Testing listing all channels', () => {
     const authUserId_4 = authRegisterV1('mal4@gmail.com', '123456', 'first4', 'last4');
     const channelId_1 = channelsCreateV1(authUserId_1, 'pete', false);
     const channelId_2 = channelsCreateV1(authUserId_2, 'jay', true);
-    const channelId_3 = channelsCreateV1(authUserId_3, 'may', true);
+    const channelId_3 = channelsCreateV1(authUserId_3, 'jay', true);
     const channelId_4 = channelsCreateV1(authUserId_4, 'mark', false);
-    const owner_pete = channelsListallV1(authUserId_1);
-    const owner_jay = channelsListallV1(authUserId_2);
+    const owner_pete = channelsListV1(authUserId_1);
+    const owner_jay = channelsListV1(authUserId_2);
+    const owner_jay2 = channelsListV1(authUserId_3);
     expect(owner_pete).toMatchObject({
 					channels: [
                                    	  { 
 					    channelId: channelId_1, 
 					    channelName: 'pete' 
-					  },
-                                   	  { 
-					    channelId: channelId_2, 
-					    channelName: 'jay' 
-					  },
-					  { 
-					    channelId: channelId_3, 
-					    channelName: 'may' 
-					  },
-                                   	  { 
-					    channelId: channelId_4, 
-					    channelName: 'mark' 
 					  }
                                         ]  
 				   });
     expect(owner_jay).toMatchObject({
-					channels: [
-                                   	  { 
-					    channelId: channelId_1, 
-					    channelName: 'pete' 
-					  },
+					channels: [                                  	  
                                    	  { 
 					    channelId: channelId_2, 
 					    channelName: 'jay' 
-					  },
-					  { 
-					    channelId: channelId_3, 
-					    channelName: 'may' 
-					  },
-                                   	  { 
-					    channelId: channelId_4, 
-					    channelName: 'mark' 
 					  }
                                         ]  
-				   });                        
+				   });  
+    expect(owner_jay2).toMatchObject({
+					channels: [                                  	  
+                                   	  { 
+					    channelId: channelId_3, 
+					    channelName: 'jay' 
+					  }
+                                        ]  
+				   });                               
 });
