@@ -31,8 +31,8 @@ describe('Tests for userProfileV1', () => {
         const authUserId = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
         const userId = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
 
-        const dummyUserId = userId * authUserId * authUserId;
-        const dummyAuthUserId = authUserId * userId * userId;
+        const dummyUserId = userId + authUserId + authUserId;
+        const dummyAuthUserId = authUserId + userId + userId;
 
         expect(userProfileV1(authUserId, dummyUserId)).toMatchObject({error: 'error'});
         expect(userProfileV1(dummyAuthUserId, userId)).toMatchObject({error: 'error'});
