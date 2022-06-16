@@ -1,10 +1,13 @@
 import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1 } from './auth';
 
+beforeEach(() => {
+    clearV1();
+});
+
 describe('Tests Cases for authRegisterV1', () => {
     
     test('Testing for empty field values', () => {
-        clearV1();
         
         const user1 = authRegisterV1('mridul@gmail.com', '', '', '');
         const user2 = authRegisterV1('', 'jshdbfgjb43@#', '', '');
@@ -22,7 +25,6 @@ describe('Tests Cases for authRegisterV1', () => {
 
 
     test('Testing with wrong typeof parameter', () => {
-        clearV1();
         
         const user1 = authRegisterV1(239592837568, 'ksbdfwej78323', 'Mridul', 'Singh');
         const user2 = authRegisterV1('mridul@mail.com', 283647687678, 'Mridul', 'Singh');
@@ -42,7 +44,6 @@ describe('Tests Cases for authRegisterV1', () => {
 
 
     test('Testing for same email entered', () => {
-        clearV1();
 
         authRegisterV1('mridul@gmail.com', 'egas@12234#As', 'Mridul', 'Singh');
         const user = authRegisterV1('mridul@gmail.com', 'as@1w4#As', 'Mridul Anand', 'Singh');
@@ -52,7 +53,6 @@ describe('Tests Cases for authRegisterV1', () => {
 
 
     test('Testing for wrong email format', () => {
-        clearV1();
         
         const user1 = authRegisterV1('@gmail.com', 'Mas@1234#As', 'Mridul', 'Singh');
         const user2 = authRegisterV1('likemail.com', 'lis@1sg34#As', 'like', 'rome');
@@ -78,7 +78,6 @@ describe('Tests Cases for authRegisterV1', () => {
 
 
     test('Testing if all emails are unique', () => {
-        clearV1();
         
         const user1 = authRegisterV1('mridul@gmail.com', 'Mas@1234#As', 'Mridul', 'Singh');
         const user2 = authRegisterV1('mridul907@gmail.com', 'egas@12234#As', 'Mridul', 'Singh');
@@ -92,7 +91,6 @@ describe('Tests Cases for authRegisterV1', () => {
 
 
     test('Testing for password length', () => {
-        clearV1();
         
         const user1 = authRegisterV1('mridul@gmail.com', 'Mas@1', 'Mridul', 'Singh');
         const user2 = authRegisterV1('like1@mail.com', '', 'like', 'rome');
@@ -108,7 +106,6 @@ describe('Tests Cases for authRegisterV1', () => {
 
 
     test('Testing for valid name limit', () => {
-        clearV1();
         
         const user1 = authRegisterV1('mridul@gmail.com', 'Mas@1skldbjk', 'Mridul', '');
         const user2 = authRegisterV1('like1@mail.com', 'ksnjdgji%#$#', '', 'rome');
@@ -128,7 +125,6 @@ describe('Tests Cases for authRegisterV1', () => {
 
 
     test('Testing for same name registration', () => {
-        clearV1();
         
         const user1 = authRegisterV1('mridul@gmail.com', 'Mas@1skldbjk', 'Mridul', 'Singh');
         const user2 = authRegisterV1('mriduls@mail.com', 'ksnjdgji%#$#', 'Mridul', 'Singh');
@@ -148,7 +144,6 @@ describe('Tests Cases for authRegisterV1', () => {
 describe('Tests Cases for authLoginV1', () => {
 
     test('Testing with email that does not belong to a existing user', () => {
-        clearV1();
         
         authRegisterV1('mridul@gmail.com', 'egas@12234#As', 'Mridul', 'Singh');
         authRegisterV1('anand.dev@gmail.com', 'egas@12234#As', 'Anand', 'Dev');
@@ -170,7 +165,6 @@ describe('Tests Cases for authLoginV1', () => {
 
 
     test('Testing with invalid password but valid email', () => {
-        clearV1();
         
         authRegisterV1('mridul@gmail.com', 'egas@12234#As', 'Mridul', 'Singh');
         authRegisterV1('anand.dev@gmail.com', 'bhdb#945bjkdvb', 'Anand', 'Dev');
@@ -188,7 +182,6 @@ describe('Tests Cases for authLoginV1', () => {
 
 
     test('Testing with both valid email and password', () => {
-        clearV1();
         
         authRegisterV1('mridul@gmail.com', 'egas@12234#As', 'Mridul', 'Singh');
         authRegisterV1('anand.dev@gmail.com', 'bhdb#945bjkdvb', 'Anand', 'Dev');
