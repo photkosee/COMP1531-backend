@@ -37,14 +37,15 @@ Returns: {
   //     }],
 */
 
+beforeEach(() => {    clearV1();});
+
 
 describe ('Test cases for channelMessagesV1', () => {
 
     test ('invalid channel', () => {
-        clearV1();
         const userId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId;
-        expect(channelMessagesV1(userId1, -1, 0)).toMatchObject({ error: 'error' });
-        expect(channelMessagesV1(-1, -1, 0)).toMatchObject({ error: 'error'});
+        expect(channelMessagesV1(userId1, -1, 0)).toEqual({ error: 'error' });
+        expect(channelMessagesV1(-1, -1, 0)).toEqual({ error: 'error'});
     });
 
     test ('start is invalid (greater than no. messages) (start<0)', () => {
@@ -59,8 +60,8 @@ describe ('Test cases for channelMessagesV1', () => {
             'timeCreated': '2016-06-03T23:15:33.008Z',
         }]
 
-        expect(channelMessagesV1(userId1, channel1, -1)).toMatchObject({ error: 'error' }); //start < 0
-        expect(channelMessagesV1(userId2,channel2.channelId, 2)).toMatchObject({ error: 'error' }); // start > no. msg
+        expect(channelMessagesV1(userId1, channel1, -1)).toEqual({ error: 'error' }); //start < 0
+        expect(channelMessagesV1(userId2,channel2.channelId, 2)).toEqual({ error: 'error' }); // start > no. msg
 
         
 
@@ -79,12 +80,12 @@ describe ('Test cases for channelMessagesV1', () => {
         }
 
         expect(channelMessagesV1(userId1, channel1.channelId, 0).messages).toHaveLength(50);
-        expect(channelMessagesV1(userId1, channel1.channelId, 0).end).toBe(50);
-        expect(channelMessagesV1(userId1, channel1.channelId, 0).start).toBe(0);
+        expect(channelMessagesV1(userId1, channel1.channelId, 0).end).toEqual(50);
+        expect(channelMessagesV1(userId1, channel1.channelId, 0).start).toEqual(0);
 
         expect(channelMessagesV1(userId1, channel1.channelId, 47).messages).toHaveLength(20); 
-        expect(channelMessagesV1(userId1, channel1.channelId, 47).end).toBe(-1);
-        expect(channelMessagesV1(userId1, channel1.channelId, 47).start).toBe(47);
+        expect(channelMessagesV1(userId1, channel1.channelId, 47).end).toEqual(-1);
+        expect(channelMessagesV1(userId1, channel1.channelId, 47).start).toEqual(47);
     })
     
 
@@ -93,8 +94,8 @@ describe ('Test cases for channelMessagesV1', () => {
         const userId2 = authRegisterV1('user2@bar.com', '123456', 'first2', 'last2').authUserId;
         const channel1 = channelsCreateV1(userId1, 'channel1', true);
 
-        expect(channelMessagesV1(userId2, channel1.channelId, 0)).toMatchObject({ error: 'error' }); //not in channel
-        expect(channelMessagesV1(-1, channel1.channelId, 0)).toMatchObject({ error: 'error' }); //invalid uId
+        expect(channelMessagesV1(userId2, channel1.channelId, 0)).toEqual({ error: 'error' }); //not in channel
+        expect(channelMessagesV1(-1, channel1.channelId, 0)).toEqual({ error: 'error' }); //invalid uId
     });
 
     test ('Check if message output is correct (no.<50)', () => {
@@ -108,8 +109,8 @@ describe ('Test cases for channelMessagesV1', () => {
                 timeCreated: '2016-06-03T23:15:33.008Z',
             }]
         }
-        expect(channelMessagesV1(userId1, channel1.channelId, 0).end).toBe(50);
-        expect(channelMessagesV1(userId1, channel1.channelId, 0).messages).toMatchObject(
+        expect(channelMessagesV1(userId1, channel1.channelId, 0).end).toEqual(50);
+        expect(channelMessagesV1(userId1, channel1.channelId, 0).messages).toEqual(
             [{
                 messageId: 0,
                 message: 'message0',
@@ -143,9 +144,9 @@ describe ('Test cases for channelMessagesV1', () => {
                 timeCreated: '2016-06-03T23:15:33.008Z',
             }]
         }
-        expect(channelMessagesV1(userId1, channel1.channelId, 50).start).toBe(50);
-        expect(channelMessagesV1(userId1, channel1.channelId, 50).end).toBe(-1);
-        expect(channelMessagesV1(userId1, channel1.channelId, 50).messages).toMatchObject(
+        expect(channelMessagesV1(userId1, channel1.channelId, 50).start).toEqual(50);
+        expect(channelMessagesV1(userId1, channel1.channelId, 50).end).toEqual(-1);
+        expect(channelMessagesV1(userId1, channel1.channelId, 50).messages).toEqual(
             [{
                 messageId: 50,
                 message: 'message50',
