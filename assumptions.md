@@ -21,7 +21,7 @@ channelInviteV1(authUserId, channelId):
 
 channelMessagesV1(authUserId, channelId, start):
 -when authUserId is not valid, should return { eror: 'error' }.
--when start is not an integer, should return { eror: 'error' }.
+-when start is not an positive integer, should return { eror: 'error' }.
 
 userProfileV1(authUserId, ulId):
 -when authUserId is not valid, should return { eror: 'error' }.
