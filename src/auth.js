@@ -35,11 +35,11 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
 
 		const permissionId = (auth_user_id === 1) ? 1 : 2;
 
-		if (!(nameFirst.length > 1 && nameFirst.length < 50)) {
+		if (!(nameFirst.length >= 1 && nameFirst.length <= 50)) {
 			return {error: 'error'};
 		};
 		
-		if (!(nameLast.length > 1 && nameLast.length < 50)) {
+		if (!(nameLast.length >= 1 && nameLast.length <= 50)) {
 			return {error: 'error'};
 		};
 
