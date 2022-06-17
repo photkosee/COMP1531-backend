@@ -75,7 +75,7 @@ describe ('Test cases for channelJoinV1', () => {
         const userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
         const channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
 
-        expect(channelJoinV1(userId1, channelId)).toEqual({});
+        expect(channelJoinV1(userId1, channelId)).toEqual({error: 'error'});
 
     });
 
