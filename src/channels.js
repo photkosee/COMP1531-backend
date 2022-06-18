@@ -131,7 +131,9 @@ function channelsCreateV1(authUserId, name, isPublic) {
 
 	}
 
-	data.channels.push(newChannelDeatails);
+	data.channels.push(newChannelDetails);
 	setData(data);
-    return { channelId: channel_id };
+    return channel_id;
 };
+
+export{ channelsCreateV1, channelsListV1, channelsListallV1 };
