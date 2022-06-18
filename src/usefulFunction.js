@@ -1,4 +1,4 @@
-import { getData } from './dataStore.js';
+import { getData, setData } from './dataStore.js';
 
 function checkAuthUserId(authUserId) {
 	/*
@@ -52,4 +52,34 @@ function checkChannelId(channelId) {
 	return false;
 }
 
-export { checkAuthUserId, checkChannelId };
+function checkIfMember(authUserId, channelId) {
+    /*
+		Function checkIfMember: checks if given user is a member of the 
+            given channel
+		
+		Arguments:
+        	authUserId	integer type   -- Input integer supplied by user
+			channelId	integer type   -- Input integer supplied by user
+			
+		Return Value:
+			boolean: 'true' if member, 'false' if not member
+			
+	*/
+    const data = getData();
+    let chosenChannel = {};
+
+    for (const channel of data.channels) {
+        if (channelId === channel.channel_id) {
+            chosenChannel = channel;
+        }
+    }
+
+    if (chosenChannel.allMembers.includes(authUserId)) {
+        return true;
+    }
+    
+    return false;
+
+}
+
+export { checkAuthUserId, checkChannelId, checkIfMember };
