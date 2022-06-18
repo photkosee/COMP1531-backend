@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore.js';
-import { checkAuthUserId, checkChannelId, checkIfMember } from './usefulFunctions.js';
+import { checkAuthUserId, checkChannelId, checkIfMember } from './channelHelperFunctions.js';
 
 const ERROR = {
 	error: 'error'
@@ -81,26 +81,6 @@ function channelDetailsV1(authUserId, channelId) {
 };
 
 export { channelMessagesV1, channelInviteV1, channelJoinV1, channelDetailsV1 };
-
-setData({
-	'users': [
-		{
-			'authUserId': 1,
-		},
-		{
-			'authUserId': 2,
-		},
-		{
-			'authUserId': 3,
-		}
-	],
-	'channels': [
-		{
-			'channel_id': 10,
-			'allMembers': [ 1, 2 ]
-		}
-	]
-});
 
 
 
