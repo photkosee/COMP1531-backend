@@ -39,15 +39,15 @@ describe('Tests for channelsListallV1', () => {
 						channels: [
 		                           	  { 
 						    channelId: channelId_1.channelId, 
-						    channelName: 'pete' 
+						    name: 'pete' 
 						  },
 						  { 
 						    channelId: channelId_2.channelId, 
-						    channelName: 'jay' 
+						    name: 'jay' 
 						  },
 						  { 
 						    channelId: channelId_3.channelId, 
-						    channelName: 'jay' 
+						    name: 'jay' 
 						  }
 		                                ]  
 					   });
@@ -55,15 +55,15 @@ describe('Tests for channelsListallV1', () => {
 						channels: [                                  	  
 		                           	  { 
 						    channelId: channelId_1.channelId, 
-						    channelName: 'pete' 
+						    name: 'pete' 
 						  },
 						  { 
 						    channelId: channelId_2.channelId, 
-						    channelName: 'jay' 
+						    name: 'jay' 
 						  },
 						  { 
 						    channelId: channelId_3.channelId, 
-						    channelName: 'jay' 
+						    name: 'jay' 
 						  }
 		                                ]  
 					   });  
@@ -71,15 +71,15 @@ describe('Tests for channelsListallV1', () => {
 						channels: [                                  	  
 		                           	  { 
 						    channelId: channelId_1.channelId, 
-						    channelName: 'pete' 
+						    name: 'pete' 
 						  },
 						  { 
 						    channelId: channelId_2.channelId, 
-						    channelName: 'jay' 
+						    name: 'jay' 
 						  },
 						  { 
 						    channelId: channelId_3.channelId, 
-						    channelName: 'jay' 
+						    name: 'jay' 
 						  }
 		                                ]  
 					   });  
@@ -87,15 +87,15 @@ describe('Tests for channelsListallV1', () => {
 						channels: [                                  	  
 		                           	  { 
 						    channelId: channelId_1.channelId, 
-						    channelName: 'pete' 
+						    name: 'pete' 
 						  },
 						  { 
 						    channelId: channelId_2.channelId, 
-						    channelName: 'jay' 
+						    name: 'jay' 
 						  },
 						  { 
 						    channelId: channelId_3.channelId, 
-						    channelName: 'jay' 
+						    name: 'jay' 
 						  }
 		                                ]  
 					   });					                                
@@ -129,11 +129,11 @@ describe('Tests for channelsListV1', () => {
 						channels: [
 		                           	  { 
 						    channelId: channelId_1.channelId, 
-						    channelName: 'pete' 
+						    name: 'pete' 
 						  },
 						  { 
 						    channelId: channelId_5.channelId, 
-						    channelName: 'pete2' 
+						    name: 'pete2' 
 						  }
 		                                ]  
 					   });
@@ -141,7 +141,7 @@ describe('Tests for channelsListV1', () => {
 						channels: [                                  	  
 		                           	  { 
 						    channelId: channelId_2.channelId, 
-						    channelName: 'jay' 
+						    name: 'jay' 
 						  }
 		                                ]  
 					   });  
@@ -149,7 +149,7 @@ describe('Tests for channelsListV1', () => {
 						channels: [                                  	  
 		                           	  { 
 						    channelId: channelId_3.channelId, 
-						    channelName: 'jay' 
+						    name: 'jay' 
 						  }
 		                                ]  
 					   });

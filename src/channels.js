@@ -30,7 +30,7 @@ function channelsListallV1(authUserId) {
 	for (let i = 0; i < data.channels.length; i++) {
 		channels.push({ 
 			'channelId': data.channels[i].channel_id, 
-			'channelName': data.channels[i].name 
+			'name': data.channels[i].name 
 		});
 	}
 
@@ -70,7 +70,7 @@ function channelsListV1(authUserId) {
 			if (data.channels[i].allMembers[j] === authUserId) {
 				channels.push({
 					'channelId': data.channels[i].channel_id,
-					'channelName': data.channels[i].name
+					'name': data.channels[i].name
 				});
 			}
 		}
