@@ -5,7 +5,7 @@ function clearV1() {
   data['users'] = [];
   data['channels'] = [];
   setData(data);
-  return data;
-}
+  return {};
+};
 
 export { clearV1 };
