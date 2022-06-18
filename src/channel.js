@@ -1,3 +1,10 @@
+import { getData, setData } from './dataStore.js';
+import { checkAuthUserId, checkChannelId, checkIfMember } from './usefulFunctions.js';
+
+const ERROR = {
+	error: 'error'
+};
+
 function channelMessagesV1(authUserId, channelId, start) {
 	/*
 		Function channelMessagesV1 (waiting for details in future tasks)
@@ -60,10 +67,42 @@ function channelDetailsV1(authUserId, channelId) {
 			string: a combined of authUserId and channelId
 			
 	*/
-    return {
-		object: 'i am an object',
-	};
+
+	if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
+		return ERROR;
+	}
+
+	let channelDetails = checkIfMember(authUserId, channelId);
+	if (Object.keys(channelDetails).length === 0) {
+		return ERROR;
+	}
+
+    return channelDetails;
 };
 
 export { channelMessagesV1, channelInviteV1, channelJoinV1, channelDetailsV1 };
+
+setData({
+	'users': [
+		{
+			'authUserId': 1,
+		},
+		{
+			'authUserId': 2,
+		},
+		{
+			'authUserId': 3,
+		}
+	],
+	'channels': [
+		{
+			'channel_id': 10,
+			'allMembers': [ 1, 2 ]
+		}
+	]
+});
+
+
+
+
 
