@@ -58,11 +58,11 @@ describe ('Test cases for channelInviteV1', () => {
         const authUserId8 = authRegisterV1('user8@bar.com', '123456', 'first8', 'last8').authUserId; 
         const channel1 = channelsCreateV1(authUserId1, 'channel1', true).channelId; 
         channelJoinV1(authUserId8, channel1); 
-        expect(channelInviteV1(authUserId1, channel1, -1)).toEqual({ error: 'error' }); // valid invalid -- in channel
-        expect(channelInviteV1(authUserId2, channel1, -1)).toEqual({ error: 'error' }); // valid invalid -- not
-        expect(channelInviteV1(-1, channel1, authUserId6)).toEqual({ error: 'error' }); // invalid valid -- not
-        expect(channelInviteV1(-1, channel1, authUserId8)).toEqual({ error: 'error' }); // invalid valid -- in channel
-        expect(channelInviteV1(-1, channel1, -1)).toEqual({ error: 'error' }); // invalid invalid
+        expect(channelInviteV1(authUserId1, channel1, 0.1)).toEqual({ error: 'error' }); // valid invalid -- in channel
+        expect(channelInviteV1(authUserId2, channel1, 0.1)).toEqual({ error: 'error' }); // valid invalid -- not
+        expect(channelInviteV1(0.1, channel1, authUserId6)).toEqual({ error: 'error' }); // invalid valid -- not
+        expect(channelInviteV1(0.1, channel1, authUserId8)).toEqual({ error: 'error' }); // invalid valid -- in channel
+        expect(channelInviteV1(0.1, channel1, 0.1)).toEqual({ error: 'error' }); // invalid invalid
 
     });
 
@@ -72,10 +72,10 @@ describe ('Test cases for channelInviteV1', () => {
         const authUserId4 = authRegisterV1('user4@bar.com', '123456', 'first4', 'last4').authUserId; 
         const authUserId6 = authRegisterV1('user6@bar.com', '123456', 'first6', 'last6').authUserId; 
         
-        expect(channelInviteV1(authUserId1, -1, -1)).toEqual({ error: 'error' }); // valid invalid 
-        expect(channelInviteV1(authUserId2, -1, authUserId4)).toEqual({ error: 'error' }); // valid valid 
-        expect(channelInviteV1(-1, -1, authUserId6)).toEqual({ error: 'error' }); // invalid valid 
-        expect(channelInviteV1(-1, -1, -1)).toEqual({ error: 'error' }); // invalid invalid
+        expect(channelInviteV1(authUserId1, 0.1, 0.1)).toEqual({ error: 'error' }); // valid invalid 
+        expect(channelInviteV1(authUserId2, 0.1, authUserId4)).toEqual({ error: 'error' }); // valid valid 
+        expect(channelInviteV1(0.1, 0.1, authUserId6)).toEqual({ error: 'error' }); // invalid valid 
+        expect(channelInviteV1(0.1, 0.1, 0.1)).toEqual({ error: 'error' }); // invalid invalid
         //valid valid 
 
     });
@@ -88,7 +88,7 @@ describe ('Test cases for channelInviteV1', () => {
 
         expect(channelInviteV1(authUserId1, channel1, authUserId1)).toEqual({ error: 'error' }); // in channel
         expect(channelInviteV1(authUserId2, channel1, authUserId2)).toEqual({ error: 'error' }); // not in channel
-        expect(channelInviteV1(-1,channel1,-1)).toEqual({ error: 'error' }); 
+        expect(channelInviteV1(0.1,channel1,0.1)).toEqual({ error: 'error' }); 
 
     });
 
