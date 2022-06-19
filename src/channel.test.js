@@ -44,8 +44,8 @@ describe ('Test cases for channelMessagesV1', () => {
 
     test ('invalid channel', () => {
         const userId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId;
-        expect(channelMessagesV1(userId1, -1, 0)).toEqual({ error: 'error' });
-        expect(channelMessagesV1(-1, -1, 0)).toEqual({ error: 'error'});
+        expect(channelMessagesV1(userId1, 0.1, 0)).toEqual({ error: 'error' });
+        expect(channelMessagesV1(0.1, 0.1, 0)).toEqual({ error: 'error'});
     });
 
     test ('start is invalid (greater than no. messages) (start<0)', () => {
@@ -60,7 +60,7 @@ describe ('Test cases for channelMessagesV1', () => {
             'timeCreated': '2016-06-03T23:15:33.008Z',
         }]
 
-        expect(channelMessagesV1(userId1, channel1, -1)).toEqual({ error: 'error' }); //start < 0
+        expect(channelMessagesV1(userId1, channel1, 0.1)).toEqual({ error: 'error' }); //start < 0
         expect(channelMessagesV1(userId2,channel2.channelId, 2)).toEqual({ error: 'error' }); // start > no. msg
 
         
@@ -95,7 +95,7 @@ describe ('Test cases for channelMessagesV1', () => {
         const channel1 = channelsCreateV1(userId1, 'channel1', true);
 
         expect(channelMessagesV1(userId2, channel1.channelId, 0)).toEqual({ error: 'error' }); //not in channel
-        expect(channelMessagesV1(-1, channel1.channelId, 0)).toEqual({ error: 'error' }); //invalid uId
+        expect(channelMessagesV1(0.1, channel1.channelId, 0)).toEqual({ error: 'error' }); //invalid uId
     });
 
     test ('Check if message output is correct (no.<50)', () => {
