@@ -41,12 +41,13 @@ function channelJoinV1(authUserId, channelId) {
 			channelId   integer type   -- Input integer supplied by user
 			
 		Return Value:
-			string: a combined of authUserId and channelId
+			string: returns and empty object on success.
 			
 	*/
-    return {
-		object: 'object',
-	};
+
+	
+
+    return {};
 };
 
 

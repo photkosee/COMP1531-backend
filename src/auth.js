@@ -111,9 +111,4 @@ function authLoginV1(email, password) {
 	return {error: 'error'};
 };
 
-<<<<<<< HEAD
 export { authRegisterV1, authLoginV1 };
-=======
-
-export { authRegisterV1, authLoginV1 };
->>>>>>> 5ec12868efdd70dc14a6b4a24ce7033286eba7f4

@@ -136,8 +136,4 @@ function channelsCreateV1(authUserId, name, isPublic) {
     	return {channelId: channel_id};
 };
 
-<<<<<<< HEAD
-export { channelsListallV1, channelsListV1, channelsCreateV1 };
-=======
 export{ channelsCreateV1, channelsListV1, channelsListallV1 };
->>>>>>> 5ec12868efdd70dc14a6b4a24ce7033286eba7f4
