@@ -10,19 +10,19 @@ describe('Tests for userProfileV1', () => {
     test('Valid user and authorised user', () => {
         clearV1();
 
-        const authUserId = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
-        const userId = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
+        let authUserId = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
+        authUserId = authUserId.authUserId;
+        let userId = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
+        userId = userId.authUserId;
 
 
-        expect(userProfileV1(authUserId.authUserId,userId.authUserId)).toMatchObject(
-            {
-                user: {    
-                    'uId': userId.authUserId,
-                    'email': 'user@gmail.com',
-                    'nameFirst': 'User',
-                    'nameLast': 'Last',
-                    'handleStr': 'userlast'
-                }
+        expect(userProfileV1(authUserId, userId)).toEqual(
+            {   
+                uId: userId,
+                email: 'user@gmail.com',
+                nameFirst: 'User',
+                nameLast: 'Last',
+                handleStr: expect.any(String),
             }
         );
     });
@@ -30,14 +30,15 @@ describe('Tests for userProfileV1', () => {
     test('Non-existent  Id', () => {
         clearV1();
 
-        const authUserId = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
-        const userId = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
+        let authUserId = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
+        authUserId = authUserId.authUserId;        
+        let userId = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
+        userId = userId.authUserId;
+        const dummyUserId = userId + authUserId + authUserId;
+        const dummyAuthUserId = authUserId + userId + userId;
 
-        const dummyUserId = userId.authUserId + authUserId.authUserId + authUserId.authUserId;
-        const dummyAuthUserId = authUserId.authUserId + userId.authUserId + userId.authUserId;
-
-        expect(userProfileV1(authUserId.authUserId, dummyUserId)).toMatchObject({error: 'error'});
-        expect(userProfileV1(dummyAuthUserId, userId.authUserId)).toMatchObject({error: 'error'});
+        expect(userProfileV1(authUserId, dummyUserId)).toMatchObject({error: 'error'});
+        expect(userProfileV1(dummyAuthUserId, userId)).toMatchObject({error: 'error'});
     });
 
     test('Invalid  Id', () => {
@@ -48,5 +49,7 @@ describe('Tests for userProfileV1', () => {
 
         expect(userProfileV1(authUserId.authUserId, '0')).toMatchObject({error: 'error'});
         expect(userProfileV1('0', userId.authUserId)).toMatchObject({error: 'error'});
+        expect(userProfileV1(authUserId.authUserId, '')).toMatchObject({error: 'error'});
+        expect(userProfileV1('', userId.authUserId)).toMatchObject({error: 'error'});
     });
 });
