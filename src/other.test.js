@@ -5,10 +5,13 @@ import {getData, setData} from './dataStore';
 test('Test clearV1 return type', () => {
     const result = clearV1();
     expect(typeof result).toBe('object');
+    expect(result).toMatchObject({});
 });
 
 test('Test clearV1 functionality', () => {
+
     clearV1();
+
     const data = {
         'users': [
             {   
