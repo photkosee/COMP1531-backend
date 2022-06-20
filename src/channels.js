@@ -122,12 +122,7 @@ function channelsCreateV1(authUserId, name, isPublic) {
 		'ownerMembers': [authUserId],
 		'allMembers': [authUserId],
 		'isPublic': isPublic,
-		'messages': [{
-		'messageId': '',
-		'message': '',
-		'authUserId' : '',
-		'timeCreated': '',
-		}],
+		'messages': [],
 
 	}
 
