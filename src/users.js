@@ -13,27 +13,27 @@ function userProfileV1(authUserId, uId) {
 			Object:		{ uId, email, nameFirst, nameLast, handleStr }
 	*/
   const data = getData();
-	let check_authId = 0;
+	let checkAuthId = 0;
 
 	for (let i = 0; i < data.users.length; i++) {
 		if (data.users[i].authUserId === authUserId) {
-			check_authId = 1;
+			checkAuthId = 1;
 		}
 	}
 
-	if (check_authId === 0) {
+	if (checkAuthId === 0) {
 		return { error: 'error' };
 	}
 
-	check_authId = 0;
+	checkAuthId = 0;
 
 	for (let i = 0; i < data.users.length; i++) {
 		if (data.users[i].authUserId === uId) {
-			check_authId = 1;
+			checkAuthId = 1;
 		}
 	}
 
-	if (check_authId === 0) {
+	if (checkAuthId === 0) {
 		return { error: 'error' };
 	}
 
