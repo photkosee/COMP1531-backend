@@ -1,7 +1,7 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 let data = {
   'users': [],
-  'channels': []
+  'channels': [],
   // 'users': [
   //   {
   //       'authUserId': integer,
@@ -17,8 +17,8 @@ let data = {
   //   {
   //     'channelId': integer,
   //     'name': 'string',
-  //     'ownerMembers': [ownerMembersauthUserId],
-  //     'allMembers': [allMembersauthUserId],
+  //     'ownerMembers': Array,
+  //     'allMembers': Array,
   //     'isPublic': boolean,
   //     'messages': [{
   //       'messageId': integer,

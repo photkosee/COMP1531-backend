@@ -1,9 +1,8 @@
-```javascript
-// TODO: insert your data structure that contains users + channels info here
-// You may also add a short description explaining your design
-```
+App Data Structure
 
 let data = {
+  'users': [],
+  'channels': []
   'users': [
     {
         'authUserId': integer,
@@ -12,21 +11,21 @@ let data = {
         'email': 'string',
         'password': 'string',
         'handleStr': 'string',
-        'permission_id': [listOfAllChannelIds],
+        'permissionId': integer,
     },
   ],
   'channels': [
     {
-      'channel_id': integer,
+      'channelId': integer,
       'name': 'string',
-      'ownerMembers': [ownerMembersauthUserId],
-      'allMembers': [allMembersauthUserId],
+      'ownerMembers': Array,
+      'allMembers': Array,
       'isPublic': boolean,
       'messages': [{
         'messageId': integer,
         'message': 'string',
         'authUserId' : integer,
-        'timeCreated': 'string',
+        'timeCreated': 'integer',
       }],
     },
   ],
