@@ -115,7 +115,7 @@ function channelsCreateV1(authUserId, name, isPublic) {
 		return { error: 'error' };
 	}
 
-	const channel_id = (data.channels.length) + 1;
+	const channelId = (data.channels.length) + 1;
 	const newChannelDetails = {
 		'channelId': channelId,
 		'name': name,
