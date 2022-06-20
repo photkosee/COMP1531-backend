@@ -51,7 +51,7 @@ function channelJoinV1(authUserId, channelId) {
 			channelId   integer type   -- Input integer supplied by user
 			
 		Return Value:
-			string: returns and empty object on success.
+			object: returns empty object on success
 			
 	*/
 
