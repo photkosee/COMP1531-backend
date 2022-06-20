@@ -44,7 +44,7 @@ function checkChannelId(channelId) {
 	}
 
 	for (const channel of data.channels) {
-		if (channelId === channel.channel_id) {
+		if (channelId === channel.channelId) {
 			return true;
 		}
 	}
@@ -70,7 +70,7 @@ function checkIfMember(authUserId, channelId) {
     let chosenChannel = {};
 
     for (const channel of data.channels) {
-        if (channelId === channel.channel_id) {
+        if (channelId === channel.channelId) {
             chosenChannel = channel;
         }
     }

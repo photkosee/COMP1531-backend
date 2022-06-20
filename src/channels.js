@@ -29,7 +29,7 @@ function channelsListallV1(authUserId) {
 
 	for (let i = 0; i < data.channels.length; i++) {
 		channels.push({ 
-			'channelId': data.channels[i].channel_id, 
+			'channelId': data.channels[i].channelId, 
 			'name': data.channels[i].name 
 		});
 	}
@@ -69,7 +69,7 @@ function channelsListV1(authUserId) {
 		for (let j = 0; j < data.channels[i].allMembers.length; j++) {
 			if (data.channels[i].allMembers[j] === authUserId) {
 				channels.push({
-					'channelId': data.channels[i].channel_id,
+					'channelId': data.channels[i].channelId,
 					'name': data.channels[i].name
 				});
 			}
@@ -115,9 +115,9 @@ function channelsCreateV1(authUserId, name, isPublic) {
 		return { error: 'error' };
 	}
 
-	const channel_id = (data.channels.length) + 1;
+	const channelId = (data.channels.length) + 1;
 	const newChannelDetails = {
-		'channel_id': channel_id,
+		'channelId': channelId,
 		'name': name,
 		'ownerMembers': [authUserId],
 		'allMembers': [authUserId],
@@ -127,7 +127,7 @@ function channelsCreateV1(authUserId, name, isPublic) {
 
 	data.channels.push(newChannelDetails);
 	setData(data);
-    	return {channelId: channel_id};
+    	return {channelId: channelId};
 };
 
 export{ channelsCreateV1, channelsListV1, channelsListallV1 };
