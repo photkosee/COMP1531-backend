@@ -55,7 +55,38 @@ function channelJoinV1(authUserId, channelId) {
 			
 	*/
 
-	
+	if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
+		return ERROR;
+	}
+
+	let channelDetails = checkIfMember(authUserId, channelId);
+	if (Object.keys(channelDetails).length !== 0) {
+		return ERROR;
+	}
+
+	const data = getData();
+
+	let chosenChannel = {};
+	for (const channel of data.channels) {
+		if (channelId === channel.channel_id) { //////////// CHANGE TO channelId
+			chosenChannel = channel;
+		}
+	}
+
+	let chosenUser = {};
+	for (const user of data.users) {
+		if (authUserId === user.authUserId) {
+			chosenUser = user;
+		}
+	}
+
+	if (chosenChannel.isPublic === false) { // Private channel
+		if (chosenUser.permission_id !== 1) { /////////////// CHANGE TO permissionId
+			return ERROR;
+		}
+	}
+
+	chosenChannel.allMembers.push(authUserId);
 
     return {};
 };
@@ -75,13 +106,11 @@ function channelDetailsV1(authUserId, channelId) {
 	*/
 
 	if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
-		console.log("check authId");
 		return ERROR;
 	}
 
 	let channelDetails = checkIfMember(authUserId, channelId);
 	if (Object.keys(channelDetails).length === 0) {
-		console.log("check if member");
 		return ERROR;
 	}
 
