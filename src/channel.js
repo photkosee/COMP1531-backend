@@ -15,7 +15,7 @@ function channelMessagesV1(authUserId, channelId, start) {
 			start 		integer type   -- Input integer supplied by user			
 			
 		Return Value:
-			string: a combined of authUserId, channelId and start
+			object: { name, isPublic, ownerMembers, allMembers }
 			
 	*/
     return 'authUserId' + 'channelId' + 'start';
@@ -64,7 +64,7 @@ function channelDetailsV1(authUserId, channelId) {
 			channelId   integer type   -- Input integer supplied by user
 			
 		Return Value:
-			string: a combined of authUserId and channelId
+			object: { name, isPublic, ownerMembers, allMembers }
 			
 	*/
 
@@ -77,7 +77,12 @@ function channelDetailsV1(authUserId, channelId) {
 		return ERROR;
 	}
 
-    return channelDetails;
+    return {
+		name: channelDetails.name,
+		isPublic: channelDetails.isPublic,
+		ownerMembers: channelDetails.ownerMembers,
+		allMembers: channelDetails.allMembers
+	}
 };
 
 export { channelMessagesV1, channelInviteV1, channelJoinV1, channelDetailsV1 };
@@ -85,4 +90,22 @@ export { channelMessagesV1, channelInviteV1, channelJoinV1, channelDetailsV1 };
 
 
 
-
+const data = setData({
+	users: [
+		{
+	    	authUserId: 1,
+		},
+		{
+	    	authUserId: 2,
+		}
+	],
+	channels: [
+		{
+		channel_id: 10,
+		name: 'course name',
+		ownerMembers: [ 1 ],
+		allMembers: [ 1, 2 ],
+		isPublic: true
+		}
+	]
+})
