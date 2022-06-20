@@ -1,6 +1,9 @@
 import { getData, setData } from './dataStore.js';
 import { checkAuthUserId, checkChannelId, checkIfMember } from './channelHelperFunctions.js';
 
+import { authRegisterV1 } from './auth.js';
+import { channelsCreateV1 } from './channels.js';
+
 const ERROR = {
 	error: 'error'
 };
@@ -69,11 +72,13 @@ function channelDetailsV1(authUserId, channelId) {
 	*/
 
 	if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
+		console.log("check authId");
 		return ERROR;
 	}
 
 	let channelDetails = checkIfMember(authUserId, channelId);
 	if (Object.keys(channelDetails).length === 0) {
+		console.log("check if member");
 		return ERROR;
 	}
 
@@ -88,24 +93,3 @@ function channelDetailsV1(authUserId, channelId) {
 export { channelMessagesV1, channelInviteV1, channelJoinV1, channelDetailsV1 };
 
 
-
-
-const data = setData({
-	users: [
-		{
-	    	authUserId: 1,
-		},
-		{
-	    	authUserId: 2,
-		}
-	],
-	channels: [
-		{
-		channel_id: 10,
-		name: 'course name',
-		ownerMembers: [ 1 ],
-		allMembers: [ 1, 2 ],
-		isPublic: true
-		}
-	]
-})

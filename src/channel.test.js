@@ -11,21 +11,34 @@ describe('Tests for channelDetailsV1', () => {
         
         clearV1();
 
-        const authUserId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
-        const authUserId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
-        const authUserId3 = authRegisterV1('mal3@email.com', '1234567', 'Three', 'Number');
+        let authUserId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        authUserId1 = authUserId1.authUserId;
 
-        const channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', false);
-        channelJoinV1(authUserId2, channelId);
+        let channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', false);
+        channelId = channelId.channelId;
 
         expect(channelDetailsV1(authUserId1, channelId)).toMatchObject(
             {
             'name': 'FO9A_CRUNCHIE',
             'isPublic': false,
             'ownerMembers': [ 1 ],
-            'allMembers': [ 1, 2 ],
+            'allMembers': [ 1 ],
             }
-        ); // user is owner, valid channelId
+        );
+    });
+
+    test.skip('Testing if member but not owner', () => {
+
+        clearV1();
+
+        let authUserId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        authUserId1 = authUserId1.authUserId;
+        let authUserId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        authUserId2 = authUserId2.authUserId;
+
+        let channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', false);
+        channelId = channelId.channelId;
+        channelJoinV1(authUserId2, channelId); 
 
         expect(channelDetailsV1(authUserId2, channelId)).toMatchObject(        
             {
@@ -34,9 +47,9 @@ describe('Tests for channelDetailsV1', () => {
             'ownerMembers': [ 1 ],
             'allMembers': [ 1, 2 ],
             }
-        ); // user is member but not owner, valid channelId
-
+        ); 
     });
+
 
     test ('Return error tests', () => {
         clearV1();
