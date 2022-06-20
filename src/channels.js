@@ -34,7 +34,7 @@ function channelsListallV1(authUserId) {
 		});
 	}
 
-    	return { channels };
+    	return { channels: channels };
 };
 
 
@@ -76,7 +76,7 @@ function channelsListV1(authUserId) {
 		}
 	}
 
-    	return { channels }; 
+    	return { channels: channels }; 
 };
 
 
@@ -122,8 +122,7 @@ function channelsCreateV1(authUserId, name, isPublic) {
 		'ownerMembers': [authUserId],
 		'allMembers': [authUserId],
 		'isPublic': isPublic,
-		'messages': [],
-
+		'messages': []
 	}
 
 	data.channels.push(newChannelDetails);
