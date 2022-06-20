@@ -24,7 +24,7 @@ let data = {
   //       'messageId': integer,
   //       'message': 'string',
   //       'authUserId' : integer,
-  //       'timeCreated': 'string',
+  //       'timeCreated': 'integer',
   //     }],
   //   },
   // ],
