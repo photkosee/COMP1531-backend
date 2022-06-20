@@ -2,7 +2,7 @@
 // Test for userProfileV1
 
 import { authRegisterV1 } from './auth.js';
-import { userProfileV1 } from './userProfileV1.js';
+import { userProfileV1 } from './users.js';
 import { clearV1 } from './other.js';
 
 describe('Tests for userProfileV1', () => {
@@ -14,13 +14,15 @@ describe('Tests for userProfileV1', () => {
         const userId = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
 
 
-        expect(userProfileV1(authUserId,userId)).toMatchObject(
+        expect(userProfileV1(authUserId.authUserId,userId.authUserId)).toMatchObject(
             {
-                'authUserId': userId,
-                'nameFirst': 'User',
-                'nameLast': 'Last',
-                'email': 'user@gmail.com',
-                'password': 'password',
+                user: {    
+                    'uId': userId.authUserId,
+                    'email': 'user@gmail.com',
+                    'nameFirst': 'User',
+                    'nameLast': 'Last',
+                    'handleStr': 'userlast'
+                }
             }
         );
     });
@@ -31,11 +33,11 @@ describe('Tests for userProfileV1', () => {
         const authUserId = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
         const userId = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
 
-        const dummyUserId = userId + authUserId + authUserId;
-        const dummyAuthUserId = authUserId + userId + userId;
+        const dummyUserId = userId.authUserId + authUserId.authUserId + authUserId.authUserId;
+        const dummyAuthUserId = authUserId.authUserId + userId.authUserId + userId.authUserId;
 
-        expect(userProfileV1(authUserId, dummyUserId)).toMatchObject({error: 'error'});
-        expect(userProfileV1(dummyAuthUserId, userId)).toMatchObject({error: 'error'});
+        expect(userProfileV1(authUserId.authUserId, dummyUserId)).toMatchObject({error: 'error'});
+        expect(userProfileV1(dummyAuthUserId, userId.authUserId)).toMatchObject({error: 'error'});
     });
 
     test('Invalid  Id', () => {
@@ -44,7 +46,7 @@ describe('Tests for userProfileV1', () => {
         const authUserId = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
         const userId = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
 
-        expect(userProfileV1(authUserId, '0')).toMatchObject({error: 'error'});
-        expect(userProfileV1('0', userId)).toMatchObject({error: 'error'});
+        expect(userProfileV1(authUserId.authUserId, '0')).toMatchObject({error: 'error'});
+        expect(userProfileV1('0', userId.authUserId)).toMatchObject({error: 'error'});
     });
 });

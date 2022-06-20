@@ -10,12 +10,12 @@ let data = {
   //       'email': 'string',
   //       'password': 'string',
   //       'handleStr': 'string',
-  //       'permission_id': integer,
+  //       'permissionId': integer,
   //   },
   // ],
   // 'channels': [
   //   {
-  //     'channel_id': integer,
+  //     'channelId': integer,
   //     'name': 'string',
   //     'ownerMembers': [ownerMembersauthUserId],
   //     'allMembers': [allMembersauthUserId],
@@ -24,7 +24,7 @@ let data = {
   //       'messageId': integer,
   //       'message': 'string',
   //       'authUserId' : integer,
-  //       'timeCreated': 'string',
+  //       'timeCreated': 'integer',
   //     }],
   //   },
   // ],
