@@ -11,6 +11,7 @@ let data = {
   //       'password': 'string',
   //       'handleStr': 'string',
   //       'permissionId': integer,
+  //       'isActive': boolean,
   //   },
   // ],
   // 'channels': [
