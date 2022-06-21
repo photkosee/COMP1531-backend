@@ -6,6 +6,110 @@ import { authRegisterV1 } from './auth.js';
 import { channelsCreateV1 } from './channels.js';
 import { clearV1 } from './other.js';
 
+describe ('Test cases for channelJoinV1', () => {
+
+    test ('Valid User Id and Valid Channel Id', () => {
+        clearV1();
+        
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
+        channelId = channelId.channelId;
+
+        expect(channelJoinV1(userId2, channelId)).toEqual({});
+
+    });
+
+    test('Non-existent Ids', () => {
+        clearV1();
+        
+        let userId1 = authRegisterV1('mal1@email.com', 'one', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', 'two', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
+        channelId = channelId.channelId;
+        let dummyChannelId = channelId + '1';
+        let dummyUserId = userId1 + userId2;
+
+        expect(channelJoinV1(userId2, dummyChannelId)).toEqual({error: 'error'});
+        expect(channelJoinV1(dummyUserId, channelId)).toEqual({error: 'error'});
+    });
+
+    test('Invalid Ids', () => {
+        clearV1();
+        
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
+        channelId = channelId.channelId;
+
+        expect(channelJoinV1(userId2, '0')).toEqual({error: 'error'});
+        expect(channelJoinV1('0', channelId)).toEqual({error: 'error'});
+
+    });
+
+    test('Authorised user is already a member', () => {
+        clearV1();
+        
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
+        channelId = channelId.channelId;
+
+        channelJoinV1(userId2, channelId);
+
+        expect(channelJoinV1(userId1, channelId)).toEqual({error: 'error'}); // Already owner + member
+        expect(channelJoinV1(userId2, channelId)).toEqual({error: 'error'}); // Already member
+
+    });
+
+    test('Private channel and adding global owner who is already a member', () => {
+        clearV1();
+
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', false);
+        channelId = channelId.channelId;
+
+        expect(channelJoinV1(userId1, channelId)).toEqual({error: 'error'});
+    });
+
+    test('Private channel and adding not a global owner', () => {
+        clearV1();
+
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', false);
+        channelId = channelId.channelId;
+
+        expect(channelJoinV1(userId2, channelId)).toEqual({error: 'error'});
+    });
+
+    test('Return empty object if private but adding global owner', () => {
+        clearV1();
+
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId2, 'FO9A_CRUNCHIE', false);
+        channelId = channelId.channelId;
+
+        expect(channelJoinV1(userId1, channelId)).toEqual({});
+    });
+});
+
 describe('Tests for channelDetailsV1', () => {
     test ('Valid userId and Valid channelId', () => {
         
