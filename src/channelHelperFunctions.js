@@ -75,9 +75,9 @@ export function checkIfMember(authUserId, channelId) {
     }
 
     for (const element of chosenChannel.allMembers) {
-	if (authUserId === element.uId) {
+		if (authUserId === element.uId) {
         	return chosenChannel;
-	}
+		}
     }
 
     
@@ -101,9 +101,11 @@ export function authInChannel(channelId, userId) {
     const dataStore = getData();
     for (const channel of dataStore.channels) {
         if (channel.channelId === channelId) {
-            if (channel.allMembers.includes(userId)) {
-                return true; 
-            }
+			for (const element of channel.allMembers) {
+				if (userId === element.uId) {
+					return true;
+				}
+			}
         }
     }
     return false; 
