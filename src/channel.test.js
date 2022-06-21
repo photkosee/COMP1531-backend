@@ -5,6 +5,7 @@ import { authRegisterV1, authLoginV1 } from './auth.js';
 import { channelsListallV1, channelsListV1, channelsCreateV1 } from './channels.js';
 import { clearV1 } from './other.js';
 
+
 /*
 
 Given a channel with ID channelId that the authorised user is a member of, 
@@ -85,14 +86,9 @@ describe ('Test cases for channelMessagesV1', () => {
 
     
 });
-/*
+
 // Jacinta 15 June 2020
 // channelDetailsV1 Jest tests
-
-import { channelJoinV1, channelDetailsV1 } from './channel.js';
-import { authRegisterV1 } from './auth.js';
-import { channelsCreateV1 } from './channels.js';
-import { clearV1 } from './other.js';
 
 describe('Tests for channelDetailsV1', () => {
     test ('Valid userId and Valid channelId', () => {
@@ -162,4 +158,4 @@ describe('Tests for channelDetailsV1', () => {
     });
 
 });
-*/
+
