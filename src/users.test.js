@@ -18,11 +18,13 @@ describe('Tests for userProfileV1', () => {
 
         expect(userProfileV1(authUserId, userId)).toEqual(
             {   
-                uId: userId,
-                email: 'user@gmail.com',
-                nameFirst: 'User',
-                nameLast: 'Last',
-                handleStr: expect.any(String),
+                user: {
+                    uId: userId,
+                    email: 'user@gmail.com',
+                    nameFirst: 'User',
+                    nameLast: 'Last',
+                    handleStr: expect.any(String),
+                }
             }
         );
     });
