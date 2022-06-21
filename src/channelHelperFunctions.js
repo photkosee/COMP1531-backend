@@ -1,3 +1,4 @@
+
 import { getData, setData } from './dataStore.js'; 
     
 
@@ -77,6 +78,37 @@ export function authInChannel(channelId, userId) { //also in channelMessages bra
 }
 
 
+
+
+export function checkIfMember(authUserId, channelId) {
+    /*
+		Function checkIfMember: checks if given user is a member of the 
+            given channel
+		
+		Arguments:
+        	authUserId	integer type   -- Input integer supplied by user
+			channelId	integer type   -- Input integer supplied by user
+			
+		Return Value:
+            object: returns details of channel if the user is a member,
+                    returns empty object if user is not a member
+			
+	*/
+    const data = getData();
+    let chosenChannel = {};
+
+    for (const channel of data.channels) {
+        if (channelId === channel.channelId) {
+            chosenChannel = channel;
+        }
+    }
+
+    if (chosenChannel.allMembers.includes(authUserId)) {
+        return chosenChannel;
+    }
     
+    return {};
+
+}
 
 
