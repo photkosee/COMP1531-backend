@@ -57,4 +57,7 @@ function setData(newData) {
   data = newData;
 }
 
-export { getData, setData };
+export {
+  getData,
+  setData
+};

@@ -1,57 +1,51 @@
-import { getData, setData } from './dataStore.js';
+import { getData } from './dataStore.js';
+import { checkAuthUserId } from './channelHelperFunctions.js';
+
+const ERROR = {error: 'error'};
 
 function userProfileV1(authUserId, uId) {
-  /*
-		Function userProfileV1, returns information about uId's userId, email, first name, 
-    last name, and handle
+	/*
+		Description:
+			userProfileV1 returns information about uId's userId,
+			email, first name, last name, and handle
     
 		Arguments:
 			authUserId	integer type   -- Input integer supplied by user
       		uId	        integer type   -- Input integer supplied by user
 			
 		Return Value:
-			Object:		{ uId, email, nameFirst, nameLast, handleStr }
+			Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
+			object: {error: 'error'}
 	*/
-  const data = getData();
-	let checkAuthId = 0;
 
-	for (let i = 0; i < data.users.length; i++) {
-		if (data.users[i].authUserId === authUserId) {
-			checkAuthId = 1;
-		}
-	}
+  	const data = getData();
 
-	if (checkAuthId === 0) {
-		return { error: 'error' };
-	}
+	if (!(checkAuthUserId(authUserId))) {
+		return ERROR;
+	};
 
-	checkAuthId = 0;
+	if (!(checkAuthUserId(uId))) {
+		return ERROR;
+	};
 
-	for (let i = 0; i < data.users.length; i++) {
-		if (data.users[i].authUserId === uId) {
-			checkAuthId = 1;
-		}
-	}
+	for (const user of data.users) {
 
-	if (checkAuthId === 0) {
-		return { error: 'error' };
-	}
+		if (user.authUserId === uId) {
 
-  for (let i = 0; i < data.users.length; i++) {
-		if (data.users[i].authUserId === uId) {
 			return {
 				user: {
-					uId: data.users[i].authUserId, 
-					email: data.users[i].email,
-					nameFirst: data.users[i].nameFirst, 
-					nameLast: data.users[i].nameLast, 
-					handleStr: data.users[i].handleStr
+					uId: user.authUserId, 
+					email: user.email,
+					nameFirst: user.nameFirst, 
+					nameLast: user.nameLast, 
+					handleStr: user.handleStr
 				}
-        	}
-      	};
-	}
+			};
+		};
+	};
 
-  return { error: 'error' };
+  	return ERROR;
 }
 
-export { userProfileV1 }
+
+export { userProfileV1 };

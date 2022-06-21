@@ -1,9 +1,10 @@
 import { getData, setData } from './dataStore.js';
 import { paramTypeChecker, genHandleStr, emailValidator } from './authHelperFunctions.js';
 
+const ERROR = {error: 'error'};
+
 function authRegisterV1(email, password, nameFirst, nameLast) {
 	/*
-
 		Description:
 			authRegisterV1 function will register new users with 
 			their details in dataStore.js
@@ -16,8 +17,7 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
 			
 		Return Value:
 			object: {authUserId: authUserId} will return users authId
-			object: return {error: 'error'
-
+			object: return {error: 'error'}
 	*/
 
 	const data = getData();
@@ -36,25 +36,26 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
 		const permissionId = (newAuthId === 1) ? 1 : 2;
 
 		if (!(nameFirst.length >= 1 && nameFirst.length <= 50)) {
-			return {error: 'error'};
+			return ERROR;
 		};
 		
 		if (!(nameLast.length >= 1 && nameLast.length <= 50)) {
-			return {error: 'error'};
+			return ERROR;
 		};
 
 		if (emailValidator(email) === false) {
-			return {error: 'error'};
+			return ERROR;
 		};
 
-		for (let i = 0; i < data.users.length; i++) {
-			if (data.users[i].email === email) {
-				return {error: 'error'};
+		for (const user of data.users) {
+
+			if (user.email === email) {
+				return ERROR;
 			};
 		};
 		
 		if (password.length < 6) {
-			return {error: 'error'};
+			return ERROR;
 		};
 
 		const newHandleStr = genHandleStr(nameFirst, nameLast, data.users);
@@ -77,14 +78,13 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
 		return {authUserId: newAuthId};
 
 	} else {
-		return {error: 'error'};
+		return ERROR;
 	};
-};
+}
 
 
 function authLoginV1(email, password) {
 	/*
-		
 		Description:
 			authLoginV1 function will help user to login if the user 
 			enters correct email and password combination
@@ -95,8 +95,7 @@ function authLoginV1(email, password) {
 			
 		Return Value:
 			object: {authUserId: authUserId} will return users authId
-			object: return {error: 'error'}
-			
+			object: return {error: 'error'}	
 	*/
 
 	
@@ -104,16 +103,20 @@ function authLoginV1(email, password) {
 
 	const data = getData();
 
-	for (let i = 0; i < data.users.length; i++) {
-		if (data.users[i].email === email &&
-			data.users[i].password === password &&
-			data.users[i].isActive === true) {
+	for (const user of data.users) {
+
+		if (user.email === email &&
+			user.password === password &&
+			user.isActive === true) {
 			
-			return {authUserId: data.users[i].authUserId};
+			return {authUserId: user.authUserId};
 		};
 	};
 
-	return {error: 'error'};
-};
+	return ERROR;
+}
 
-export { authRegisterV1, authLoginV1 };
+export { 
+	authRegisterV1,
+	authLoginV1
+};
