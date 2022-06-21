@@ -14,12 +14,15 @@ describe('Tests Cases for authRegisterV1', () => {
         const user3 = authRegisterV1('', '', 'Mridul', '');
         const user4 = authRegisterV1('', '', '', 'Singh');
         const user5 = authRegisterV1('', '', '', '');
+        const user6 = authRegisterV1('mridul@gmail.com', '          ', 'Mridul Anand', 'Singh');
+
 
         expect(user1).toStrictEqual({error: 'error'});
         expect(user2).toStrictEqual({error: 'error'});
         expect(user3).toStrictEqual({error: 'error'});
         expect(user4).toStrictEqual({error: 'error'});
         expect(user5).toStrictEqual({error: 'error'});
+        expect(user6).toStrictEqual({error: 'error'});
 
     });
 

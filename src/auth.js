@@ -25,15 +25,15 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
 	const checkParamType = paramTypeChecker(email, password, nameFirst, nameLast);
 
 	if (checkParamType) {
-		// trim() Removes whitespace from both sides of a string
+
 		email = email.trim();
 		password = password.trim();
 		nameFirst = nameFirst.trim();
 		nameLast = nameLast.trim();
 
-		const auth_user_id = (data.users.length) + 1;
+		const newAuthId = (data.users.length) + 1;
 
-		const permissionId = (auth_user_id === 1) ? 1 : 2;
+		const permissionId = (newAuthId === 1) ? 1 : 2;
 
 		if (!(nameFirst.length >= 1 && nameFirst.length <= 50)) {
 			return {error: 'error'};
@@ -57,23 +57,24 @@ function authRegisterV1(email, password, nameFirst, nameLast) {
 			return {error: 'error'};
 		};
 
-		const new_handle_str = genHandleStr(nameFirst, nameLast, data.users);
+		const newHandleStr = genHandleStr(nameFirst, nameLast, data.users);
 
 		const newUserDetails = {
-			'authUserId': auth_user_id,
+			'authUserId': newAuthId,
 			'nameFirst': nameFirst,
 			'nameLast': nameLast,
 			'email': email,
 			'password': password,
-			'handleStr': new_handle_str,
-			'permission_id': permissionId,
+			'handleStr': newHandleStr,
+			'permissionId': permissionId,
+			'isActive': true,
 		};
 
 		data.users.push(newUserDetails);
 
 		setData(data);
 
-		return {authUserId: auth_user_id};
+		return {authUserId: newAuthId};
 
 	} else {
 		return {error: 'error'};
@@ -98,11 +99,15 @@ function authLoginV1(email, password) {
 			
 	*/
 
+	
+	email = email.trim();
+
 	const data = getData();
 
 	for (let i = 0; i < data.users.length; i++) {
 		if (data.users[i].email === email &&
-			data.users[i].password === password) {
+			data.users[i].password === password &&
+			data.users[i].isActive === true) {
 			
 			return {authUserId: data.users[i].authUserId};
 		};
