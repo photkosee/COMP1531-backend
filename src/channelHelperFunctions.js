@@ -1,6 +1,8 @@
-import { getData, setData } from './dataStore.js';
 
-function checkAuthUserId(authUserId) {
+import { getData, setData } from './dataStore.js'; 
+    
+
+export function checkAuthUserId(authUserId) { //written by Jacinta
 	/*
 		Function checkAuthUserId: checks validity and existence of argument
 		
@@ -26,7 +28,7 @@ function checkAuthUserId(authUserId) {
 	return false;
 }
 
-function checkChannelId(channelId) {
+export function checkChannelId(channelId) { //written by Jacinta
 	/*
 		Function checkChannelId: checks validity and existence of argument
 		
@@ -52,7 +54,33 @@ function checkChannelId(channelId) {
 	return false;
 }
 
-function checkIfMember(authUserId, channelId) {
+export function authInChannel(channelId, userId) { //also in channelMessages branch
+    /*
+		Function authInChannel: checks existence of user in channel
+		
+		Arguments:
+			channelId	integer type   -- Input integer supplied by user
+            userId  	integer type   -- Input integer supplied by user
+
+		Return Value:
+			boolean: 'true' if user in channel, 'false' if not in channel
+			
+	*/
+    const dataStore = getData();
+    for (const channel of dataStore.channels) {
+        if (channel.channelId === channelId) {
+            if (channel.allMembers.includes(userId)) {
+                return true; 
+            }
+        }
+    }
+    return false; 
+}
+
+
+
+
+export function checkIfMember(authUserId, channelId) {
     /*
 		Function checkIfMember: checks if given user is a member of the 
             given channel
@@ -83,4 +111,4 @@ function checkIfMember(authUserId, channelId) {
 
 }
 
-export { checkAuthUserId, checkChannelId, checkIfMember };
+
