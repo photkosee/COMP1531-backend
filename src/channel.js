@@ -1,4 +1,4 @@
-import { getData } from './dataStore.js';
+import { getData, setData } from './dataStore.js';
 import { checkAuthUserId, checkChannelId, checkIfMember, authInChannel, getMessages } from './channelHelperFunctions.js';
 
 const ERROR = {
