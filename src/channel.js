@@ -68,7 +68,7 @@ function channelJoinV1(authUserId, channelId) {
 
 	let chosenChannel = {};
 	for (const channel of data.channels) {
-		if (channelId === channel.channel_id) { //////////// CHANGE TO channelId
+		if (channelId === channel.channelId) { //////////// CHANGE TO channelId
 			chosenChannel = channel;
 		}
 	}
@@ -81,7 +81,7 @@ function channelJoinV1(authUserId, channelId) {
 	}
 
 	if (chosenChannel.isPublic === false) { // Private channel
-		if (chosenUser.permission_id !== 1) { /////////////// CHANGE TO permissionId
+		if (chosenUser.permissionId !== 1) { /////////////// CHANGE TO permissionId
 			return ERROR;
 		}
 	}
