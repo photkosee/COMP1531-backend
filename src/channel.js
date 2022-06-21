@@ -9,13 +9,6 @@ const ERROR = {
 }
 
 
-
-
-	const authUserId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId; //in
-	const authUserId2 = authRegisterV1('user2@bar.com', '123456', 'first2', 'last2').authUserId; //out
-	const channel1 = channelsCreateV1(authUserId1, 'channel1', true).channelId;
-	console.log(channelInviteV1(authUserId1, channel1, authUserId2));
-
 function channelMessagesV1(authUserId, channelId, start) {
 	/*
 		Function channelMessagesV1 (waiting for details in future tasks)
@@ -99,13 +92,11 @@ function channelDetailsV1(authUserId, channelId) {
 	*/
 
 	if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
-		console.log("check authId");
 		return ERROR;
 	}
 
 	let channelDetails = checkIfMember(authUserId, channelId);
 	if (Object.keys(channelDetails).length === 0) {
-		console.log("check if member");
 		return ERROR;
 	}
 
