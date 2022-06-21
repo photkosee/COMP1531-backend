@@ -1,8 +1,5 @@
 import { getData, setData } from './dataStore.js';
-
 import { checkAuthUserId, checkChannelId, authInChannel, checkIfMember } from './channelHelperFunctions.js';
-import { authRegisterV1 } from './auth.js';
-import { channelsCreateV1 } from './channels.js';
 
 const ERROR = {
     error: 'error'
@@ -88,7 +85,7 @@ function channelJoinV1(authUserId, channelId) {
 
 	let chosenChannel = {};
 	for (const channel of data.channels) {
-		if (channelId === channel.channelId) { //////////// CHANGE TO channelId
+		if (channelId === channel.channelId) {
 			chosenChannel = channel;
 		}
 	}
@@ -100,8 +97,8 @@ function channelJoinV1(authUserId, channelId) {
 		}
 	}
 
-	if (chosenChannel.isPublic === false) { // Private channel
-		if (chosenUser.permissionId !== 1) { /////////////// CHANGE TO permissionId
+	if (chosenChannel.isPublic === false) {
+		if (chosenUser.permissionId !== 1) { 
 			return ERROR;
 		}
 	}
