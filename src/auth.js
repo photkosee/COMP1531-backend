@@ -116,5 +116,4 @@ function authLoginV1(email, password) {
 	return {error: 'error'};
 };
 
-
 export { authRegisterV1, authLoginV1 };
