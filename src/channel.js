@@ -2,9 +2,9 @@ import { getData, setData } from './dataStore.js';
 import { checkUserAuthIdExists, checkChannelInvite } from './channelHelperFunctions.js';
 
 
-
-
-console.log(channelInviteV1(2,4,5)); 
+const ERROR = {
+    error: 'error'
+}
 
 function channelMessagesV1(authUserId, channelId, start) {
 	/*
@@ -41,7 +41,7 @@ function channelInviteV1(authUserId, channelId, uId) {
 	*/
 
 
-	if (checkUserAuthIdExists(authUserId, uId) && checkChannelInvite(channelId, authUserId, uId)) {
+	if (checkAuthUserId(authUserId) && checkAuthUserId(uId) && checkChannelInvite(channelId, authUserId, uId)) {
 		const dataStore = getData(); 
 		for (const channels in dataStore.channels) {
 			if (channels.channelId === channelId) {
@@ -52,7 +52,7 @@ function channelInviteV1(authUserId, channelId, uId) {
 		}
 
 	} else {
-		return { error: 'error' }; 
+		return ERROR; 
 	}
 	
 };

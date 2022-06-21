@@ -1,31 +1,47 @@
 import { getData, setData } from './dataStore.js'; 
     
-export function checkUserAuthIdExists(authUserId, uId) {
-    const dataStore = getData(); 
-    if (!Number.isInteger(authUserId) || !Number.isInteger(uId)) {
-        return false; 
-    }
 
-    let authExists = false; 
-	let uIdExists = false;
-	for (const users of dataStore.users) {
-		if (users.authUserId === authUserId) {
-			authExists = true; 
-		} else if (users.authUserId === uId) {
-			uIdExists = true; 
+export function checkAuthUserId(authUserId) { //written by Jacinta
+	/*
+		Function checkAuthUserId: checks validity and existence of argument
+		
+		Arguments:
+			authUserId	integer type   -- Input integer supplied by user
+			
+		Return Value:
+			boolean: 'true' if valid, 'false' if invalid or non-existent
+			
+	*/
+	const data = getData();
+
+	if (typeof authUserId !== 'number') {
+		return false;
+	}
+
+	for (const user of data.users) {
+		if (authUserId === user.authUserId) {
+			return true;
 		}
 	}
 
-    if (authExists && uIdExists) {
-        return true;
-    } else {
-        return false;
-    }
+	return false;
+}
 
-}    
 
 
 export function checkChannelInvite(channelId, authUserId, uId) {
+	/*
+		Function checkChannelInvite: 
+			checks whether authUserId and uId are in a valid channel
+		
+		Arguments:
+			authUserId	integer type   -- Input integer supplied by user
+			
+		Return Value:
+			boolean: 'true' if authUserId in channel and uId not in valid channel
+			boolean: 'false' authUser not in channel or uId in channel or channel invalid
+			
+	*/
     const dataStore = getData(); 
     if (!Number.isInteger(channelId)) {
         return false; 
@@ -46,7 +62,7 @@ export function checkChannelInvite(channelId, authUserId, uId) {
 		
 	}
 
-    if (channelExists && uIdInChannel && authInChannel) {
+    if (channelExists && !uIdInChannel && authInChannel) {
         return true;
     } else {
         return false; 
