@@ -1,6 +1,13 @@
+import { getData, setData } from './dataStore.js';
+import { checkChannelId, checkAuthUserId, authInChannel, getMessages, startLessThanMessages } from './channelHelperFunction.js';
+
+const ERROR = {
+    error: 'error'
+}
+
 function channelMessagesV1(authUserId, channelId, start) {
 	/*
-		Function channelMessagesV1 (waiting for details in future tasks)
+		Function channelMessagesV1: checks the message history of a given channel
 		
 		Arguments:
 			authUserId	integer type   -- Input integer supplied by user
@@ -8,10 +15,40 @@ function channelMessagesV1(authUserId, channelId, start) {
 			start 		integer type   -- Input integer supplied by user			
 			
 		Return Value:
-			string: a combined of authUserId, channelId and start
+			object: { 
+				messages: [messages],
+				start: start,
+				end: end,
+			}
 			
 	*/
-    return 'authUserId' + 'channelId' + 'start';
+
+	if (!checkChannelId(channelId) || !checkAuthUserId(authUserId) 
+			|| !authInChannel(channelId, authUserId) || startLessThanMessages(channelId, start)) {
+		return ERROR; 
+	}
+
+	
+	const messagesArray = [];
+	const messages = getMessages(channelId);
+		
+	for (let i = 0; i < 50 && (start + i < messages.length); i++) {
+		messagesArray.push(messages[start + i]);
+	}
+ 
+	if (start + 50 < messages.length) {
+		const end = start + 50;
+	} else {
+		const end = -1;
+	}
+
+	return {
+		messages: messagesArray,
+		start: start,
+		end: end, 
+	}
+	
+
 };
 
 
