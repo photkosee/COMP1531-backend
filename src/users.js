@@ -40,11 +40,13 @@ function userProfileV1(authUserId, uId) {
   for (let i = 0; i < data.users.length; i++) {
 		if (data.users[i].authUserId === uId) {
 			return {
-				uId: data.users[i].authUserId, 
-				email: data.users[i].email,
-				nameFirst: data.users[i].nameFirst, 
-				nameLast: data.users[i].nameLast, 
-				handleStr: data.users[i].handleStr
+				user: {
+					uId: data.users[i].authUserId, 
+					email: data.users[i].email,
+					nameFirst: data.users[i].nameFirst, 
+					nameLast: data.users[i].nameLast, 
+					handleStr: data.users[i].handleStr
+				}
         	}
       	};
 	}
