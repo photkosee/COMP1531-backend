@@ -53,7 +53,7 @@ function channelInviteV1(authUserId, channelId, uId) {
 	if (checkAuthUserId(authUserId) && checkAuthUserId(uId) && checkChannelId(channelId) 
 			&& authInChannel(channelId, authUserId) && !authInChannel(channelId, uId)) {
 		const dataStore = getData(); 
-		console.log('hello');
+		
 		for (const channel of dataStore.channels) {
 			if (channel.channelId === channelId) {
 				channel.allMembers.push(uId); 
