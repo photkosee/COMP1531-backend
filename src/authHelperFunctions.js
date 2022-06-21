@@ -30,7 +30,7 @@ function paramTypeChecker(email, password, nameFirst, nameLast) {
 };
 
 
-function genHandleStr(nameFirst, nameLast, users_data) {
+function genHandleStr(nameFirst, nameLast, userData) {
 	/*
 
 		Description:
@@ -39,7 +39,7 @@ function genHandleStr(nameFirst, nameLast, users_data) {
 		Arguments:
 			nameFirst string type   -- Input string supplied by function authRegisterV1
 			nameLast  string type   -- Input string supplied by function authRegisterV1
-			users_data array type   -- Users array supplied by function authRegisterV1
+			userData array type   -- Users array supplied by function authRegisterV1
 			
 		Return Value:
 			string: newUserHandle
@@ -58,8 +58,8 @@ function genHandleStr(nameFirst, nameLast, users_data) {
 
 	let numToAppend = 0;
 
-	for (let i = 0; i < users_data.length; i++) {
-		if (users_data[i].handleStr === newUserHandle) {
+	for (let i = 0; i < userData.length; i++) {
+		if (userData[i].handleStr === newUserHandle) {
 			newUserHandle = `${newUserHandle.substring(0, 20) + numToAppend.toString()}`;
 			i = 0;
 			numToAppend++;
