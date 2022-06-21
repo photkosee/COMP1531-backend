@@ -1,5 +1,6 @@
-import { getData, setData } from './dataStore.js';
-import { checkAuthUserId, checkChannelId, authInChannel, checkIfMember } from './channelHelperFunctions.js';
+import { getData } from './dataStore.js';
+
+import { checkAuthUserId, checkChannelId, checkIfMember, authInChannel, getMessages } from './channelHelperFunctions.js';
 
 const ERROR = {
     error: 'error'
@@ -8,7 +9,7 @@ const ERROR = {
 
 function channelMessagesV1(authUserId, channelId, start) {
 	/*
-		Function channelMessagesV1 (waiting for details in future tasks)
+		Function channelMessagesV1: checks the message history of a given channel
 		
 		Arguments:
 			authUserId	integer type   -- Input integer supplied by user
@@ -16,10 +17,40 @@ function channelMessagesV1(authUserId, channelId, start) {
 			start 		integer type   -- Input integer supplied by user			
 			
 		Return Value:
-			object: { name, isPublic, ownerMembers, allMembers }
+
+			object: { 
+				messages: [messages],
+				start: start,
+				end: end,
+			}
 			
 	*/
-    return 'authUserId' + 'channelId' + 'start';
+
+	if (!checkChannelId(channelId) || !checkAuthUserId(authUserId) 
+			|| !authInChannel(channelId, authUserId) || start > getMessages(channelId).length) {
+		return ERROR; 
+	}
+
+	
+	const messagesArray = [];
+	const messages = getMessages(channelId);
+		
+	for (let i = 0; i < 50 && (start + i < messages.length); i++) {
+		messagesArray.push(messages[start + i]);
+	}
+	
+	let end = -1;
+	if (start + 50 < messages.length) {
+		end = start + 50;
+	} 
+
+	return {
+		messages: messagesArray,
+		start: start,
+		end: end, 
+	}
+	
+
 };
 
 
@@ -85,7 +116,7 @@ function channelJoinV1(authUserId, channelId) {
 
 	let chosenChannel = {};
 	for (const channel of data.channels) {
-		if (channelId === channel.channelId) {
+		if (channelId === channel.channelId) { //////////// CHANGE TO channelId
 			chosenChannel = channel;
 		}
 	}
@@ -97,8 +128,8 @@ function channelJoinV1(authUserId, channelId) {
 		}
 	}
 
-	if (chosenChannel.isPublic === false) {
-		if (chosenUser.permissionId !== 1) { 
+	if (chosenChannel.isPublic === false) { // Private channel
+		if (chosenUser.permissionId !== 1) { /////////////// CHANGE TO permissionId
 			return ERROR;
 		}
 	}

@@ -1,8 +1,6 @@
+import { getData } from './dataStore.js';
 
-import { getData, setData } from './dataStore.js'; 
-    
-
-export function checkAuthUserId(authUserId) { //written by Jacinta
+export function checkAuthUserId(authUserId) {
 	/*
 		Function checkAuthUserId: checks validity and existence of argument
 		
@@ -27,7 +25,7 @@ export function checkAuthUserId(authUserId) { //written by Jacinta
 	return false;
 }
 
-export function checkChannelId(channelId) { //written by Jacinta
+export function checkChannelId(channelId) {
 	/*
 		Function checkChannelId: checks validity and existence of argument
 		
@@ -53,7 +51,39 @@ export function checkChannelId(channelId) { //written by Jacinta
 	return false;
 }
 
-export function authInChannel(channelId, userId) { //also in channelMessages branch
+export function checkIfMember(authUserId, channelId) {
+    /*
+		Function checkIfMember: checks if given user is a member of the 
+            given channel
+		
+		Arguments:
+        	authUserId	integer type   -- Input integer supplied by user
+			channelId	integer type   -- Input integer supplied by user
+			
+		Return Value:
+            object: returns details of channel if the user is a member,
+                    returns empty object if user is not a member
+			
+	*/
+    const data = getData();
+    let chosenChannel = {};
+
+    for (const channel of data.channels) {
+        if (channelId === channel.channelId) {
+            chosenChannel = channel;
+        }
+    }
+
+    if (chosenChannel.allMembers.includes(authUserId)) {
+        return chosenChannel;
+    }
+    
+    return {};
+
+}
+
+
+export function authInChannel(channelId, userId) {
     /*
 		Function authInChannel: checks existence of user in channel
 		
@@ -77,28 +107,20 @@ export function authInChannel(channelId, userId) { //also in channelMessages bra
 }
 
 
-
-
-export function checkIfMember(authUserId, channelId) {
-    /*
-		Function checkIfMember: checks if given user is a member of the 
-            given channel
+export function getMessages(channelId) {
+	/*
+		Function getMessages: returns array of messages of a given channel
 		
 		Arguments:
-        	authUserId	integer type   -- Input integer supplied by user
 			channelId	integer type   -- Input integer supplied by user
-			
-		Return Value:
-            object: returns details of channel if the user is a member,
-                    returns empty object if user is not a member
-			
-	*/
-    const data = getData();
-    let chosenChannel = {};
 
-    for (const channel of data.channels) {
-        if (channelId === channel.channelId) {
-            chosenChannel = channel;
+		Return Value:
+			array: messages of a given channelId			
+	*/
+    const dataStore = getData();
+    for (const channel of dataStore.channels) {
+        if (channel.channelId === channelId) {
+            return channel.messages; 
         }
     }
 
