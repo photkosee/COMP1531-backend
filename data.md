@@ -1,8 +1,6 @@
 App Data Structure
 
 let data = {
-  'users': [],
-  'channels': []
   'users': [
     {
         'authUserId': integer,
@@ -12,6 +10,7 @@ let data = {
         'password': 'string',
         'handleStr': 'string',
         'permissionId': integer,
+        'isActive': boolean,
     },
   ],
   'channels': [
