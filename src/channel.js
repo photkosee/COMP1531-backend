@@ -1,5 +1,4 @@
-import { getData } from './dataStore.js';
-
+import { getData, setData } from './dataStore.js';
 import { checkAuthUserId, checkChannelId, checkIfMember, authInChannel, getMessages } from './channelHelperFunctions.js';
 
 const ERROR = {
@@ -77,9 +76,19 @@ function channelInviteV1(authUserId, channelId, uId) {
 		
 		for (const channel of dataStore.channels) {
 			if (channel.channelId === channelId) {
-				channel.allMembers.push(uId); 
-				setData(dataStore); 
-				return {}; 
+				for (const element of dataStore.users) {
+					if (uId === element.authUserId) {
+						channel.allMembers.push({
+							uId: uId,
+							email: element.email,
+							nameFirst: element.nameFirst,
+							nameLast: element.nameLast,
+							handleStr: element.handleStr
+						}); 
+						setData(dataStore); 
+						return {};
+					}
+				} 
 			}
 		}
 
@@ -118,6 +127,11 @@ function channelJoinV1(authUserId, channelId) {
 	for (const channel of data.channels) {
 		if (channelId === channel.channelId) { //////////// CHANGE TO channelId
 			chosenChannel = channel;
+			for (const element of channel.allMembers) {
+				if (authUserId === element.uId) {
+					return ERROR;
+				}
+			}
 		}
 	}
 
@@ -134,10 +148,17 @@ function channelJoinV1(authUserId, channelId) {
 		}
 	}
 
-	chosenChannel.allMembers.push(authUserId);
-
+	chosenChannel.allMembers.push({
+		uId: authUserId,
+	 	email: chosenUser.email,
+		nameFirst: chosenUser.nameFirst,
+		nameLast: chosenUser.nameLast,
+		handleStr: chosenUser.handleStr
+	});
+	
     return {};
 };
+
 
 
 function channelDetailsV1(authUserId, channelId) {

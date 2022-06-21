@@ -22,7 +22,6 @@ export function checkAuthUserId(authUserId) {
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -75,9 +74,12 @@ export function checkIfMember(authUserId, channelId) {
         }
     }
 
-    if (chosenChannel.allMembers.includes(authUserId)) {
-        return chosenChannel;
+    for (const element of chosenChannel.allMembers) {
+		if (authUserId === element.uId) {
+        	return chosenChannel;
+		}
     }
+
     
     return {};
 
@@ -99,9 +101,11 @@ export function authInChannel(channelId, userId) {
     const dataStore = getData();
     for (const channel of dataStore.channels) {
         if (channel.channelId === channelId) {
-            if (channel.allMembers.includes(userId)) {
-                return true; 
-            }
+			for (const element of channel.allMembers) {
+				if (userId === element.uId) {
+					return true;
+				}
+			}
         }
     }
     return false; 
@@ -124,6 +128,15 @@ export function getMessages(channelId) {
             return channel.messages; 
         }
     }
+
+    for (const element of chosenChannel.allMembers) {
+	if (authUserId === element.uId) {
+        	return chosenChannel;
+	}
+    }
+    
+    return {};
+
 }
 
 
