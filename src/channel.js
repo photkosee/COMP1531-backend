@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore.js';
-import { checkChannelId, checkAuthUserId, authInChannel, getMessages, startLessThanMessages } from './channelHelperFunction.js';
+import { checkChannelId, checkAuthUserId, authInChannel, getMessages } from './channelHelperFunction.js';
 
 const ERROR = {
     error: 'error'
@@ -24,7 +24,7 @@ function channelMessagesV1(authUserId, channelId, start) {
 	*/
 
 	if (!checkChannelId(channelId) || !checkAuthUserId(authUserId) 
-			|| !authInChannel(channelId, authUserId) || startLessThanMessages(channelId, start)) {
+			|| !authInChannel(channelId, authUserId) || start > getMessages(channelId).length) {
 		return ERROR; 
 	}
 

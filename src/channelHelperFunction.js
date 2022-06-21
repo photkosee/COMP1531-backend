@@ -80,19 +80,23 @@ export function authInChannel(channelId, userId) {
 
 
 export function getMessages(channelId) {
+	/*
+		Function getMessages: returns array of messages of a given channel
+		
+		Arguments:
+			channelId	integer type   -- Input integer supplied by user
+
+		Return Value:
+			array: messages of a given channelId			
+	*/
     const dataStore = getData();
     for (const channel of dataStore.channels) {
         if (channel.channelId === channelId) {
             return channel.messages; 
         }
-    }
+    } 
+	
 
 }
 
-export function startLessThanMessages(channelId, start) {
-    const dataStore = getData();
-    const messages = getMessages();
-    return (messages.length < start);
-
-}
 
