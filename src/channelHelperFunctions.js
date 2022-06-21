@@ -1,3 +1,4 @@
+import { getData } from './dataStore.js';
 
 export function checkAuthUserId(authUserId) {
 	/*
@@ -122,9 +123,7 @@ export function getMessages(channelId) {
         if (channel.channelId === channelId) {
             return channel.messages; 
         }
-    } 
-	
-
+    }
 }
 
 
