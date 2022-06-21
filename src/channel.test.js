@@ -1,42 +1,108 @@
-import { channelMessagesV1, channelJoinV1, channelDetailsV1 } from './channel.js';
+import { channelInviteV1, channelMessagesV1, channelJoinV1, channelDetailsV1 } from './channel.js';
 import { authRegisterV1 } from './auth.js';
 import { channelsCreateV1 } from './channels.js';
 import { clearV1 } from './other.js';
 
-/*
-
-Given a channel with ID channelId that the authorised user is a member of, 
-return up to 50 messages between index "start" and "start + 50". 
-Message with index 0 is the most recent message in the channel. 
-This function returns a new index "end" which is the value of "start + 50", or, 
-if this function has returned the least recent messages in the channel, returns -1 in "end" 
-to indicate there are no more messages to load after this return.
-
-Parameters: {
-    int authUserId,
-    int channelId,
-    int start
-}
-Returns: {
-    no error: {
-        [messages],
-        start,
-        end
-    }
-    
-    error: { error: 'error' }
-}
-
-'messages': [{
-  //       'messageId': integer,
-  //       'message': 'string',
-  //       'authUserId' : integer,
-  //       'timeCreated': 'string',
-  //     }],
-*/
-
 beforeEach(() => {
     clearV1();
+});
+
+describe ('Test cases for channelJoinV1', () => {
+
+    test ('Valid User Id and Valid Channel Id', () => {
+        
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
+        channelId = channelId.channelId;
+
+        expect(channelJoinV1(userId2, channelId)).toEqual({});
+
+    });
+
+    test('Non-existent Ids', () => {
+        
+        let userId1 = authRegisterV1('mal1@email.com', 'one', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', 'two', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
+        channelId = channelId.channelId;
+        let dummyChannelId = channelId + '1';
+        let dummyUserId = userId1 + userId2;
+
+        expect(channelJoinV1(userId2, dummyChannelId)).toEqual({error: 'error'});
+        expect(channelJoinV1(dummyUserId, channelId)).toEqual({error: 'error'});
+
+    });
+
+    test('Invalid Ids', () => {
+
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
+        channelId = channelId.channelId;
+
+        expect(channelJoinV1(userId2, '0')).toEqual({error: 'error'});
+        expect(channelJoinV1('0', channelId)).toEqual({error: 'error'});
+
+    });
+
+    test('Authorised user is already a member', () => {
+        
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
+        channelId = channelId.channelId;
+
+        channelJoinV1(userId2, channelId);
+
+        expect(channelJoinV1(userId1, channelId)).toEqual({error: 'error'}); // Already owner + member
+        expect(channelJoinV1(userId2, channelId)).toEqual({error: 'error'}); // Already member
+
+    });
+
+    test('Private channel and adding global owner who is already a member', () => {
+
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', false);
+        channelId = channelId.channelId;
+
+        expect(channelJoinV1(userId1, channelId)).toEqual({error: 'error'});
+    });
+
+    test('Private channel and adding not a global owner', () => {
+
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', false);
+        channelId = channelId.channelId;
+
+        expect(channelJoinV1(userId2, channelId)).toEqual({error: 'error'});
+    });
+
+    test('Return empty object if private but adding global owner', () => {
+
+        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+        userId1 = userId1.authUserId;
+        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
+        userId2 = userId2.authUserId;
+        let channelId = channelsCreateV1(userId2, 'FO9A_CRUNCHIE', false);
+        channelId = channelId.channelId;
+
+        expect(channelJoinV1(userId1, channelId)).toEqual({});
+    });
 });
 
 
@@ -87,6 +153,7 @@ describe ('Test cases for channelMessagesV1', () => {
     
 });
 
+
 describe('Tests for channelDetailsV1', () => {
 
     test ('Valid userId and Valid channelId', () => {
@@ -101,30 +168,50 @@ describe('Tests for channelDetailsV1', () => {
             {
             'name': 'FO9A_CRUNCHIE',
             'isPublic': false,
-            'ownerMembers': [ 1 ],
-            'allMembers': [ 1 ],
+            'ownerMembers': [ { uId: authUserId1,
+                email: 'mal1@email.com',
+               nameFirst: 'One',
+               nameLast: 'Number',
+               handleStr: 'onenumber' } ],
+            'allMembers': [ { uId: authUserId1,
+                email: 'mal1@email.com',
+               nameFirst: 'One',
+               nameLast: 'Number',
+               handleStr: 'onenumber' } ],
             }
         );
-
     });
 
-    test.skip('Testing if member but not owner', () => {
+    test('Testing if member but not owner', () => {
 
         let authUserId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
         authUserId1 = authUserId1.authUserId;
         let authUserId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
         authUserId2 = authUserId2.authUserId;
 
-        let channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', false);
+        let channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', true);
         channelId = channelId.channelId;
         channelJoinV1(authUserId2, channelId); 
 
         expect(channelDetailsV1(authUserId2, channelId)).toMatchObject(        
             {
             'name': 'FO9A_CRUNCHIE',
-            'isPublic': false,
-            'ownerMembers': [ 1 ],
-            'allMembers': [ 1, 2 ],
+            'isPublic': true,
+            'ownerMembers': [ { uId: authUserId1,
+                email: 'mal1@email.com',
+               nameFirst: 'One',
+               nameLast: 'Number',
+               handleStr: 'onenumber' } ],
+            'allMembers': [ { uId: authUserId1,
+                email: 'mal1@email.com',
+               nameFirst: 'One',
+               nameLast: 'Number',
+               handleStr: 'onenumber' },
+               { uId: authUserId2,
+                email: 'mal2@email.com',
+               nameFirst: 'Two',
+               nameLast: 'Number',
+               handleStr: 'twonumber' } ],
             }
         ); 
     });
@@ -154,99 +241,68 @@ describe('Tests for channelDetailsV1', () => {
 });
 
 
-describe ('Test cases for channelJoinV1', () => {
+describe ('Test cases for channelInviteV1', () => {
 
-    test ('Valid User Id and Valid Channel Id', () => {
+    test ('Valid Channel and Valid User Ids', () => {
+
+        const authUserId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId;
+        const authUserId2 = authRegisterV1('user2@bar.com', '123456', 'first2', 'last2').authUserId;
+        const authUserId3 = authRegisterV1('user3@bar.com', '123456', 'first3', 'last3').authUserId;
+        const authUserId4 = authRegisterV1('user4@bar.com', '123456', 'first4', 'last4').authUserId;
+        const authUserId5 = authRegisterV1('user5@bar.com', '123456', 'first5', 'last5').authUserId;
+        const authUserId6 = authRegisterV1('user6@bar.com', '123456', 'first6', 'last6').authUserId;
+        const authUserId7 = authRegisterV1('user7@bar.com', '123456', 'first7', 'last7').authUserId;
+        const authUserId8 = authRegisterV1('user8@bar.com', '123456', 'first8', 'last8').authUserId;
+        const channel1 = channelsCreateV1(authUserId1, 'channel1', true).channelId; 
+        channelJoinV1(authUserId3, channel1);
+        channelJoinV1(authUserId4, channel1);  
+        channelJoinV1(authUserId8, channel1);
+        expect(channelInviteV1(authUserId1, channel1, authUserId2)).toStrictEqual({});
+        expect(channelInviteV1(authUserId3, channel1, authUserId4)).toStrictEqual({ error: 'error' });
+        expect(channelInviteV1(authUserId5, channel1, authUserId6)).toStrictEqual({ error: 'error' });
+        expect(channelInviteV1(authUserId7, channel1, authUserId8)).toStrictEqual({ error: 'error' });
         
-        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
-        userId1 = userId1.authUserId;
-        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
-        userId2 = userId2.authUserId;
-        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
-        channelId = channelId.channelId;
+    });
 
-        expect(channelJoinV1(userId2, channelId)).toEqual({});
+    test ('Valid Channel and Invalid uId', () => {
+        const authUserId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId; 
+        const authUserId2 = authRegisterV1('user2@bar.com', '123456', 'first2', 'last2').authUserId; 
+        const authUserId6 = authRegisterV1('user6@bar.com', '123456', 'first6', 'last6').authUserId; 
+        const authUserId8 = authRegisterV1('user8@bar.com', '123456', 'first8', 'last8').authUserId; 
+        const channel1 = channelsCreateV1(authUserId1, 'channel1', true).channelId; 
+        channelJoinV1(authUserId8, channel1); 
+        expect(channelInviteV1(authUserId1, channel1, 0.1)).toStrictEqual({ error: 'error' });
+        expect(channelInviteV1(authUserId2, channel1, 0.1)).toStrictEqual({ error: 'error' });
+        expect(channelInviteV1(0.1, channel1, authUserId6)).toStrictEqual({ error: 'error' });
+        expect(channelInviteV1(0.1, channel1, authUserId8)).toStrictEqual({ error: 'error' });
+        expect(channelInviteV1(0.1, channel1, 0.1)).toStrictEqual({ error: 'error' });
 
     });
 
-    test('Non-existent Ids', () => {
+    test ('Invalid Channel', () => {
+        const authUserId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId; 
+        const authUserId2 = authRegisterV1('user2@bar.com', '123456', 'first2', 'last2').authUserId; 
+        const authUserId4 = authRegisterV1('user4@bar.com', '123456', 'first4', 'last4').authUserId; 
+        const authUserId6 = authRegisterV1('user6@bar.com', '123456', 'first6', 'last6').authUserId; 
         
-        let userId1 = authRegisterV1('mal1@email.com', 'one', 'One', 'Number');
-        userId1 = userId1.authUserId;
-        let userId2 = authRegisterV1('mal2@email.com', 'two', 'Two', 'Number');
-        userId2 = userId2.authUserId;
-        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
-        channelId = channelId.channelId;
-        let dummyChannelId = channelId + '1';
-        let dummyUserId = userId1 + userId2;
+        expect(channelInviteV1(authUserId1, 0.1, 0.1)).toStrictEqual({ error: 'error' });
+        expect(channelInviteV1(authUserId2, 0.1, authUserId4)).toStrictEqual({ error: 'error' });  
+        expect(channelInviteV1(0.1, 0.1, authUserId6)).toStrictEqual({ error: 'error' });
+        expect(channelInviteV1(0.1, 0.1, 0.1)).toStrictEqual({ error: 'error' });
 
-        expect(channelJoinV1(userId2, dummyChannelId)).toEqual({error: 'error'});
-        expect(channelJoinV1(dummyUserId, channelId)).toEqual({error: 'error'});
     });
+    
+    
+    test ('uId of authUserId is same as uId invite', () => {
+        const authUserId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId; 
+        const authUserId2 = authRegisterV1('user2@bar.com', '123456', 'first2', 'last2').authUserId; 
+        const channel1 = channelsCreateV1(authUserId1, 'channel1', true).channelId; 
 
-    test('Invalid Ids', () => {
-
-        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
-        userId1 = userId1.authUserId;
-        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
-        userId2 = userId2.authUserId;
-        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
-        channelId = channelId.channelId;
-
-        expect(channelJoinV1(userId2, '0')).toEqual({error: 'error'});
-        expect(channelJoinV1('0', channelId)).toEqual({error: 'error'});
+        expect(channelInviteV1(authUserId1, channel1, authUserId1)).toStrictEqual({ error: 'error' });
+        expect(channelInviteV1(authUserId2, channel1, authUserId2)).toStrictEqual({ error: 'error' });
+        expect(channelInviteV1(0.1,channel1,0.1)).toStrictEqual({ error: 'error' }); 
 
     });
 
-    test('Authorised user is already a member', () => {
-        
-        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
-        userId1 = userId1.authUserId;
-        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
-        userId2 = userId2.authUserId;
-        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', true);
-        channelId = channelId.channelId;
-
-        channelJoinV1(userId2, channelId);
-
-        expect(channelJoinV1(userId1, channelId)).toEqual({error: 'error'});
-        expect(channelJoinV1(userId2, channelId)).toEqual({error: 'error'});
-
-    });
-
-    test('Private channel and adding global owner who is already a member', () => {
-
-        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
-        userId1 = userId1.authUserId;
-        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
-        userId2 = userId2.authUserId;
-        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', false);
-        channelId = channelId.channelId;
-
-        expect(channelJoinV1(userId1, channelId)).toEqual({error: 'error'});
-    });
-
-    test('Private channel and adding not a global owner', () => {
-
-        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
-        userId1 = userId1.authUserId;
-        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
-        userId2 = userId2.authUserId;
-        let channelId = channelsCreateV1(userId1, 'FO9A_CRUNCHIE', false);
-        channelId = channelId.channelId;
-
-        expect(channelJoinV1(userId2, channelId)).toEqual({error: 'error'});
-    });
-
-    test('Return empty object if private but adding global owner', () => {
-
-        let userId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
-        userId1 = userId1.authUserId;
-        let userId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
-        userId2 = userId2.authUserId;
-        let channelId = channelsCreateV1(userId2, 'FO9A_CRUNCHIE', false);
-        channelId = channelId.channelId;
-
-        expect(channelJoinV1(userId1, channelId)).toEqual({});
-    });
 });
+
