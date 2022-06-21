@@ -56,11 +56,13 @@ function genHandleStr(nameFirst, nameLast, userData) {
 
 	newUserHandle = newUserHandle.substring(0, 20);
 
+	const lenHandle = newUserHandle.length;
+
 	let numToAppend = 0;
 
 	for (let i = 0; i < userData.length; i++) {
 		if (userData[i].handleStr === newUserHandle) {
-			newUserHandle = `${newUserHandle.substring(0, 20) + numToAppend.toString()}`;
+			newUserHandle = `${newUserHandle.substring(0, lenHandle) + numToAppend.toString()}`;
 			i = 0;
 			numToAppend++;
 		};

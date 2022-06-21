@@ -1,5 +1,6 @@
-import { clearV1 } from './other';
-import { authRegisterV1, authLoginV1 } from './auth';
+import { clearV1 } from './other.js';
+import { authRegisterV1, authLoginV1 } from './auth.js';
+import { userProfileV1 } from './users.js'
 
 beforeEach(() => {
     clearV1();
@@ -138,6 +139,32 @@ describe('Tests Cases for authRegisterV1', () => {
         expect(user2).toStrictEqual({authUserId: 2});
         expect(user3).toStrictEqual({authUserId: 3});
         expect(user4).toStrictEqual({authUserId: 4});
+
+    });
+
+
+    test('Testing for handleStr', () => {
+        
+        const user1 = authRegisterV1('mridul@gmail.com', 'Mas@1skldbjk', 'Mridul', 'Singh');
+        const user2 = authRegisterV1('mriduls@mail.com', 'ksnjdgji%#$#', 'Mridul', 'Singh');
+        const user3 = authRegisterV1('mridula@mail.com', 'ksnjdgji%#$#', 'Mridul', 'Singh');
+        const user4 = authRegisterV1('mrid@mail.com', 'ksnjdgji%#$#', 'Mrid*&^*ul', 'Si^^&ngh0979');
+        const user5 = authRegisterV1('mridsdula@mail.com', 'ksnjdgji%#$#', 'mRikjsfkbg87645kbsfDul', 'SinH0284');
+        const user6 = authRegisterV1('mridsfdvula@mail.com', 'ksnjdgji%#$#', 'mRikjsfkbg87645kbsfDul', 'SinH0284');
+
+        const result1 = userProfileV1(user1.authUserId, user1.authUserId);
+        const result2 = userProfileV1(user2.authUserId, user2.authUserId);
+        const result3 = userProfileV1(user3.authUserId, user3.authUserId);
+        const result4 = userProfileV1(user4.authUserId, user4.authUserId);
+        const result5 = userProfileV1(user5.authUserId, user5.authUserId);
+        const result6 = userProfileV1(user6.authUserId, user6.authUserId);
+        
+        expect(result1.user.handleStr).toStrictEqual('mridulsingh');
+        expect(result2.user.handleStr).toStrictEqual('mridulsingh0');
+        expect(result3.user.handleStr).toStrictEqual('mridulsingh1');
+        expect(result4.user.handleStr).toStrictEqual('mridulsingh0979');
+        expect(result5.user.handleStr).toStrictEqual('mrikjsfkbg87645kbsfd');
+        expect(result6.user.handleStr).toStrictEqual('mrikjsfkbg87645kbsfd0');
 
     });
 
