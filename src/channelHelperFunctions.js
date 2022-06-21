@@ -74,9 +74,12 @@ export function checkIfMember(authUserId, channelId) {
         }
     }
 
-    if (chosenChannel.allMembers.includes(authUserId)) {
-        return chosenChannel;
+    for (const element of chosenChannel.allMembers) {
+	if (authUserId === element.uId) {
+        	return chosenChannel;
+	}
     }
+
     
     return {};
 

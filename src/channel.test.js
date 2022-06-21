@@ -182,21 +182,21 @@ describe('Tests for channelDetailsV1', () => {
         );
     });
 
-    test.skip('Testing if member but not owner', () => {
+    test('Testing if member but not owner', () => {
 
         let authUserId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
         authUserId1 = authUserId1.authUserId;
         let authUserId2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
         authUserId2 = authUserId2.authUserId;
 
-        let channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', false);
+        let channelId = channelsCreateV1(authUserId1, 'FO9A_CRUNCHIE', true);
         channelId = channelId.channelId;
         channelJoinV1(authUserId2, channelId); 
 
         expect(channelDetailsV1(authUserId2, channelId)).toMatchObject(        
             {
             'name': 'FO9A_CRUNCHIE',
-            'isPublic': false,
+            'isPublic': true,
             'ownerMembers': [ { uId: authUserId1,
                 email: 'mal1@email.com',
                nameFirst: 'One',
@@ -207,7 +207,7 @@ describe('Tests for channelDetailsV1', () => {
                nameFirst: 'One',
                nameLast: 'Number',
                handleStr: 'onenumber' },
-               { uId: authUserId1.authUserId,
+               { uId: authUserId2,
                 email: 'mal2@email.com',
                nameFirst: 'Two',
                nameLast: 'Number',
