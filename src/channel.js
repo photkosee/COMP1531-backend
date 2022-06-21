@@ -91,7 +91,7 @@ function channelJoinV1(authUserId, channelId) {
 		nameFirst: chosenUser.nameFirst,
 		nameLast: chosenUser.nameLast,
 		handleStr: chosenUser.handleStr } );
-
+	
     return {};
 };
 

@@ -114,12 +114,12 @@ function channelsCreateV1(authUserId, name, isPublic) {
 					email: data.users[i].email,
 					nameFirst: data.users[i].nameFirst,
 					nameLast: data.users[i].nameLast,
-					handleStr: data.users[i].hadleStr } ],
+					handleStr: data.users[i].handleStr } ],
 				'allMembers': [ { uId: authUserId,
 					email: data.users[i].email,
 					nameFirst: data.users[i].nameFirst,
 					nameLast: data.users[i].nameLast,
-					handleStr: data.users[i].hadleStr } ],
+					handleStr: data.users[i].handleStr } ],
 				'isPublic': isPublic,
 				'messages': []
 			}
