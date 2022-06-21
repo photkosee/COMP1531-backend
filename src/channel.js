@@ -3,8 +3,9 @@ import { getData } from './dataStore.js';
 import { checkAuthUserId, checkChannelId, checkIfMember, authInChannel, getMessages } from './channelHelperFunctions.js';
 
 const ERROR = {
-	error: 'error'
-};
+    error: 'error'
+}
+
 
 function channelMessagesV1(authUserId, channelId, start) {
 	/*
@@ -55,18 +56,37 @@ function channelMessagesV1(authUserId, channelId, start) {
 
 function channelInviteV1(authUserId, channelId, uId) {
 	/*
-		Function channelInviteV1 (waiting for details in future tasks)
-		
+	
+		Function channelInviteV1: Will invite and add a user into a channel
+
 		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
-			channelId   integer type   -- Input integer supplied by user
-			uId 		integer type   -- Input integer supplied by user			
-			
+		authUserId	integer type   -- Input integer supplied by user
+		channelId   integer type   -- Input integer supplied by user
+		uId 		integer type   -- Input integer supplied by user			
+		
+
 		Return Value:
-			string: a combined of authUserId, channelId and uId
-			
+			object: {} when user is added
+
+    	
 	*/
-    return 'authUserId' + 'channelId' + 'uId';
+
+	if (checkAuthUserId(authUserId) && checkAuthUserId(uId) && checkChannelId(channelId) 
+			&& authInChannel(channelId, authUserId) && !authInChannel(channelId, uId)) {
+		const dataStore = getData(); 
+		
+		for (const channel of dataStore.channels) {
+			if (channel.channelId === channelId) {
+				channel.allMembers.push(uId); 
+				setData(dataStore); 
+				return {}; 
+			}
+		}
+
+	} else {
+		return ERROR; 
+	}
+	
 };
   
 
