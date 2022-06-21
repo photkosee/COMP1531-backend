@@ -134,11 +134,13 @@ function channelJoinV1(authUserId, channelId) {
 		}
 	}
 
-	chosenChannel.allMembers.push( { uId: authUserId,
+	chosenChannel.allMembers.push({
+		uId: authUserId,
 	 	email: chosenUser.email,
 		nameFirst: chosenUser.nameFirst,
 		nameLast: chosenUser.nameLast,
-		handleStr: chosenUser.handleStr } );
+		handleStr: chosenUser.handleStr
+	});
 	
     return {};
 };

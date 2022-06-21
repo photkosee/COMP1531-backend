@@ -110,16 +110,20 @@ function channelsCreateV1(authUserId, name, isPublic) {
 			const newChannelDetails = {
 				'channelId': channelId,
 				'name': name,
-				'ownerMembers': [ { uId: authUserId,
+				'ownerMembers': [{
+					uId: authUserId,
 					email: data.users[i].email,
 					nameFirst: data.users[i].nameFirst,
 					nameLast: data.users[i].nameLast,
-					handleStr: data.users[i].handleStr } ],
-				'allMembers': [ { uId: authUserId,
+					handleStr: data.users[i].handleStr 
+				}],
+				'allMembers': [{ 
+					uId: authUserId,
 					email: data.users[i].email,
 					nameFirst: data.users[i].nameFirst,
 					nameLast: data.users[i].nameLast,
-					handleStr: data.users[i].handleStr } ],
+					handleStr: data.users[i].handleStr 
+				}],
 				'isPublic': isPublic,
 				'messages': []
 			}
