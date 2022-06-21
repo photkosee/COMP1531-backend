@@ -27,48 +27,55 @@ export function checkAuthUserId(authUserId) { //written by Jacinta
 	return false;
 }
 
-
-
-export function checkChannelInvite(channelId, authUserId, uId) {
+export function checkChannelId(channelId) { //written by Jacinta
 	/*
-		Function checkChannelInvite: 
-			checks whether authUserId and uId are in a valid channel
+		Function checkChannelId: checks validity and existence of argument
 		
 		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
+			channelId	integer type   -- Input integer supplied by user
 			
 		Return Value:
-			boolean: 'true' if authUserId in channel and uId not in valid channel
-			boolean: 'false' authUser not in channel or uId in channel or channel invalid
+			boolean: 'true' if valid, 'false' if invalid or non-existent
 			
 	*/
-    const dataStore = getData(); 
-    if (!Number.isInteger(channelId)) {
-        return false; 
-    }
-    let channelExists = false; 
-	let uIdInChannel = false; 
-	let authInChannel = false; 
-	for (const channels of dataStore.channels) {
-		if (channels.channelId === channelId) {
-			channelExists = true; 
-			if (channels.allMembers.includes(uId)) {
-				uIdInChannel = true;
-			}
-			if (channels.allMembers.includes(authUserId)) {
-				authInChannel = true; 
-			}
-		}
-		
+	const data = getData();
+
+	if (typeof channelId !== 'number') {
+		return false;
 	}
 
-    if (channelExists && !uIdInChannel && authInChannel) {
-        return true;
-    } else {
-        return false; 
-    }
+	for (const channel of data.channels) {
+		if (channelId === channel.channelId) {
+			return true;
+		}
+	}
 
+	return false;
 }
+
+export function authInChannel(channelId, userId) { //also in channelMessages branch
+    /*
+		Function authInChannel: checks existence of user in channel
+		
+		Arguments:
+			channelId	integer type   -- Input integer supplied by user
+            userId  	integer type   -- Input integer supplied by user
+
+		Return Value:
+			boolean: 'true' if user in channel, 'false' if not in channel
+			
+	*/
+    const dataStore = getData();
+    for (const channel of dataStore.channels) {
+        if (channel.channelId === channelId) {
+            if (channel.allMembers.includes(userId)) {
+                return true; 
+            }
+        }
+    }
+    return false; 
+}
+
 
     
 

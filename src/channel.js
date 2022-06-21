@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore.js';
-import { checkUserAuthIdExists, checkChannelInvite } from './channelHelperFunctions.js';
+import { checkAuthUserId, checkChannelId, authInChannel } from './channelHelperFunctions.js';
 
 
 const ERROR = {
@@ -39,9 +39,8 @@ function channelInviteV1(authUserId, channelId, uId) {
 
     	
 	*/
-
-
-	if (checkAuthUserId(authUserId) && checkAuthUserId(uId) && checkChannelInvite(channelId, authUserId, uId)) {
+	if (checkAuthUserId(authUserId) && checkAuthUserId(uId) && checkChannelId(channelId) 
+			&& authInChannel(channelId, authUserId) && !authInChannel(channelId, uId)) {
 		const dataStore = getData(); 
 		for (const channels in dataStore.channels) {
 			if (channels.channelId === channelId) {
