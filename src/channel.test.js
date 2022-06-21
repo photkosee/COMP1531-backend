@@ -125,8 +125,16 @@ describe('Tests for channelDetailsV1', () => {
             {
             'name': 'FO9A_CRUNCHIE',
             'isPublic': false,
-            'ownerMembers': [ 1 ],
-            'allMembers': [ 1 ],
+            'ownerMembers': [ { uId: authUserId1.authUserId,
+                email: authUserId1.email,
+               nameFirst: authUserId1.nameFirst,
+               nameLast: authUserId1.nameLast,
+               handleStr: authUserId1.handleStr } ],
+            'allMembers': [ { uId: authUserId1.authUserId,
+                email: authUserId1.email,
+               nameFirst: authUserId1.nameFirst,
+               nameLast: authUserId1.nameLast,
+               handleStr: authUserId1.handleStr } ],
             }
         );
     });
@@ -148,8 +156,21 @@ describe('Tests for channelDetailsV1', () => {
             {
             'name': 'FO9A_CRUNCHIE',
             'isPublic': false,
-            'ownerMembers': [ 1 ],
-            'allMembers': [ 1, 2 ],
+            'ownerMembers': [ { uId: authUserId1.authUserId,
+                email: authUserId1.email,
+               nameFirst: authUserId1.nameFirst,
+               nameLast: authUserId1.nameLast,
+               handleStr: authUserId1.handleStr } ],
+            'allMembers': [ { uId: authUserId1.authUserId,
+                email: authUserId1.email,
+               nameFirst: authUserId1.nameFirst,
+               nameLast: authUserId1.nameLast,
+               handleStr: authUserId1.handleStr },
+               { uId: authUserId2.authUserId,
+                email: authUserId2.email,
+                nameFirst: authUserId2.nameFirst,
+                nameLast: authUserId2.nameLast,
+                handleStr: authUserId2.handleStr } ],
             }
         ); 
     });

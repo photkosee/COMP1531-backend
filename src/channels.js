@@ -67,7 +67,7 @@ function channelsListV1(authUserId) {
 
 	for (let i = 0; i < data.channels.length; i++) {
 		for (let j = 0; j < data.channels[i].allMembers.length; j++) {
-			if (data.channels[i].allMembers[j] === authUserId) {
+			if (data.channels[i].allMembers[j].uId === authUserId) {
 				channels.push({
 					'channelId': data.channels[i].channelId,
 					'name': data.channels[i].name
@@ -95,7 +95,6 @@ function channelsCreateV1(authUserId, name, isPublic) {
 			
 	*/
 	const data = getData();
-	let check_authId = 0;
 
 	if (typeof isPublic !== 'boolean') {
 		return { error: 'error' };
@@ -107,27 +106,30 @@ function channelsCreateV1(authUserId, name, isPublic) {
 
 	for (let i = 0; i < data.users.length; i++) {
 		if (data.users[i].authUserId === authUserId) {
-			check_authId = 1;
+			const channelId = (data.channels.length) + 1;
+			const newChannelDetails = {
+				'channelId': channelId,
+				'name': name,
+				'ownerMembers': [ { uId: authUserId,
+					email: data.users[i].email,
+					nameFirst: data.users[i].nameFirst,
+					nameLast: data.users[i].nameLast,
+					handleStr: data.users[i].hadleStr } ],
+				'allMembers': [ { uId: authUserId,
+					email: data.users[i].email,
+					nameFirst: data.users[i].nameFirst,
+					nameLast: data.users[i].nameLast,
+					handleStr: data.users[i].hadleStr } ],
+				'isPublic': isPublic,
+				'messages': []
+			}
+			data.channels.push(newChannelDetails);
+			setData(data);
+			return {channelId: channelId};
 		}
 	}
 
-	if (check_authId === 0) {
-		return { error: 'error' };
-	}
-
-	const channelId = (data.channels.length) + 1;
-	const newChannelDetails = {
-		'channelId': channelId,
-		'name': name,
-		'ownerMembers': [authUserId],
-		'allMembers': [authUserId],
-		'isPublic': isPublic,
-		'messages': []
-	}
-
-	data.channels.push(newChannelDetails);
-	setData(data);
-    	return {channelId: channelId};
+	return { error: 'error' };
 };
 
 export{ channelsCreateV1, channelsListV1, channelsListallV1 };

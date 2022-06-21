@@ -68,7 +68,7 @@ function channelJoinV1(authUserId, channelId) {
 
 	let chosenChannel = {};
 	for (const channel of data.channels) {
-		if (channelId === channel.channel_id) { //////////// CHANGE TO channelId
+		if (channelId === channel.channelId) { 
 			chosenChannel = channel;
 		}
 	}
@@ -80,16 +80,21 @@ function channelJoinV1(authUserId, channelId) {
 		}
 	}
 
-	if (chosenChannel.isPublic === false) { // Private channel
-		if (chosenUser.permission_id !== 1) { /////////////// CHANGE TO permissionId
+	if (chosenChannel.isPublic === false) { 
+		if (chosenUser.permissionId !== 1) { 
 			return ERROR;
 		}
 	}
 
-	chosenChannel.allMembers.push(authUserId);
+	chosenChannel.allMembers.push( { uId: authUserId,
+	 	email: chosenUser.email,
+		nameFirst: chosenUser.nameFirst,
+		nameLast: chosenUser.nameLast,
+		handleStr: chosenUser.handleStr } );
 
     return {};
 };
+
 
 
 function channelDetailsV1(authUserId, channelId) {
