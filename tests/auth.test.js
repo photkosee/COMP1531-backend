@@ -1,6 +1,6 @@
-import { clearV1 } from './other.js';
-import { authRegisterV1, authLoginV1 } from './auth.js';
-import { userProfileV1 } from './users.js';
+import { clearV1 } from '../src/other.js';
+import { authRegisterV1, authLoginV1 } from '../src/auth.js';
+import { userProfileV1 } from '../src/users.js';
 
 const ERROR = {error: 'error'};
 

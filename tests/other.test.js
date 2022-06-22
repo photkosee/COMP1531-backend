@@ -1,4 +1,4 @@
-import { clearV1 } from './other.js';
+import { clearV1 } from '../src/other.js';
 
 test('Test clearV1 return type', () => {
 

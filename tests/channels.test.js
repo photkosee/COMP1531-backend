@@ -2,9 +2,9 @@ import {
 	channelsListallV1,
 	channelsListV1,
 	channelsCreateV1
-} from './channels.js';
-import { authRegisterV1 } from './auth.js';
-import { clearV1 } from './other.js';
+} from '../src/channels.js';
+import { authRegisterV1 } from '../src/auth.js';
+import { clearV1 } from '../src/other.js';
 
 const ERROR = {error: 'error'};
 

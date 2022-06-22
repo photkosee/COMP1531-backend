@@ -3,10 +3,10 @@ import {
     channelMessagesV1,
     channelJoinV1,
     channelDetailsV1
-} from './channel.js';
-import { authRegisterV1 } from './auth.js';
-import { channelsCreateV1 } from './channels.js';
-import { clearV1 } from './other.js';
+} from '../src/channel.js';
+import { authRegisterV1 } from '../src/auth.js';
+import { channelsCreateV1 } from '../src/channels.js';
+import { clearV1 } from '../src/other.js';
 
 const ERROR = {error: 'error'};
 
