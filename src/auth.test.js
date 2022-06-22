@@ -1,9 +1,13 @@
-import { clearV1 } from './other';
-import { authRegisterV1, authLoginV1 } from './auth';
+import { clearV1 } from './other.js';
+import { authRegisterV1, authLoginV1 } from './auth.js';
+import { userProfileV1 } from './users.js';
+
+const ERROR = {error: 'error'};
 
 beforeEach(() => {
     clearV1();
 });
+
 
 describe('Tests Cases for authRegisterV1', () => {
     
@@ -16,13 +20,12 @@ describe('Tests Cases for authRegisterV1', () => {
         const user5 = authRegisterV1('', '', '', '');
         const user6 = authRegisterV1('mridul@gmail.com', '          ', 'Mridul Anand', 'Singh');
 
-
-        expect(user1).toStrictEqual({error: 'error'});
-        expect(user2).toStrictEqual({error: 'error'});
-        expect(user3).toStrictEqual({error: 'error'});
-        expect(user4).toStrictEqual({error: 'error'});
-        expect(user5).toStrictEqual({error: 'error'});
-        expect(user6).toStrictEqual({error: 'error'});
+        expect(user1).toStrictEqual(ERROR);
+        expect(user2).toStrictEqual(ERROR);
+        expect(user3).toStrictEqual(ERROR);
+        expect(user4).toStrictEqual(ERROR);
+        expect(user5).toStrictEqual(ERROR);
+        expect(user6).toStrictEqual(ERROR);
 
     });
 
@@ -36,12 +39,12 @@ describe('Tests Cases for authRegisterV1', () => {
         const user5 = authRegisterV1('mridu@gmail.com', 'skjjdfkik7864%^%', 93769956, 'Singh');
         const user6 = authRegisterV1('mrila@gmail.com', 'skjgik7isug864%^%', 'Mridul', 9283459);
 
-        expect(user1).toStrictEqual({error: 'error'});
-        expect(user2).toStrictEqual({error: 'error'});
-        expect(user3).toStrictEqual({error: 'error'});
-        expect(user4).toStrictEqual({error: 'error'});
-        expect(user5).toStrictEqual({error: 'error'});
-        expect(user6).toStrictEqual({error: 'error'});
+        expect(user1).toStrictEqual(ERROR);
+        expect(user2).toStrictEqual(ERROR);
+        expect(user3).toStrictEqual(ERROR);
+        expect(user4).toStrictEqual(ERROR);
+        expect(user5).toStrictEqual(ERROR);
+        expect(user6).toStrictEqual(ERROR);
 
     });
 
@@ -51,7 +54,8 @@ describe('Tests Cases for authRegisterV1', () => {
         authRegisterV1('mridul@gmail.com', 'egas@12234#As', 'Mridul', 'Singh');
         const user = authRegisterV1('mridul@gmail.com', 'as@1w4#As', 'Mridul Anand', 'Singh');
 
-        expect(user).toStrictEqual({error: 'error'});
+        expect(user).toStrictEqual(ERROR);
+
     });
 
 
@@ -67,15 +71,15 @@ describe('Tests Cases for authRegisterV1', () => {
         const user8 = authRegisterV1('arther@mail..com', 'Mas@1qegf$#As', 'arther', 'zefri');
         const user9 = authRegisterV1('donald tram@gmail.com', 'Mas@1qegf$#As', 'donald', 'tram');
 
-        expect(user1).toStrictEqual({error: 'error'});
-        expect(user2).toStrictEqual({error: 'error'});
-        expect(user3).toStrictEqual({error: 'error'});
-        expect(user4).toStrictEqual({error: 'error'});
-        expect(user5).toStrictEqual({error: 'error'});
-        expect(user6).toStrictEqual({error: 'error'});
-        expect(user7).toStrictEqual({error: 'error'});
-        expect(user8).toStrictEqual({error: 'error'});
-        expect(user9).toStrictEqual({error: 'error'});
+        expect(user1).toStrictEqual(ERROR);
+        expect(user2).toStrictEqual(ERROR);
+        expect(user3).toStrictEqual(ERROR);
+        expect(user4).toStrictEqual(ERROR);
+        expect(user5).toStrictEqual(ERROR);
+        expect(user6).toStrictEqual(ERROR);
+        expect(user7).toStrictEqual(ERROR);
+        expect(user8).toStrictEqual(ERROR);
+        expect(user9).toStrictEqual(ERROR);
 
     });
 
@@ -100,9 +104,9 @@ describe('Tests Cases for authRegisterV1', () => {
         const user3 = authRegisterV1('jhon-dene@gmail.com', 's', 'jhon', 'dene');
         const user4 = authRegisterV1('ali.saund@mail.com', '4#Assd', 'ali', 'saund');
 
-        expect(user1).toStrictEqual({error: 'error'});
-        expect(user2).toStrictEqual({error: 'error'});
-        expect(user3).toStrictEqual({error: 'error'});
+        expect(user1).toStrictEqual(ERROR);
+        expect(user2).toStrictEqual(ERROR);
+        expect(user3).toStrictEqual(ERROR);
         expect(user4).toStrictEqual({authUserId: 1});
 
     });
@@ -117,12 +121,12 @@ describe('Tests Cases for authRegisterV1', () => {
         const user5 = authRegisterV1('arther@mail..com', 'Mas@1qegf$#As', 'artherkjaefgbaisodbhasukdbgoibuoifgboiasbsivgbasush', 'zefri');
         const user6 = authRegisterV1('zafri.jake@mail..com', 'Mas@1qegf$#As', 'jake', 'zafrirkjaefgbaisodbhasukdbgoibuoifgboiasbsivgbasush');
 
-        expect(user1).toStrictEqual({error: 'error'});
-        expect(user2).toStrictEqual({error: 'error'});
-        expect(user3).toStrictEqual({error: 'error'});
-        expect(user4).toStrictEqual({error: 'error'});
-        expect(user5).toStrictEqual({error: 'error'});
-        expect(user6).toStrictEqual({error: 'error'});
+        expect(user1).toStrictEqual(ERROR);
+        expect(user2).toStrictEqual(ERROR);
+        expect(user3).toStrictEqual(ERROR);
+        expect(user4).toStrictEqual(ERROR);
+        expect(user5).toStrictEqual(ERROR);
+        expect(user6).toStrictEqual(ERROR);
 
     });
 
@@ -138,6 +142,32 @@ describe('Tests Cases for authRegisterV1', () => {
         expect(user2).toStrictEqual({authUserId: 2});
         expect(user3).toStrictEqual({authUserId: 3});
         expect(user4).toStrictEqual({authUserId: 4});
+
+    });
+
+
+    test('Testing for handleStr', () => {
+        
+        const user1 = authRegisterV1('mridul@gmail.com', 'Mas@1skldbjk', 'Mridul', 'Singh');
+        const user2 = authRegisterV1('mriduls@mail.com', 'ksnjdgji%#$#', 'Mridul', 'Singh');
+        const user3 = authRegisterV1('mridula@mail.com', 'ksnjdgji%#$#', 'Mridul', 'Singh');
+        const user4 = authRegisterV1('mrid@mail.com', 'ksnjdgji%#$#', 'Mrid*&^*ul', 'Si^^&ngh0979');
+        const user5 = authRegisterV1('mridsdula@mail.com', 'ksnjdgji%#$#', 'mRikjsfkbg87645kbsfDul', 'SinH0284');
+        const user6 = authRegisterV1('mridsfdvula@mail.com', 'ksnjdgji%#$#', 'mRikjsfkbg87645kbsfDul', 'SinH0284');
+
+        const result1 = userProfileV1(user1.authUserId, user1.authUserId);
+        const result2 = userProfileV1(user2.authUserId, user2.authUserId);
+        const result3 = userProfileV1(user3.authUserId, user3.authUserId);
+        const result4 = userProfileV1(user4.authUserId, user4.authUserId);
+        const result5 = userProfileV1(user5.authUserId, user5.authUserId);
+        const result6 = userProfileV1(user6.authUserId, user6.authUserId);
+        
+        expect(result1.user.handleStr).toStrictEqual('mridulsingh');
+        expect(result2.user.handleStr).toStrictEqual('mridulsingh0');
+        expect(result3.user.handleStr).toStrictEqual('mridulsingh1');
+        expect(result4.user.handleStr).toStrictEqual('mridulsingh0979');
+        expect(result5.user.handleStr).toStrictEqual('mrikjsfkbg87645kbsfd');
+        expect(result6.user.handleStr).toStrictEqual('mrikjsfkbg87645kbsfd0');
 
     });
 
@@ -158,12 +188,13 @@ describe('Tests Cases for authLoginV1', () => {
         const login5 = authLoginV1("anand dev@gmail.com", "egas@12wert5");
         const login6 = authLoginV1(" anand.dev@gmail.com", "egas@12wert5");
 
-        expect(login1).toStrictEqual({error: 'error'});
-        expect(login2).toStrictEqual({error: 'error'});
-        expect(login3).toStrictEqual({error: 'error'});
-        expect(login4).toStrictEqual({error: 'error'});
-        expect(login5).toStrictEqual({error: 'error'});
-        expect(login6).toStrictEqual({error: 'error'});
+        expect(login1).toStrictEqual(ERROR);
+        expect(login2).toStrictEqual(ERROR);
+        expect(login3).toStrictEqual(ERROR);
+        expect(login4).toStrictEqual(ERROR);
+        expect(login5).toStrictEqual(ERROR);
+        expect(login6).toStrictEqual(ERROR);
+
     });
 
 
@@ -177,10 +208,11 @@ describe('Tests Cases for authLoginV1', () => {
         const login3 = authLoginV1("anand.dev@gmail.com", " bhdb#945bjkdvb");
         const login4 = authLoginV1("anand.dev@gmail.com", "kawjwrgi83746");
 
-        expect(login1).toStrictEqual({error: 'error'});
-        expect(login2).toStrictEqual({error: 'error'});
-        expect(login3).toStrictEqual({error: 'error'});
-        expect(login4).toStrictEqual({error: 'error'});
+        expect(login1).toStrictEqual(ERROR);
+        expect(login2).toStrictEqual(ERROR);
+        expect(login3).toStrictEqual(ERROR);
+        expect(login4).toStrictEqual(ERROR);
+        
     });
 
 

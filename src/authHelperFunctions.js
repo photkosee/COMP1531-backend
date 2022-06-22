@@ -1,9 +1,7 @@
 import validator from 'validator';
 
-
 function paramTypeChecker(email, password, nameFirst, nameLast) {
 	/*
-
 		Description:
 			Helper function to check typeof parameters entered in authRegisterV1
 
@@ -15,24 +13,23 @@ function paramTypeChecker(email, password, nameFirst, nameLast) {
 			
 		Return Value:
 			boolean: true | false
-
 	*/
 
-	if (typeof email === 'string'&&
+	if (typeof email === 'string' &&
 		typeof password === 'string' &&
 		typeof nameFirst === 'string' &&
 		typeof nameLast === 'string') {
 	
 		return true;
+		
 	} else {
 		return false;
 	};
-};
+}
 
 
 function genHandleStr(nameFirst, nameLast, userData) {
 	/*
-
 		Description:
 			Helper function for generating user handleStr
 
@@ -43,7 +40,6 @@ function genHandleStr(nameFirst, nameLast, userData) {
 			
 		Return Value:
 			string: newUserHandle
-
 	*/
 
 	let newUserHandle = `${nameFirst + nameLast}`;
@@ -56,23 +52,27 @@ function genHandleStr(nameFirst, nameLast, userData) {
 
 	newUserHandle = newUserHandle.substring(0, 20);
 
+	const lenHandleStr = newUserHandle.length;
+
 	let numToAppend = 0;
 
 	for (let i = 0; i < userData.length; i++) {
+
 		if (userData[i].handleStr === newUserHandle) {
-			newUserHandle = `${newUserHandle.substring(0, 20) + numToAppend.toString()}`;
+
+			newUserHandle = `${newUserHandle.substring(0, lenHandleStr) + numToAppend.toString()}`;
+
 			i = 0;
 			numToAppend++;
 		};
 	};
 
 	return newUserHandle;
-};
+}
 
 
 function emailValidator(email) {
 	/*
-
 		Description:
 			Helper function to validate user Email
 
@@ -81,15 +81,15 @@ function emailValidator(email) {
 			
 		Return Value:
 			boolean: true | false
-
 	*/
 
 	const specialCharacters = ['!','#', '$', '%', '&', '*', '+', '-', '/', '=', '?', '^', '`', '{', '|', '}', '~'];
 
 	if (validator.isEmail(email)) {
 
-		for (let i = 0; i < specialCharacters.length; i++) {
-			if (email.includes(specialCharacters[i])) {
+		for (const character of specialCharacters) {
+
+			if (email.includes(character)) {
 				return false;
 			};
 		};
@@ -97,7 +97,11 @@ function emailValidator(email) {
 	} else {
 		return false;
 	}
+}
+
+
+export {
+	paramTypeChecker,
+	genHandleStr,
+	emailValidator
 };
-
-
-export { paramTypeChecker, genHandleStr, emailValidator };
