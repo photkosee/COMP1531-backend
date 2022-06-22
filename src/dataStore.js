@@ -1,5 +1,7 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
 let data = {
+  'users': [],
+  'channels': [],
   // 'users': [
   //   {
   //       'authUserId': integer,
@@ -8,21 +10,22 @@ let data = {
   //       'email': 'string',
   //       'password': 'string',
   //       'handleStr': 'string',
-  //       'permission_id': [listOfAllChannelIds],
+  //       'permissionId': integer,
+  //       'isActive': boolean,
   //   },
   // ],
   // 'channels': [
   //   {
-  //     'channel_id': integer,
+  //     'channelId': integer,
   //     'name': 'string',
-  //     'ownerMembers': [ownerMembersauthUserId],
-  //     'allMembers': [allMembersauthUserId],
+  //     'ownerMembers': Array,
+  //     'allMembers': Array,
   //     'isPublic': boolean,
   //     'messages': [{
   //       'messageId': integer,
   //       'message': 'string',
   //       'authUserId' : integer,
-  //       'timeCreated': 'string',
+  //       'timeCreated': 'integer',
   //     }],
   //   },
   // ],
@@ -54,4 +57,7 @@ function setData(newData) {
   data = newData;
 }
 
-export { getData, setData };
+export {
+  getData,
+  setData
+};
