@@ -33,7 +33,8 @@ function channelMessagesV1(authUserId, channelId, start) {
 	if (!checkChannelId(channelId) ||
 		!checkAuthUserId(authUserId) ||
 		!authInChannel(channelId, authUserId) ||
-		start > getMessages(channelId).length) {
+		start > getMessages(channelId).length ||
+		start < 0) {
 
 		return ERROR;
 	};
