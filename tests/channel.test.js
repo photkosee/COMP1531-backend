@@ -7,6 +7,7 @@ import {
 import { authRegisterV1 } from '../src/auth.js';
 import { channelsCreateV1 } from '../src/channels.js';
 import { clearV1 } from '../src/other.js';
+import { userProfileV1 } from '../src/users.js'; 
 
 const ERROR = {error: 'error'};
 
@@ -140,13 +141,19 @@ describe ('Test cases for channelJoinV1', () => {
 
 
 describe ('Test cases for channelMessagesV1', () => {
+    test('invalid input', () => {
+        expect(channelMessagesV1('string', 'string', 'string')).toStrictEqual(ERROR);
+        expect(channelMessagesV1(true, false, 1)).toStrictEqual(ERROR); 
+        const object = {number: 1};
+        expect(channelMessagesV1(object, object, 1)).toStrictEqual(ERROR); 
 
+    });
     test('invalid channel', () => {
-
+        expect(channelMessagesV1(1,2,3)).toStrictEqual(ERROR); 
         const userId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId;
 
         expect(channelMessagesV1(userId1, 0.1, 0)).toStrictEqual(ERROR);
-        expect(channelMessagesV1(0.1, 0.1, 0)).toStrictEqual({ error: 'error'});
+        expect(channelMessagesV1(0.1, 0.1, 0)).toStrictEqual(ERROR);
 
     });
 
@@ -160,6 +167,7 @@ describe ('Test cases for channelMessagesV1', () => {
         const channel2 = channelsCreateV1(userId2, 'channel2', true).channelId;
         
         expect(channelMessagesV1(userId1, channel1, 0.1)).toStrictEqual(ERROR);
+        expect(channelMessagesV1(userId1,channel1, -1)).toStrictEqual(ERROR);
         expect(channelMessagesV1(userId2,channel2, 2)).toStrictEqual(ERROR);
 
     });
@@ -293,7 +301,7 @@ describe('Tests for channelDetailsV1', () => {
 describe ('Test cases for channelInviteV1', () => {
 
     test ('Valid Channel and Valid User Ids', () => {
-
+        expect(channelInviteV1(1,2,3)).toStrictEqual(ERROR); 
         const authUserId1 = authRegisterV1('user1@bar.com', '123456', 'first1', 'last1').authUserId;
         const authUserId2 = authRegisterV1('user2@bar.com', '123456', 'first2', 'last2').authUserId;
         const authUserId3 = authRegisterV1('user3@bar.com', '123456', 'first3', 'last3').authUserId;
@@ -304,16 +312,20 @@ describe ('Test cases for channelInviteV1', () => {
         const authUserId8 = authRegisterV1('user8@bar.com', '123456', 'first8', 'last8').authUserId;
 
         const channel1 = channelsCreateV1(authUserId1, 'channel1', true).channelId; 
+        expect(channelInviteV1(authUserId1, channel1, authUserId2)).toStrictEqual({});
+        expect(channelDetailsV1(authUserId1, channel1).allMembers.length).toStrictEqual(2);
+        expect(channelDetailsV1(authUserId1, channel1).allMembers).toContainEqual(userProfileV1(authUserId2, authUserId2).user); 
+        expect(channelDetailsV1(authUserId1, channel1).allMembers).toContainEqual(userProfileV1(authUserId1, authUserId1).user); 
 
         channelJoinV1(authUserId3, channel1);
         channelJoinV1(authUserId4, channel1);  
         channelJoinV1(authUserId8, channel1);
-
-        expect(channelInviteV1(authUserId1, channel1, authUserId2)).toStrictEqual({});
+        expect(channelDetailsV1(authUserId1, channel1).allMembers.length).toStrictEqual(5);
+        
         expect(channelInviteV1(authUserId3, channel1, authUserId4)).toStrictEqual(ERROR);
         expect(channelInviteV1(authUserId5, channel1, authUserId6)).toStrictEqual(ERROR);
         expect(channelInviteV1(authUserId7, channel1, authUserId8)).toStrictEqual(ERROR);
-        
+        expect(channelDetailsV1(authUserId1, channel1).allMembers.length).toStrictEqual(5);
     });
 
 
