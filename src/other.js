@@ -4,7 +4,7 @@ function clearV1() {
 
   	/*
 		Description:
-			clearV1 clears the dataStore before each jest test. 
+			clearV1 clears the dataStore 
     
 		Arguments:
 			
