@@ -13,8 +13,8 @@ spaces on either ends will be trimmed (e.g. "  Pete   " becomes "Pete"). For
 authLoginV1, white spaces on either ends will be trimmed for email but 
 not password.
 
-- For channelsListallV1, if there are no existing channels, function will return 
-{ channels: [] }.
+- For channelsListV1, if a valid authUserId is not a member of any channel, 
+function it will return { channels: [] }.
 
 - For channelsListallV1, if there are no existing channels, function will return 
 { channels: [] }.
