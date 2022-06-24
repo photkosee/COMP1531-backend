@@ -179,8 +179,8 @@ describe ('Test cases for channelMessagesV1', () => {
         const channel1 = channelsCreateV1(userId1, 'channel1', true);
         
         expect(channelMessagesV1(userId1, channel1.channelId, 0).start).toStrictEqual(0);
-        expect(channelMessagesV1(userId1, channel1.channelId, 0).end).toBeLessThanOrEqual(50);
-        expect(channelMessagesV1(userId1, channel1.channelId, 0).messages.length).toBeLessThanOrEqual(50);
+        expect(channelMessagesV1(userId1, channel1.channelId, 0).end).toStrictEqual(-1);
+        expect(channelMessagesV1(userId1, channel1.channelId, 0).messages.length).toStrictEqual(0);
 
     });
     
