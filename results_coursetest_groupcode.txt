@@ -1,0 +1,83 @@
+npm verb cli [
+npm verb cli   '/import/kamen/3/cs1531/.nvm/versions/node/v16.14.2/bin/node',
+npm verb cli   '/import/kamen/3/cs1531/.nvm/versions/node/v16.14.2/bin/npm',
+npm verb cli   'run',
+npm verb cli   'test',
+npm verb cli   '--verbose',
+npm verb cli   'tests/'
+npm verb cli ]
+npm info using npm@8.5.0
+npm info using node@v16.14.2
+npm timing npm:load:whichnode Completed in 1ms
+npm timing config:load:defaults Completed in 2ms
+npm timing config:load:file:/import/kamen/3/cs1531/.nvm/versions/node/v16.14.2/lib/node_modules/npm/npmrc Completed in 1ms
+npm timing config:load:builtin Completed in 1ms
+npm timing config:load:cli Completed in 2ms
+npm timing config:load:env Completed in 0ms
+npm timing config:load:file:/import/kamen/3/cs1531/project-automarking/tempstore/.npmrc Completed in 0ms
+npm timing config:load:project Completed in 11ms
+npm timing config:load:file:/import/kamen/3/cs1531/.npmrc Completed in 1ms
+npm timing config:load:user Completed in 1ms
+npm timing config:load:file:/import/kamen/3/cs1531/.nvm/versions/node/v16.14.2/etc/npmrc Completed in 0ms
+npm timing config:load:global Completed in 0ms
+npm timing config:load:validate Completed in 0ms
+npm timing config:load:credentials Completed in 2ms
+npm timing config:load:setEnvs Completed in 1ms
+npm timing config:load Completed in 21ms
+npm timing npm:load:configload Completed in 21ms
+npm timing npm:load:setTitle Completed in 0ms
+npm timing config:load:flatten Completed in 3ms
+npm timing npm:load:display Completed in 6ms
+npm verb logfile /import/kamen/3/cs1531/.npm/_logs/2022-06-25T01_11_16_148Z-debug-0.log
+npm timing npm:load:logFile Completed in 7ms
+npm timing npm:load:timers Completed in 0ms
+npm timing npm:load:configScope Completed in 0ms
+npm timing npm:load Completed in 36ms
+
+> test
+> jest "tests/"
+
+PASS tests/tests/channel_tests/channelInvite.test.js
+PASS tests/tests/channel_tests/channelDetails.test.js
+PASS tests/tests/auth_tests/authRegister.test.js
+PASS tests/tests/channel_tests/channelJoin.test.js
+PASS tests/tests/channel_tests/channelMessages.test.js
+PASS tests/tests/channels_tests/channelsList.test.js
+PASS tests/tests/channels_tests/channelsCreate.test.js
+PASS tests/tests/other_tests/clear.test.js
+PASS student_tests/auth.test.js
+FAIL tests/tests/channels_tests/channelsListall.test.js
+  ● Test when no channels
+
+    expect(received).toStrictEqual(expected) // deep equality
+
+    Expected: []
+    Received: undefined
+
+      22 |     clearV1();
+      23 |     let res = channelsListallV1(uIdZerg)['channels']
+    > 24 |     expect(res).toStrictEqual([]);
+         |                 ^
+      25 | });
+      26 |
+      27 | test('Test when one channel exists private', () => {
+
+      at Object.<anonymous> (tests/tests/channels_tests/channelsListall.test.js:24:17)
+
+PASS student_tests/channel.test.js
+PASS tests/tests/user_tests/userProfile.test.js
+PASS tests/tests/auth_tests/authLogin.test.js
+PASS student_tests/users.test.js
+PASS student_tests/echo.test.js
+PASS student_tests/other.test.js
+PASS student_tests/channels.test.js
+
+Test Suites: 1 failed, 16 passed, 17 total
+Tests:       1 failed, 95 passed, 96 total
+Snapshots:   0 total
+Time:        2.364 s
+Ran all test suites matching /tests\//i.
+npm timing command:run Completed in 3556ms
+npm verb exit 1
+npm timing npm Completed in 3817ms
+npm verb code 1
