@@ -66,6 +66,7 @@ In this iteration, you are expected to:
 
     Below shows a sample conversion of auth.js => auth.ts
     ![](node.png)
+    ![](typescript.png)
 
 3. Implement and test the HTTP Express server according to the entire interface provided in the specification.
 
@@ -85,7 +86,7 @@ In this iteration, you are expected to:
 
     * `eslint` should be added to your repo via `npm` and then added to your `package.json` file to run when the command `npm run lint` is run. The provided `.eslint` file is *very* lenient, so there is no reason you should have to disable any additional checks. See section 4.5 below for instructions on adding linting to your pipeline.
 
-    * You are required to edit the `gitlab-ci.yml` file, as per section 4.5 to add linting and typechecking to the code on `master`. **You must do this BEFORE merging anything from iteration 2 into `master`**, so that you ensure `master` is always stable.
+    * You are required to edit the `gitlab-ci.yml` file, as per section 4.5 to add linting to the code on `master`. **You must do this BEFORE merging anything from iteration 2 into `master`**, so that you ensure `master` is always stable.
 
 5. Continue demonstrating effective project management and effective git usage
 
@@ -306,7 +307,7 @@ These interface specifications come from Hayden & COMP6080, who are building the
 
 ### 5.1. Input/Output types
 
-#### 5.1.2. Iteration 1+ Input/Output Types
+### 5.1.2. Iteration 1+ Input/Output Types
 
 <table>
   <tr>
@@ -375,7 +376,7 @@ These interface specifications come from Hayden & COMP6080, who are building the
   </tr>
 </table>
 
-#### 5.1.3. Iteration 2+ Input/Output
+### 5.1.3. Iteration 2+ Input/Output
 
 <table>
   <tr>
@@ -396,14 +397,7 @@ These interface specifications come from Hayden & COMP6080, who are building the
   </tr>
 </table>
 
-#### 5.2.3. Iteration 2 Interface
-
-For iteration 1 routes:
- * Replace camelCase with `camel/case` for HTTP routes, note that all routes should be lowercase
- * Add the HTTP Method to the table
- * Replace "authUserId" parameters with "token" (and update version to v2)
- * Add token return key for auth/login and auth/register
- * Add owner permissions info for DMs
+### 5.2.3. Iteration 2 Interface
 
 NOTE: For all routes which take `token` as a parameter, an <code>{ error: 'error' }</code> object should be returned when the `token` passed in is invalid.
 
@@ -414,6 +408,126 @@ NOTE: For all routes which take `token` as a parameter, an <code>{ error: 'error
     <th>HTTP Method</th>
     <th style="width:18%">Data Types</th>
     <th style="width:32%">Error returns</th>
+  </tr>
+  <tr>
+    <td><code>auth/login/v2</code><br /><br />Given a registered user's email and password, returns their `authUserId` value.</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Body Parameters:</b><br /><code>( email, password )</code><br /><br /><b>Return type if no error:</b><br /><code>{ token, authUserId }</code></td>
+    <td>
+      <b>Return object <code>{error: 'error'}</code></b> when any of:
+      <ul>
+        <li>email entered does not belong to a user</li>
+        <li>password is not correct</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>auth/register/v2</code><br /><br />Given a user's first and last name, email address, and password, create a new account for them and return a new `authUserId`.<br /><br />A handle is generated that is the concatenation of their casted-to-lowercase alphanumeric (a-z0-9) first name and last name (i.e. make lowercase then remove non-alphanumeric characters). If the concatenation is longer than 20 characters, it is cut off at 20 characters. Once you've concatenated it, if the handle is once again taken, append the concatenated names with the smallest number (starting from 0) that forms a new handle that isn't already taken. The addition of this final number may result in the handle exceeding the 20 character limit (the handle 'abcdefghijklmnopqrst0' is allowed if the handle 'abcdefghijklmnopqrst' is already taken).</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Body Parameters:</b><br /><code>( email, password, nameFirst, nameLast )</code><br /><br /><b>Return type if no error:</b><br /><code>{ token, authUserId }</code></td>
+    <td>
+      <b>Return object <code>{error: 'error'}</code></b> when any of:
+      <ul>
+        <li>email entered is not a valid email (more in section 6.4)</li>
+        <li>email address is already being used by another user</li>
+        <li>length of password is less than 6 characters</li>
+        <li>length of nameFirst is not between 1 and 50 characters inclusive</li>
+        <li>length of nameLast is not between 1 and 50 characters inclusive</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>channels/create/v2</code><br /><br />Creates a new channel with the given name that is either a public or private channel. The user who created it automatically joins the channel.</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Body Parameters:</b><br /><code>( token, name, isPublic )</code><br /><br /><b>Return type if no error:</b><br /><code>{ channelId }</code></td>
+    <td>
+      <b>Return object <code>{error: 'error'}</code></b> when any of:
+      <ul>
+        <li>length of name is less than 1 or more than 20 characters</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>channels/list/v2</code><br /><br />Provide an array of all channels (and their associated details) that the authorised user is part of.</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Query Parameters:</b><br /><code>( token )</code><br /><br /><b>Return type if no error:</b><br /><code>{ channels }</code></td>
+    <td>N/A</td>
+  </tr>
+  <tr>
+    <td><code>channels/listall/v2</code><br /><br />Provide an array of all channels, including private channels, (and their associated details)</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Query Parameters:</b><br /><code>( token )</code><br /><br /><b>Return type if no error:</b><br /><code>{ channels }</code></td>
+    <td>N/A</td>
+  </tr>
+  <tr>
+    <td><code>channel/details/v2</code><br /><br />Given a channel with ID channelId that the authorised user is a member of, provide basic details about the channel.</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Query Parameters:</b><br /><code>( token, channelId )</code><br /><br /><b>Return type if no error:</b><br /><code>{ name, isPublic, ownerMembers, allMembers }</code></td>
+    <td>
+      <b>Return object <code>{error: 'error'}</code></b> when any of:
+      <ul>
+        <li>channelId does not refer to a valid channel</li>
+        <li>channelId is valid and the authorised user is not a member of the channel</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>channel/join/v2</code><br /><br />Given a channelId of a channel that the authorised user can join, adds them to that channel.</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Body Parameters:</b><br /><code>( token, channelId )</code><br /><br /><b>Return type if no error:</b><br /><code>{}</code></td>
+    <td>
+      <b>Return object <code>{error: 'error'}</code></b> when any of:
+      <ul>
+        <li>channelId does not refer to a valid channel</li>
+        <li>the authorised user is already a member of the channel</li>
+        <li>channelId refers to a channel that is private and the authorised user is not already a channel member and is not a global owner</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>channel/invite/v2</code><br /><br />Invites a user with ID uId to join a channel with ID channelId. Once invited, the user is added to the channel immediately. In both public and private channels, all members are able to invite users.</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Body Parameters:</b><br /><code>( token, channelId, uId )</code><br /><br /><b>Return type if no error:</b><br /><code>{}</code></td>
+    <td>
+      <b>Return object <code>{error: 'error'}</code></b> when any of:
+      <ul>
+        <li>channelId does not refer to a valid channel</li>
+        <li>uId does not refer to a valid user</li>
+        <li>uId refers to a user who is already a member of the channel</li>
+        <li>channelId is valid and the authorised user is not a member of the channel</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>channel/messages/v2</code><br /><br />Given a channel with ID channelId that the authorised user is a member of, return up to 50 messages between index "start" and "start + 50". Message with index 0 is the most recent message in the channel. This function returns a new index "end" which is the value of "start + 50", or, if this function has returned the least recent messages in the channel, returns -1 in "end" to indicate there are no more messages to load after this return.</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Query Parameters:</b><br /><code>( token, channelId, start )</code><br /><br /><b>Return type if no error:</b><br /><code>{ messages, start, end }</code></td>
+    <td>
+      <b>Return object <code>{error: 'error'}</code></b> when any of:
+      <ul>
+        <li>channelId does not refer to a valid channel</li>
+        <li>start is greater than the total number of messages in the channel</li>
+        <li>channelId is valid and the authorised user is not a member of the channel</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>user/profile/v2</code><br /><br />For a valid user, returns information about their userId, email, first name, last name, and handle
+    </td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Query Parameters:</b><br /><code>( token, uId )</code><br /><br /><b>Return type if no error:</b><br /><code>{ user }</code></td>
+    <td>
+      <b>Return object <code>{error: 'error'}</code></b> when any of:
+      <ul>
+        <li>uId does not refer to a valid user</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>clear/v1</code><br /><br />Resets the internal data of the application to its initial state</td>
+    <td style="font-weight: bold; color: red;">DELETE</td>
+    <td><b>Parameters:</b><br /><code>()</code><br /><br /><b>Return type if no error:</b><br /><code>{}</code></td>
+    <td>N/A</td>
   </tr>
   <tr>
     <td><code>auth/logout/v1</code><br /><br />Given an active token, invalidates the token to log the user out.</td>
@@ -687,7 +801,7 @@ If you run the frontend at the same time as your express server is running on th
 
 Please note: The frontend may have very slight inconsistencies with expected behaviour outlined in the specification. Our automarkers will be running against your compliance to the specification. The frontend is there for further testing and demonstration.
 
-#### 5.8.1. Example implementation
+### 5.8.1. Example implementation
 
 A working example of the frontend can be used at http://treats-unsw.herokuapp.com/. This is not a gospel implementation that dictates the required behaviour for all possible occurrences; our implementation will make reasonable assumptions just as yours will, and they might be different, and that's fine.
 
@@ -804,23 +918,20 @@ Your other team members will **not** be able to see how you rated them or what c
     <th>Closes</th>
   </tr>
   <tr>
-    <td>1</td>
-    <td><a href="https://forms.office.com/Pages/ResponsePage.aspx?id=pM_2PxXn20i44Qhnufn7o_RvPhdrUs1DpZ0MlMs_Bf1UNUNGWVRHTE0wWDRNVzVFU0Q1QUtHWE00Ri4u">Click here</a></td>
     <td>Iteration 1</td>
+    <td><a href="https://forms.office.com/Pages/ResponsePage.aspx?id=pM_2PxXn20i44Qhnufn7o_RvPhdrUs1DpZ0MlMs_Bf1UNUNGWVRHTE0wWDRNVzVFU0Q1QUtHWE00Ri4u">Click here</a></td>
     <td>10pm Friday 24th June</td>
     <td>9am Monday 27th June</td>
   </tr>
   <tr>
-    <td>1</td>
-    <td><a href="https://forms.office.com/Pages/ResponsePage.aspx?id=pM_2PxXn20i44Qhnufn7o_RvPhdrUs1DpZ0MlMs_Bf1UMUxUWTVLR0tZQVpDV0hQOFpCSko4NFpMUC4u">Click here</a></td>
     <td>Iteration 2</td>
+    <td><a href="https://forms.office.com/Pages/ResponsePage.aspx?id=pM_2PxXn20i44Qhnufn7o_RvPhdrUs1DpZ0MlMs_Bf1UMUxUWTVLR0tZQVpDV0hQOFpCSko4NFpMUC4u">Click here</a></td>
     <td>10pm Friday 15th July</td>
     <td>9am Monday 18th July</td>
   </tr>
   <tr>
-    <td>1</td>
-    <td><a href="https://forms.office.com/Pages/ResponsePage.aspx?id=pM_2PxXn20i44Qhnufn7o_RvPhdrUs1DpZ0MlMs_Bf1UODJPNE5JU1pLSkJJTjdSQzFDU09MVTFUNy4u">Click here</a></td>
     <td>Iteration 3</td>
+    <td><a href="https://forms.office.com/Pages/ResponsePage.aspx?id=pM_2PxXn20i44Qhnufn7o_RvPhdrUs1DpZ0MlMs_Bf1UODJPNE5JU1pLSkJJTjdSQzFDU09MVTFUNy4u">Click here</a></td>
     <td>10pm Friday 5th August</td>
     <td>9am Monday 8th August</td>
   </tr>
