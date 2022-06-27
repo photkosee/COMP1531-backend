@@ -65,7 +65,7 @@ In this iteration, you are expected to:
     * Either choose to change one file at a time, or change all file extensions and use `// @ts-nocheck` at the beginning of select files to disable checking on that specific file, omitting errors.
 
     Below shows a sample conversion of auth.js => auth.ts
-    ![](node.png) ![](typescript.png)
+    ![](node.png)
 
 3. Implement and test the HTTP Express server according to the entire interface provided in the specification.
 

@@ -1,7 +1,5 @@
 image: comp1531/basic:latest
 
-image: comp1531/basic:latest
-
 stages:
   - checks
 
