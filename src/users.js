@@ -47,5 +47,9 @@ function userProfileV1(authUserId, uId) {
   	return ERROR;
 }
 
+<<<<<<< HEAD
 
 export { userProfileV1 };
+=======
+export { userProfileV1 }
+>>>>>>> update-5637e094d875bb87f9537637c1be167b2ea6fb81
