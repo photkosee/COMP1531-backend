@@ -600,8 +600,8 @@ NOTE: For all routes which take `token` as a parameter, an <code>{ error: 'error
         <ul>
         <li>length of message is over 1000 characters</li>
         <li>messageId does not refer to a valid message within a channel/DM that the authorised user has joined</li>
-        <li>the message was sent by the authorised user making this request</li>
-        <li>the authorised user has owner permissions in the channel/DM</li>
+        <li>the message was not sent by the authorised user making this request</li>
+        <li>the authorised user does not have owner permissions in the channel/DM</li>
         </ul>
     </td>
   </tr>
@@ -613,8 +613,8 @@ NOTE: For all routes which take `token` as a parameter, an <code>{ error: 'error
       <b>Return object <code>{error: 'error'}</code></b> when any of:
         <ul>  
         <li>messageId does not refer to a valid message within a channel/DM that the authorised user has joined</li>
-        <li>the message was sent by the authorised user making this request</li>
-        <li>the authorised user has owner permissions in the channel/DM</li>
+        <li>the message was not sent by the authorised user making this request</li>
+        <li>the authorised user does not have owner permissions in the channel/DM</li>
         </ul>
     </td>
   </tr>
