@@ -16,7 +16,7 @@ tests:
     - SERVER_LOG=$(mktemp)
     - npm run start >& $SERVER_LOG &
     - sleep 2
-    - npm run test src/
+    - npm run test
     - kill -SIGINT %1
     - cat $SERVER_LOG
 
