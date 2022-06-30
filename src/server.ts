@@ -41,8 +41,7 @@ app.get('/echo', (req, res, next) => {
 
 app.delete('/clear/v1', (req, res, next) => {
   try {
-    clearV1();
-    return res.json({});
+    return res.json(clearV1());
   } catch (err) {
     next(err);
   }
