@@ -2,8 +2,9 @@ import express from 'express';
 import morgan from 'morgan';
 import config from './config.json';
 import fs from 'fs';
-import { echo } from './echo';
 import { getData, setData } from './dataStore';
+import { echo } from './echo';
+import { clearV1 } from './other';
 
 // Set up web app, use JSON
 const app = express();
@@ -33,6 +34,15 @@ app.get('/echo', (req, res, next) => {
   try {
     const data = req.query.echo as string;
     return res.json(echo(data));
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.delete('/clear/v1', (req, res, next) => {
+  try {
+    clearV1();
+    return res.json({});
   } catch (err) {
     next(err);
   }
