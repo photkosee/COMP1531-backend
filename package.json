@@ -5,7 +5,7 @@
         "lint": "eslint src/**.ts",
         "lint-fix": "eslint --fix src/**.ts",
         "start": "ts-node src/server.ts",
-        "nodemon": "nodemon start"
+        "dev": "nodemon --ignore src/database.json src/server.ts"
     },
     "dependencies": {
         "express": "^4.18.0",
