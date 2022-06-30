@@ -1,7 +1,9 @@
 import express from 'express';
-import { echo } from './echo';
 import morgan from 'morgan';
 import config from './config.json';
+import fs from 'fs';
+import { echo } from './echo';
+import { getData, setData } from './dataStore';
 
 // Set up web app, use JSON
 const app = express();
@@ -9,6 +11,22 @@ app.use(express.json());
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
+const databasePath: string = __dirname + '/database.json';
+
+// Express middleware to save data to database.json on every request end
+app.use((req, res, next) => {
+  req.on('end', function () {
+    const newData = getData();
+    fs.writeFile(databasePath, JSON.stringify(newData), (error) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Succesfully written to database.json');
+      }
+    });
+  });
+  next();
+});
 
 // Example get request
 app.get('/echo', (req, res, next) => {
@@ -26,4 +44,22 @@ app.use(morgan('dev'));
 // start server
 app.listen(PORT, HOST, () => {
   console.log(`⚡️ Server listening on port ${PORT} at ${HOST}`);
+
+  // Loads data from database.json to dataStore on server initialization
+  fs.readFile(databasePath, 'utf-8', (error, jsonData) => {
+    if (error) {
+      console.log(error);
+      return error;
+    }
+
+    try {
+      const database = JSON.parse(jsonData);
+      setData(database);
+      console.log('DataStore Initialized Successfully');
+      return {};
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  });
 });
