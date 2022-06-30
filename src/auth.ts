@@ -40,7 +40,6 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     password = password.trim();
     nameFirst = nameFirst.trim();
     nameLast = nameLast.trim();
-
     const newAuthId: number = (data.users.length) + 1;
 
     const permissionId: number = (newAuthId === 1) ? 1 : 2;

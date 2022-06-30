@@ -6,55 +6,11 @@ const port = config.port;
 const url = config.url;
 const ERROR = { error: 'error' };
 
-beforeEach(() => {
-  request('DELETE', `${url}:${port}/clear/v1`);
-});
-
-describe('Tests for successful registration - auth/register/v2', () => {
-  test.each([
-    {
-      email: 'mridul@gmail.com',
-      password: 'uhunr567T#$%',
-      nameFirst: 'Mridul',
-      nameLast: 'Anand',
-      expected: { token: expect.any(String), authUserId: 1 },
-    },
-    {
-      email: 'mriduls@gmail.com',
-      password: 'uhunr567T#$%',
-      nameFirst: 'Mridul',
-      nameLast: 'Singh',
-      expected: { token: expect.any(String), authUserId: 2 },
-    },
-    {
-      email: 'mridul907@gmail.com',
-      password: 'uhunr567T#$%',
-      nameFirst: 'Mridul',
-      nameLast: 'Rathore',
-      expected: { token: expect.any(String), authUserId: 3 },
-    },
-  ])(
-    '($email, $password, $nameFirst, $nameLast) => $expected',
-    ({ email, password, nameFirst, nameLast, expected }) => {
-      const res = request('POST', `${url}:${port}/auth/register/v2`, {
-        body: JSON.stringify({
-          email: `${email}`,
-          password: `${password}`,
-          nameFirst: `${nameFirst}`,
-          nameLast: `${nameLast}`,
-        }),
-        headers: {
-          'Content-type': 'application/json',
-        },
-      });
-      const bodyObj = JSON.parse(res.body as string);
-      expect(res.statusCode).toBe(OK);
-      expect(bodyObj).toStrictEqual(expected);
-    }
-  );
-});
-
 describe('Testing for empty field values - auth/register/v2', () => {
+  beforeAll(() => {
+    request('DELETE', `${url}:${port}/clear/v1`);
+  });
+
   test.each([
     {
       email: '',
@@ -75,10 +31,10 @@ describe('Testing for empty field values - auth/register/v2', () => {
     ({ email, password, nameFirst, nameLast, expected }) => {
       const res = request('POST', `${url}:${port}/auth/register/v2`, {
         json: {
-          email: `${email}`,
-          password: `${password}`,
-          nameFirst: `${nameFirst}`,
-          nameLast: `${nameLast}`,
+          email: email,
+          password: password,
+          nameFirst: nameFirst,
+          nameLast: nameLast,
         },
       });
       const bodyObj = JSON.parse(res.body as string);
@@ -89,6 +45,10 @@ describe('Testing for empty field values - auth/register/v2', () => {
 });
 
 describe('Testing with wrong typeof parameter - auth/register/v2', () => {
+  beforeAll(() => {
+    request('DELETE', `${url}:${port}/clear/v1`);
+  });
+
   test.each([
     {
       email: 7647687586758668,
@@ -123,10 +83,65 @@ describe('Testing with wrong typeof parameter - auth/register/v2', () => {
     ({ email, password, nameFirst, nameLast, expected }) => {
       const res = request('POST', `${url}:${port}/auth/register/v2`, {
         json: {
-          email: `${email}`,
-          password: `${password}`,
-          nameFirst: `${nameFirst}`,
-          nameLast: `${nameLast}`,
+          email: email,
+          password: password,
+          nameFirst: nameFirst,
+          nameLast: nameLast,
+        },
+      });
+      const bodyObj = JSON.parse(res.body as string);
+      expect(res.statusCode).toBe(OK);
+      expect(bodyObj).toStrictEqual(expected);
+    }
+  );
+});
+
+describe('Testing for password length - auth/register/v2', () => {
+  beforeAll(() => {
+    request('DELETE', `${url}:${port}/clear/v1`);
+  });
+
+  test.each([
+    {
+      email: 'mridul@gmail.com',
+      password: 'Mas@1',
+      nameFirst: 'Mridul',
+      nameLast: 'Anand',
+      expected: ERROR,
+    },
+    {
+      email: 'mriduls@gmail.com',
+      password: '',
+      nameFirst: 'Mridul',
+      nameLast: 'Singh',
+      expected: ERROR,
+    },
+    {
+      email: 'mridul907@gmail.com',
+      password: '4#Assd',
+      nameFirst: 'Mridul',
+      nameLast: 'Rathore',
+      expected: { token: expect.any(String), authUserId: 1 },
+    },
+    {
+      email: 'mriduerl907@gmail.com',
+      password: 'd',
+      nameFirst: 'dfvsdfv',
+      nameLast: 'Ratdsfvhore',
+      expected: ERROR,
+    },
+  ])(
+    '($email, $password, $nameFirst, $nameLast) => $expected',
+    ({ email, password, nameFirst, nameLast, expected }) => {
+      const res = request('POST', `${url}:${port}/auth/register/v2`, {
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          nameFirst: nameFirst,
+          nameLast: nameLast,
+        }),
+        headers: {
+          'Content-type': 'application/json',
         },
       });
       const bodyObj = JSON.parse(res.body as string);
@@ -137,13 +152,17 @@ describe('Testing with wrong typeof parameter - auth/register/v2', () => {
 });
 
 describe('Testing for same user email - auth/register/v2', () => {
+  beforeAll(() => {
+    request('DELETE', `${url}:${port}/clear/v1`);
+  });
+
   test.each([
     {
       email: 'mridul@gmail.com',
       password: 'uhunr567T#$%',
       nameFirst: 'Mridul',
       nameLast: 'Anand',
-      expected: ERROR,
+      expected: { token: expect.any(String), authUserId: 1 },
     },
     {
       email: 'mridul@gmail.com',
@@ -157,10 +176,10 @@ describe('Testing for same user email - auth/register/v2', () => {
     ({ email, password, nameFirst, nameLast, expected }) => {
       const res = request('POST', `${url}:${port}/auth/register/v2`, {
         json: {
-          email: `${email}`,
-          password: `${password}`,
-          nameFirst: `${nameFirst}`,
-          nameLast: `${nameLast}`,
+          email: email,
+          password: password,
+          nameFirst: nameFirst,
+          nameLast: nameLast,
         },
       });
       const bodyObj = JSON.parse(res.body as string);
@@ -171,6 +190,10 @@ describe('Testing for same user email - auth/register/v2', () => {
 });
 
 describe('Testing for wrong email format - auth/register/v2', () => {
+  beforeAll(() => {
+    request('DELETE', `${url}:${port}/clear/v1`);
+  });
+
   test.each([
     {
       email: '@gmail.com',
@@ -219,61 +242,10 @@ describe('Testing for wrong email format - auth/register/v2', () => {
     ({ email, password, nameFirst, nameLast, expected }) => {
       const res = request('POST', `${url}:${port}/auth/register/v2`, {
         json: {
-          email: `${email}`,
-          password: `${password}`,
-          nameFirst: `${nameFirst}`,
-          nameLast: `${nameLast}`,
-        },
-      });
-      const bodyObj = JSON.parse(res.body as string);
-      expect(res.statusCode).toBe(OK);
-      expect(bodyObj).toStrictEqual(expected);
-    }
-  );
-});
-
-describe('Testing for password length - auth/register/v2', () => {
-  test.each([
-    {
-      email: 'mridul@gmail.com',
-      password: 'Mas@1',
-      nameFirst: 'Mridul',
-      nameLast: 'Anand',
-      expected: ERROR,
-    },
-    {
-      email: 'mriduls@gmail.com',
-      password: '',
-      nameFirst: 'Mridul',
-      nameLast: 'Singh',
-      expected: ERROR,
-    },
-    {
-      email: 'mridul907@gmail.com',
-      password: '4#Assd',
-      nameFirst: 'Mridul',
-      nameLast: 'Rathore',
-      expected: ERROR,
-    },
-    {
-      email: 'mriduerl907@gmail.com',
-      password: 'd',
-      nameFirst: 'dfvsdfv',
-      nameLast: 'Ratdsfvhore',
-      expected: ERROR,
-    },
-  ])(
-    '($email, $password, $nameFirst, $nameLast) => $expected',
-    ({ email, password, nameFirst, nameLast, expected }) => {
-      const res = request('POST', `${url}:${port}/auth/register/v2`, {
-        body: JSON.stringify({
-          email: `${email}`,
-          password: `${password}`,
-          nameFirst: `${nameFirst}`,
-          nameLast: `${nameLast}`,
-        }),
-        headers: {
-          'Content-type': 'application/json',
+          email: email,
+          password: password,
+          nameFirst: nameFirst,
+          nameLast: nameLast,
         },
       });
       const bodyObj = JSON.parse(res.body as string);
@@ -284,6 +256,10 @@ describe('Testing for password length - auth/register/v2', () => {
 });
 
 describe('Testing for valid name limit - auth/register/v2', () => {
+  beforeAll(() => {
+    request('DELETE', `${url}:${port}/clear/v1`);
+  });
+
   test.each([
     {
       email: 'mridul@gmail.com',
@@ -325,10 +301,10 @@ describe('Testing for valid name limit - auth/register/v2', () => {
     ({ email, password, nameFirst, nameLast, expected }) => {
       const res = request('POST', `${url}:${port}/auth/register/v2`, {
         body: JSON.stringify({
-          email: `${email}`,
-          password: `${password}`,
-          nameFirst: `${nameFirst}`,
-          nameLast: `${nameLast}`,
+          email: email,
+          password: password,
+          nameFirst: nameFirst,
+          nameLast: nameLast,
         }),
         headers: {
           'Content-type': 'application/json',
@@ -342,6 +318,10 @@ describe('Testing for valid name limit - auth/register/v2', () => {
 });
 
 describe('Tests for successful registration - auth/register/v2', () => {
+  beforeAll(() => {
+    request('DELETE', `${url}:${port}/clear/v1`);
+  });
+
   test.each([
     {
       email: 'mridul@gmail.com',
@@ -369,10 +349,10 @@ describe('Tests for successful registration - auth/register/v2', () => {
     ({ email, password, nameFirst, nameLast, expected }) => {
       const res = request('POST', `${url}:${port}/auth/register/v2`, {
         body: JSON.stringify({
-          email: `${email}`,
-          password: `${password}`,
-          nameFirst: `${nameFirst}`,
-          nameLast: `${nameLast}`,
+          email: email,
+          password: password,
+          nameFirst: nameFirst,
+          nameLast: nameLast,
         }),
         headers: {
           'Content-type': 'application/json',
