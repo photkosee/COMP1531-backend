@@ -5,7 +5,7 @@ import fs from 'fs';
 import { getData, setData } from './dataStore';
 import { echo } from './echo';
 import { clearV1 } from './other';
-import { authRegisterV1 } from './auth';
+import { authRegisterV1, authLoginV1 } from './auth';
 
 // Set up web app, use JSON
 const app = express();
@@ -53,6 +53,16 @@ app.post('/auth/register/v2', (req, res, next) => {
   try {
     const { email, password, nameFirst, nameLast } = req.body;
     const returnData = authRegisterV1(email, password, nameFirst, nameLast);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/auth/login/v2', (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const returnData = authLoginV1(email, password);
     return res.json(returnData);
   } catch (err) {
     next(err);

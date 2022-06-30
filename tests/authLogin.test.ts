@@ -71,9 +71,9 @@ test('Testing with invalid password but valid email - auth/login/v2', () => {
 const invalidEmailData: any = [
   { email: '', password: 'uhunr567T#$%' },
   { email: '    ', password: 'uhunr56ef7T#$%' },
-  { email: 'mrjgidul907@gmail.com ', password: 'uhudfnr567T#$%' },
+  { email: 'mrjgiduljbh907@gmail.com', password: 'uhudfnr567T#$%' },
   { email: 'mridul @gmail.com', password: 'uhunr567T#$%' },
-  { email: ' mrihhduls@gmail.com', password: 'uhunr56ef7T#$%' },
+  { email: 'mrihhduls@mail.com', password: 'uhunr56ef7T#$%' },
 ];
 
 test('Testing with email that does not belong to a existing user - auth/login/v2', () => {
