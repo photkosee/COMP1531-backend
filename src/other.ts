@@ -16,6 +16,7 @@ function clearV1() {
   data.channels = [];
 
   setData(data);
+  return {};
 }
 
 export { clearV1 };
