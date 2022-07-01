@@ -117,10 +117,9 @@ function authLoginV1(email: string, password: string) {
     if (user.email === email &&
         user.password === password &&
         user.isActive === true) {
-      return { authUserId: user.authUserId };
+      return { token: user.token, authUserId: user.authUserId };
     }
   }
-
   return ERROR;
 }
 
