@@ -5,6 +5,7 @@ import fs from 'fs';
 import { getData, setData } from './dataStore';
 import { echo } from './echo';
 import { clearV1 } from './other';
+import { authRegisterV1 } from './auth';
 
 // Set up web app, use JSON
 const app = express();
@@ -17,7 +18,7 @@ const databasePath: string = __dirname + '/database.json';
 // Express middleware to save data to database.json on every request end
 app.use((req, res, next) => {
   req.on('end', function () {
-    const newData = getData();
+    const newData: any = getData();
     fs.writeFile(databasePath, JSON.stringify(newData), (error) => {
       if (error) {
         console.log(error);
@@ -42,6 +43,16 @@ app.get('/echo', (req, res, next) => {
 app.delete('/clear/v1', (req, res, next) => {
   try {
     return res.json(clearV1());
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/auth/register/v2', (req, res, next) => {
+  try {
+    const { email, password, nameFirst, nameLast } = req.body;
+    const returnData = authRegisterV1(email, password, nameFirst, nameLast);
+    return res.json(returnData);
   } catch (err) {
     next(err);
   }
