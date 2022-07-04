@@ -14,67 +14,52 @@ const registeredUser: any = [
   { email: 'mrjgidul907@gmail.com', password: 'uhudfnr567T#$%', nameFirst: 'Mriuffhdul', nameLast: 'Rathor' },
 ];
 
-describe('Tests for successful logout - auth/logout/v1', () => {
-  beforeAll(() => {
-    request('DELETE', `${url}:${port}/clear/v1`);
-    registrationData = [];
-    for (const user of registeredUser) {
-      const res = request('POST', `${url}:${port}/auth/register/v2`, {
-        json: {
-          email: user.email,
-          password: user.password,
-          nameFirst: user.nameFirst,
-          nameLast: user.nameLast,
-        }
-      });
-      const bodyObj = JSON.parse(res.body as string);
-      registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
-    }
-  });
+beforeAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+  registrationData = [];
+  for (const user of registeredUser) {
+    const res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: user.email,
+        password: user.password,
+        nameFirst: user.nameFirst,
+        nameLast: user.nameLast,
+      }
+    });
+    const bodyObj = JSON.parse(res.body as string);
+    registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
+  }
+});
 
-  test('Tests for successful logout - auth/logout/v1', () => {
-    for (let i = 0; i < registeredUser.length; i++) {
-      const res = request('POST', `${url}:${port}/auth/logout/v1`, {
-        json: {
-          token: registrationData[i].token,
-        }
-      });
-      const bodyObj = JSON.parse(res.body as string);
-      expect(res.statusCode).toBe(OK);
-      expect(bodyObj).toStrictEqual({});
-    }
-  });
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
+test('Tests for successful logout - auth/logout/v1', () => {
+  for (let i = 0; i < registeredUser.length; i++) {
+    const res = request('POST', `${url}:${port}/auth/logout/v1`, {
+      json: {
+        token: registrationData[i].token,
+      }
+    });
+    const bodyObj = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(OK);
+    expect(bodyObj).toStrictEqual({});
+  }
 });
 
 describe('Testing with invalid token passed - auth/logout/v1', () => {
-  beforeAll(() => {
-    request('DELETE', `${url}:${port}/clear/v1`);
-    registrationData = [];
-    for (const user of registeredUser) {
-      const res = request('POST', `${url}:${port}/auth/register/v2`, {
-        json: {
-          email: user.email,
-          password: user.password,
-          nameFirst: user.nameFirst,
-          nameLast: user.nameLast,
-        }
-      });
-      const bodyObj = JSON.parse(res.body as string);
-      registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
-    }
-  });
-
   test.each([
     {
-      token: registrationData[1].token,
+      token: `${(Math.floor(Math.random() * Date.now())).toString().substring(0, 10)}`,
       expected: ERROR,
     },
     {
-      token: registrationData[1].token,
-      expected: {},
+      token: `${(Math.floor(Math.random() * Date.now())).toString().substring(0, 10)}`,
+      expected: ERROR,
     },
     {
-      token: registrationData[1].token,
+      token: `${(Math.floor(Math.random() * Date.now())).toString().substring(0, 10)}`,
       expected: ERROR,
     },
   ])(

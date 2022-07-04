@@ -155,7 +155,7 @@ function authLogoutV1(token: string) {
   */
 
   const data: any = getData();
-  const logoutDetail = tryLogout(token, data.user);
+  const logoutDetail = tryLogout(token, data.users);
 
   if (!(logoutDetail)) {
     return ERROR;
