@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+import cors from 'cors';
 import config from './config.json';
 import fs from 'fs';
 import { getData, setData } from './dataStore';
@@ -10,6 +11,7 @@ import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 // Set up web app, use JSON
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: true }));
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
