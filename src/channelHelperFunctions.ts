@@ -14,8 +14,7 @@ function checkAuthUserId(authUserId) {
 	*/
 
 	const data = getData();
-
-	if (typeof authUserId !== 'number') {
+	if (typeof(authUserId) !== 'number') {
 		return false;
 	};
 

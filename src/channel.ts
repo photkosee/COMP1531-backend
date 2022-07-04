@@ -1,11 +1,11 @@
-import { getData, setData } from './dataStore.js';
+import { getData, setData } from './dataStore.ts';
 import { 
 	checkAuthUserId, 
 	checkChannelId,
 	checkIfMember,
 	authInChannel,
 	getMessages
-} from './channelHelperFunctions.js';
+} from './channelHelperFunctions.ts';
 
 
 const ERROR = {error: 'error'};
