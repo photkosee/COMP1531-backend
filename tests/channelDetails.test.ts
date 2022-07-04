@@ -18,25 +18,41 @@ import { clearV1 } from '../src/other';
 import { userProfileV1 } from '../src/users';
 
 beforeEach(() => {
-  clearV1();
+  request('DELETE', `${url}:${port}/clear/v1`);
 });
+
 
 describe('Return objects', () => {
   test('Valid inputs', () => {
-    let user = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'mal1@email.com',
+        password: '1234567',
+        nameFirst: 'One',
+        nameLast: 'Number',
+      }
+    });
+    const user = JSON.parse(res.getBody() as string);
     let token = user.token;
-    let channel = channelsCreateV1(token, 'FO9A_CRUNCHIE', false);
+
+    res = request('POST', `${url}:${port}/channels/create/v2`, { 
+      json: {
+        token: token,
+        name: 'FO9A_CRUNCHIE',
+        isPublic: false
+      }
+    });
+    const channel = JSON.parse(res.getBody() as string);
     let channelId = channel.channelId;
 
-    const  res = request(
-      'GET', `${url}:${port}/channel/details`, {
+    res = request(
+      'GET', `${url}:${port}/channel/details/v2`, {
         qs: {
           token: token,
           channelId: channelId
         }
     });
-
-    const data = JSON.parse(res.body() as string);
+    const data = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
     expect(data).toStrictEqual({ 
       name: 'FO9A_CRUNCHIE',
@@ -59,23 +75,53 @@ describe('Return objects', () => {
   });
 
   test('Testing if member but not owner', () => {
-    let user1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
+    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'mal1@email.com',
+        password: '1234567',
+        nameFirst: 'One',
+        nameLast: 'Number',
+      }
+    });
+    const user1 = JSON.parse(res.getBody() as string);
     let token1 = user1.token;
-    let user2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
-    let token2 = user2.token;
-    let channel = channelsCreateV1(token1, 'FO9A_CRUNCHIE', true);
-    let channelId = channel.channelId;
-    channelJoinV1(token1, channelId);
 
-    const res = request(
-      'GET', `${url}:${port}/channel/details`, {
+    res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'mal2@email.com',
+        password: '1234567',
+        nameFirst: 'Two',
+        nameLast: 'Number',
+      }
+    });
+    const user2 = JSON.parse(res.getBody() as string);
+    let token2 = user2.token;
+
+    res = request('POST', `${url}:${port}/channels/create/v2`, { 
+      json: {
+        token: token1,
+        name: 'FO9A_CRUNCHIE',
+        isPublic: false
+      }
+    });
+    const channel = JSON.parse(res.getBody() as string);
+    let channelId = channel.channelId;
+
+    res = request('POST', `${url}:${port}/channel/join/v2`, { 
+      json: {
+        token: token2,
+        channelId: channelId,
+      }
+    });
+
+    res = request(
+      'GET', `${url}:${port}/channel/details/v2`, {
         json: {
           token: token2,
           channelId: channelId
         }
     });
-
-    const data = JSON.parse(res.body() as string);
+    const data = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
     expect(data).toStrictEqual({
       name: 'FO9A_CRUNCHIE',
@@ -107,26 +153,54 @@ describe('Return objects', () => {
 
 describe('Return errors', () => {
   test('Return error tests', () => {
-    let user1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
-    let token1 = user1.token;
-    let user2 = authRegisterV1('mal2@email.com', '1234567', 'Two', 'Number');
-    let token2 = user2.token;
-    let user3 = authRegisterV1('mal3@email.com', '1234567', 'Three', 'Number');
-    let token3 = user3.token;
+    let registrationData: any = [];
 
-    let channel = channelsCreateV1(token1, 'FO9A_CRUNCHIE', false);
+    const registeredUser: any = [
+      { email: 'mal1@email.com', password: '1234567', nameFirst: 'One', nameLast: 'Number' },
+      { email: 'mal2@email.com', password: '1234567', nameFirst: 'Two', nameLast: 'Number' },
+      { email: 'mal3@email.com', password: '1234567', nameFirst: 'Three', nameLast: 'Number' },    
+    ];
+
+    for (const user of registeredUser) {
+      let res = request('POST', `${url}:${port}/auth/register/v2`, {
+        json: {
+          email: user.email,
+          password: user.password,
+          nameFirst: user.nameFirst,
+          nameLast: user.nameLast,
+        }
+      });
+      const bodyObj = JSON.parse(res.body as string);
+      registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
+    }
+  
+    let res = request('POST', `${url}:${port}/channels/create/v2`, { 
+      json: {
+        token: registrationData[0].token,
+        name: 'FO9A_CRUNCHIE',
+        isPublic: false
+      }
+    });
+    const channel = JSON.parse(res.getBody() as string);
     let channelId = channel.channelId;
-    channelJoinV1(token2, channelId);
 
-    let dummyToken = token1 + token2 + token3;
+    res = request('POST', `${url}:${port}/channel/join/v2`, { 
+      json: {
+        token: registrationData[1].token,
+        channelId: channelId,
+      }
+    });
+
+    let dummyToken = registrationData[0].token + registrationData[1].token 
+      + registrationData[2].token;
     let dummyChannelId = channelId + 1;
 
     const invalidPassData = [
       { token: dummyToken, channelId: channelId },
-      { token: token1, channelId: dummyChannelId },
+      { token: registrationData[0].token, channelId: dummyChannelId },
       { token: 'abc', channelId: channelId },
-      { token: token1, channelId: 'abc' },
-      { token: token3, channelId: channelId },
+      { token: registrationData[0].token, channelId: 'abc' },
+      { token: registrationData[3].token, channelId: channelId },
     ]
 
     for (const test in invalidPassData) {
@@ -137,7 +211,7 @@ describe('Return errors', () => {
             channelId: invalidPassData[test].channelId
           }
       });
-      const data = JSON.parse(res.body() as string);
+      const data = JSON.parse(res.getBody() as string);
       expect(res.statusCode).toBe(OK);
       expect(data).toStrictEqual({ error: 'error' });
     }
