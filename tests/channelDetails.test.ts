@@ -137,9 +137,9 @@ describe('Return errors', () => {
             channelId: invalidPassData[test].channelId
           }
       });
+      const data = JSON.parse(res.body() as string);
+      expect(res.statusCode).toBe(OK);
+      expect(data).toStrictEqual({ error: 'error' });
     }
-    const data = JSON.parse(res.body() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual({ error: 'error' });
   });
 });
