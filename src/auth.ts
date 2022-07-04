@@ -1,5 +1,11 @@
 import { getData, setData } from './dataStore';
-import { paramTypeChecker, genHandleStr, emailValidator } from './authHelperFunctions';
+import {
+  paramTypeChecker,
+  genHandleStr,
+  emailValidator,
+  loginVerifier,
+  genNewSessionId
+} from './authHelperFunctions';
 
 const ERROR = { error: 'error' };
 
@@ -12,7 +18,13 @@ interface newUserDetails {
   password: string,
   handleStr: string,
   permissionId: number,
+  sessionList: Array<string>,
   isActive: boolean,
+}
+
+interface loginDetail {
+  token: string,
+  authUserId: number,
 }
 
 function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
@@ -22,12 +34,13 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
       their details in dataStore.js
 
     Arguments:
-      email     string type-- Input string supplied by user
+      email     string type   -- Input string supplied by user
       passwrd   string type   -- Input string supplied by user
       nameFirst string type   -- Input string supplied by user
       nameLast  string type   -- Input string supplied by user
+
     Return Value:
-      object: {authUserId: authUserId} will return users authId
+      object: {token: token, authUserId: authUserId} will return users authId
       object: return {error: 'error'}
   */
 
@@ -72,6 +85,8 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
 
     newToken = newToken.substring(0, 10);
 
+    const newSessionId = `${nameFirst.toLowerCase().replace(/[^a-z]/gi, '') + '1'}`;
+
     const newUserDetails: newUserDetails = {
       token: newToken,
       authUserId: newAuthId,
@@ -81,6 +96,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
       password: password,
       handleStr: newHandleStr,
       permissionId: permissionId,
+      sessionList: [newSessionId],
       isActive: true,
     };
 
@@ -105,7 +121,7 @@ function authLoginV1(email: string, password: string) {
       passwrd   string type   -- Input string supplied by user
 
     Return Value:
-      object: {authUserId: authUserId} will return users authId
+      object: {token: token, authUserId: authUserId} will return users authId
       object: return {error: 'error'}
   */
 
@@ -113,14 +129,15 @@ function authLoginV1(email: string, password: string) {
 
   const data: any = getData();
 
-  for (const user of data.users) {
-    if (user.email === email &&
-        user.password === password &&
-        user.isActive === true) {
-      return { token: user.token, authUserId: user.authUserId };
-    }
+  const loginDetail: loginDetail | boolean = loginVerifier(email, password, data.users);
+
+  if (loginDetail === false) {
+    return ERROR;
   }
-  return ERROR;
+
+  genNewSessionId(loginDetail.token, data.users);
+
+  return loginDetail;
 }
 
 export {

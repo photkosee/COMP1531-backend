@@ -17,9 +17,9 @@ const databasePath: string = __dirname + '/database.json';
 
 // Express middleware to save data to database.json on every request end
 app.use((req, res, next) => {
-  req.on('end', function () {
+  res.on('finish', function () {
     const newData: any = getData();
-    fs.writeFile(databasePath, JSON.stringify(newData), (error) => {
+    fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
       if (error) {
         console.log(error);
       } else {

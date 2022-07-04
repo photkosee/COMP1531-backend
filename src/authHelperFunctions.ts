@@ -25,15 +25,15 @@ function paramTypeChecker(email: string, password: string, nameFirst: string, na
   }
 }
 
-function genHandleStr(nameFirst: string, nameLast: string, userData: string | any[]) {
+function genHandleStr(nameFirst: string, nameLast: string, userData: string[] | any[]) {
   /*
     Description:
       Helper function for generating user handleStr
 
     Arguments:
-      nameFirst string type -- Input string supplied by function authRegisterV1
-      nameLast  string type -- Input string supplied by function authRegisterV1
-      userData array type   -- Users array supplied by function authRegisterV1
+      nameFirst string type   -- Input string supplied by function authRegisterV1
+      nameLast  string type   -- Input string supplied by function authRegisterV1
+      userData  array  type   -- Users array supplied by function authRegisterV1
 
     Return Value:
       string: newUserHandle
@@ -89,8 +89,59 @@ function emailValidator(email: string) {
   }
 }
 
+function loginVerifier(email: string, password: string, userData: string[] | any[]) {
+  /*
+    Description:
+      Helper function to validate user Email and password for login
+
+    Arguments:
+      email       string type   -- Input string supplied by function authRegisterV1
+      password    string type   -- Input string supplied by function authRegisterV1
+      userData    array  type   -- Users array supplied by function authRegisterV1
+
+    Return Value:
+      object: { token: user.token, authUserId: user.authUserId }
+      boolean: false
+  */
+
+  for (const user of userData) {
+    if (user.email === email &&
+        user.password === password &&
+        user.isActive === true) {
+      return { token: user.token, authUserId: user.authUserId };
+    }
+  }
+  return false;
+}
+
+function genNewSessionId(token: string, userData: string[] | any[]) {
+  /*
+    Description:
+      Helper function to generate newSessionId
+
+    Arguments:
+      token       string type   -- Input string supplied by function authRegisterV1
+      userData    array  type   -- Users array supplied by function authRegisterV1
+
+    Return Value:
+      {}
+  */
+
+  for (const user of userData) {
+    if (user.token === token &&
+        user.isActive === true) {
+      const sessionListLength = user.sessionList.length;
+      const newSessionId = `${user.nameFirst.toLowerCase().replace(/[^a-z]/gi, '') + (sessionListLength + 1).toString()}`;
+      user.sessionList.push(newSessionId);
+      return {};
+    }
+  }
+}
+
 export {
   paramTypeChecker,
   genHandleStr,
-  emailValidator
+  emailValidator,
+  loginVerifier,
+  genNewSessionId
 };
