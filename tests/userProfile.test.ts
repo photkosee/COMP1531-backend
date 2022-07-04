@@ -6,8 +6,6 @@ const port = config.port;
 const url = config.url;
 const ERROR = { error: 'error' };
 
-let registrationData: any = [];
-
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
@@ -23,7 +21,7 @@ describe('Return user', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
-    let token = user.tokenl;
+    const token = user.tokenl;
 
     res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
@@ -34,7 +32,7 @@ describe('Return user', () => {
       }
     });
     const authUser = JSON.parse(res.getBody() as string);
-    let userId = authUser.authUserId;
+    const userId = authUser.authUserId;
 
     res = request(
       'GET', `${url}:${port}/user/profile`, {
@@ -69,7 +67,7 @@ describe('Return error', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
-    let token = user.tokenl;
+    const token = user.tokenl;
 
     res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
@@ -80,22 +78,22 @@ describe('Return error', () => {
       }
     });
     const authUser = JSON.parse(res.getBody() as string);
-    let userId = authUser.authUserId;
+    const userId = authUser.authUserId;
 
     const dummyToken = token + '1';
     const dummyUserId = userId + 1;
 
-    let passData: any = [
+    const passData: any = [
       { token: dummyToken, uId: userId },
       { token: token, uId: dummyUserId },
       { token: token, uId: '0' },
       { token: '0', uId: userId },
-      { token: token, uId: ''},
-      { token: '', uId: userId  },
+      { token: token, uId: '' },
+      { token: '', uId: userId },
     ];
 
     for (const test of passData) {
-      let res = request(
+      const res = request(
         'GET', `${url}:${port}/user/profile`, {
           qs: {
             token: test.token,
