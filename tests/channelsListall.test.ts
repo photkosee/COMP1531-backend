@@ -10,7 +10,7 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Testing with unexisting token - channels/list/v2', () => {  
+describe('Testing with unexisting token - channels/listall/v2', () => {  
   test('Invalid inputs', () => { 
     let res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
@@ -33,7 +33,7 @@ describe('Testing with unexisting token - channels/list/v2', () => {
     const channel = JSON.parse(res.getBody() as string);
     let channelId = channel.channelId;
 
-    let res3 = request('GET', `${url}:${port}/channels/list/v2`, { 
+    let res3 = request('GET', `${url}:${port}/channels/listall/v2`, { 
       qs: {
         token: 12345
       }
@@ -43,7 +43,7 @@ describe('Testing with unexisting token - channels/list/v2', () => {
   })
 });
 
-describe('Testing listing no channels - channels/list/v2', () => {  
+describe('Testing listing no channels - channels/listall/v2', () => {  
   test('Valid inputs', () => { 
     let res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
@@ -56,7 +56,7 @@ describe('Testing listing no channels - channels/list/v2', () => {
     const user = JSON.parse(res.getBody() as string);
     let token = user.token;
 
-    let res3 = request('GET', `${url}:${port}/channels/list/v2`, { 
+    let res3 = request('GET', `${url}:${port}/channels/listall/v2`, { 
       qs: {
         token: token
       }
@@ -66,7 +66,7 @@ describe('Testing listing no channels - channels/list/v2', () => {
   })
 });
 
-describe('Testing listing channels - channels/list/v2', () => {  
+describe('Testing listing channels - channels/listall/v2', () => {  
   test('Valid inputs', () => { 
     let res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
@@ -78,6 +78,17 @@ describe('Testing listing channels - channels/list/v2', () => {
     });
     const user = JSON.parse(res.getBody() as string);
     let token = user.token;
+
+    let res6 = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'mal2@email.com',
+        password: '1234567',
+        nameFirst: '2',
+        nameLast: '2',
+      }
+    });
+    const user2 = JSON.parse(res.getBody() as string);
+    let token2 = user2.token;
 
     let res2 = request('POST', `${url}:${port}/channels/create/v2`, { 
       json: {
@@ -97,18 +108,39 @@ describe('Testing listing channels - channels/list/v2', () => {
       }
     });
     const channel2 = JSON.parse(res.getBody() as string);
-    let channelId2 = channel.channelId;
+    let channelId2 = channel2.channelId;
+
+    let res5 = request('POST', `${url}:${port}/channels/create/v2`, { 
+      json: {
+        token: token,
+        name: 'HoN',
+        isPublic: true
+      }
+    });
+    const channel3 = JSON.parse(res.getBody() as string);
+    let channelId3 = channel3.channelId;
 
 
-    let res3 = request('GET', `${url}:${port}/channels/list/v2`, { 
+    let res3 = request('GET', `${url}:${port}/channels/listall/v2`, { 
       qs: {
         token: token
       }
     });
     const channelList = JSON.parse(res.getBody() as string);
+
+    let res7 = request('GET', `${url}:${port}/channels/listall/v2`, { 
+      qs: {
+        token: token2
+      }
+    });
+    const channelList2 = JSON.parse(res.getBody() as string);
+
+    expect(channelList).toStrictEqual(channelList2);
     expect(channelList).toStrictEqual({ channels: [ {channelId: channelId, 
                                         name: channel.name}, 
                                         {channelId: channelId2, 
-                                          name: channel2.name} ] });
+                                          name: channel2.name}, 
+                                          {channelId: channelId3, 
+                                            name: channel3.name} ] });
   })
 });
