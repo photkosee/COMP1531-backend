@@ -1,29 +1,45 @@
 import { getData, setData } from './dataStore.js';
-import { checkAuthUserId } from './channelHelperFunctions.js';
 
 const ERROR = {error: 'error'};
 
-function channelsListallV1(authUserId) {
+interface newChannelDetails {
+	channelId: number,
+    name: string,
+    ownerMembers: any,
+    allMembers: any,
+    isPublic: boolean,
+    messages: any,
+};
+  
+function channelsListallV1(token: string) {
 	/*
 		Description:
 			channelsListallV1  returning all existing 
 			channels if the given authUserId is valid
 		
 		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
+			token		string  type    -- Input string supplied by user
 			
 		Return Value:
 			array of object: having details of channelId and name
 			object: {error: 'error'}
 	*/
 
-	const data = getData();
+	const data: any = getData();
+	let check_token: boolean = false;
 
-	if (!(checkAuthUserId(authUserId))) {
-		return ERROR;
+	for (const user of data.users) {
+
+		if (token === user.token) {
+			check_token = true;
+		};
 	};
 
-	const channels = [];
+	if (check_token === false) {
+		return ERROR;
+	}
+
+	const channels: any = [];
 
 	for (let i = 0; i < data.channels.length; i++) {
 
@@ -38,27 +54,36 @@ function channelsListallV1(authUserId) {
 }
 
 
-function channelsListV1(authUserId) {
+function channelsListV1(token: string) {
 	/*
 		Description:
 			channelsListV1 returning all channels that the 
 			given authUserId is part of the channels
 		
 		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
+			token		string  type    -- Input string supplied by user
 			
 		Return Value:
 			array of object: having details of channelId and name
 			object: {error: 'error'}
 	*/
 
-	const data = getData();
+	const data: any = getData();
 
-	if (!(checkAuthUserId(authUserId))) {
-		return ERROR;
+	let authUserId: number = -1;
+
+	for (const user of data.users) {
+
+		if (token === user.token) {
+			let authUserId: number = user.authUserId;
+		};
 	};
 
-	const channels = [];
+	if (authUserId === -1) {
+		return ERROR;
+	}
+
+	const channels: any = [];
 
 	for (let i = 0; i < data.channels.length; i++) {
 
@@ -78,14 +103,14 @@ function channelsListV1(authUserId) {
 }
 
 
-function channelsCreateV1(authUserId, name, isPublic) {
+function channelsCreateV1(token: string, name: string, isPublic: boolean) {
 	/*
 		Description:
 			channelsCreateV1  creating a new channel from given authUserId,
 			name and set if the channel is private or public.
 
 		Arguments:
-			authUserId	integer type    -- Input integer supplied by user
+			token		string  type    -- Input string supplied by user
 			name		string  type	-- Input string supplied by user	
 			isPublic	boolean type	-- Input boolean supplied by user
 			
@@ -95,7 +120,7 @@ function channelsCreateV1(authUserId, name, isPublic) {
 			
 	*/
 
-	const data = getData();
+	const data: any = getData();
 
 	if (typeof isPublic !== 'boolean') {
 		return ERROR;
@@ -105,37 +130,50 @@ function channelsCreateV1(authUserId, name, isPublic) {
 		return ERROR;
 	};
 
+	let authUserId: number = -1;
+
+	for (const user of data.users) {
+
+		if (token === user.token) {
+			let authUserId: number = user.authUserId;
+		};
+	};
+
+	if (authUserId === -1) {
+		return ERROR;
+	}
+
 	for (let i = 0; i < data.users.length; i++) {
 
 		if (data.users[i].authUserId === authUserId) {
 
-			const channelId = (data.channels.length) + 1;
+			const channelId: number = (data.channels.length) + 1;
 
-			const newChannelDetails = {
-				'channelId': channelId,
-				'name': name,
-				'ownerMembers': [{
+			const newChannelDetails: newChannelDetails = {
+				channelId: channelId,
+				name: name,
+				ownerMembers: [{
 					uId: authUserId,
 					email: data.users[i].email,
 					nameFirst: data.users[i].nameFirst,
 					nameLast: data.users[i].nameLast,
 					handleStr: data.users[i].handleStr 
 				}],
-				'allMembers': [{ 
+				allMembers: [{ 
 					uId: authUserId,
 					email: data.users[i].email,
 					nameFirst: data.users[i].nameFirst,
 					nameLast: data.users[i].nameLast,
 					handleStr: data.users[i].handleStr 
 				}],
-				'isPublic': isPublic,
-				'messages': []
+				isPublic: isPublic,
+				messages: [],
 			};
 
 			data.channels.push(newChannelDetails);
 			setData(data);
 
-			return {channelId: channelId};
+			return { channelId: channelId };
 		};
 	};
 

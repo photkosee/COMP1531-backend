@@ -25,7 +25,7 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
 
     let res2 = request('POST', `${url}:${port}/channels/create/v2`, { 
       json: {
-        token: 1,
+        token: -5,
         name: 'DOTA2',
         isPublic: false
       }
@@ -112,6 +112,6 @@ describe('Succesfully creating channels - channels/create/v2', () => {
       }
     });
     const channel = JSON.parse(res.getBody() as string);
-    expect(channel).toStrictEqual({ channelId: expect.any(number)});
+    expect(channel).toStrictEqual({ channelId: 1});
   })
 });
