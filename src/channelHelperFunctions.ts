@@ -1,173 +1,157 @@
 import { getData } from './dataStore.js';
 
 function checkAuthUserId(authUserId) {
-	/*
-		Description:
-			checkAuthUserId checks validity and existence of authId
-		
-		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
-			
-		Return Value:
-			boolean: 'true' if valid, 'false' if invalid or non-existent
-			
-	*/
+/*
+Description:
+checkAuthUserId checks validity and existence of authId
 
-	const data = getData();
-	if (typeof(authUserId) !== 'number') {
-		return false;
-	};
+Arguments:
+authUserId integer type   -- Input integer supplied by user
 
-	for (const user of data.users) {
+Return Value:
+boolean: 'true' if valid, 'false' if invalid or non-existent
 
-		if (authUserId === user.authUserId) {
-			return true;
-		};
-	};
+*/
 
-	return false;
+  const data = getData();
+  if (typeof (authUserId) !== 'number') {
+    return false;
+  }
+
+  for (const user of data.users) {
+    if (authUserId === user.authUserId) {
+      return true;
+    }
+  }
+
+  return false;
 }
-
 
 function checkChannelId(channelId) {
-	/*
-		Description:
-			checkChannelId checks validity and existence of channelId
-		
-		Arguments:
-			channelId	integer type   -- Input integer supplied by user
-			
-		Return Value:
-			boolean: 'true' if valid, 'false' if invalid or non-existent
-			
-	*/
+/*
+Description:
+checkChannelId checks validity and existence of channelId
 
-	const data = getData();
+Arguments:
+channelId integer type   -- Input integer supplied by user
 
-	if (typeof channelId !== 'number') {
-		return false;
-	};
+Return Value:
+boolean: 'true' if valid, 'false' if invalid or non-existent
 
-	for (const channel of data.channels) {
+*/
 
-		if (channelId === channel.channelId) {
-			return true;
-		};
-	};
+  const data = getData();
 
-	return false;
+  if (typeof channelId !== 'number') {
+    return false;
+  }
+
+  for (const channel of data.channels) {
+    if (channelId === channel.channelId) {
+      return true;
+    }
+  }
+
+  return false;
 }
-
 
 function checkIfMember(authUserId, channelId) {
-    /*
-		Description:
-			checkIfMember checks if given user is a member of the 
-            given channel
-		
-		Arguments:
-        	authUserId	integer type   -- Input integer supplied by user
-			channelId	integer type   -- Input integer supplied by user
-			
-		Return Value:
-            object: returns details of channel if the user is a member,
-                    returns empty object if user is not a member
-			
-	*/
+/*
+Description:
+checkIfMember checks if given user is a member of the
+given channel
 
-    const data = getData();
+Arguments:
+authUserId integer type   -- Input integer supplied by user
+channelId integer type -- Input integer supplied by user
 
-    let chosenChannel = {};
+Return Value:
+object: returns details of channel if the user is a member,
+returns empty object if user is not a member
 
-    for (const channel of data.channels) {
+*/
 
-        if (channelId === channel.channelId) {
-            chosenChannel = channel;
-        };
-    };
+  const data = getData();
 
-    for (const element of chosenChannel.allMembers) {
+  let chosenChannel = {};
 
-		if (authUserId === element.uId) {
-        	return chosenChannel;
-		};
-    };
+  for (const channel of data.channels) {
+    if (channelId === channel.channelId) {
+      chosenChannel = channel;
+    }
+  }
 
-    return {};
+  for (const element of chosenChannel.allMembers) {
+    if (authUserId === element.uId) {
+      return chosenChannel;
+    }
+  }
+
+  return {};
 }
-
 
 function authInChannel(channelId, userId) {
-    /*
-		Description:
-			authInChannel checks existence of user in channel 
-		
-		Arguments:
-			channelId	integer type   -- Input integer supplied by user
-            userId  	integer type   -- Input integer supplied by user
+/*
+Description:
+authInChannel checks existence of user in channel
 
-		Return Value:
-			boolean: 'true' if user in channel, 'false' if not in channel
-			
-	*/
+Arguments:
+channelId	integer type -- Input integer supplied by user
+userId integer type -- Input integer supplied by user
 
-    const dataStore = getData();
+Return Value:
+boolean: 'true' if user in channel, 'false' if not in channel
 
-    for (const channel of dataStore.channels) {
+*/
 
-        if (channel.channelId === channelId) {
+  const dataStore = getData();
 
-			for (const element of channel.allMembers) {
+  for (const channel of dataStore.channels) {
+    if (channel.channelId === channelId) {
+      for (const element of channel.allMembers) {
+        if (userId === element.uId) {
+          return true;
+        }
+      }
+    }
+  }
 
-				if (userId === element.uId) {
-					return true;
-				};
-			};
-        };
-    };
-
-    return false; 
+  return false;
 }
-
 
 function getMessages(channelId) {
-	/*
-		Description:
-			getMessages returns array of messages of a given channelId
+/*
+Description:
+getMessages returns array of messages of a given channelId
 
-		Arguments:
-			channelId	integer type   -- Input integer supplied by user
+Arguments:
+channelId	integer type   -- Input integer supplied by user
 
-		Return Value:
-			array: messages of a given channelId			
-	*/
+Return Value:
+array: messages of a given channelId
+*/
 
-    const dataStore = getData();
+  const dataStore = getData();
 
-    for (const channel of dataStore.channels) {
+  for (const channel of dataStore.channels) {
+    if (channel.channelId === channelId) {
+      return channel.messages;
+    }
+  }
 
-        if (channel.channelId === channelId) {
-            return channel.messages; 
-        };
-    };
+  for (const element of chosenChannel.allMembers) {
+    if (authUserId === element.uId) {
+      return chosenChannel;
+    }
+  }
 
-    for (const element of chosenChannel.allMembers) {
-
-		if (authUserId === element.uId) {
-				return chosenChannel;
-		};
-    };
-    
-    return {};
+  return {};
 }
 
-
 export {
-	checkAuthUserId,
-	checkChannelId,
-	checkIfMember,
-	authInChannel,
-	getMessages
+  checkAuthUserId,
+  checkChannelId,
+  checkIfMember,
+  authInChannel,
+  getMessages
 };
-
-
