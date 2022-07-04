@@ -30,7 +30,7 @@ describe('Testing with unexisting token - channels/list/v2', () => {
         isPublic: false
       }
     });
-    const channel = JSON.parse(res.getBody() as string);
+    const channel = JSON.parse(res2.getBody() as string);
     let channelId = channel.channelId;
 
     let res3 = request('GET', `${url}:${port}/channels/list/v2`, { 
@@ -38,7 +38,7 @@ describe('Testing with unexisting token - channels/list/v2', () => {
         token: 12345
       }
     });
-    const channelList = JSON.parse(res.getBody() as string);
+    const channelList = JSON.parse(res3.getBody() as string);
     expect(channelList).toStrictEqual(ERROR);
   })
 });
@@ -61,7 +61,7 @@ describe('Testing listing no channels - channels/list/v2', () => {
         token: token
       }
     });
-    const channelList = JSON.parse(res.getBody() as string);
+    const channelList = JSON.parse(res3.getBody() as string);
     expect(channelList).toStrictEqual({ channels: [] });
   })
 });
@@ -86,7 +86,7 @@ describe('Testing listing channels - channels/list/v2', () => {
         isPublic: false
       }
     });
-    const channel = JSON.parse(res.getBody() as string);
+    const channel = JSON.parse(res2.getBody() as string);
     let channelId = channel.channelId;
 
     let res4 = request('POST', `${url}:${port}/channels/create/v2`, { 
@@ -96,7 +96,7 @@ describe('Testing listing channels - channels/list/v2', () => {
         isPublic: true
       }
     });
-    const channel2 = JSON.parse(res.getBody() as string);
+    const channel2 = JSON.parse(res4.getBody() as string);
     let channelId2 = channel.channelId;
 
 
@@ -105,7 +105,7 @@ describe('Testing listing channels - channels/list/v2', () => {
         token: token
       }
     });
-    const channelList = JSON.parse(res.getBody() as string);
+    const channelList = JSON.parse(res3.getBody() as string);
     expect(channelList).toStrictEqual({ channels: [ {channelId: channelId, 
                                         name: channel.name}, 
                                         {channelId: channelId2, 
