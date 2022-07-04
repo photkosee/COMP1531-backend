@@ -4,6 +4,7 @@ import {
   genHandleStr,
   emailValidator,
   loginVerifier,
+  tryLogout,
   genNewSessionId
 } from './authHelperFunctions';
 
@@ -140,7 +141,31 @@ function authLoginV1(email: string, password: string) {
   return loginDetail;
 }
 
+function authLogoutV1(token: string) {
+  /*
+    Description:
+      authLogoutV1 function invalidates the token to log the user out
+
+    Arguments:
+      token     string type   -- token string supplied by browser
+
+    Return Value:
+      object: return {} if logout is successful
+      object: return {error: 'error'} if token is invalid
+  */
+
+  const data: any = getData();
+  const logoutDetail = tryLogout(token, data.user);
+
+  if (!(logoutDetail)) {
+    return ERROR;
+  }
+
+  return {};
+}
+
 export {
   authRegisterV1,
-  authLoginV1
+  authLoginV1,
+  authLogoutV1
 };

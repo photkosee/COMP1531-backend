@@ -95,9 +95,9 @@ function loginVerifier(email: string, password: string, userData: string[] | any
       Helper function to validate user Email and password for login
 
     Arguments:
-      email       string type   -- Input string supplied by function authRegisterV1
-      password    string type   -- Input string supplied by function authRegisterV1
-      userData    array  type   -- Users array supplied by function authRegisterV1
+      email       string type   -- Input string supplied by function authLoginV1
+      password    string type   -- Input string supplied by function authLoginV1
+      userData    array  type   -- Users array supplied by function authLoginV1
 
     Return Value:
       object: { token: user.token, authUserId: user.authUserId }
@@ -109,6 +109,28 @@ function loginVerifier(email: string, password: string, userData: string[] | any
         user.password === password &&
         user.isActive === true) {
       return { token: user.token, authUserId: user.authUserId };
+    }
+  }
+  return false;
+}
+
+function tryLogout(token: string, userData: string[] | any[]) {
+  /*
+    Description:
+      Helper function to invalidates the token to log the user out
+
+    Arguments:
+      token       string type   -- Input string supplied by function authLogoutV1
+      userData    array  type   -- Users array supplied by function authLogoutV1
+
+    Return Value:
+      boolean: true | false
+  */
+
+  for (const user of userData) {
+    if (user.token === token &&
+        user.isActive === true) {
+      return true;
     }
   }
   return false;
@@ -143,5 +165,6 @@ export {
   genHandleStr,
   emailValidator,
   loginVerifier,
-  genNewSessionId
+  genNewSessionId,
+  tryLogout
 };
