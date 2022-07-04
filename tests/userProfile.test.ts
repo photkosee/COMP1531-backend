@@ -6,23 +6,37 @@ const port = config.port;
 const url = config.url;
 const ERROR = { error: 'error' };
 
-import { authRegisterV1 } from '../src/auth.ts';
-import { userProfileV1 } from '../src/users.ts';
-import { clearV1 } from '../src/other.ts';
+let registrationData: any = [];
 
 beforeEach(() => {
-  clearV1();
+  request('DELETE', `${url}:${port}/clear/v1`);
 });
 
 describe('Return user', () => {
   test('Valid user and autherised user', () => {
-    let user = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
-    let token = user.token;
+    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'auth@gmail.com',
+        password: 'password',
+        nameFirst: 'Auth',
+        nameLast: 'Last',
+      }
+    });
+    const user = JSON.parse(res.getBody() as string);
+    let token = user.tokenl;
 
-    user = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
-    let userId = user.authUserId;
+    res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'user@gmail.com',
+        password: 'password',
+        nameFirst: 'User',
+        nameLast: 'Last',
+      }
+    });
+    const authUser = JSON.parse(res.getBody() as string);
+    let userId = authUser.authUserId;
 
-    const res = request(
+    res = request(
       'GET', `${url}:${port}/user/profile`, {
         qs: {
           token: token,
@@ -30,7 +44,7 @@ describe('Return user', () => {
         }
       }
     );
-    const data = JSON.parse(res.body() as string);
+    const data = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
     expect(data).toStrictEqual({
       user: {
@@ -46,22 +60,52 @@ describe('Return user', () => {
 
 describe('Return error', () => {
   test('Non-existent Id and Invalid Id', () => {
-    let user = authRegisterV1('auth@gmail.com', 'password', 'Auth', 'Last');
-    let token = user.token;
+    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'auth@gmail.com',
+        password: 'password',
+        nameFirst: 'Auth',
+        nameLast: 'Last',
+      }
+    });
+    const user = JSON.parse(res.getBody() as string);
+    let token = user.tokenl;
 
-    user = authRegisterV1('user@gmail.com', 'password', 'User', 'Last');
-    let userId = user.authUserId;
+    res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'user@gmail.com',
+        password: 'password',
+        nameFirst: 'User',
+        nameLast: 'Last',
+      }
+    });
+    const authUser = JSON.parse(res.getBody() as string);
+    let userId = authUser.authUserId;
 
     const dummyToken = token + '1';
     const dummyUserId = userId + 1;
 
-    const invalidPassData = [
+    let passData: any = [
       { token: dummyToken, uId: userId },
       { token: token, uId: dummyUserId },
       { token: token, uId: '0' },
       { token: '0', uId: userId },
       { token: token, uId: ''},
       { token: '', uId: userId  },
-    ]
+    ];
+
+    for (const test of passData) {
+      let res = request(
+        'GET', `${url}:${port}/user/profile`, {
+          qs: {
+            token: test.token,
+            uId: test.uId
+          }
+        }
+      );
+      const data = JSON.parse(res.getBody() as string);
+      expect(res.statusCode).toBe(OK);
+      expect(data).toStrictEqual(ERROR);
+    }
   });
 });
