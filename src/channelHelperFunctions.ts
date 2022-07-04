@@ -1,6 +1,6 @@
 import { getData } from './dataStore.js';
 
-function checkAuthUserId(authUserId) {
+function checkAuthUserId(authUserId: number) {
 	/*
 		Description:
 			checkAuthUserId checks validity and existence of authId
@@ -13,7 +13,7 @@ function checkAuthUserId(authUserId) {
 			
 	*/
 
-	const data = getData();
+	const data: any = getData();
 
 	if (typeof authUserId !== 'number') {
 		return false;
@@ -30,7 +30,7 @@ function checkAuthUserId(authUserId) {
 }
 
 
-function checkChannelId(channelId) {
+function checkChannelId(channelId: number) {
 	/*
 		Description:
 			checkChannelId checks validity and existence of channelId
@@ -43,7 +43,7 @@ function checkChannelId(channelId) {
 			
 	*/
 
-	const data = getData();
+	const data: any = getData();
 
 	if (typeof channelId !== 'number') {
 		return false;
@@ -60,7 +60,7 @@ function checkChannelId(channelId) {
 }
 
 
-function checkIfMember(authUserId, channelId) {
+function checkIfMember(authUserId: number, channelId: number) {
     /*
 		Description:
 			checkIfMember checks if given user is a member of the 
@@ -76,7 +76,7 @@ function checkIfMember(authUserId, channelId) {
 			
 	*/
 
-    const data = getData();
+    const data: any = getData();
 
     let chosenChannel = {};
 
@@ -98,7 +98,7 @@ function checkIfMember(authUserId, channelId) {
 }
 
 
-function authInChannel(channelId, userId) {
+function authInChannel(channelId: number, userId: number) {
     /*
 		Description:
 			authInChannel checks existence of user in channel 
@@ -112,7 +112,7 @@ function authInChannel(channelId, userId) {
 			
 	*/
 
-    const dataStore = getData();
+    const dataStore: any = getData();
 
     for (const channel of dataStore.channels) {
 
@@ -131,7 +131,7 @@ function authInChannel(channelId, userId) {
 }
 
 
-function getMessages(channelId) {
+function getMessages(channelId: number) {
 	/*
 		Description:
 			getMessages returns array of messages of a given channelId
@@ -143,7 +143,7 @@ function getMessages(channelId) {
 			array: messages of a given channelId			
 	*/
 
-    const dataStore = getData();
+    const dataStore: any = getData();
 
     for (const channel of dataStore.channels) {
 

@@ -8,7 +8,7 @@ import {
 } from './channelHelperFunctions.js';
 
 
-const ERROR = {error: 'error'};
+const ERROR = { error: 'error' };
 
 
 function channelMessagesV1(authUserId, channelId, start) {
