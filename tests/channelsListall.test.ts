@@ -30,7 +30,7 @@ describe('Testing with unexisting token - channels/listall/v2', () => {
         isPublic: false
       }
     });
-    const channel = JSON.parse(res.getBody() as string);
+    const channel = JSON.parse(res2.getBody() as string);
     let channelId = channel.channelId;
 
     let res3 = request('GET', `${url}:${port}/channels/listall/v2`, { 
@@ -38,7 +38,7 @@ describe('Testing with unexisting token - channels/listall/v2', () => {
         token: 12345
       }
     });
-    const channelList = JSON.parse(res.getBody() as string);
+    const channelList = JSON.parse(res3.getBody() as string);
     expect(channelList).toStrictEqual(ERROR);
   })
 });
@@ -61,7 +61,7 @@ describe('Testing listing no channels - channels/listall/v2', () => {
         token: token
       }
     });
-    const channelList = JSON.parse(res.getBody() as string);
+    const channelList = JSON.parse(res3.getBody() as string);
     expect(channelList).toStrictEqual({ channels: [] });
   })
 });
@@ -87,7 +87,7 @@ describe('Testing listing channels - channels/listall/v2', () => {
         nameLast: '2',
       }
     });
-    const user2 = JSON.parse(res.getBody() as string);
+    const user2 = JSON.parse(res6.getBody() as string);
     let token2 = user2.token;
 
     let res2 = request('POST', `${url}:${port}/channels/create/v2`, { 
@@ -97,7 +97,7 @@ describe('Testing listing channels - channels/listall/v2', () => {
         isPublic: false
       }
     });
-    const channel = JSON.parse(res.getBody() as string);
+    const channel = JSON.parse(res2.getBody() as string);
     let channelId = channel.channelId;
 
     let res4 = request('POST', `${url}:${port}/channels/create/v2`, { 
@@ -107,7 +107,7 @@ describe('Testing listing channels - channels/listall/v2', () => {
         isPublic: true
       }
     });
-    const channel2 = JSON.parse(res.getBody() as string);
+    const channel2 = JSON.parse(res4.getBody() as string);
     let channelId2 = channel2.channelId;
 
     let res5 = request('POST', `${url}:${port}/channels/create/v2`, { 
@@ -117,7 +117,7 @@ describe('Testing listing channels - channels/listall/v2', () => {
         isPublic: true
       }
     });
-    const channel3 = JSON.parse(res.getBody() as string);
+    const channel3 = JSON.parse(res5.getBody() as string);
     let channelId3 = channel3.channelId;
 
 
@@ -126,14 +126,14 @@ describe('Testing listing channels - channels/listall/v2', () => {
         token: token
       }
     });
-    const channelList = JSON.parse(res.getBody() as string);
+    const channelList = JSON.parse(res3.getBody() as string);
 
     let res7 = request('GET', `${url}:${port}/channels/listall/v2`, { 
       qs: {
         token: token2
       }
     });
-    const channelList2 = JSON.parse(res.getBody() as string);
+    const channelList2 = JSON.parse(res7.getBody() as string);
 
     expect(channelList).toStrictEqual(channelList2);
     expect(channelList).toStrictEqual({ channels: [ {channelId: channelId, 
