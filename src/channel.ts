@@ -5,7 +5,8 @@ import {
   checkChannelId,
   checkIfMember,
   authInChannel,
-  getMessages
+  getMessages,
+  tokenToUserId
 } from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
@@ -102,7 +103,7 @@ authInChannel(channelId, authUserId) &&
   }
 }
 
-function channelJoinV1(authUserId, channelId) {
+function channelJoinV1(token: string, channelId: number) {
 /*
 Description:
 channelJoinV1 helps user join a channel
@@ -115,15 +116,29 @@ Return Value:
 object: returns empty object on success
 object: {error: 'error'}
 */
+  const userId: number = tokenToUserId(token);
 
-  if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
-    return ERROR;
-  }
+  if (!checkAuthUserId(userId)) {
+    return { error: 'user'}
+  } 
+  
+  // if (!checkChannelId(channelId)) {
+    return { hi: channelId} ;
+  // } 
+  if (!checkToken(token)) {
+    return { error: 'token' }
+  } 
 
-  const channelDetails: any = checkIfMember(authUserId, channelId);
+
+  // if (!checkToken(token) || !checkChannelId(channelId) ||
+  // !checkAuthUserId(userId)) {
+  //   return ERROR;
+  // }
+
+  const channelDetails: any = checkIfMember(userId, channelId);
 
   if (Object.keys(channelDetails).length !== 0) {
-    return ERROR;
+    return {eror: 'checkif'};
   }
 
   const data: any = getData();
@@ -135,7 +150,7 @@ object: {error: 'error'}
       chosenChannel = channel;
 
       for (const element of channel.allMembers) {
-        if (authUserId === element.uId) {
+        if (userId === element.uId) {
           return ERROR;
         }
       }
@@ -145,7 +160,7 @@ object: {error: 'error'}
   let chosenUser: any = {};
 
   for (const user of data.users) {
-    if (authUserId === user.authUserId) {
+    if (token === user.token) {
       chosenUser = user;
     }
   }
@@ -157,7 +172,7 @@ object: {error: 'error'}
   }
 
   chosenChannel.allMembers.push({
-    uId: authUserId,
+    uId: chosenUser.authUserId,
     email: chosenUser.email,
     nameFirst: chosenUser.nameFirst,
     nameLast: chosenUser.nameLast,
@@ -181,11 +196,15 @@ object: { name, isPublic, ownerMembers, allMembers }
 object: {error: 'error'}
 */
 
-  if (!(checkToken(token)) || !(checkChannelId(channelId))) {
+  const userId: number = tokenToUserId(token);
+
+  if (!checkToken(token) || !checkChannelId(channelId) ||
+  !checkAuthUserId(userId)) {
     return ERROR;
   }
 
-  const channelDetails: any = checkIfMember(token, channelId);
+
+  const channelDetails: any = checkIfMember(userId, channelId);
 
   if (Object.keys(channelDetails).length === 0) {
     return ERROR;

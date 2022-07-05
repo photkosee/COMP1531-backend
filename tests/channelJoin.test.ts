@@ -11,16 +11,14 @@ let channelId = 0;
 
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
-});
 
-beforeEach(() => {
   const userInput = [
     { email: 'mal1@email.com', password: '1234567', nameFirst: 'One', nameLast: 'Number' },
-    { email: 'mal2@email.com', password: '1234567', nameFirst: 'One', nameLast: 'Number' },
+    { email: 'mal2@email.com', password: '1234567', nameFirst: 'Two', nameLast: 'Number' },
   ];
 
   for (const users of userInput) {
-    const res = request(
+    let res = request(
       'POST', `${url}:${port}/auth/register/v2`, {
         json: {
           email: users.email,
@@ -36,11 +34,11 @@ beforeEach(() => {
     userData.push({ token: data.token, authUserId: data.authUserId });
   }
 
-  const res = request('POST', `${url}:${port}/channels/create/v2`, {
+  let res = request('POST', `${url}:${port}/channels/create/v2`, {
     json: {
       token: userData[0].token,
       name: 'FO9A_CRUNCHIE',
-      isPublic: false
+      isPublic: true
     }
   });
   const channel = JSON.parse(res.getBody() as string);
@@ -48,12 +46,61 @@ beforeEach(() => {
 });
 
 describe('Valid returns', () => {
-  test('Valid user id and valid channel id', () => {
-    const res = request(
-      'POST', `${url}:${port}/channel/join/v2 `, {
+  test.only('randpm', () => {
+    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'mal1@email.com',
+        password: '1234567',
+        nameFirst: 'One',
+        nameLast: 'Number',
+      }
+    });
+    const user = JSON.parse(res.getBody() as string);
+    let token = user.token;
+
+    res = request('POST', `${url}:${port}/channels/create/v2`, { 
+      json: {
+        token: token,
+        name: 'DOTA2',
+        isPublic: true
+      }
+    });
+    const channel = JSON.parse(res.getBody() as string);
+    expect(channel).toStrictEqual({ channelId: 1});
+
+
+    res = request(
+      'POST', `${url}:${port}/channel/join/v2`, {
         json: {
-          token: userData[1].token,
-          channelId: channelId
+          token: userData[0].token,
+          channelId: channel.channelId
+        }
+      }
+    );
+
+    const data = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(data).toStrictEqual({});
+
+  });
+
+  test('Private channel, adding a global owner', () => {
+    let res = request('POST', `${url}:${port}/channels/create/v2`, {
+      json: {
+        token: userData[1].token,
+        name: 'FO9A_CRUNCHIE_PRIVATE',
+        isPublic: false
+      }
+    });
+    const channelPrivate = JSON.parse(res.getBody() as string);
+    let channelIdPrivate = 0;
+     channelIdPrivate =channelPrivate.channelId;
+
+    res = request(
+      'POST', `${url}:${port}/channel/join/v2`, {
+        json: {
+          token: userData[0].token,
+          channelId: channelPrivate
         }
       }
     );
@@ -63,11 +110,11 @@ describe('Valid returns', () => {
     expect(data).toStrictEqual({});
   });
 
-  test('Private channel, adding a global owner', () => {
+  test('Valid user id and valid channel id', () => {
     const res = request(
       'POST', `${url}:${port}/channel/join/v2`, {
         json: {
-          token: userData[0].token,
+          token: userData[1].token,
           channelId: channelId
         }
       }
@@ -108,7 +155,7 @@ describe('Error returns', () => {
 
   test('Authorised user is already a member', () => {
     request(
-      'POST', `${url}:${port}/channel/join/v2 `, {
+      'POST', `${url}:${port}/channel/join/v2`, {
         json: {
           token: userData[1].token,
           channelId: channelId
@@ -137,11 +184,21 @@ describe('Error returns', () => {
   });
 
   test('Private channel, adding not a global owner', () => {
-    const res = request(
+    let res = request('POST', `${url}:${port}/channels/create/v2`, {
+      json: {
+        token: userData[0].token,
+        name: 'FO9A_CRUNCHIE_PRIVATE',
+        isPublic: false
+      }
+    });
+    const channelPrivate = JSON.parse(res.getBody() as string);
+    const channelIdPrivate = channelPrivate.channelId;
+
+    res = request(
       'POST', `${url}:${port}/channel/join/v2`, {
         json: {
           token: userData[1].token,
-          channelId: channelId
+          channelId: channelIdPrivate
         }
       }
     );

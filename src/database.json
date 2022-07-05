@@ -12,8 +12,7 @@
       "sessionList": [
         "one1"
       ],
-      "isActive": true
-    },
+      "isActive": true    },
     {
       "token": "4352846987",
       "authUserId": 2,
@@ -31,8 +30,8 @@
   ],
   "channels": [
     {
-      "channelId": 1,
-      "name": "FO9A_CRUNCHIE",
+      "channelId": 1,      "name": "FO9A_CRUNCHIE",
+
       "ownerMembers": [
         {
           "uId": 1,

@@ -1,14 +1,14 @@
 import { getData } from './dataStore';
 
-export function checkAuthUserId(token: string) {
+function checkAuthUserId(userId: number) {
 
     const data: any = getData();
-    if (typeof (token) !== 'string') {
+    if (typeof(userId) !== 'number') {
       return false;
     }
   
     for (const user of data.users) {
-      if (token === user.token) {
+      if (userId === user.authUserId) {
         return true;
       }
     }
@@ -28,9 +28,8 @@ Return Value:
 boolean: 'true' if valid, 'false' if invalid or non-existent
 
 */
-
   const data: any = getData();
-  if (typeof (token) !== 'string') {
+  if (typeof(token) !== 'string') {
     return false;
   }
 
@@ -58,8 +57,8 @@ boolean: 'true' if valid, 'false' if invalid or non-existent
 
   const data: any = getData();
 
-  if (typeof channelId !== 'number') {
-    return false;
+  if (typeof(channelId) !== 'number') {
+    return { hi: channelId};
   }
 
   for (const channel of data.channels) {
@@ -68,10 +67,10 @@ boolean: 'true' if valid, 'false' if invalid or non-existent
     }
   }
 
-  return false;
+  return 'generl';
 }
 
-function checkIfMember(token: string, channelId: number) {
+function checkIfMember(userId: number, channelId: number) {
 /*
 Description:
 checkIfMember checks if given user is a member of the
@@ -98,7 +97,7 @@ returns empty object if user is not a member
   }
 
   for (const element of chosenChannel.allMembers) {
-    if (token === element.token) {
+    if (userId === element.uId) {
       return chosenChannel;
     }
   }
@@ -106,7 +105,7 @@ returns empty object if user is not a member
   return {};
 }
 
-function authInChannel(channelId: number, token: string) {
+function authInChannel(channelId: number, userId: number) {
 /*
 Description:
 authInChannel checks existence of user in channel
@@ -124,7 +123,7 @@ boolean: 'true' if user in channel, 'false' if not in channel
   for (const channel of dataStore.channels) {
     if (channel.channelId === channelId) {
       for (const element of channel.allMembers) {
-        if (token === element.token) {
+        if (userId === element.uId) {
           return true;
         }
       }
@@ -163,10 +162,24 @@ array: messages of a given channelId
   return {};
 }
 
+function tokenToUserId(token: string) {
+  const data: any = getData();
+
+  for (const user of data.users) {
+    if (token = user.token) {
+      return user.authUserId;
+    }
+  }
+
+  return;
+}
+
 export {
   checkToken,
   checkChannelId,
   checkIfMember,
   authInChannel,
-  getMessages
+  getMessages,
+  tokenToUserId,
+  checkAuthUserId
 };
