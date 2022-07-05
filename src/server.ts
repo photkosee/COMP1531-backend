@@ -8,7 +8,7 @@ import { echo } from './echo';
 import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
-import { channelDetailsV1 } from './channel';
+import { channelDetailsV1, channelJoinV1 } from './channel';
 
 // Set up web app, use JSON
 const app = express();
@@ -118,6 +118,16 @@ app.get('/channel/details/v2', (req, res, next) => {
     const channelIdReq = req.query.channelId;
     const channelId = +channelIdReq;
     const returnData = channelDetailsV1(token, channelId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/join/v2', (req, res, next) => {
+  try {
+    const { token, channelId } = req.body;
+    const returnData = channelJoinV1(token, channelId);
     return res.json(returnData);
   } catch (err) {
     next(err);

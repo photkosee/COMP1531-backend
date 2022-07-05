@@ -1,4 +1,58 @@
 {
-  "users": [],
-  "channels": []
+  "users": [
+    {
+      "token": "3092581105",
+      "authUserId": 1,
+      "nameFirst": "One",
+      "nameLast": "Number",
+      "email": "mal1@email.com",
+      "password": "1234567",
+      "handleStr": "onenumber",
+      "permissionId": 1,
+      "sessionList": [
+        "one1"
+      ],
+      "isActive": true
+    },
+    {
+      "token": "4352846987",
+      "authUserId": 2,
+      "nameFirst": "Two",
+      "nameLast": "Number",
+      "email": "mal2@email.com",
+      "password": "1234567",
+      "handleStr": "twonumber",
+      "permissionId": 2,
+      "sessionList": [
+        "two1"
+      ],
+      "isActive": true
+    }
+  ],
+  "channels": [
+    {
+      "channelId": 1,
+      "name": "FO9A_CRUNCHIE",
+      "ownerMembers": [
+        {
+          "uId": 1,
+          "email": "mal1@email.com",
+          "nameFirst": "One",
+          "nameLast": "Number",
+          "handleStr": "onenumber"
+        }
+      ],
+      "allMembers": [
+        {
+          "uId": 1,
+          "email": "mal1@email.com",
+          "nameFirst": "One",
+          "nameLast": "Number",
+          "handleStr": "onenumber"
+        }
+      ],
+      "isPublic": true,
+      "messages": []
+    }
+  ]
 }
