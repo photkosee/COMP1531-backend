@@ -6,9 +6,8 @@ import fs from 'fs';
 import { getData, setData } from './dataStore';
 import { echo } from './echo';
 import { clearV1 } from './other';
-import { authRegisterV1, authLoginV1 } from './auth';
-import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
+import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 
 // Set up web app, use JSON
 const app = express();
@@ -72,6 +71,16 @@ app.post('/auth/login/v2', (req, res, next) => {
   }
 });
 
+app.post('/auth/logout/v1', (req, res, next) => {
+  try {
+    const { token } = req.body;
+    const returnData = authLogoutV1(token);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.post('/channels/create/v2', (req, res, next) => {
   try {
     const { token, name, isPublic } = req.body;
@@ -96,11 +105,6 @@ app.get('/channels/listall/v2', (req, res, next) => {
   try {
     const token = req.query.token as string;
     const returnData = channelsListallV1(token);
-
-app.post('/auth/logout/v1', (req, res, next) => {
-  try {
-    const { token } = req.body;
-    const returnData = authLogoutV1(token);
     return res.json(returnData);
   } catch (err) {
     next(err);
