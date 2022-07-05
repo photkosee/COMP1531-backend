@@ -23,34 +23,24 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
     const user = JSON.parse(res.getBody() as string);
     let token = user.token;
 
-    let res2 = request('POST', `${url}:${port}/channels/create/v2`, { 
+    res = request('POST', `${url}:${port}/channels/create/v2`, { 
       json: {
         token: -5,
         name: 'DOTA2',
         isPublic: false
       }
     });
-    const channel = JSON.parse(res2.getBody() as string);
+    const channel = JSON.parse(res.getBody() as string);
     expect(channel).toStrictEqual(ERROR);
 
-    let res3 = request('POST', `${url}:${port}/channels/create/v2`, { 
-      json: {
-        token: token,
-        name: 12345,
-        isPublic: false
-      }
-    });
-    const channel2 = JSON.parse(res3.getBody() as string);
-    expect(channel2).toStrictEqual(ERROR);
-
-    let res4 = request('POST', `${url}:${port}/channels/create/v2`, { 
+    res = request('POST', `${url}:${port}/channels/create/v2`, { 
       json: {
         token: token,
         name: 'DOTA2',
         isPublic: 123
       }
     });
-    const channel3 = JSON.parse(res4.getBody() as string);
+    const channel3 = JSON.parse(res.getBody() as string);
     expect(channel3).toStrictEqual(ERROR);
 
   });
@@ -68,24 +58,24 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
       const user = JSON.parse(res.getBody() as string);
       let token = user.token;
 
-      let res2 = request('POST', `${url}:${port}/channels/create/v2`, { 
+      res = request('POST', `${url}:${port}/channels/create/v2`, { 
         json: {
           token: token,
           name: '',
           isPublic: false
         }
       });
-      const channel = JSON.parse(res2.getBody() as string);
+      const channel = JSON.parse(res.getBody() as string);
       expect(channel).toStrictEqual(ERROR);
 
-      let res3 = request('POST', `${url}:${port}/channels/create/v2`, { 
+      res = request('POST', `${url}:${port}/channels/create/v2`, { 
         json: {
           token: token,
           name: '1234567891011121314151617',
           isPublic: false
         }
       });
-      const channel2 = JSON.parse(res3.getBody() as string);
+      const channel2 = JSON.parse(res.getBody() as string);
       expect(channel2).toStrictEqual(ERROR);
     })
   })
