@@ -1,25 +1,41 @@
-import { getData } from './dataStore.js';
+import { getData } from './dataStore';
 
-function checkAuthUserId(authUserId) {
+export function checkAuthUserId(token: string) {
+
+    const data: any = getData();
+    if (typeof (token) !== 'string') {
+      return false;
+    }
+  
+    for (const user of data.users) {
+      if (token === user.token) {
+        return true;
+      }
+    }
+  
+    return false;
+}
+
+function checkToken(token: string) {
 /*
 Description:
-checkAuthUserId checks validity and existence of authId
+checkToken checks validity and existence of authId
 
 Arguments:
-authUserId integer type   -- Input integer supplied by user
+token string type   -- Input integer supplied by user
 
 Return Value:
 boolean: 'true' if valid, 'false' if invalid or non-existent
 
 */
 
-  const data = getData();
-  if (typeof (authUserId) !== 'number') {
+  const data: any = getData();
+  if (typeof (token) !== 'string') {
     return false;
   }
 
   for (const user of data.users) {
-    if (authUserId === user.authUserId) {
+    if (token === user.token) {
       return true;
     }
   }
@@ -27,7 +43,7 @@ boolean: 'true' if valid, 'false' if invalid or non-existent
   return false;
 }
 
-function checkChannelId(channelId) {
+function checkChannelId(channelId: number) {
 /*
 Description:
 checkChannelId checks validity and existence of channelId
@@ -40,7 +56,7 @@ boolean: 'true' if valid, 'false' if invalid or non-existent
 
 */
 
-  const data = getData();
+  const data: any = getData();
 
   if (typeof channelId !== 'number') {
     return false;
@@ -55,7 +71,7 @@ boolean: 'true' if valid, 'false' if invalid or non-existent
   return false;
 }
 
-function checkIfMember(authUserId, channelId) {
+function checkIfMember(token: string, channelId: number) {
 /*
 Description:
 checkIfMember checks if given user is a member of the
@@ -71,9 +87,9 @@ returns empty object if user is not a member
 
 */
 
-  const data = getData();
+  const data: any = getData();
 
-  let chosenChannel = {};
+  let chosenChannel: any = {};
 
   for (const channel of data.channels) {
     if (channelId === channel.channelId) {
@@ -82,7 +98,7 @@ returns empty object if user is not a member
   }
 
   for (const element of chosenChannel.allMembers) {
-    if (authUserId === element.uId) {
+    if (token === element.token) {
       return chosenChannel;
     }
   }
@@ -90,7 +106,7 @@ returns empty object if user is not a member
   return {};
 }
 
-function authInChannel(channelId, userId) {
+function authInChannel(channelId: number, token: string) {
 /*
 Description:
 authInChannel checks existence of user in channel
@@ -104,12 +120,12 @@ boolean: 'true' if user in channel, 'false' if not in channel
 
 */
 
-  const dataStore = getData();
+  const dataStore: any = getData();
 
   for (const channel of dataStore.channels) {
     if (channel.channelId === channelId) {
       for (const element of channel.allMembers) {
-        if (userId === element.uId) {
+        if (token === element.token) {
           return true;
         }
       }
@@ -119,7 +135,7 @@ boolean: 'true' if user in channel, 'false' if not in channel
   return false;
 }
 
-function getMessages(channelId) {
+function getMessages(channelId: number) {
 /*
 Description:
 getMessages returns array of messages of a given channelId
@@ -131,7 +147,7 @@ Return Value:
 array: messages of a given channelId
 */
 
-  const dataStore = getData();
+  const dataStore: any = getData();
 
   for (const channel of dataStore.channels) {
     if (channel.channelId === channelId) {
@@ -139,17 +155,17 @@ array: messages of a given channelId
     }
   }
 
-  for (const element of chosenChannel.allMembers) {
-    if (authUserId === element.uId) {
-      return chosenChannel;
-    }
-  }
+  // for (const element of chosenChannel.allMembers) {
+  //   if (authUserId === element.uId) {
+  //     return chosenChannel;
+  //   }
+  // }
 
   return {};
 }
 
 export {
-  checkAuthUserId,
+  checkToken,
   checkChannelId,
   checkIfMember,
   authInChannel,

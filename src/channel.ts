@@ -1,11 +1,12 @@
-import { getData, setData } from './dataStore.ts';
+import { getData, setData } from './dataStore';
 import {
   checkAuthUserId,
+  checkToken,
   checkChannelId,
   checkIfMember,
   authInChannel,
   getMessages
-} from './channelHelperFunctions.ts';
+} from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
 
@@ -36,8 +37,8 @@ start < 0) {
     return ERROR;
   }
 
-  const messagesArray = [];
-  const messages = getMessages(channelId);
+  const messagesArray: any = [];
+  const messages: any = getMessages(channelId);
 
   for (let i = 0; i < 50 && (start + i < messages.length); i++) {
     messagesArray.push(messages[start + i]);
@@ -76,7 +77,7 @@ checkAuthUserId(uId) &&
 checkChannelId(channelId) &&
 authInChannel(channelId, authUserId) &&
 !authInChannel(channelId, uId)) {
-    const dataStore = getData();
+    const dataStore: any = getData();
 
     for (const channel of dataStore.channels) {
       if (channel.channelId === channelId) {
@@ -119,15 +120,15 @@ object: {error: 'error'}
     return ERROR;
   }
 
-  const channelDetails = checkIfMember(authUserId, channelId);
+  const channelDetails: any = checkIfMember(authUserId, channelId);
 
   if (Object.keys(channelDetails).length !== 0) {
     return ERROR;
   }
 
-  const data = getData();
+  const data: any = getData();
 
-  let chosenChannel = {};
+  let chosenChannel: any = {};
 
   for (const channel of data.channels) {
     if (channelId === channel.channelId) {
@@ -141,7 +142,7 @@ object: {error: 'error'}
     }
   }
 
-  let chosenUser = {};
+  let chosenUser: any = {};
 
   for (const user of data.users) {
     if (authUserId === user.authUserId) {
@@ -166,13 +167,13 @@ object: {error: 'error'}
   return {};
 }
 
-function channelDetailsV1(authUserId, channelId) {
+function channelDetailsV1(token: string, channelId: number) {
 /*
 Description:
 channelDetailsV1 provide basic details about the channel
 
 Arguments:
-authUserId integer type   -- Input integer supplied by user
+token string type   -- Input integer supplied by user
 channelId integer type   -- Input integer supplied by user
 
 Return Value:
@@ -180,11 +181,11 @@ object: { name, isPublic, ownerMembers, allMembers }
 object: {error: 'error'}
 */
 
-  if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
+  if (!(checkToken(token)) || !(checkChannelId(channelId))) {
     return ERROR;
   }
 
-  const channelDetails = checkIfMember(authUserId, channelId);
+  const channelDetails: any = checkIfMember(token, channelId);
 
   if (Object.keys(channelDetails).length === 0) {
     return ERROR;
@@ -204,3 +205,4 @@ export {
   channelJoinV1,
   channelDetailsV1
 };
+
