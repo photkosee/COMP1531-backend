@@ -188,12 +188,12 @@ describe('Return errors', () => {
       { token: registrationData[0].token, channelId: dummyChannelId },
       { token: 'abc', channelId: channelId },
       { token: registrationData[0].token, channelId: 'abc' },
-      { token: registrationData[3].token, channelId: channelId },
+      { token: registrationData[2].token, channelId: channelId },
     ];
 
     for (const test in invalidPassData) {
       const res = request(
-        'GET', `${url}:${port}/channel/details`, {
+        'GET', `${url}:${port}/channel/details/v2`, {
           json: {
             token: invalidPassData[test].token,
             channelId: invalidPassData[test].channelId
