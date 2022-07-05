@@ -162,7 +162,7 @@ describe('Test cases for channelMessagesV1', () => {
   });
 });
 
-describe('Tests for channelDetailsV1', () => {
+describe.only('Tests for channelDetailsV1', () => {
   test('Valid userId and Valid channelId', () => {
     let authUserId1 = authRegisterV1('mal1@email.com', '1234567', 'One', 'Number');
     authUserId1 = authUserId1.authUserId;

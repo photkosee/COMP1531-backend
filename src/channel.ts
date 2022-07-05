@@ -1,43 +1,44 @@
-import { getData, setData } from './dataStore.ts';
+import { getData, setData } from './dataStore';
 import {
   checkAuthUserId,
+  checkToken,
   checkChannelId,
   checkIfMember,
   authInChannel,
   getMessages
-} from './channelHelperFunctions.ts';
+} from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
 
 function channelMessagesV1(authUserId, channelId, start) {
-  /*
-		Description:
-			channelMessagesV1 checks the message history of a given channel
+/*
+Description:
+channelMessagesV1 checks the message history of a given channel
 
-		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
-			channelId   integer type   -- Input integer supplied by user
-			start 		integer type   -- Input integer supplied by user
+Arguments:
+authUserId integer type   -- Input integer supplied by user
+channelId integer type   -- Input integer supplied by user
+start integer type   -- Input integer supplied by user
 
-		Return Value:
-			object: {
-				messages: [messages],
-				start: start,
-				end: end,
-			}
-			object: {error: 'error'}
-	*/
+Return Value:
+object: {
+  messages: [messages],
+  start: start,
+  end: end,
+}
+object: {error: 'error'}
+*/
 
   if (!checkChannelId(channelId) ||
-		!checkAuthUserId(authUserId) ||
-		!authInChannel(channelId, authUserId) ||
-		start > getMessages(channelId).length ||
-		start < 0) {
+!checkAuthUserId(authUserId) ||
+!authInChannel(channelId, authUserId) ||
+start > getMessages(channelId).length ||
+start < 0) {
     return ERROR;
   }
 
-  const messagesArray = [];
-  const messages = getMessages(channelId);
+  const messagesArray: any = [];
+  const messages: any = getMessages(channelId);
 
   for (let i = 0; i < 50 && (start + i < messages.length); i++) {
     messagesArray.push(messages[start + i]);
@@ -57,26 +58,26 @@ function channelMessagesV1(authUserId, channelId, start) {
 }
 
 function channelInviteV1(authUserId, channelId, uId) {
-  /*
-		Description:
-			channelInviteV1 Will invite and add a user into a channel
+/*
+Description:
+channelInviteV1 Will invite and add a user into a channel
 
-		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
-			channelId   integer type   -- Input integer supplied by user
-			uId 		integer type   -- Input integer supplied by user
+Arguments:
+authUserId integer type   -- Input integer supplied by user
+channelId integer type   -- Input integer supplied by user
+uId integer type   -- Input integer supplied by user
 
-		Return Value:
-			object: {} when user is added
-			object: {error: 'error'}
-	*/
+Return Value:
+object: {} when user is added
+object: {error: 'error'}
+*/
 
   if (checkAuthUserId(authUserId) &&
-		checkAuthUserId(uId) &&
-		checkChannelId(channelId) &&
-		authInChannel(channelId, authUserId) &&
-		!authInChannel(channelId, uId)) {
-    const dataStore = getData();
+checkAuthUserId(uId) &&
+checkChannelId(channelId) &&
+authInChannel(channelId, authUserId) &&
+!authInChannel(channelId, uId)) {
+    const dataStore: any = getData();
 
     for (const channel of dataStore.channels) {
       if (channel.channelId === channelId) {
@@ -102,32 +103,32 @@ function channelInviteV1(authUserId, channelId, uId) {
 }
 
 function channelJoinV1(authUserId, channelId) {
-  /*
-		Description:
-			channelJoinV1 helps user join a channel
+/*
+Description:
+channelJoinV1 helps user join a channel
 
-		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
-			channelId   integer type   -- Input integer supplied by user
+Arguments:
+authUserId  integer type   -- Input integer supplied by user
+channelId   integer type   -- Input integer supplied by user
 
-		Return Value:
-			object: returns empty object on success
-			object: {error: 'error'}
-	*/
+Return Value:
+object: returns empty object on success
+object: {error: 'error'}
+*/
 
   if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
     return ERROR;
   }
 
-  const channelDetails = checkIfMember(authUserId, channelId);
+  const channelDetails: any = checkIfMember(authUserId, channelId);
 
   if (Object.keys(channelDetails).length !== 0) {
     return ERROR;
   }
 
-  const data = getData();
+  const data: any = getData();
 
-  let chosenChannel = {};
+  let chosenChannel: any = {};
 
   for (const channel of data.channels) {
     if (channelId === channel.channelId) {
@@ -141,7 +142,7 @@ function channelJoinV1(authUserId, channelId) {
     }
   }
 
-  let chosenUser = {};
+  let chosenUser: any = {};
 
   for (const user of data.users) {
     if (authUserId === user.authUserId) {
@@ -157,7 +158,7 @@ function channelJoinV1(authUserId, channelId) {
 
   chosenChannel.allMembers.push({
     uId: authUserId,
-	 	email: chosenUser.email,
+    email: chosenUser.email,
     nameFirst: chosenUser.nameFirst,
     nameLast: chosenUser.nameLast,
     handleStr: chosenUser.handleStr
@@ -166,25 +167,25 @@ function channelJoinV1(authUserId, channelId) {
   return {};
 }
 
-function channelDetailsV1(authUserId, channelId) {
-  /*
-		Description:
-			channelDetailsV1 provide basic details about the channel
+function channelDetailsV1(token: string, channelId: number) {
+/*
+Description:
+channelDetailsV1 provide basic details about the channel
 
-		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
-			channelId   integer type   -- Input integer supplied by user
+Arguments:
+token string type   -- Input integer supplied by user
+channelId integer type   -- Input integer supplied by user
 
-		Return Value:
-			object: { name, isPublic, ownerMembers, allMembers }
-			object: {error: 'error'}
-	*/
+Return Value:
+object: { name, isPublic, ownerMembers, allMembers }
+object: {error: 'error'}
+*/
 
-  if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
+  if (!(checkToken(token)) || !(checkChannelId(channelId))) {
     return ERROR;
   }
 
-  const channelDetails = checkIfMember(authUserId, channelId);
+  const channelDetails: any = checkIfMember(token, channelId);
 
   if (Object.keys(channelDetails).length === 0) {
     return ERROR;
@@ -204,3 +205,4 @@ export {
   channelJoinV1,
   channelDetailsV1
 };
+
