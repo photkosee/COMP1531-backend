@@ -6,6 +6,7 @@ import { getData, setData } from './dataStore';
 import { echo } from './echo';
 import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1 } from './auth';
+import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 
 // Set up web app, use JSON
 const app = express();
@@ -62,6 +63,36 @@ app.post('/auth/login/v2', (req, res, next) => {
   try {
     const { email, password } = req.body;
     const returnData = authLoginV1(email, password);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channels/create/v2', (req, res, next) => {
+  try {
+    const { token, name, isPublic } = req.body;
+    const returnData = channelsCreateV1(token, name, isPublic);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/channels/list/v2', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const returnData = channelsListV1(token);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/channels/listall/v2', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const returnData = channelsListallV1(token);
     return res.json(returnData);
   } catch (err) {
     next(err);

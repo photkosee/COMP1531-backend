@@ -23,22 +23,22 @@ describe('Testing with unexisting token - channels/list/v2', () => {
     const user = JSON.parse(res.getBody() as string);
     let token = user.token;
 
-    let res2 = request('POST', `${url}:${port}/channels/create/v2`, { 
+    res = request('POST', `${url}:${port}/channels/create/v2`, { 
       json: {
         token: token,
         name: 'DOTA2',
         isPublic: false
       }
     });
-    const channel = JSON.parse(res2.getBody() as string);
+    const channel = JSON.parse(res.getBody() as string);
     let channelId = channel.channelId;
 
-    let res3 = request('GET', `${url}:${port}/channels/list/v2`, { 
+    res = request('GET', `${url}:${port}/channels/list/v2`, { 
       qs: {
-        token: 12345
+        token: -678
       }
     });
-    const channelList = JSON.parse(res3.getBody() as string);
+    const channelList = JSON.parse(res.getBody() as string);
     expect(channelList).toStrictEqual(ERROR);
   })
 });
@@ -56,12 +56,12 @@ describe('Testing listing no channels - channels/list/v2', () => {
     const user = JSON.parse(res.getBody() as string);
     let token = user.token;
 
-    let res3 = request('GET', `${url}:${port}/channels/list/v2`, { 
+    res = request('GET', `${url}:${port}/channels/list/v2`, { 
       qs: {
         token: token
       }
     });
-    const channelList = JSON.parse(res3.getBody() as string);
+    const channelList = JSON.parse(res.getBody() as string);
     expect(channelList).toStrictEqual({ channels: [] });
   })
 });
@@ -86,29 +86,33 @@ describe('Testing listing channels - channels/list/v2', () => {
         isPublic: false
       }
     });
-    const channel = JSON.parse(res2.getBody() as string);
-    let channelId = channel.channelId;
+    const channel = JSON.parse(res.getBody() as string);
 
-    let res4 = request('POST', `${url}:${port}/channels/create/v2`, { 
+    res = request('POST', `${url}:${port}/channels/create/v2`, { 
       json: {
         token: token,
         name: 'LoL',
         isPublic: true
       }
     });
-    const channel2 = JSON.parse(res4.getBody() as string);
-    let channelId2 = channel.channelId;
+    const channel2 = JSON.parse(res.getBody() as string);
 
-
-    let res3 = request('GET', `${url}:${port}/channels/list/v2`, { 
+    res = request('GET', `${url}:${port}/channels/list/v2`, { 
       qs: {
         token: token
       }
     });
-    const channelList = JSON.parse(res3.getBody() as string);
-    expect(channelList).toStrictEqual({ channels: [ {channelId: channelId, 
-                                        name: channel.name}, 
-                                        {channelId: channelId2, 
-                                          name: channel2.name} ] });
+    const channelList = JSON.parse(res.getBody() as string);
+    expect(channelList).toStrictEqual({
+      channels: [{
+        channelId: 1,
+        name: 'DOTA2'
+      },
+      {
+        channelId: 2,
+        name: 'LoL'
+      }]
+    });
+
   })
 });
