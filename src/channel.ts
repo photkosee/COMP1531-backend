@@ -119,12 +119,12 @@ object: {error: 'error'}
   const userId: number = tokenToUserId(token);
 
   if (!checkAuthUserId(userId)) {
-    return { error: 'user'}
+    return { error: 'channelId'}
   } 
   
-  // if (!checkChannelId(channelId)) {
-    return { hi: channelId} ;
-  // } 
+  if (!checkChannelId(channelId)) {
+    return { hi: 'channelId'} ;
+  } 
   if (!checkToken(token)) {
     return { error: 'token' }
   } 

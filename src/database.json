@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "token": "3092581105",
+      "token": "3391465688",
       "authUserId": 1,
       "nameFirst": "One",
       "nameLast": "Number",
@@ -12,9 +12,10 @@
       "sessionList": [
         "one1"
       ],
-      "isActive": true    },
+      "isActive": true
+    },
     {
-      "token": "4352846987",
+      "token": "2082335517",
       "authUserId": 2,
       "nameFirst": "Two",
       "nameLast": "Number",
@@ -28,30 +29,5 @@
       "isActive": true
     }
   ],
-  "channels": [
-    {
-      "channelId": 1,      "name": "FO9A_CRUNCHIE",
-
-      "ownerMembers": [
-        {
-          "uId": 1,
-          "email": "mal1@email.com",
-          "nameFirst": "One",
-          "nameLast": "Number",
-          "handleStr": "onenumber"
-        }
-      ],
-      "allMembers": [
-        {
-          "uId": 1,
-          "email": "mal1@email.com",
-          "nameFirst": "One",
-          "nameLast": "Number",
-          "handleStr": "onenumber"
-        }
-      ],
-      "isPublic": true,
-      "messages": []
-    }
-  ]
+  "channels": []
 }

@@ -70,7 +70,7 @@ boolean: 'true' if valid, 'false' if invalid or non-existent
   return 'generl';
 }
 
-function checkIfMember(userId: number, channelId: number) {
+function checkIfMember(authUserId: number, channelId: number) {
 /*
 Description:
 checkIfMember checks if given user is a member of the
@@ -96,10 +96,12 @@ returns empty object if user is not a member
     }
   }
 
-  for (const element of chosenChannel.allMembers) {
-    if (userId === element.uId) {
-      return chosenChannel;
-    }
+  if (chosenChannel === {}) {
+    return {};
+  }
+  
+  if (chosenChannel.allMembers.includes(authUserId)) {
+    return chosenChannel;
   }
 
   return {};
