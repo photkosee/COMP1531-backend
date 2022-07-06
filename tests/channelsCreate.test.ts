@@ -5,13 +5,13 @@ const OK = 200;
 const port = config.port;
 const url = config.url;
 const ERROR = { error: 'error' };
-  
+
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Testing with wrong typeof parameter - channels/create/v2', () => {  
-  test('Invalid inputs', () => { 
+describe('Testing with wrong typeof parameter - channels/create/v2', () => {
+  test('Invalid inputs', () => {
     let res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
         email: 'mal1@email.com',
@@ -21,9 +21,9 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
-    let token = user.token;
+    const token = user.token;
 
-    res = request('POST', `${url}:${port}/channels/create/v2`, { 
+    res = request('POST', `${url}:${port}/channels/create/v2`, {
       json: {
         token: -5,
         name: 'DOTA2',
@@ -33,7 +33,7 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
     const channel = JSON.parse(res.getBody() as string);
     expect(channel).toStrictEqual(ERROR);
 
-    res = request('POST', `${url}:${port}/channels/create/v2`, { 
+    res = request('POST', `${url}:${port}/channels/create/v2`, {
       json: {
         token: token,
         name: 'DOTA2',
@@ -42,10 +42,9 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
     });
     const channel3 = JSON.parse(res.getBody() as string);
     expect(channel3).toStrictEqual(ERROR);
-
   });
 
-  describe('Testing for name length - channels/create/v2', () => {   
+  describe('Testing for name length - channels/create/v2', () => {
     test('Invalid inputs', () => {
       let res = request('POST', `${url}:${port}/auth/register/v2`, {
         json: {
@@ -56,9 +55,9 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
         }
       });
       const user = JSON.parse(res.getBody() as string);
-      let token = user.token;
+      const token = user.token;
 
-      res = request('POST', `${url}:${port}/channels/create/v2`, { 
+      res = request('POST', `${url}:${port}/channels/create/v2`, {
         json: {
           token: token,
           name: '',
@@ -68,7 +67,7 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
       const channel = JSON.parse(res.getBody() as string);
       expect(channel).toStrictEqual(ERROR);
 
-      res = request('POST', `${url}:${port}/channels/create/v2`, { 
+      res = request('POST', `${url}:${port}/channels/create/v2`, {
         json: {
           token: token,
           name: '1234567891011121314151617',
@@ -77,8 +76,8 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
       });
       const channel2 = JSON.parse(res.getBody() as string);
       expect(channel2).toStrictEqual(ERROR);
-    })
-  })
+    });
+  });
 });
 
 describe('Succesfully creating channels - channels/create/v2', () => {
@@ -92,9 +91,9 @@ describe('Succesfully creating channels - channels/create/v2', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
-    let token = user.token;
+    const token = user.token;
 
-    res = request('POST', `${url}:${port}/channels/create/v2`, { 
+    res = request('POST', `${url}:${port}/channels/create/v2`, {
       json: {
         token: token,
         name: 'DOTA2',
@@ -102,6 +101,6 @@ describe('Succesfully creating channels - channels/create/v2', () => {
       }
     });
     const channel = JSON.parse(res.getBody() as string);
-    expect(channel).toStrictEqual({ channelId: 1});
-  })
+    expect(channel).toStrictEqual({ channelId: 1 });
+  });
 });
