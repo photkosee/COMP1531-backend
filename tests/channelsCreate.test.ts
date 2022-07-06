@@ -1,6 +1,7 @@
 import request from 'sync-request';
 import config from '../src/config.json';
 
+const OK = 200;
 const port = config.port;
 const url = config.url;
 const ERROR = { error: 'error' };
@@ -20,6 +21,7 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     let token = user.token;
 
     res = request('POST', `${url}:${port}/channels/create/v2`, { 
@@ -30,6 +32,7 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
       }
     });
     const channel = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     expect(channel).toStrictEqual(ERROR);
 
     res = request('POST', `${url}:${port}/channels/create/v2`, { 
@@ -40,6 +43,7 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
       }
     });
     const channel3 = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     expect(channel3).toStrictEqual(ERROR);
 
   });
@@ -55,6 +59,7 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
         }
       });
       const user = JSON.parse(res.getBody() as string);
+      expect(res.statusCode).toBe(OK);
       let token = user.token;
 
       res = request('POST', `${url}:${port}/channels/create/v2`, { 
@@ -65,6 +70,7 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
         }
       });
       const channel = JSON.parse(res.getBody() as string);
+      expect(res.statusCode).toBe(OK);
       expect(channel).toStrictEqual(ERROR);
 
       res = request('POST', `${url}:${port}/channels/create/v2`, { 
@@ -75,6 +81,7 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
         }
       });
       const channel2 = JSON.parse(res.getBody() as string);
+      expect(res.statusCode).toBe(OK);
       expect(channel2).toStrictEqual(ERROR);
     })
   })
@@ -91,6 +98,7 @@ describe('Succesfully creating channels - channels/create/v2', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     let token = user.token;
 
     res = request('POST', `${url}:${port}/channels/create/v2`, { 
@@ -101,6 +109,7 @@ describe('Succesfully creating channels - channels/create/v2', () => {
       }
     });
     const channel = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     expect(channel).toStrictEqual({ channelId: 1});
   })
 });
