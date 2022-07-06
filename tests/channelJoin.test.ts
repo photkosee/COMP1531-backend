@@ -11,7 +11,7 @@ const USER = 1;
 
 interface authRegisterObj {
     token: string,
-    authUserId: umber
+    authUserId: number
 }
 
 interface channelsCreateObj {
@@ -32,7 +32,7 @@ describe('Valid return', () => {
     ];
 
     for (const users of userInput) {
-      const res = request('POST', `${url}:${port}/auth/register/v2`, {
+      let res = request('POST', `${url}:${port}/auth/register/v2`, {
         json: {
           email: users.email,
           password: users.password,
@@ -45,7 +45,7 @@ describe('Valid return', () => {
       userData.push({ token: user.token, authUserId: user.authUserId });
     }
 
-    res = request('POST', `${url}:${port}/channels/create/v2`, {
+    let res = request('POST', `${url}:${port}/channels/create/v2`, {
       json: {
         token: userData[GLOBAL].token,
         name: 'FO9A_CRUNCHIE',
@@ -56,6 +56,190 @@ describe('Valid return', () => {
     const channelId = channel.channelId;
     // ======================== SET UP END ===========================
 
+    let res1 = request(
+      'POST', `${url}:${port}/channel/join/v2`, {
+        json: {
+          token: userData[USER].token,
+          channelId: channelId
+        }
+      }
+    );
+    const channelJoin = JSON.parse(res1.getBody() as string);
+    expect(res1.statusCode).toBe(OK);
+    expect(channelJoin).toStrictEqual({});
+  });
+
+  test('Add global owner to a private channel', () => {
+    // ======================== SET UP START ===========================
+    const userData: authRegisterObj[] = [];
+    const userInput = [
+      { email: 'global@email.com', password: '1234567', nameFirst: 'global', nameLast: 'Last' },
+      { email: 'user@email.com', password: '1234567', nameFirst: 'user', nameLast: 'Last' },
+    ];
+
+    for (const users of userInput) {
+      let res = request('POST', `${url}:${port}/auth/register/v2`, {
+        json: {
+          email: users.email,
+          password: users.password,
+          nameFirst: users.nameFirst,
+          nameLast: users.nameLast
+        }
+      });
+      const user: authRegisterObj = JSON.parse(res.getBody() as string);
+      expect(res.statusCode).toBe(OK);
+      userData.push({ token: user.token, authUserId: user.authUserId });
+    }
+
+    let res = request('POST', `${url}:${port}/channels/create/v2`, {
+      json: {
+        token: userData[USER].token,
+        name: 'FO9A_CRUNCHIE',
+        isPublic: false
+      }
+    });
+    const channel: channelsCreateObj = JSON.parse(res.getBody() as string);
+    const channelId = channel.channelId;
+    // ======================== SET UP END ===========================
+    res = request('POST', `${url}:${port}/channel/join/v2`, {
+      json: {
+        token: userData[GLOBAL].token,
+        channelId: channelId
+      }
+    });
+    const channelJoin = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(channelJoin).toStrictEqual({});
+  });
+});
+
+describe('Error returns', () => {
+  test('Invalid/non-existent token and channelId', () => {
+    // ======================== SET UP START ===========================
+    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'global@email.com',
+        password: '1234567',
+        nameFirst: 'global',
+        nameLast: 'Last'
+      }
+    });
+    const user: authRegisterObj = JSON.parse(res.getBody() as string);
+    const token: string =  user.token;
+    const authUserId: number = user.authUserId;
+    
+    res = request('POST', `${url}:${port}/channels/create/v2`, {
+      json: {
+        token: token,
+        name: 'FO9A_CRUNCHIE',
+        isPublic: true
+      }
+    });
+    const channel: channelsCreateObj = JSON.parse(res.getBody() as string);
+    const channelId: number = channel.channelId;
+    // ======================== SET UP END ===========================
+    const dummyChannelId: number = channelId + 1;
+    const dummyToken: string = token + 'abc';
+
+    const invalidPassData: any = [
+      { token: dummyToken, channelId: channelId },
+      { token: token, channelId: dummyChannelId },
+      { token: 'abc', channelId: channelId },
+      { token: token, channelId: 'abc' },
+    ];
+
+    for (let pos = 0; pos < invalidPassData.length; pos++) {
+      res = request(
+        'POST', `${url}:${port}/channel/join/v2`, {
+          json: {
+            token: invalidPassData[pos].token,
+            channelId: invalidPassData[pos].channelId
+          }
+        }
+      );
+      const data = JSON.parse(res.getBody() as string);
+      expect(res.statusCode).toBe(OK);
+      expect(data).toStrictEqual({ error: 'error' });
+    }
+  });
+
+  test('User is already a member', () => {
+    // ======================== SET UP START ===========================
+    const userData: authRegisterObj[] = [];
+    const userInput = [
+      { email: 'global@email.com', password: '1234567', nameFirst: 'global', nameLast: 'Last' },
+      { email: 'user@email.com', password: '1234567', nameFirst: 'user', nameLast: 'Last' },
+    ];
+
+    for (const users of userInput) {
+      let res = request('POST', `${url}:${port}/auth/register/v2`, {
+        json: {
+          email: users.email,
+          password: users.password,
+          nameFirst: users.nameFirst,
+          nameLast: users.nameLast
+        }
+      });
+      const user: authRegisterObj = JSON.parse(res.getBody() as string);
+      expect(res.statusCode).toBe(OK);
+      userData.push({ token: user.token, authUserId: user.authUserId });
+    }
+
+    let res = request('POST', `${url}:${port}/channels/create/v2`, {
+      json: {
+        token: userData[GLOBAL].token,
+        name: 'FO9A_CRUNCHIE',
+        isPublic: true
+      }
+    });
+    const channel: channelsCreateObj = JSON.parse(res.getBody() as string);
+    const channelId = channel.channelId;
+    // ======================== SET UP END ===========================
+    res = request(
+      'POST', `${url}:${port}/channel/join/v2`, {
+        json: {
+          token: userData[GLOBAL].token,
+          channelId: channelId
+        }
+      }
+    );
+    const channelJoin = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(channelJoin).toStrictEqual(ERROR);
+  });
+
+  test('Adding a non-global owner to a private channel', () => {
+    // ======================== SET UP START ===========================
+    const userData: authRegisterObj[] = [];
+    const userInput = [
+      { email: 'global@email.com', password: '1234567', nameFirst: 'global', nameLast: 'Last' },
+      { email: 'user@email.com', password: '1234567', nameFirst: 'user', nameLast: 'Last' },
+    ];
+
+    for (const users of userInput) {
+      let res = request('POST', `${url}:${port}/auth/register/v2`, {
+        json: {
+          email: users.email,
+          password: users.password,
+          nameFirst: users.nameFirst,
+          nameLast: users.nameLast
+        }
+      });
+      const user: authRegisterObj = JSON.parse(res.getBody() as string);
+      expect(res.statusCode).toBe(OK);
+      userData.push({ token: user.token, authUserId: user.authUserId });
+    }
+
+    let res = request('POST', `${url}:${port}/channels/create/v2`, {
+      json: {
+        token: userData[GLOBAL].token,
+        name: 'FO9A_CRUNCHIE',
+        isPublic: false
+      }
+    });
+    const channel: channelsCreateObj = JSON.parse(res.getBody() as string);
+    const channelId = channel.channelId;
+    // ======================== SET UP END ===========================
     res = request(
       'POST', `${url}:${port}/channel/join/v2`, {
         json: {
@@ -64,26 +248,8 @@ describe('Valid return', () => {
         }
       }
     );
-    const channelJoin: any = JSON.parse(res.getBody() as string);
+    const channelJoin = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
-    expect(channelJoin).toStrictEqual({});
-  });
-
-  test('Add global owner to a private channel', () => {
-
-  });
-});
-
-describe('Error returns', () => {
-  test('Invalid/non-existent token and channelId', () => {
-
-  });
-
-  test('User is already a member', () => {
-
-  });
-
-  test('Adding a non-global owner to a private channel', () => {
-
+    expect(channelJoin).toStrictEqual(ERROR);
   });
 });

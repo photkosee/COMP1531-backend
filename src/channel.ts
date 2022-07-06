@@ -1,113 +1,119 @@
-import { getData, setData } from './dataStore';
+import { getData } from './dataStore';
 import {
   checkAuthUserId,
   checkChannelId,
   checkIfMember,
   authInChannel,
-  getMessages
-} from './channelHelperFunctions.js';
+  getMessages,
+  checkToken,
+  tokenToAuthUserId
+} from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
 
-function channelMessagesV1(authUserId, channelId, start) {
-  /*
-		Description:
-			channelMessagesV1 checks the message history of a given channel
-
-		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
-			channelId   integer type   -- Input integer supplied by user
-			start 		integer type   -- Input integer supplied by user
-
-		Return Value:
-			object: {
-				messages: [messages],
-				start: start,
-				end: end,
-			}
-			object: {error: 'error'}
-	*/
-
-  if (!checkChannelId(channelId) ||
-		!checkAuthUserId(authUserId) ||
-		!authInChannel(channelId, authUserId) ||
-		start > getMessages(channelId).length ||
-		start < 0) {
-    return ERROR;
-  }
-
-  const messagesArray = [];
-  const messages = getMessages(channelId);
-
-  for (let i = 0; i < 50 && (start + i < messages.length); i++) {
-    messagesArray.push(messages[start + i]);
-  }
-
-  let end = -1;
-
-  if (start + 50 < messages.length) {
-    end = start + 50;
-  }
-
-  return {
-    messages: messagesArray,
-    start: start,
-    end: end
-  };
+interface authUserIdObj {
+  authUserId?: number
 }
 
-function channelInviteV1(authUserId, channelId, uId) {
-  /*
-		Description:
-			channelInviteV1 Will invite and add a user into a channel
+// function channelMessagesV1(authUserId, channelId, start) {
+//   /*
+// 		Description:
+// 			channelMessagesV1 checks the message history of a given channel
 
-		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
-			channelId   integer type   -- Input integer supplied by user
-			uId 		integer type   -- Input integer supplied by user
+// 		Arguments:
+// 			authUserId	integer type   -- Input integer supplied by user
+// 			channelId   integer type   -- Input integer supplied by user
+// 			start 		integer type   -- Input integer supplied by user
 
-		Return Value:
-			object: {} when user is added
-			object: {error: 'error'}
-	*/
+// 		Return Value:
+// 			object: {
+// 				messages: [messages],
+// 				start: start,
+// 				end: end,
+// 			}
+// 			object: {error: 'error'}
+// 	*/
 
-  if (checkAuthUserId(authUserId) &&
-		checkAuthUserId(uId) &&
-		checkChannelId(channelId) &&
-		authInChannel(channelId, authUserId) &&
-		!authInChannel(channelId, uId)) {
-    const dataStore = getData();
+//   if (!checkChannelId(channelId) ||
+// 		!checkAuthUserId(authUserId) ||
+// 		!authInChannel(channelId, authUserId) ||
+// 		start > getMessages(channelId).length ||
+// 		start < 0) {
+//     return ERROR;
+//   }
 
-    for (const channel of dataStore.channels) {
-      if (channel.channelId === channelId) {
-        for (const element of dataStore.users) {
-          if (uId === element.authUserId) {
-            channel.allMembers.push({
-              uId: uId,
-              email: element.email,
-              nameFirst: element.nameFirst,
-              nameLast: element.nameLast,
-              handleStr: element.handleStr
-            });
+//   const messagesArray = [];
+//   const messages = getMessages(channelId);
 
-            setData(dataStore);
-            return {};
-          }
-        }
-      }
-    }
-  } else {
-    return ERROR;
-  }
-}
+//   for (let i = 0; i < 50 && (start + i < messages.length); i++) {
+//     messagesArray.push(messages[start + i]);
+//   }
 
-function channelJoinV1(authUserId, channelId) {
+//   let end = -1;
+
+//   if (start + 50 < messages.length) {
+//     end = start + 50;
+//   }
+
+//   return {
+//     messages: messagesArray,
+//     start: start,
+//     end: end
+//   };
+// }
+
+// function channelInviteV1(authUserId, channelId, uId) {
+//   /*
+// 		Description:
+// 			channelInviteV1 Will invite and add a user into a channel
+
+// 		Arguments:
+// 			authUserId	integer type   -- Input integer supplied by user
+// 			channelId   integer type   -- Input integer supplied by user
+// 			uId 		integer type   -- Input integer supplied by user
+
+// 		Return Value:
+// 			object: {} when user is added
+// 			object: {error: 'error'}
+// 	*/
+
+//   if (checkAuthUserId(authUserId) &&
+// 		checkAuthUserId(uId) &&
+// 		checkChannelId(channelId) &&
+// 		authInChannel(channelId, authUserId) &&
+// 		!authInChannel(channelId, uId)) {
+//     const dataStore = getData();
+
+//     for (const channel of dataStore.channels) {
+//       if (channel.channelId === channelId) {
+//         for (const element of dataStore.users) {
+//           if (uId === element.authUserId) {
+//             channel.allMembers.push({
+//               uId: uId,
+//               email: element.email,
+//               nameFirst: element.nameFirst,
+//               nameLast: element.nameLast,
+//               handleStr: element.handleStr
+//             });
+
+//             setData(dataStore);
+//             return {};
+//           }
+//         }
+//       }
+//     }
+//   } else {
+//     return ERROR;
+//   }
+// }
+
+function channelJoinV1(token: string, channelId: number) {
   /*
 		Description:
 			channelJoinV1 helps user join a channel
 
 		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
+			token	      string type   -- Input integer supplied by user
 			channelId   integer type   -- Input integer supplied by user
 
 		Return Value:
@@ -115,19 +121,22 @@ function channelJoinV1(authUserId, channelId) {
 			object: {error: 'error'}
 	*/
 
-  if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
+  if (!(checkToken(token)) || !(checkChannelId(channelId))) {
     return ERROR;
   }
 
-  const channelDetails = checkIfMember(authUserId, channelId);
+  const authUserIdRet: authUserIdObj = tokenToAuthUserId(token);
+  const authUserId: number = authUserIdRet.authUserId;
+
+  const channelDetails: any = checkIfMember(authUserId, channelId);
 
   if (Object.keys(channelDetails).length !== 0) {
     return ERROR;
   }
 
-  const data = getData();
+  const data: any = getData();
 
-  let chosenChannel = {};
+  let chosenChannel: any = {};
 
   for (const channel of data.channels) {
     if (channelId === channel.channelId) {
@@ -141,7 +150,7 @@ function channelJoinV1(authUserId, channelId) {
     }
   }
 
-  let chosenUser = {};
+  let chosenUser: any = {};
 
   for (const user of data.users) {
     if (authUserId === user.authUserId) {
@@ -166,41 +175,41 @@ function channelJoinV1(authUserId, channelId) {
   return {};
 }
 
-function channelDetailsV1(authUserId, channelId) {
-  /*
-		Description:
-			channelDetailsV1 provide basic details about the channel
+// function channelDetailsV1(authUserId, channelId) {
+//   /*
+// 		Description:
+// 			channelDetailsV1 provide basic details about the channel
 
-		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
-			channelId   integer type   -- Input integer supplied by user
+// 		Arguments:
+// 			authUserId	integer type   -- Input integer supplied by user
+// 			channelId   integer type   -- Input integer supplied by user
 
-		Return Value:
-			object: { name, isPublic, ownerMembers, allMembers }
-			object: {error: 'error'}
-	*/
+// 		Return Value:
+// 			object: { name, isPublic, ownerMembers, allMembers }
+// 			object: {error: 'error'}
+// 	*/
 
-  if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
-    return ERROR;
-  }
+//   if (!(checkAuthUserId(authUserId)) || !(checkChannelId(channelId))) {
+//     return ERROR;
+//   }
 
-  const channelDetails = checkIfMember(authUserId, channelId);
+//   const channelDetails = checkIfMember(authUserId, channelId);
 
-  if (Object.keys(channelDetails).length === 0) {
-    return ERROR;
-  }
+//   if (Object.keys(channelDetails).length === 0) {
+//     return ERROR;
+//   }
 
-  return {
-    name: channelDetails.name,
-    isPublic: channelDetails.isPublic,
-    ownerMembers: channelDetails.ownerMembers,
-    allMembers: channelDetails.allMembers
-  };
-}
+//   return {
+//     name: channelDetails.name,
+//     isPublic: channelDetails.isPublic,
+//     ownerMembers: channelDetails.ownerMembers,
+//     allMembers: channelDetails.allMembers
+//   };
+// }
 
 export {
-  channelMessagesV1,
-  channelInviteV1,
+  // channelMessagesV1,
+  // channelInviteV1,
   channelJoinV1,
-  channelDetailsV1
+  // channelDetailsV1
 };
