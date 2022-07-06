@@ -1,6 +1,7 @@
 import request from 'sync-request';
 import config from '../src/config.json';
 
+const OK = 200;
 const port = config.port;
 const url = config.url;
 const ERROR = { error: 'error' };
@@ -20,6 +21,7 @@ describe('Testing with unexisting token - channels/list/v2', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     let token = user.token;
 
     res = request('POST', `${url}:${port}/channels/create/v2`, { 
@@ -30,6 +32,7 @@ describe('Testing with unexisting token - channels/list/v2', () => {
       }
     });
     const channel = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     let channelId = channel.channelId;
 
     res = request('GET', `${url}:${port}/channels/list/v2`, { 
@@ -38,6 +41,7 @@ describe('Testing with unexisting token - channels/list/v2', () => {
       }
     });
     const channelList = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     expect(channelList).toStrictEqual(ERROR);
   })
 });
@@ -53,6 +57,7 @@ describe('Testing listing no channels - channels/list/v2', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     let token = user.token;
 
     res = request('GET', `${url}:${port}/channels/list/v2`, { 
@@ -61,6 +66,7 @@ describe('Testing listing no channels - channels/list/v2', () => {
       }
     });
     const channelList = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     expect(channelList).toStrictEqual({ channels: [] });
   })
 });
@@ -76,6 +82,7 @@ describe('Testing listing channels - channels/list/v2', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     let token = user.token;
 
     let res2 = request('POST', `${url}:${port}/channels/create/v2`, { 
@@ -86,6 +93,7 @@ describe('Testing listing channels - channels/list/v2', () => {
       }
     });
     const channel = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
 
     res = request('POST', `${url}:${port}/channels/create/v2`, { 
       json: {
@@ -95,6 +103,7 @@ describe('Testing listing channels - channels/list/v2', () => {
       }
     });
     const channel2 = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
 
     res = request('GET', `${url}:${port}/channels/list/v2`, { 
       qs: {
@@ -102,6 +111,7 @@ describe('Testing listing channels - channels/list/v2', () => {
       }
     });
     const channelList = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     expect(channelList).toStrictEqual({
       channels: [{
         channelId: 1,
