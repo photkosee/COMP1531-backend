@@ -6,7 +6,7 @@ import { getData, setData } from './dataStore';
 import { echo } from './echo';
 import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1 } from './auth';
-import { userProfileV1 } from './users'
+import { userProfileV1 } from './users';
 
 // Set up web app, use JSON
 const app = express();
@@ -76,7 +76,7 @@ app.get('/user/profile/v2', (req, res, next) => {
     const uId = +uIdReq;
     const returnData = userProfileV1(token, uId);
     return res.json(returnData);
-  } catch(err) {
+  } catch (err) {
     next(err);
   }
 });

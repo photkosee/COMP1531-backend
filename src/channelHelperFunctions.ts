@@ -1,17 +1,17 @@
 import { getData } from './dataStore';
 
 function checkAuthUserId(authUserId: number) {
-  /*
-		Description:
-			checkAuthUserId checks validity and existence of authId
+/*
+  Description:
+    checkAuthUserId checks validity and existence of authId
 
-		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
+  Arguments:
+    authUserId  integer type   -- Input integer supplied by user
 
-		Return Value:
-			boolean: 'true' if valid, 'false' if invalid or non-existent
+  Return Value:
+    boolean:  'true' if valid, 'false' if invalid or non-existent
 
-	*/
+*/
 
   const data: any = getData();
 
@@ -29,17 +29,17 @@ function checkAuthUserId(authUserId: number) {
 }
 
 function checkChannelId(channelId: number) {
-  /*
-		Description:
-			checkChannelId checks validity and existence of channelId
+/*
+  Description:
+    checkChannelId checks validity and existence of channelId
 
-		Arguments:
-			channelId	integer type   -- Input integer supplied by user
+  Arguments:
+    channelId integer type  -- Input integer supplied by user
 
-		Return Value:
-			boolean: 'true' if valid, 'false' if invalid or non-existent
+  Return Value:
+    boolean: 'true' if valid, 'false' if invalid or non-existent
 
-	*/
+*/
 
   const data: any = getData();
 
@@ -57,20 +57,19 @@ function checkChannelId(channelId: number) {
 }
 
 function checkIfMember(authUserId: number, channelId: number) {
-  /*
-		Description:
-			checkIfMember checks if given user is a member of the
-            given channel
+/*
+  Description:
+    checkIfMember checks if given user is a member of the given channel
 
-		Arguments:
-        	authUserId	integer type   -- Input integer supplied by user
-			channelId	integer type   -- Input integer supplied by user
+  Arguments:
+    authUserId  integer type   -- Input integer supplied by user
+    channelId integer type   -- Input integer supplied by user
 
-		Return Value:
-            object: returns details of channel if the user is a member,
-                    returns empty object if user is not a member
+  Return Value:
+    object: returns details of channel if the user is a member,
+            returns empty object if user is not a member
 
-	*/
+*/
 
   const data: any = getData();
 
@@ -84,7 +83,7 @@ function checkIfMember(authUserId: number, channelId: number) {
 
   for (const element of chosenChannel.allMembers) {
     if (authUserId === element.uId) {
-        	return chosenChannel;
+      return chosenChannel;
     }
   }
 
@@ -92,18 +91,18 @@ function checkIfMember(authUserId: number, channelId: number) {
 }
 
 function authInChannel(channelId: number, userId: number) {
-  /*
-		Description:
-			authInChannel checks existence of user in channel
+/*
+  Description:
+    authInChannel checks existence of user in channel
 
-		Arguments:
-			channelId	integer type   -- Input integer supplied by user
-            userId  	integer type   -- Input integer supplied by user
+  Arguments:
+    channelId integer type   -- Input integer supplied by user
+    userId  integer type   -- Input integer supplied by user
 
-		Return Value:
-			boolean: 'true' if user in channel, 'false' if not in channel
+  Return Value:
+    boolean: 'true' if user in channel, 'false' if not in channel
 
-	*/
+*/
 
   const dataStore: any = getData();
 
@@ -121,16 +120,16 @@ function authInChannel(channelId: number, userId: number) {
 }
 
 function getMessages(channelId: number) {
-  /*
-		Description:
-			getMessages returns array of messages of a given channelId
+/*
+  Description:
+    getMessages returns array of messages of a given channelId
 
-		Arguments:
-			channelId	integer type   -- Input integer supplied by user
+  Arguments:
+    channelId integer type  -- Input integer supplied by user
 
-		Return Value:
-			array: messages of a given channelId
-	*/
+  Return Value:
+    array:  messages of a given channelId
+*/
 
   const dataStore: any = getData();
 
@@ -140,28 +139,21 @@ function getMessages(channelId: number) {
     }
   }
 
-  // for (const element of chosenChannel.allMembers) {
-
-  // 	if (authUserId === element.uId) {
-  // 			return chosenChannel;
-  // 	};
-  // };
-
   return {};
 }
 
 function checkToken(token: string) {
-  /*
-		Description:
-			checkToken checks validity and existence of token
+/*
+  Description:
+    checkToken checks validity and existence of token
 
-		Arguments:
-			token	integer string   -- Input integer supplied by user
+  Arguments:
+    token integer string  -- Input integer supplied by user
 
-		Return Value:
-			boolean: 'true' if valid, 'false' if invalid or non-existent
+  Return Value:
+    boolean: 'true' if valid, 'false' if invalid or non-existent
 
-	*/
+*/
 
   const data: any = getData();
 
@@ -179,18 +171,18 @@ function checkToken(token: string) {
 }
 
 function tokenToAuthUserId(token: string) {
-  /*
-		Description:
-			tokenToAuthUserId finds authUserId for corresponding token
+/*
+  Description:
+    tokenToAuthUserId finds authUserId for corresponding token
 
-		Arguments:
-			token	integer string   -- Input integer supplied by user
+  Arguments:
+    token integer string  --  Input integer supplied by user
 
-		Return Value:
-			object: { authUserId: authUserId } on success
-			empty object if failed
+  Return Value:
+    object: { authUserId: authUserId } on success
+    empty object if failed
 
-	*/
+*/
   const data: any = getData();
 
   for (const user of data.users) {
