@@ -87,6 +87,7 @@ app.get('/user/profile/v2', (req, res, next) => {
     const uIdReq = req.query.uId;
     const uId = +uIdReq;
     const returnData = userProfileV1(token, uId);
+    return res.json(returnData);
   } catch (err) {
     next(err);
   }
