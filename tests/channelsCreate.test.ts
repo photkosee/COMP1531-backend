@@ -1,7 +1,6 @@
 import request from 'sync-request';
 import config from '../src/config.json';
 
-const OK = 200;
 const port = config.port;
 const url = config.url;
 const ERROR = { error: 'error' };
