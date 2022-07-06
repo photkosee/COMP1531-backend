@@ -32,7 +32,7 @@ describe('Valid return', () => {
     ];
 
     for (const users of userInput) {
-      let res = request('POST', `${url}:${port}/auth/register/v2`, {
+      const res = request('POST', `${url}:${port}/auth/register/v2`, {
         json: {
           email: users.email,
           password: users.password,
@@ -45,7 +45,7 @@ describe('Valid return', () => {
       userData.push({ token: user.token, authUserId: user.authUserId });
     }
 
-    let res = request('POST', `${url}:${port}/channels/create/v2`, {
+    const res = request('POST', `${url}:${port}/channels/create/v2`, {
       json: {
         token: userData[GLOBAL].token,
         name: 'FO9A_CRUNCHIE',
@@ -56,7 +56,7 @@ describe('Valid return', () => {
     const channelId = channel.channelId;
     // ======================== SET UP END ===========================
 
-    let res1 = request(
+    const res1 = request(
       'POST', `${url}:${port}/channel/join/v2`, {
         json: {
           token: userData[USER].token,
@@ -78,7 +78,7 @@ describe('Valid return', () => {
     ];
 
     for (const users of userInput) {
-      let res = request('POST', `${url}:${port}/auth/register/v2`, {
+      const res = request('POST', `${url}:${port}/auth/register/v2`, {
         json: {
           email: users.email,
           password: users.password,
@@ -125,9 +125,8 @@ describe('Error returns', () => {
       }
     });
     const user: authRegisterObj = JSON.parse(res.getBody() as string);
-    const token: string =  user.token;
-    const authUserId: number = user.authUserId;
-    
+    const token: string = user.token;
+
     res = request('POST', `${url}:${port}/channels/create/v2`, {
       json: {
         token: token,
@@ -172,7 +171,7 @@ describe('Error returns', () => {
     ];
 
     for (const users of userInput) {
-      let res = request('POST', `${url}:${port}/auth/register/v2`, {
+      const res = request('POST', `${url}:${port}/auth/register/v2`, {
         json: {
           email: users.email,
           password: users.password,
@@ -217,7 +216,7 @@ describe('Error returns', () => {
     ];
 
     for (const users of userInput) {
-      let res = request('POST', `${url}:${port}/auth/register/v2`, {
+      const res = request('POST', `${url}:${port}/auth/register/v2`, {
         json: {
           email: users.email,
           password: users.password,
