@@ -41,6 +41,7 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
       }
     });
     const channel3 = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     expect(channel3).toStrictEqual(ERROR);
   });
 
@@ -75,6 +76,7 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
         }
       });
       const channel2 = JSON.parse(res.getBody() as string);
+      expect(res.statusCode).toBe(OK);
       expect(channel2).toStrictEqual(ERROR);
     });
   });
@@ -101,6 +103,7 @@ describe('Succesfully creating channels - channels/create/v2', () => {
       }
     });
     const channel = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
     expect(channel).toStrictEqual({ channelId: 1 });
   });
 });
