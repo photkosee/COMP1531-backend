@@ -6,6 +6,7 @@ import { getData, setData } from './dataStore';
 import { echo } from './echo';
 import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1 } from './auth';
+import { userProfileV1 } from './users'
 
 // Set up web app, use JSON
 const app = express();
@@ -64,6 +65,18 @@ app.post('/auth/login/v2', (req, res, next) => {
     const returnData = authLoginV1(email, password);
     return res.json(returnData);
   } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/user/profile/v2', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const uIdReq = req.query.uId;
+    const uId = +uIdReq;
+    const returnData = userProfileV1(token, uId);
+    return res.json(returnData);
+  } catch(err) {
     next(err);
   }
 });

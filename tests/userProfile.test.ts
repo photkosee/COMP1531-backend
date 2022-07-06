@@ -21,7 +21,7 @@ describe('Return user', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
-    const token = user.tokenl;
+    const token = user.token;
 
     res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
@@ -35,7 +35,7 @@ describe('Return user', () => {
     const userId = authUser.authUserId;
 
     res = request(
-      'GET', `${url}:${port}/user/profile`, {
+      'GET', `${url}:${port}/user/profile/v2`, {
         qs: {
           token: token,
           uId: userId
@@ -94,7 +94,7 @@ describe('Return error', () => {
 
     for (const test of passData) {
       const res = request(
-        'GET', `${url}:${port}/user/profile`, {
+        'GET', `${url}:${port}/user/profile/v2`, {
           qs: {
             token: test.token,
             uId: test.uId

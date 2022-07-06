@@ -1,16 +1,20 @@
-import { getData } from './dataStore.js';
-import { checkAuthUserId } from './channelHelperFunctions.js';
+import { getData } from './dataStore';
+import { checkAuthUserId, checkToken, tokenToAuthUserId } from './channelHelperFunctions';
 
 const ERROR = {error: 'error'};
 
-function userProfileV1(authUserId, uId) {
+interface authUserIdObj {
+    authUserId?: number
+}
+
+function userProfileV1(token: string, uId: number) {
 	/*
 		Description:
 			userProfileV1 returns information about uId's userId,
 			email, first name, last name, and handle
     
 		Arguments:
-			authUserId	integer type   -- Input integer supplied by user
+			token		integer string   -- Input integer supplied by user
       		uId	        integer type   -- Input integer supplied by user
 			
 		Return Value:
@@ -18,20 +22,17 @@ function userProfileV1(authUserId, uId) {
 			object: {error: 'error'}
 	*/
 
-  	const data = getData();
+  	const data: any = getData();
 
-	if (!(checkAuthUserId(authUserId))) {
-		return ERROR;
-	};
+	if (!(checkToken(token)) || !(checkAuthUserId(uId))) {
+	return ERROR;
+	}
 
-	if (!(checkAuthUserId(uId))) {
-		return ERROR;
-	};
+	const authUserIdRet: authUserIdObj = tokenToAuthUserId(token);
+	const authUserId: number = authUserIdRet.authUserId;
 
 	for (const user of data.users) {
-
 		if (user.authUserId === uId) {
-
 			return {
 				user: {
 					uId: user.authUserId, 
@@ -47,9 +48,4 @@ function userProfileV1(authUserId, uId) {
   	return ERROR;
 }
 
-<<<<<<< HEAD
-
 export { userProfileV1 };
-=======
-export { userProfileV1 }
->>>>>>> update-5637e094d875bb87f9537637c1be167b2ea6fb81

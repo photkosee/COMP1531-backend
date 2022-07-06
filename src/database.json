@@ -1,1 +1,1 @@
-{"users":[],"channels":[]}
+{"users":[{"token":"1097039276","authUserId":1,"nameFirst":"Auth","nameLast":"Last","email":"auth@gmail.com","password":"password","handleStr":"authlast","permissionId":1,"isActive":true},{"token":"1167930014","authUserId":2,"nameFirst":"User","nameLast":"Last","email":"user@gmail.com","password":"password","handleStr":"userlast","permissionId":2,"isActive":true}],"channels":[]}
