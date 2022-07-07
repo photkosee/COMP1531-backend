@@ -1,4 +1,44 @@
 {
-  "users": [],
-  "channels": []
+  "users": [
+    {
+      "token": "1042976320",
+      "authUserId": 1,
+      "nameFirst": "One",
+      "nameLast": "Number",
+      "email": "mal1@email.com",
+      "password": "1234567",
+      "handleStr": "onenumber",
+      "permissionId": 1,
+      "sessionList": [
+        "one1"
+      ],
+      "isActive": true
+    }
+  ],
+  "channels": [
+    {
+      "channelId": 1,
+      "name": "DOTA2",
+      "ownerMembers": [
+        {
+          "uId": 1,
+          "email": "mal1@email.com",
+          "nameFirst": "One",
+          "nameLast": "Number",
+          "handleStr": "onenumber"
+        }
+      ],
+      "allMembers": [
+        {
+          "uId": 1,
+          "email": "mal1@email.com",
+          "nameFirst": "One",
+          "nameLast": "Number",
+          "handleStr": "onenumber"
+        }
+      ],
+      "isPublic": true,
+      "messages": []
+    }
+  ]
 }
