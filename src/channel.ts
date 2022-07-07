@@ -226,7 +226,7 @@ function channelMessagesV1(token: string, channelId: number, start: number) {
 
 
 export {
-  // channelMessagesV1,
+  channelMessagesV1,
   channelInviteV1,
   channelJoinV1,
   channelDetailsV1
