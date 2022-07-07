@@ -139,9 +139,9 @@ app.get('/channel/messages/v2', (req, res, next) => {
     const returnData = channelMessagesV1(token, channelId, start);
     return res.json(returnData);
   } catch (err) {
-    next(err); 
+    next(err);
   }
-})
+});
 
 // for logging errors
 app.use(morgan('dev'));
