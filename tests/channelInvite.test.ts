@@ -8,11 +8,9 @@ const ERROR = { error: 'error' };
 
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
-
-
 });
 
-const post = (path, body) => {
+const post = (path: any, body: any) => {
   const res = request(
     'POST',
     `${url}:${port}/${path}`,
@@ -25,8 +23,7 @@ const post = (path, body) => {
   );
   const bodyObj = JSON.parse(String(res.getBody()));
   return bodyObj;
-}
-
+};
 
 test('Tests for successful invite - channel/invite/v2', () => {
   const registrationData = [];
@@ -40,7 +37,7 @@ test('Tests for successful invite - channel/invite/v2', () => {
     { email: 'user7@bar.com', password: '123456', nameFirst: 'first7', nameLast: 'last7' },
     { email: 'user8@bar.com', password: '123456', nameFirst: 'first8', nameLast: 'last8' },
   ];
-  for (const user of registeredUser) {
+  for (const user of reqisteredUser) {
     const bodyObj = post('auth/register/v2', {
       json: {
         email: user.email,
@@ -50,15 +47,15 @@ test('Tests for successful invite - channel/invite/v2', () => {
       }
     });
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
-  };
-  
+  }
+
   const channel1 = post('channel/create/v2', {
     json: {
       token: registrationData[0].token,
       name: 'channel1',
       isPublic: true,
     }
-  })
+  });
 
   const inviteResponse1 = post('channel/invite/v2', {
     json: {
@@ -66,41 +63,44 @@ test('Tests for successful invite - channel/invite/v2', () => {
       channelId: channel1.channelId,
       uId: registrationData[1].authUserId,
     }
-  })
+  });
 
   expect(inviteResponse1).toStrictEqual({});
 
-  const channel1Details = request('GET' `${url}:${port}/channel/details/v2`, {
+  const channel1Details = request('GET', `${url}:${port}/channel/details/v2`, {
     json: {
       token: registrationData[0].token,
       channelId: channel1.channelId,
     }
-  })
+  });
   const user1Profile = request('GET', `${url}:${port}/user/profile/v2`, {
     json: {
       token: registrationData[0].token,
       uId: registrationData[0].authUserId,
     }
-  })
+  });
   const user2Profile = request('GET', `${url}:${port}/user/profile/v2`, {
     json: {
       token: registrationData[1].token,
       uId: registrationData[1].authUserId,
     }
-  })
+  });
   expect(channel1Details.allMembers.length).toStrictEqual(2);
   expect(channel1Details.allMembers).toContainEqual(user1Profile.user);
   expect(channel1Details.allMembers).toContainEqual(user2Profile.user);
 
-  post('channel/join/v2', { 
-      token: registrationData[2].token, 
-      channelId: channel1.channelId});
-  post('channel/join/v2', { 
-    token: registrationData[3].token, 
-    channelId: channel1.channelId});
-  post('channel/join/v2', { 
-    token: registrationData[7].token, 
-    channelId: channel1.channelId});
+  post('channel/join/v2', {
+    token: registrationData[2].token,
+    channelId: channel1.channelId
+  });
+  post('channel/join/v2', {
+    token: registrationData[3].token,
+    channelId: channel1.channelId
+  });
+  post('channel/join/v2', {
+    token: registrationData[7].token,
+    channelId: channel1.channelId
+  });
 
   const channel1Details = request('GET', `${url}:${port}/channel/details/v2`, {
     json: {
@@ -109,7 +109,7 @@ test('Tests for successful invite - channel/invite/v2', () => {
     }
   });
   expect(channel1Details.allMembers.length).toStrictEqual(5);
-  
+
   expect(post('channel/invite/v2', {
     json: {
       token: registrationData[2].token,
@@ -132,15 +132,14 @@ test('Tests for successful invite - channel/invite/v2', () => {
     }
   })).toStrictEqual(ERROR);
 
-  const channel1Details = request('GET' `${url}:${port}/channel/details/v2`, {
+  const channel1Details = request('GET', `${url}:${port}/channel/details/v2`, {
     json: {
       token: registrationData[0].token,
       channelId: channel1.channelId,
     }
   });
   expect(channel1Details.allMembers.length).toStrictEqual(5);
-
-}); 
+});
 
 test('Testing with valid ChannelId and invalid uId', () => {
   const registrationData = [];
@@ -150,7 +149,7 @@ test('Testing with valid ChannelId and invalid uId', () => {
     { email: 'user6@bar.com', password: '123456', nameFirst: 'first6', nameLast: 'last6' },
     { email: 'user8@bar.com', password: '123456', nameFirst: 'first8', nameLast: 'last8' },
   ];
-  for (const user of registeredUser) {
+  for (const user of reqisteredUser) {
     const bodyObj = post('auth/register/v2', {
       json: {
         email: user.email,
@@ -160,7 +159,7 @@ test('Testing with valid ChannelId and invalid uId', () => {
       }
     });
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
-  };
+  }
   const channel1 = post('channel/create/v2', {
     json: {
       token: registrationData[0].token,
@@ -168,8 +167,8 @@ test('Testing with valid ChannelId and invalid uId', () => {
       isPublic: true,
     }
   });
-  post('channel/join/v2', { 
-    token: registrationData[3].token, 
+  post('channel/join/v2', {
+    token: registrationData[3].token,
     channelId: channel1.channelId
   });
 
@@ -220,7 +219,7 @@ test('Testing for invalid channel', () => {
     { email: 'user4@bar.com', password: '123456', nameFirst: 'first4', nameLast: 'last4' },
     { email: 'user6@bar.com', password: '123456', nameFirst: 'first6', nameLast: 'last6' },
   ];
-  for (const user of registeredUser) {
+  for (const user of reqisteredUser) {
     const bodyObj = post('auth/register/v2', {
       json: {
         email: user.email,
@@ -230,7 +229,7 @@ test('Testing for invalid channel', () => {
       }
     });
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
-  };
+  }
 
   expect(post('channel/invite/v2', {
     json: {
@@ -268,7 +267,7 @@ test('Testing for token and uId are same person', () => {
     { email: 'user1@bar.com', password: '123456', nameFirst: 'first1', nameLast: 'last1' },
     { email: 'user2@bar.com', password: '123456', nameFirst: 'first2', nameLast: 'last2' },
   ];
-  for (const user of registeredUser) {
+  for (const user of reqisteredUser) {
     const bodyObj = post('auth/register/v2', {
       json: {
         email: user.email,
@@ -278,7 +277,7 @@ test('Testing for token and uId are same person', () => {
       }
     });
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
-  };
+  }
 
   const channel1 = post('channel/create/v2', {
     json: {
@@ -309,5 +308,4 @@ test('Testing for token and uId are same person', () => {
       uId: 0.1,
     }
   })).toStrictEqual(ERROR);
-  
-})
+});

@@ -118,66 +118,52 @@ function channelDetailsV1(token: string, channelId: number) {
   };
 }
 
-
 function channelInviteV1(token: string, channelId: number, uId: number): object {
-	/*
-	Description:
-		channelInviteV1 Will invite and add a user into a channel
+  /*
+    Description:
+      channelInviteV1 Will invite and add a user into a channel
 
-	Arguments:
-		authUserId	integer type   -- Input integer supplied by user
-		channelId   integer type   -- Input integer supplied by user
-		uId 		integer type   -- Input integer supplied by user			
-	
+    Arguments:
+      authUserId  integer type   -- Input integer supplied by user
+      channelId   integer type   -- Input integer supplied by user
+      uId         integer type   -- Input integer supplied by user
 
-	Return Value:
-		object: {} when user is added
-		object: {error: 'error'}
-	*/
+    Return Value:
+      object: {} when user is added
+      object: {error: 'error'}
+  */
 
-	if (checkAuthUserId(uId) &&
-			checkToken(token) &&
-			checkChannelId(channelId) &&
-			authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
-			!authInChannel(channelId, uId)) {
+  if (checkAuthUserId(uId) &&
+    checkToken(token) &&
+    checkChannelId(channelId) &&
+    authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
+    !authInChannel(channelId, uId)) {
+    const dataStore: any = getData();
 
-		const dataStore: any = getData();
-		
-		for (const channel of dataStore.channels) {
+    for (const channel of dataStore.channels) {
+      if (channel.channelId === channelId) {
+        for (const element of dataStore.users) {
+          if (uId === element.authUserId) {
+            channel.allMembers.push({
+              uId: uId,
+              email: element.email,
+              nameFirst: element.nameFirst,
+              nameLast: element.nameLast,
+              handleStr: element.handleStr
+            });
 
-			if (channel.channelId === channelId) {
-
-				for (const element of dataStore.users) {
-
-					if (uId === element.authUserId) {
-
-						channel.allMembers.push({
-							uId: uId,
-							email: element.email,
-							nameFirst: element.nameFirst,
-							nameLast: element.nameLast,
-							handleStr: element.handleStr
-						});
-
-						setData(dataStore);
-						return {};
-					};
-				};
-			};
-		};
-
-
-
-	} else {
-		return ERROR;
-	}
-
-
+            setData(dataStore);
+            return {};
+          }
+        }
+      }
+    }
+  } else {
+    return ERROR;
+  }
 }
 
-
 export {
-  // channelMessagesV1,
   channelInviteV1,
   channelJoinV1,
   channelDetailsV1
