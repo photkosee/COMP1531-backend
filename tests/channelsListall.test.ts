@@ -12,7 +12,7 @@ beforeEach(() => {
 
 describe('Testing with unexisting token - channels/listall/v2', () => {
   test('Invalid inputs', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    const res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
         email: 'mal1@email.com',
         password: '1234567',
@@ -22,20 +22,18 @@ describe('Testing with unexisting token - channels/listall/v2', () => {
     });
     const user = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
-    let token = user.token;
+    const token = user.token;
 
-    let res2 = request('POST', `${url}:${port}/channels/create/v2`, {
+    const res2 = request('POST', `${url}:${port}/channels/create/v2`, {
       json: {
         token: token,
         name: 'DOTA2',
         isPublic: false
       }
     });
-    const channel = JSON.parse(res2.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    let channelId = channel.channelId;
+    expect(res2.statusCode).toBe(OK);
 
-    let res3 = request('GET', `${url}:${port}/channels/listall/v2`, {
+    const res3 = request('GET', `${url}:${port}/channels/listall/v2`, {
       qs: {
         token: 12345
       }
@@ -43,12 +41,12 @@ describe('Testing with unexisting token - channels/listall/v2', () => {
     const channelList = JSON.parse(res3.getBody() as string);
     expect(res.statusCode).toBe(OK);
     expect(channelList).toStrictEqual(ERROR);
-  })
+  });
 });
 
 describe('Testing listing no channels - channels/listall/v2', () => {
   test('Valid inputs', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    const res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
         email: 'mal1@email.com',
         password: '1234567',
@@ -58,9 +56,9 @@ describe('Testing listing no channels - channels/listall/v2', () => {
     });
     const user = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
-    let token = user.token;
+    const token = user.token;
 
-    let res3 = request('GET', `${url}:${port}/channels/listall/v2`, {
+    const res3 = request('GET', `${url}:${port}/channels/listall/v2`, {
       qs: {
         token: token
       }
@@ -68,7 +66,7 @@ describe('Testing listing no channels - channels/listall/v2', () => {
     const channelList = JSON.parse(res3.getBody() as string);
     expect(res.statusCode).toBe(OK);
     expect(channelList).toStrictEqual({ channels: [] });
-  })
+  });
 });
 
 describe('Testing listing channels - channels/listall/v2', () => {
@@ -83,7 +81,7 @@ describe('Testing listing channels - channels/listall/v2', () => {
     });
     const user = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
-    let token = user.token;
+    const token = user.token;
 
     res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
@@ -95,7 +93,7 @@ describe('Testing listing channels - channels/listall/v2', () => {
     });
     const user2 = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
-    let token2 = user2.token;
+    const token2 = user2.token;
 
     res = request('POST', `${url}:${port}/channels/create/v2`, {
       json: {
@@ -158,5 +156,5 @@ describe('Testing listing channels - channels/listall/v2', () => {
         name: 'HoN'
       }]
     });
-  })
+  });
 });
