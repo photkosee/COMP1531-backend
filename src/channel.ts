@@ -4,7 +4,7 @@ import {
   checkChannelId,
   checkIfMember,
   authInChannel,
-  // getMessages,
+  getMessages,
   checkToken,
   tokenToAuthUserId
 } from './channelHelperFunctions';
@@ -171,6 +171,55 @@ function channelInviteV1(token: string, channelId: number, uId: number): object 
 	} else {
 		return ERROR;
 	}
+
+
+}
+
+function channelMessagesV1(token: string, channelId: number, start: number) {
+/*
+		Description:
+			channelMessagesV1 checks the message history of a given channel
+		
+		Arguments:
+			authUserId	integer type   -- Input integer supplied by user
+			channelId   integer type   -- Input integer supplied by user
+			start 		integer type   -- Input integer supplied by user			
+			
+		Return Value:
+			object: { 
+				messages: [messages],
+				start: start,
+				end: end,
+			}
+			object: {error: 'error'}	
+*/
+
+  if (!checkChannelId(channelId) || 
+    !checkToken(token) ||
+    !authInChannel(channelId, tokenToAuthUserId(token).authUserId) ||
+    start > getMessages(channelId).length ||
+    start < 0) {
+      return ERROR;
+  }
+
+  const messagesArray = [];
+  const messages = getMessages(channelId);
+
+  for (let i = 0; i < 50 && (start + i < messages.length); i++) {
+		messagesArray.push(messages[start + i]);
+	};
+	
+	let end = -1;
+
+	if (start + 50 < messages.length) {
+		end = start + 50;
+	};
+
+	return {
+		messages: messagesArray,
+		start: start,
+		end: end
+	};
 
 
 }
