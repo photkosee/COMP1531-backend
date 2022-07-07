@@ -1,15 +1,19 @@
 import express from 'express';
 import morgan from 'morgan';
+import cors from 'cors';
 import config from './config.json';
 import fs from 'fs';
 import { getData, setData } from './dataStore';
 import { echo } from './echo';
 import { clearV1 } from './other';
-import { authRegisterV1, authLoginV1 } from './auth';
+import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
+import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
+import { channelJoinV1, channelInviteV1 } from './channel';
 
 // Set up web app, use JSON
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: true }));
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
@@ -17,9 +21,9 @@ const databasePath: string = __dirname + '/database.json';
 
 // Express middleware to save data to database.json on every request end
 app.use((req, res, next) => {
-  req.on('end', function () {
+  res.on('finish', function () {
     const newData: any = getData();
-    fs.writeFile(databasePath, JSON.stringify(newData), (error) => {
+    fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
       if (error) {
         console.log(error);
       } else {
@@ -62,6 +66,66 @@ app.post('/auth/login/v2', (req, res, next) => {
   try {
     const { email, password } = req.body;
     const returnData = authLoginV1(email, password);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/auth/logout/v1', (req, res, next) => {
+  try {
+    const { token } = req.body;
+    const returnData = authLogoutV1(token);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channels/create/v2', (req, res, next) => {
+  try {
+    const { token, name, isPublic } = req.body;
+    const returnData = channelsCreateV1(token, name, isPublic);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/channels/list/v2', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const returnData = channelsListV1(token);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/channels/listall/v2', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const returnData = channelsListallV1(token);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/join/v2', (req, res, next) => {
+  try {
+    const { token, channelId } = req.body;
+    const returnData = channelJoinV1(token, channelId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/invite/v2', (req, res, next) => {
+  try {
+    const { token, channelId, uId } = req.body;
+    const returnData = channelInviteV1(token, channelId, uId);
     return res.json(returnData);
   } catch (err) {
     next(err);
