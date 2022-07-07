@@ -21,6 +21,10 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
+<<<<<<< HEAD
+=======
+    expect(res.statusCode).toBe(OK);
+>>>>>>> a9f5e853f3a6355a83a9e6e5820262a839db25d7
     const token = user.token;
 
     res = request('POST', `${url}:${port}/channels/create/v2`, {
@@ -57,6 +61,10 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
         }
       });
       const user = JSON.parse(res.getBody() as string);
+<<<<<<< HEAD
+=======
+      expect(res.statusCode).toBe(OK);
+>>>>>>> a9f5e853f3a6355a83a9e6e5820262a839db25d7
       const token = user.token;
 
       res = request('POST', `${url}:${port}/channels/create/v2`, {
@@ -67,6 +75,10 @@ describe('Testing with wrong typeof parameter - channels/create/v2', () => {
         }
       });
       const channel = JSON.parse(res.getBody() as string);
+<<<<<<< HEAD
+=======
+      expect(res.statusCode).toBe(OK);
+>>>>>>> a9f5e853f3a6355a83a9e6e5820262a839db25d7
       expect(channel).toStrictEqual(ERROR);
 
       res = request('POST', `${url}:${port}/channels/create/v2`, {
@@ -94,6 +106,10 @@ describe('Succesfully creating channels - channels/create/v2', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
+<<<<<<< HEAD
+=======
+    expect(res.statusCode).toBe(OK);
+>>>>>>> a9f5e853f3a6355a83a9e6e5820262a839db25d7
     const token = user.token;
 
     res = request('POST', `${url}:${port}/channels/create/v2`, {
