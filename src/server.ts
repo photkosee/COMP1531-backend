@@ -135,13 +135,13 @@ app.post('/channel/join/v2', (req, res, next) => {
   }
 });
 
-
 app.get('/user/profile/v2', (req, res, next) => {
   try {
     const token = req.query.token as string;
     const uIdReq = req.query.uId;
     const uId = +uIdReq;
     const returnData = userProfileV1(token, uId);
+    return res.json(returnData);
   } catch (err) {
     next(err);
   }
