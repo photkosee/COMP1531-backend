@@ -11,7 +11,6 @@ import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels'
 import { channelJoinV1, channelDetailsV1, channelInviteV1 } from './channel';
 import { userProfileV1 } from './users';
 
-
 // Set up web app, use JSON
 const app = express();
 app.use(express.json());
@@ -124,7 +123,6 @@ app.post('/channel/invite/v2', (req, res, next) => {
   }
 });
 
-
 app.get('/channel/details/v2', (req, res, next) => {
   try {
     const token = req.query.token as string;
@@ -137,9 +135,6 @@ app.get('/channel/details/v2', (req, res, next) => {
   }
 });
 
-
-
-
 app.post('/channel/join/v2', (req, res, next) => {
   try {
     const { token, channelId } = req.body;
@@ -149,7 +144,6 @@ app.post('/channel/join/v2', (req, res, next) => {
     next(err);
   }
 });
-
 
 app.get('/user/profile/v2', (req, res, next) => {
   try {
@@ -162,7 +156,6 @@ app.get('/user/profile/v2', (req, res, next) => {
     next(err);
   }
 });
-
 
 // for logging errors
 app.use(morgan('dev'));

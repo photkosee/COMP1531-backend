@@ -4,7 +4,7 @@ import {
   checkChannelId,
   checkIfMember,
   authInChannel,
-  getMessages,
+  // getMessages,
   checkToken,
   tokenToAuthUserId
 } from './channelHelperFunctions';
@@ -118,7 +118,7 @@ function channelDetailsV1(token: string, channelId: number) {
   };
 }
 
-function channelInviteV1(token, channelId, uId) {
+function channelInviteV1(token: string, channelId: number, uId: number) {
   /*
     Description:
       channelInviteV1 Will invite and add a user into a channel
@@ -132,14 +132,13 @@ function channelInviteV1(token, channelId, uId) {
       object: {} when user is added
       object: {error: 'error'}
   */
-  
+
   if (checkAuthUserId(uId) &&
       checkToken(token) &&
       checkChannelId(channelId) &&
       authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
       !authInChannel(channelId, uId)
   ) {
-
     const dataStore: any = getData();
 
     for (const channel of dataStore.channels) {
@@ -163,9 +162,7 @@ function channelInviteV1(token, channelId, uId) {
   } else {
     return ERROR;
   }
-  
 }
-
 
 export {
   channelInviteV1,
