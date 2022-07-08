@@ -22,7 +22,7 @@ function channelJoinV1(token: string, channelId: number) {
 
   Arguments:
     token       string type   -- Input integer supplied by user
-    channelId   integer type -- Input integer supplied by user
+    channelId   integer type  -- Input integer supplied by user
 
   Return Value:
     object: returns empty object on success
