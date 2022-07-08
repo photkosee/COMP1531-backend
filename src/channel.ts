@@ -118,7 +118,7 @@ function channelDetailsV1(token: string, channelId: number) {
   };
 }
 
-function channelInviteV1(token: string, channelId: number, uId: number): object {
+function channelInviteV1(token, channelId, uId) {
   /*
     Description:
       channelInviteV1 Will invite and add a user into a channel
@@ -132,12 +132,14 @@ function channelInviteV1(token: string, channelId: number, uId: number): object 
       object: {} when user is added
       object: {error: 'error'}
   */
-
+  
   if (checkAuthUserId(uId) &&
-    checkToken(token) &&
-    checkChannelId(channelId) &&
-    authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
-    !authInChannel(channelId, uId)) {
+      checkToken(token) &&
+      checkChannelId(channelId) &&
+      authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
+      !authInChannel(channelId, uId)
+  ) {
+
     const dataStore: any = getData();
 
     for (const channel of dataStore.channels) {
@@ -161,6 +163,7 @@ function channelInviteV1(token: string, channelId: number, uId: number): object 
   } else {
     return ERROR;
   }
+  
 }
 
 
