@@ -1,4 +1,58 @@
 {
-  "users": [],
-  "channels": []
+  "users": [
+    {
+      "token": "4304101020",
+      "authUserId": 1,
+      "nameFirst": "global",
+      "nameLast": "Last",
+      "email": "global@email.com",
+      "password": "1234567",
+      "handleStr": "globallast",
+      "permissionId": 1,
+      "sessionList": [
+        "global1"
+      ],
+      "isActive": true
+    },
+    {
+      "token": "1165630415",
+      "authUserId": 2,
+      "nameFirst": "user",
+      "nameLast": "Last",
+      "email": "user@email.com",
+      "password": "1234567",
+      "handleStr": "userlast",
+      "permissionId": 2,
+      "sessionList": [
+        "user1"
+      ],
+      "isActive": true
+    }
+  ],
+  "channels": [
+    {
+      "channelId": 1,
+      "name": "FO9A_CRUNCHIE",
+      "ownerMembers": [
+        {
+          "uId": 1,
+          "email": "global@email.com",
+          "nameFirst": "global",
+          "nameLast": "Last",
+          "handleStr": "globallast"
+        }
+      ],
+      "allMembers": [
+        {
+          "uId": 1,
+          "email": "global@email.com",
+          "nameFirst": "global",
+          "nameLast": "Last",
+          "handleStr": "globallast"
+        }
+      ],
+      "isPublic": false,
+      "messages": []
+    }
+  ]
 }
