@@ -8,7 +8,9 @@ import { echo } from './echo';
 import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
-import { channelInviteV1, channelJoinV1 } from './channel';
+import { channelJoinV1, channelDetailsV1, channelInviteV1 } from './channel';
+import { userProfileV1 } from './users';
+
 
 // Set up web app, use JSON
 const app = express();
@@ -111,6 +113,7 @@ app.get('/channels/listall/v2', (req, res, next) => {
     next(err);
   }
 });
+
 app.post('/channel/invite/v2', (req, res, next) => {
   try {
     const { token, channelId, uId } = req.body;
@@ -120,10 +123,40 @@ app.post('/channel/invite/v2', (req, res, next) => {
     next(err);
   }
 });
+
+
+app.get('/channel/details/v2', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const channelIdReq = req.query.channelId;
+    const channelId = +channelIdReq;
+    const returnData = channelDetailsV1(token, channelId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+
+
 app.post('/channel/join/v2', (req, res, next) => {
   try {
     const { token, channelId } = req.body;
     const returnData = channelJoinV1(token, channelId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+app.get('/user/profile/v2', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const uIdReq = req.query.uId;
+    const uId = +uIdReq;
+    const returnData = userProfileV1(token, uId);
     return res.json(returnData);
   } catch (err) {
     next(err);
