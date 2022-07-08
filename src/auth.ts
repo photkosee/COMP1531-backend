@@ -36,7 +36,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
 
     Arguments:
       email     string type   -- Input string supplied by user
-      passwrd   string type   -- Input string supplied by user
+      password  string type   -- Input string supplied by user
       nameFirst string type   -- Input string supplied by user
       nameLast  string type   -- Input string supplied by user
 
