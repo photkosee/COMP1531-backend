@@ -24,6 +24,7 @@ const databasePath: string = __dirname + '/database.json';
 app.use((req, res, next) => {
   res.on('finish', function () {
     const newData: any = getData();
+
     fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
       if (error) {
         console.log(error);
@@ -179,8 +180,21 @@ app.listen(PORT, HOST, () => {
   // Loads data from database.json to dataStore on server initialization
   fs.readFile(databasePath, 'utf-8', (error, jsonData) => {
     if (error) {
-      console.log(error);
-      return error;
+      console.log(`Error Initialising Datastore -> ${error.message}`);
+      console.log('Creating new Database file');
+
+      const newData: any = getData();
+
+      fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
+        if (error) {
+          console.log(error);
+          return error;
+        } else {
+          console.log('Succesfully created database.json file');
+        }
+      });
+
+      return {};
     }
 
     try {
