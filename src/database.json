@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "token": "1194190982",
+      "token": "4543914125",
       "authUserId": 1,
       "nameFirst": "Auth",
       "nameLast": "Last",
@@ -15,7 +15,7 @@
       "isActive": true
     },
     {
-      "token": "9051961936",
+      "token": "1373662726",
       "authUserId": 2,
       "nameFirst": "User",
       "nameLast": "Last",

@@ -9,7 +9,8 @@ import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
-import { userProfileV1 } from './users';
+import { userProfileV1, userProfileSetnameV1 } from './user';
+import { usersAllV1 } from './users';
 
 // Set up web app, use JSON
 const app = express();
@@ -163,6 +164,26 @@ app.get('/channel/messages/v2', (req, res, next) => {
     const channelId = +req.query.channelId;
     const start = +req.query.start;
     const returnData = channelMessagesV1(token, channelId, start);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/users/all/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const returnData = usersAllV1(token);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/user/profile/setname/v1', (req, res, next) => {
+  try {
+    const { token, nameFirst, nameLast } = req.body;
+    const returnData = userProfileSetnameV1(token, nameFirst, nameLast);
     return res.json(returnData);
   } catch (err) {
     next(err);
