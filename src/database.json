@@ -1,33 +1,4 @@
 {
-  "users": [
-    {
-      "token": "1194190982",
-      "authUserId": 1,
-      "nameFirst": "Auth",
-      "nameLast": "Last",
-      "email": "auth@gmail.com",
-      "password": "password",
-      "handleStr": "authlast",
-      "permissionId": 1,
-      "sessionList": [
-        "auth1"
-      ],
-      "isActive": true
-    },
-    {
-      "token": "9051961936",
-      "authUserId": 2,
-      "nameFirst": "User",
-      "nameLast": "Last",
-      "email": "user@gmail.com",
-      "password": "password",
-      "handleStr": "userlast",
-      "permissionId": 2,
-      "sessionList": [
-        "user1"
-      ],
-      "isActive": true
-    }
-  ],
+  "users": [],
   "channels": []
 }
