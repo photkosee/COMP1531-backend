@@ -33,13 +33,17 @@ beforeEach(() => {
   }
 });
 
-const validData: any = [
-  { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
-  { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
-  { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
-];
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
 
 test('Test for successful dm creation - dm/create/v1', () => {
+  const validData: any = [
+    { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
+    { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+    { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+  ];
+
   for (let i = 0; i < validData.length; i++) {
     const res = request('POST', `${url}:${port}/dm/create/v1`, {
       json: {
@@ -53,13 +57,13 @@ test('Test for successful dm creation - dm/create/v1', () => {
   }
 });
 
-const invalidUidData: any = [
-  { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId, 4] },
-  { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, 5] },
-  { token: registrationData[2].token, uIds: [] },
-];
-
 test('Test for any uId in uIds does not refer to a valid user - dm/create/v1', () => {
+  const invalidUidData: any = [
+    { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId, 4] },
+    { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, 5] },
+    { token: registrationData[2].token, uIds: [] },
+  ];
+
   for (let i = 0; i < invalidUidData.length; i++) {
     const res = request('POST', `${url}:${port}/dm/create/v1`, {
       json: {
@@ -73,12 +77,12 @@ test('Test for any uId in uIds does not refer to a valid user - dm/create/v1', (
   }
 });
 
-const duplicateUidData: any = [
-  { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId, registrationData[1].authUserId] },
-  { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[2].authUserId] },
-];
-
 test('Test for duplicate uId in uIds - dm/create/v1', () => {
+  const duplicateUidData: any = [
+    { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId, registrationData[1].authUserId] },
+    { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[2].authUserId] },
+  ];
+
   for (let i = 0; i < duplicateUidData.length; i++) {
     const res = request('POST', `${url}:${port}/dm/create/v1`, {
       json: {
@@ -92,13 +96,13 @@ test('Test for duplicate uId in uIds - dm/create/v1', () => {
   }
 });
 
-const creatorInUidData: any = [
-  { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[0].authUserId, registrationData[2].authUserId] },
-  { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[1].authUserId] },
-  { token: registrationData[2].token, uIds: [registrationData[2].authUserId, registrationData[0].authUserId, registrationData[1].authUserId] },
-];
-
 test('Test for creator In Uids Data - dm/create/v1', () => {
+  const creatorInUidData: any = [
+    { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[0].authUserId, registrationData[2].authUserId] },
+    { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[1].authUserId] },
+    { token: registrationData[2].token, uIds: [registrationData[2].authUserId, registrationData[0].authUserId, registrationData[1].authUserId] },
+  ];
+
   for (let i = 0; i < creatorInUidData.length; i++) {
     const res = request('POST', `${url}:${port}/dm/create/v1`, {
       json: {
@@ -112,13 +116,13 @@ test('Test for creator In Uids Data - dm/create/v1', () => {
   }
 });
 
-const invalidTokenData: any = [
-  { token: '', uIds: [registrationData[1].authUserId, registrationData[0].authUserId, registrationData[2].authUserId] },
-  { token: 8265434234, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[1].authUserId] },
-  { token: 1, uIds: [registrationData[2].authUserId, registrationData[0].authUserId, registrationData[1].authUserId] },
-];
-
 test('Test for creator In Uids Data - dm/create/v1', () => {
+  const invalidTokenData: any = [
+    { token: '', uIds: [registrationData[1].authUserId, registrationData[0].authUserId, registrationData[2].authUserId] },
+    { token: 8265434234, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[1].authUserId] },
+    { token: 1, uIds: [registrationData[2].authUserId, registrationData[0].authUserId, registrationData[1].authUserId] },
+  ];
+
   for (let i = 0; i < invalidTokenData.length; i++) {
     const res = request('POST', `${url}:${port}/dm/create/v1`, {
       json: {

@@ -62,6 +62,9 @@ function dmCreateV1(token: string, uIds: number[]) {
     creatorId: newCreatorId,
     messages: []
   });
+
+  setData(data);
+  return { dmId: newDmId };
 }
 
 export {

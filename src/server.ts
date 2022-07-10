@@ -10,6 +10,7 @@ import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
 import { userProfileV1 } from './users';
+import { dmCreateV1 } from './dm';
 
 // Set up web app, use JSON
 const app = express();
@@ -164,6 +165,16 @@ app.get('/channel/messages/v2', (req, res, next) => {
     const channelId = +req.query.channelId;
     const start = +req.query.start;
     const returnData = channelMessagesV1(token, channelId, start);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/dm/create/v1', (req, res, next) => {
+  try {
+    const { token, uIds } = req.body;
+    const returnData = dmCreateV1(token, uIds);
     return res.json(returnData);
   } catch (err) {
     next(err);
