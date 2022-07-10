@@ -1,5 +1,6 @@
 import { getData } from './dataStore';
 import { checkAuthUserId, checkToken } from './channelHelperFunctions';
+import { emailValidator } from './authHelperFunctions';
 
 const ERROR = { error: 'error' };
 
