@@ -10,7 +10,7 @@ import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
 import { userProfileV1 } from './users';
-import { dmCreateV1, dmListV1 } from './dm';
+import { dmCreateV1, dmListV1, dmRemoveV1 } from './dm';
 
 // Set up web app, use JSON
 const app = express();
@@ -185,6 +185,17 @@ app.get('/dm/list/v1', (req, res, next) => {
   try {
     const token = req.query.token as string;
     const returnData = dmListV1(token);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.delete('/dm/remove/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const dmId = parseInt(req.query.dmId as string);
+    const returnData = dmRemoveV1(token, dmId);
     return res.json(returnData);
   } catch (err) {
     next(err);
