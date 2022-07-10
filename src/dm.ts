@@ -16,6 +16,7 @@ function dmCreateV1(token: string, uIds: number[]) {
       object: return {dmId: dmId}
       object: return {error: 'error'}
   */
+
   const data: any = getData();
 
   if (!(checkToken(token))) {
@@ -51,6 +52,12 @@ function dmCreateV1(token: string, uIds: number[]) {
     return ERROR;
   }
 
+  for (const user of data.users) {
+    if (user.authUserId === newCreatorId) {
+      dmName.push(user.handleStr);
+    }
+  }
+
   dmName.sort();
 
   const newNameString = dmName.toString().split(',').join(', ');
@@ -67,6 +74,54 @@ function dmCreateV1(token: string, uIds: number[]) {
   return { dmId: newDmId };
 }
 
+function dmListV1(token: string) {
+  /*
+    Description:
+      dmListV1 function will return list of dms that the caller is part of.
+
+    Arguments:
+      token     string type   -- Input string supplied by user
+
+    Return Value:
+      object: return {dms: [{dmId: dmId, name : name}]}
+      object: return {error: 'error'}
+  */
+
+  const data: any = getData();
+  const dmsList: object[] = [];
+
+  if (!(checkToken(token))) {
+    return ERROR;
+  }
+
+  const authUserId: number = tokenToAuthUserId(token).authUserId;
+
+  for (const dm of data.dms) {
+    if (dm.creatorId === authUserId) {
+      dmsList.push(
+        {
+          dmId: dm.dmId,
+          name: dm.name
+        }
+      );
+    }
+
+    if (dm.uIds.includes(authUserId)) {
+      dmsList.push(
+        {
+          dmId: dm.dmId,
+          name: dm.name
+        }
+      );
+    }
+  }
+
+  return {
+    dms: [...dmsList]
+  };
+}
+
 export {
-  dmCreateV1
+  dmCreateV1,
+  dmListV1
 };

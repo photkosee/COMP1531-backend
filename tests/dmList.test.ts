@@ -12,6 +12,7 @@ const registeredUser: any = [
   { email: 'mridul@gmail.com', password: 'uhunr567T#$%', nameFirst: 'Mridul', nameLast: 'Anand' },
   { email: 'anand@gmail.com', password: 'uhunr56ef7T#$%', nameFirst: 'Anand', nameLast: 'Singh' },
   { email: 'rathor@gmail.com', password: 'uhudfnr567T#$%', nameFirst: 'Mridul', nameLast: 'Rathor' },
+  { email: 'adam@gmail.com', password: 'uhud567T#$%', nameFirst: 'adam', nameLast: 'saund' },
 ];
 
 beforeEach(() => {
@@ -54,9 +55,10 @@ afterAll(() => {
 
 test('Test for success dm list fetch - dm/list/v1', () => {
   const validData = [
-    { token: registrationData[0].token, expected: [{ dmId: 2, name: 'mridulanand, mridulrathor' }, { dmId: 3, name: 'mridulanand, anandsingh' }] },
-    { token: registrationData[1].token, expected: [{ dmId: 1, name: 'anandsingh, mridulrathor' }, { dmId: 3, name: 'mridulanand, anandsingh' }] },
-    { token: registrationData[2].token, expected: [{ dmId: 1, name: 'anandsingh, mridulrathor' }, { dmId: 2, name: 'mridulanand, mridulrathor' }] }
+    { token: registrationData[0].token, expected: [{ dmId: 2, name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: 3, name: 'anandsingh, mridulanand, mridulrathor' }] },
+    { token: registrationData[1].token, expected: [{ dmId: 1, name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: 3, name: 'anandsingh, mridulanand, mridulrathor' }] },
+    { token: registrationData[2].token, expected: [{ dmId: 1, name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: 2, name: 'anandsingh, mridulanand, mridulrathor' }] },
+    { token: registrationData[3].token, expected: [] }
   ];
 
   for (let i = 0; i < validData.length; i++) {
