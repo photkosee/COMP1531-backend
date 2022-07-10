@@ -4,7 +4,7 @@ import {
   checkChannelId,
   checkIfMember,
   authInChannel,
-  // getMessages,
+  getMessages,
   checkToken,
   tokenToAuthUserId
 } from './channelHelperFunctions';
@@ -118,11 +118,7 @@ function channelDetailsV1(token: string, channelId: number) {
   };
 }
 
-<<<<<<< HEAD
 function channelInviteV1(token: string, channelId: number, uId: number) {
-=======
-function channelInviteV1(token: string, channelId: number, uId: number): object {
->>>>>>> cd4b178795cf3052ba7680336e273da84ac766b1
   /*
     Description:
       channelInviteV1 Will invite and add a user into a channel
@@ -138,18 +134,11 @@ function channelInviteV1(token: string, channelId: number, uId: number): object 
   */
 
   if (checkAuthUserId(uId) &&
-<<<<<<< HEAD
       checkToken(token) &&
       checkChannelId(channelId) &&
       authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
       !authInChannel(channelId, uId)
   ) {
-=======
-    checkToken(token) &&
-    checkChannelId(channelId) &&
-    authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
-    !authInChannel(channelId, uId)) {
->>>>>>> cd4b178795cf3052ba7680336e273da84ac766b1
     const dataStore: any = getData();
 
     for (const channel of dataStore.channels) {
@@ -172,12 +161,6 @@ function channelInviteV1(token: string, channelId: number, uId: number): object 
     }
   } else {
     return ERROR;
-<<<<<<< HEAD
-  }
-}
-
-export {
-=======
   }
 }
 
@@ -230,7 +213,6 @@ function channelMessagesV1(token: string, channelId: number, start: number) {
 
 export {
   channelMessagesV1,
->>>>>>> cd4b178795cf3052ba7680336e273da84ac766b1
   channelInviteV1,
   channelJoinV1,
   channelDetailsV1

@@ -8,7 +8,7 @@ import { echo } from './echo';
 import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
-import { channelJoinV1, channelDetailsV1, channelInviteV1, channelInviteV1 } from './channel';
+import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
 import { userProfileV1 } from './users';
 
 // Set up web app, use JSON
