@@ -35,7 +35,6 @@ beforeEach(() => {
 
   const dmData: any = [
     { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
-    { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
     { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
   ];
 
@@ -55,8 +54,8 @@ afterAll(() => {
 
 test('Test for success dm list fetch - dm/list/v1', () => {
   const validData = [
-    { token: registrationData[0].token, expected: [{ dmId: 2, name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: 3, name: 'anandsingh, mridulanand, mridulrathor' }] },
-    { token: registrationData[1].token, expected: [{ dmId: 1, name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: 3, name: 'anandsingh, mridulanand, mridulrathor' }] },
+    { token: registrationData[0].token, expected: [{ dmId: 1, name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: 2, name: 'anandsingh, mridulanand, mridulrathor' }] },
+    { token: registrationData[1].token, expected: [{ dmId: 1, name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: 2, name: 'anandsingh, mridulanand, mridulrathor' }] },
     { token: registrationData[2].token, expected: [{ dmId: 1, name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: 2, name: 'anandsingh, mridulanand, mridulrathor' }] },
     { token: registrationData[3].token, expected: [] }
   ];
