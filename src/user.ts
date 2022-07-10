@@ -101,11 +101,11 @@ export function userProfileSetemailV1(token: string, email: string) {
     return ERROR;
   }
 
-  email = email.trim();
-
   if (typeof (email) !== 'string') {
     return ERROR;
   }
+
+  email = email.trim();
 
   const updatedEmail = email.trim();
 
