@@ -64,15 +64,15 @@ export function userProfileSetnameV1(token: string, nameFirst: string,
     return ERROR;
   }
 
+  nameFirst = nameFirst.trim();
+  nameLast = nameLast.trim();
+
   if (nameFirst.length <= 1 || nameFirst.length >= 50 ||
   nameLast.length <= 1 || nameLast.length >= 50) {
     return ERROR;
   }
 
   const data: any = getData();
-
-  nameFirst = nameFirst.trim();
-  nameLast = nameLast.trim();
 
   for (const user of data.users) {
     if (token === user.token) {
@@ -101,6 +101,8 @@ export function userProfileSetemailV1(token: string, email: string) {
   if (!checkToken(token)) {
     return ERROR;
   }
+
+  email = email.trim();
 
   if (typeof (email) !== 'string') {
     return ERROR;
