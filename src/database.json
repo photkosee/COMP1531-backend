@@ -1,26 +1,26 @@
 {
   "users": [
     {
-      "token": "1194190982",
+      "token": "4304101020",
       "authUserId": 1,
-      "nameFirst": "Auth",
+      "nameFirst": "global",
       "nameLast": "Last",
-      "email": "auth@gmail.com",
-      "password": "password",
-      "handleStr": "authlast",
+      "email": "global@email.com",
+      "password": "1234567",
+      "handleStr": "globallast",
       "permissionId": 1,
       "sessionList": [
-        "auth1"
+        "global1"
       ],
       "isActive": true
     },
     {
-      "token": "9051961936",
+      "token": "1165630415",
       "authUserId": 2,
-      "nameFirst": "User",
+      "nameFirst": "user",
       "nameLast": "Last",
-      "email": "user@gmail.com",
-      "password": "password",
+      "email": "user@email.com",
+      "password": "1234567",
       "handleStr": "userlast",
       "permissionId": 2,
       "sessionList": [
@@ -29,5 +29,30 @@
       "isActive": true
     }
   ],
-  "channels": []
+  "channels": [
+    {
+      "channelId": 1,
+      "name": "FO9A_CRUNCHIE",
+      "ownerMembers": [
+        {
+          "uId": 1,
+          "email": "global@email.com",
+          "nameFirst": "global",
+          "nameLast": "Last",
+          "handleStr": "globallast"
+        }
+      ],
+      "allMembers": [
+        {
+          "uId": 1,
+          "email": "global@email.com",
+          "nameFirst": "global",
+          "nameLast": "Last",
+          "handleStr": "globallast"
+        }
+      ],
+      "isPublic": false,
+      "messages": []
+    }
+  ]
 }
