@@ -219,9 +219,47 @@ function dmDetailsV1(token: string, dmId: number) {
   return ERROR;
 }
 
+function dmLeaveV1(token: string, dmId: number) {
+  /*
+    Description:
+      dmLeaveV1 function will remove the user as a member of the DM.
+
+    Arguments:
+      token     string type   -- Input string supplied by user
+      dmId      number type   -- Input number supplied by user
+
+    Return Value:
+      object: return {}
+      object: return {error: 'error'}
+  */
+
+  const data: any = getData();
+
+  if (!(checkToken(token))) {
+    return ERROR;
+  }
+
+  const authUserId: number = tokenToAuthUserId(token).authUserId;
+
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      const index = dm.uIds.indexOf(authUserId);
+      if (index > -1) {
+        dm.uIds.splice(index, 1);
+        return {};
+      } else if (dm.creatorId === authUserId) {
+        dm.creatorId = -1;
+        return {};
+      }
+    }
+  }
+  return ERROR;
+}
+
 export {
   dmCreateV1,
   dmListV1,
   dmRemoveV1,
-  dmDetailsV1
+  dmDetailsV1,
+  dmLeaveV1
 };
