@@ -118,7 +118,11 @@ function channelDetailsV1(token: string, channelId: number) {
   };
 }
 
+<<<<<<< HEAD
 function channelInviteV1(token: string, channelId: number, uId: number) {
+=======
+function channelInviteV1(token: string, channelId: number, uId: number): object {
+>>>>>>> cd4b178795cf3052ba7680336e273da84ac766b1
   /*
     Description:
       channelInviteV1 Will invite and add a user into a channel
@@ -134,11 +138,18 @@ function channelInviteV1(token: string, channelId: number, uId: number) {
   */
 
   if (checkAuthUserId(uId) &&
+<<<<<<< HEAD
       checkToken(token) &&
       checkChannelId(channelId) &&
       authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
       !authInChannel(channelId, uId)
   ) {
+=======
+    checkToken(token) &&
+    checkChannelId(channelId) &&
+    authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
+    !authInChannel(channelId, uId)) {
+>>>>>>> cd4b178795cf3052ba7680336e273da84ac766b1
     const dataStore: any = getData();
 
     for (const channel of dataStore.channels) {
@@ -161,10 +172,65 @@ function channelInviteV1(token: string, channelId: number, uId: number) {
     }
   } else {
     return ERROR;
+<<<<<<< HEAD
   }
 }
 
 export {
+=======
+  }
+}
+
+function channelMessagesV1(token: string, channelId: number, start: number) {
+  /*
+      Description:
+        channelMessagesV1 checks the message history of a given channel
+
+      Arguments:
+        token       string type   -- Input integer supplied by user
+        channelId   integer type   -- Input integer supplied by user
+        start       integer type   -- Input integer supplied by user
+
+      Return Value:
+        object: {
+          messages: [messages],
+          start: start,
+          end: end,
+        }
+        object: {error: 'error'}
+  */
+
+  if (!checkChannelId(channelId) ||
+    !checkToken(token) ||
+    !authInChannel(channelId, tokenToAuthUserId(token).authUserId) ||
+    start > getMessages(channelId).length ||
+    start < 0) {
+    return ERROR;
+  }
+
+  const messagesArray = [];
+  const messages = getMessages(channelId);
+
+  for (let i = 0; i < 50 && (start + i < messages.length); i++) {
+    messagesArray.push(messages[start + i]);
+  }
+
+  let end = -1;
+
+  if (start + 50 < messages.length) {
+    end = start + 50;
+  }
+
+  return {
+    messages: messagesArray,
+    start: start,
+    end: end
+  };
+}
+
+export {
+  channelMessagesV1,
+>>>>>>> cd4b178795cf3052ba7680336e273da84ac766b1
   channelInviteV1,
   channelJoinV1,
   channelDetailsV1
