@@ -102,15 +102,13 @@ export function userProfileSetemailV1(token: string, email: string) {
     return ERROR;
   }
 
-  email = email.trim();
-
   if (typeof (email) !== 'string') {
     return ERROR;
   }
 
-  const updatedEmail = email.trim();
+  email = email.trim();
 
-  if (emailValidator(updatedEmail) === false) {
+  if (emailValidator(email) === false) {
     return ERROR;
   }
 
@@ -118,7 +116,7 @@ export function userProfileSetemailV1(token: string, email: string) {
 
   for (const user of data.users) {
     if (token !== user.token) {
-      if (updatedEmail === user.email) {
+      if (email === user.email) {
         return ERROR;
       }
     }
@@ -126,7 +124,7 @@ export function userProfileSetemailV1(token: string, email: string) {
 
   for (const user of data.users) {
     if (token === user.token) {
-      user.email = updatedEmail;
+      user.email = email;
     }
   }
   return {};
