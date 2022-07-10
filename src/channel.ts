@@ -124,7 +124,7 @@ function channelInviteV1(token: string, channelId: number, uId: number) {
       channelInviteV1 Will invite and add a user into a channel
 
     Arguments:
-      authUserId  integer type   -- Input integer supplied by user
+      token       string type   -- Input integer supplied by user
       channelId   integer type   -- Input integer supplied by user
       uId         integer type   -- Input integer supplied by user
 
