@@ -39,7 +39,7 @@ describe('Testing with unexisting token - channels/listall/v2', () => {
       }
     });
     const channelList = JSON.parse(res3.getBody() as string);
-    expect(res.statusCode).toBe(OK);
+    expect(res3.statusCode).toBe(OK);
     expect(channelList).toStrictEqual(ERROR);
   });
 });
