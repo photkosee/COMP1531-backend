@@ -8,7 +8,7 @@ import { echo } from './echo';
 import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
-import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
+import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1, channelAddownerV1 } from './channel';
 import { userProfileV1 } from './users';
 
 // Set up web app, use JSON
@@ -139,6 +139,16 @@ app.post('/channel/join/v2', (req, res, next) => {
   try {
     const { token, channelId } = req.body;
     const returnData = channelJoinV1(token, channelId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/addowner/v1', (req, res, next) => {
+  try {
+    const { token, channelId, uId } = req.body;
+    const returnData = channelAddownerV1(token, channelId, uId);
     return res.json(returnData);
   } catch (err) {
     next(err);
