@@ -52,29 +52,31 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-test('Test for success dm remove - dm/remove/v1', () => {
+test('Test for successful dm leave - dm/leave/v1', () => {
   const validData = [
-    { token: registrationData[0].token, dmId: 1, expected: {} },
-    { token: registrationData[2].token, dmId: 2, expected: {} }
+    { token: registrationData[0].token, dmId: 1 },
+    { token: registrationData[2].token, dmId: 1 },
+    { token: registrationData[0].token, dmId: 2 },
+    { token: registrationData[1].token, dmId: 2 }
   ];
 
   for (let i = 0; i < validData.length; i++) {
     const res = request(
-      'DELETE', `${url}:${port}/dm/remove/v1`,
+      'POST', `${url}:${port}/dm/leave/v1`,
       {
-        qs: {
+        json: {
           token: validData[i].token,
-          dmId: validData[i].dmId
+          dmId: validData[i].dmId,
         }
       }
     );
     const bodyObj = JSON.parse(res.body as string);
     expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual(validData[i].expected);
+    expect(bodyObj).toStrictEqual({});
   }
 });
 
-test('Test for invalid dmId - dm/remove/v1', () => {
+test('Test for invalid dmId - dm/leave/v1', () => {
   const invalidDmIdData = [
     { token: registrationData[0].token, dmId: 3 },
     { token: registrationData[2].token, dmId: 4 }
@@ -82,11 +84,11 @@ test('Test for invalid dmId - dm/remove/v1', () => {
 
   for (let i = 0; i < invalidDmIdData.length; i++) {
     const res = request(
-      'DELETE', `${url}:${port}/dm/remove/v1`,
+      'POST', `${url}:${port}/dm/leave/v1`,
       {
-        qs: {
+        json: {
           token: invalidDmIdData[i].token,
-          dmId: invalidDmIdData[i].dmId
+          dmId: invalidDmIdData[i].dmId,
         }
       }
     );
@@ -96,19 +98,19 @@ test('Test for invalid dmId - dm/remove/v1', () => {
   }
 });
 
-test('Test for authorised user is no more in the DM - dm/remove/v1', () => {
-  const invalidAuthUserIdData = [
-    { token: registrationData[2].token, dmId: 1 },
-    { token: registrationData[1].token, dmId: 2 }
+test('Test for user is not a member of the DM - dm/leave/v1', () => {
+  const invalidMemberData = [
+    { token: registrationData[3].token, dmId: 1 },
+    { token: registrationData[3].token, dmId: 2 }
   ];
 
-  for (let i = 0; i < invalidAuthUserIdData.length; i++) {
+  for (let i = 0; i < invalidMemberData.length; i++) {
     const res = request(
-      'DELETE', `${url}:${port}/dm/remove/v1`,
+      'POST', `${url}:${port}/dm/leave/v1`,
       {
-        qs: {
-          token: invalidAuthUserIdData[i].token,
-          dmId: invalidAuthUserIdData[i].dmId
+        json: {
+          token: invalidMemberData[i].token,
+          dmId: invalidMemberData[i].dmId,
         }
       }
     );
@@ -118,7 +120,7 @@ test('Test for authorised user is no more in the DM - dm/remove/v1', () => {
   }
 });
 
-test('Test for invalid Token Data - dm/remove/v1', () => {
+test('Test for invalid Token Data - dm/leave/v1', () => {
   const invalidTokenData = [
     { token: '', dmId: 1 },
     { token: 1, dmId: 2 }
@@ -126,11 +128,11 @@ test('Test for invalid Token Data - dm/remove/v1', () => {
 
   for (let i = 0; i < invalidTokenData.length; i++) {
     const res = request(
-      'DELETE', `${url}:${port}/dm/remove/v1`,
+      'POST', `${url}:${port}/dm/leave/v1`,
       {
-        qs: {
+        json: {
           token: invalidTokenData[i].token,
-          dmId: invalidTokenData[i].dmId
+          dmId: invalidTokenData[i].dmId,
         }
       }
     );
