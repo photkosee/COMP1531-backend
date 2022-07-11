@@ -2,32 +2,50 @@ let data: object = {
   users: [
     // {
     //   token: 'string',
-    //   authUserId: 'integer',
+    //   authUserId: 'number',
     //   nameFirst: 'string',
     //   nameLast: 'string',
     //   email: 'string',
     //   password: 'string',
     //   handleStr: 'string',
-    //   permissionId: 'integer',
+    //   permissionId: 'number',
     //   sessionList: 'Array',
     //   isActive: 'boolean',
-    // },
+    // }
   ],
   channels: [
     // {
-    //   channelId: 'integer',
+    //   channelId: 'number',
     //   name: 'string',
     //   ownerMembers: 'Array',
     //   allMembers: 'Array',
     //   isPublic: 'boolean',
-    //   messages: [{
-    //     messageId: 'integer',
-    //     message: 'string',
-    //     authUserId: 'integer',
-    //     timeCreated: 'integer',
-    //   }],
-    // },
+    //   messages: [
+    //     {
+    //       messageId: 'number',
+    //       message: 'string',
+    //       authUserId: 'number',
+    //       timeCreated: 'number',
+    //     }
+    //   ],
+    // }
   ],
+  dms: [
+    // {
+    //   dmId: 'number',
+    //   name: 'string',
+    //   uIds: 'Array',
+    //   creatorId: 'number',
+    //   messages: [
+    //     {
+    //       messageId: 'number',
+    //       message: 'string',
+    //       authUserId: 'number',
+    //       timeCreated: 'number',
+    //     }
+    //   ]
+    // }
+  ]
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

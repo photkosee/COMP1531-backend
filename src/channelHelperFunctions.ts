@@ -193,6 +193,22 @@ function tokenToAuthUserId(token: string) {
   return {};
 }
 
+function authIsOwner (channelId: number, uId: number) {
+  const dataStore: any = getData();
+
+  for (const channel of dataStore.channels) {
+    if (channel.channelId === channelId) {
+      for (const element of channel.ownerMembers) {
+        if (uId === element.uId) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
 export {
   checkAuthUserId,
   checkChannelId,
@@ -200,5 +216,6 @@ export {
   authInChannel,
   getMessages,
   checkToken,
-  tokenToAuthUserId
+  tokenToAuthUserId,
+  authIsOwner
 };
