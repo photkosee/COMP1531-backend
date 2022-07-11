@@ -20,24 +20,9 @@ app.use(cors({ origin: true }));
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 const databasePath: string = __dirname + '/database.json';
-const logFilePath: string = __dirname + '/logs.json';
 
 // Express middleware to save data to database.json on every request end
 app.use((req, res, next) => {
-  const reqLog = {
-    url: req.url,
-    body: req.body,
-    query: req.query
-  };
-
-  fs.appendFile(logFilePath, JSON.stringify(reqLog, null, 2), (error) => {
-    if (error) {
-      console.log(error);
-    } else {
-      // console.log('Logged');
-    }
-  });
-
   res.on('finish', function () {
     const newData: any = getData();
 
@@ -45,7 +30,7 @@ app.use((req, res, next) => {
       if (error) {
         console.log(error);
       } else {
-        console.log('Succesfully written to database.json');
+        // console.log('Succesfully written to database.json');
       }
     });
   });
