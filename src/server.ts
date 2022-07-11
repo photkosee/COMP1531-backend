@@ -10,6 +10,7 @@ import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
 import { userProfileV1, userProfileSetnameV1, userProfileSetemailV1 } from './user';
+import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1 } from './dm';
 import { usersAllV1 } from './users';
 
 // Set up web app, use JSON
@@ -25,6 +26,7 @@ const databasePath: string = __dirname + '/database.json';
 app.use((req, res, next) => {
   res.on('finish', function () {
     const newData: any = getData();
+
     fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
       if (error) {
         console.log(error);
@@ -170,6 +172,58 @@ app.get('/channel/messages/v2', (req, res, next) => {
   }
 });
 
+app.post('/dm/create/v1', (req, res, next) => {
+  try {
+    const { token, uIds } = req.body;
+    const returnData = dmCreateV1(token, uIds);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/dm/list/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const returnData = dmListV1(token);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.delete('/dm/remove/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const dmId = parseInt(req.query.dmId as string);
+    const returnData = dmRemoveV1(token, dmId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/dm/details/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const dmId = parseInt(req.query.dmId as string);
+    const returnData = dmDetailsV1(token, dmId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/dm/leave/v1', (req, res, next) => {
+  try {
+    const { token, dmId } = req.body;
+    const returnData = dmLeaveV1(token, dmId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.get('/users/all/v1', (req, res, next) => {
   try {
     const token = req.query.token as string;
@@ -210,8 +264,21 @@ app.listen(PORT, HOST, () => {
   // Loads data from database.json to dataStore on server initialization
   fs.readFile(databasePath, 'utf-8', (error, jsonData) => {
     if (error) {
-      console.log(error);
-      return error;
+      console.log(`Error Initialising Datastore -> ${error.message}`);
+      console.log('Creating new Database file');
+
+      const newData: any = getData();
+
+      fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
+        if (error) {
+          console.log(error);
+          return error;
+        } else {
+          console.log('Succesfully created database.json file');
+        }
+      });
+
+      return {};
     }
 
     try {
