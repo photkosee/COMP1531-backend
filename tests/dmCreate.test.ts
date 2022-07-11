@@ -116,7 +116,7 @@ test('Test for creator In Uids Data - dm/create/v1', () => {
   }
 });
 
-test('Test for creator In Uids Data - dm/create/v1', () => {
+test('Test for invalid Token Data - dm/create/v1', () => {
   const invalidTokenData: any = [
     { token: '', uIds: [registrationData[1].authUserId, registrationData[0].authUserId, registrationData[2].authUserId] },
     { token: 8265434234, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[1].authUserId] },
