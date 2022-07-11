@@ -121,7 +121,45 @@ function dmListV1(token: string) {
   };
 }
 
+function dmRemoveV1(token: string, dmId: number) {
+  /*
+    Description:
+      dmRemoveV1 function will remove an existing DM, so all members are no longer in the DM,
+      original creator of the DM can only remove dms.
+
+    Arguments:
+      token     string type   -- Input string supplied by user
+      dmId      number type   -- Input number supplied by user
+
+    Return Value:
+      object: return {}
+      object: return {error: 'error'}
+  */
+
+  const data: any = getData();
+
+  if (!(checkToken(token))) {
+    return ERROR;
+  }
+
+  const authUserId: number = tokenToAuthUserId(token).authUserId;
+
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      if (dm.creatorId === authUserId) {
+        const dmIndex = data.dms.indexOf(dm);
+        data.dms.splice(dmIndex, 1);
+        return {};
+      } else {
+        return ERROR;
+      }
+    }
+  }
+  return ERROR;
+}
+
 export {
   dmCreateV1,
-  dmListV1
+  dmListV1,
+  dmRemoveV1
 };
