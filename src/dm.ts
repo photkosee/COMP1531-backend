@@ -158,8 +158,70 @@ function dmRemoveV1(token: string, dmId: number) {
   return ERROR;
 }
 
+function dmDetailsV1(token: string, dmId: number) {
+  /*
+    Description:
+      dmDetailsV1 function will provide basic details about the DM.
+
+    Arguments:
+      token     string type   -- Input string supplied by user
+      dmId      number type   -- Input number supplied by user
+
+    Return Value:
+      object: return { name: name, members: [user] }
+      object: return {error: 'error'}
+  */
+
+  const data: any = getData();
+
+  if (!(checkToken(token))) {
+    return ERROR;
+  }
+
+  const authUserId: number = tokenToAuthUserId(token).authUserId;
+
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      if (dm.uIds.includes(authUserId) || dm.creatorId === authUserId) {
+        const userData: object[] = [];
+        for (const user of data.users) {
+          if (dm.uIds.includes(user.authUserId)) {
+            userData.push(
+              {
+                uId: user.authUserId,
+                email: user.email,
+                nameFirst: user.nameFirst,
+                nameLast: user.nameLast,
+                handleStr: user.handleStr
+              }
+            );
+          } else if (user.authUserId === dm.creatorId) {
+            userData.push(
+              {
+                uId: user.authUserId,
+                email: user.email,
+                nameFirst: user.nameFirst,
+                nameLast: user.nameLast,
+                handleStr: user.handleStr
+              }
+            );
+          }
+        }
+        return {
+          name: dm.name,
+          members: [...userData]
+        };
+      } else {
+        return ERROR;
+      }
+    }
+  }
+  return ERROR;
+}
+
 export {
   dmCreateV1,
   dmListV1,
-  dmRemoveV1
+  dmRemoveV1,
+  dmDetailsV1
 };
