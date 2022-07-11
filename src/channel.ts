@@ -6,7 +6,8 @@ import {
   authInChannel,
   getMessages,
   checkToken,
-  tokenToAuthUserId
+  tokenToAuthUserId,
+  authIsOwner
 } from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
@@ -212,7 +213,37 @@ function channelMessagesV1(token: string, channelId: number, start: number) {
 }
 
 function channelAddownerV1(token: string, channelId: number, uId: number) {
-  return ERROR;
+  if (checkChannelId(channelId) &&
+      checkToken(token) &&
+      checkAuthUserId(uId) &&
+      authInChannel(channelId, uId) &&
+      authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
+      authIsOwner(channelId, tokenToAuthUserId(token).authUserId) &&
+      !authIsOwner(channelId, uId)
+  ) {
+    const dataStore: any = getData();
+
+    for (const channel of dataStore.channels) {
+      if (channel.channelId === channelId) {
+        for (const element of dataStore.users) {
+          if (uId === element.authUserId) {
+            channel.ownerMembers.push({
+              uId: uId,
+              email: element.email,
+              nameFirst: element.nameFirst,
+              nameLast: element.nameLast,
+              handleStr: element.handleStr
+            });
+
+            setData(dataStore);
+            return {};
+          }
+        }
+      }
+    }
+  } else {
+    return ERROR;
+  }
 }
 
 export {

@@ -145,7 +145,7 @@ test('Testing for token not in channel and uId already owner', () => {
             channelId: channel1.channelId,
         }
     });
-    expect(addowner(user1.token, channel1.channelId, user3.authUserId)).toStrictEqual(ERROR);
+    
     expect(addowner(user1.token, channel1.channelId, user2.authUserId)).toStrictEqual({});
     expect(addowner(user1.token, channel1.channelId, user2.authUserId)).toStrictEqual(ERROR);
     res = request('GET', `${url}:${port}/channel/details/v2`, {
@@ -157,7 +157,6 @@ test('Testing for token not in channel and uId already owner', () => {
     const channel1Details = JSON.parse(res.body as string);
     expect(channel1Details.allMembers.length).toStrictEqual(3);
     expect(channel1Details.ownerMembers.length).toStrictEqual(2);
-
 })
 
 test('Testing for adding yourself', () => {
@@ -212,7 +211,60 @@ test('Testing for adding yourself', () => {
         }
     })
     const channel1Details = JSON.parse(res.body as string);
-    console.log(channel1Details);
     expect(channel1Details.allMembers.length).toStrictEqual(2);
     expect(channel1Details.ownerMembers.length).toStrictEqual(1);
 });
+
+test('Testing successful addowner', () => {
+    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+        json: {
+            email: 'user1@email.com',
+            password: 'password1',
+            nameFirst: 'john',
+            nameLast: 'smith',
+        }
+    })
+    const user1 = JSON.parse(res.body as string);
+    res = request('POST', `${url}:${port}/auth/register/v2`, {
+        json: {
+            email: 'user2@email.com',
+            password: 'password2',
+            nameFirst: 'ben',
+            nameLast: 'mitchel',
+        }
+    })
+    const user2 = JSON.parse(res.body as string);    
+    res = request('POST', `${url}:${port}/auth/register/v2`, {
+        json: {
+            email: 'user3@email.com',
+            password: 'password3',
+            nameFirst: 'ajax',
+            nameLast: 'virn',
+        }
+    })
+    const user3 = JSON.parse(res.body as string);    
+    res = request('POST', `${url}:${port}/channels/create/v2`, {
+        json: {
+            token: user1.token,
+            name: 'channel1',
+            isPublic: true,
+        }
+    })
+    const channel1 = JSON.parse(res.body as string);
+    request('POST', `${url}:${port}/channel/join/v2`, {
+        json: {
+            token: user2.token,
+            channelId: channel1.channelId,
+        }
+    });
+    request('POST', `${url}:${port}/channel/join/v2`, {
+        json: {
+            token: user3.token,
+            channelId: channel1.channelId,
+        }
+    });
+
+    expect(addowner(user1.token, channel1.channelId, user2.authUserId)).toStrictEqual({});
+    expect(addowner(user2.token, channel1.channelId, user3.authUserId)).toStrictEqual({});
+
+})
