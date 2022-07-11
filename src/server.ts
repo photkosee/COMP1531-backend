@@ -8,7 +8,7 @@ import { echo } from './echo';
 import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
-import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
+import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1, channelRemoveownerV1 } from './channel';
 import { userProfileV1 } from './users';
 import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1 } from './dm';
 
@@ -165,6 +165,16 @@ app.get('/channel/messages/v2', (req, res, next) => {
     const channelId = +req.query.channelId;
     const start = +req.query.start;
     const returnData = channelMessagesV1(token, channelId, start);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/removeowner/v1', (req, res, next) => {
+  try {
+    const { token, channelId, uIds } = req.body;
+    const returnData = channelRemoveownerV1(token, channelId, uIds);
     return res.json(returnData);
   } catch (err) {
     next(err);

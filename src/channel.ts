@@ -211,9 +211,14 @@ function channelMessagesV1(token: string, channelId: number, start: number) {
   };
 }
 
+function channelRemoveownerV1(token: string, channelId: number, uId: number) {
+  return ERROR;
+}
+
 export {
   channelMessagesV1,
   channelInviteV1,
   channelJoinV1,
-  channelDetailsV1
+  channelDetailsV1,
+  channelRemoveownerV1
 };
