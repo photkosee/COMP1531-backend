@@ -10,6 +10,7 @@ import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
 import { userProfileV1 } from './users';
+import { dmCreateV1 } from './dm';
 
 // Set up web app, use JSON
 const app = express();
@@ -24,6 +25,7 @@ const databasePath: string = __dirname + '/database.json';
 app.use((req, res, next) => {
   res.on('finish', function () {
     const newData: any = getData();
+
     fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
       if (error) {
         console.log(error);
@@ -169,6 +171,16 @@ app.get('/channel/messages/v2', (req, res, next) => {
   }
 });
 
+app.post('/dm/create/v1', (req, res, next) => {
+  try {
+    const { token, uIds } = req.body;
+    const returnData = dmCreateV1(token, uIds);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // for logging errors
 app.use(morgan('dev'));
 
@@ -179,8 +191,21 @@ app.listen(PORT, HOST, () => {
   // Loads data from database.json to dataStore on server initialization
   fs.readFile(databasePath, 'utf-8', (error, jsonData) => {
     if (error) {
-      console.log(error);
-      return error;
+      console.log(`Error Initialising Datastore -> ${error.message}`);
+      console.log('Creating new Database file');
+
+      const newData: any = getData();
+
+      fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
+        if (error) {
+          console.log(error);
+          return error;
+        } else {
+          console.log('Succesfully created database.json file');
+        }
+      });
+
+      return {};
     }
 
     try {
