@@ -193,7 +193,7 @@ app.post('/channel/removeowner/v1', (req, res, next) => {
 
 app.post('/channel/leave/v1', (req, res, next) => {
   try {
-    const { token, channelId} = req.body;
+    const { token, channelId } = req.body;
     const returnData = channelLeaveV1(token, channelId);
     return res.json(returnData);
   } catch (err) {

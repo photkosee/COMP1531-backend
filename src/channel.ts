@@ -279,7 +279,7 @@ function channelRemoveownerV1(token: string, channelId: number, uId: number) {
 function channelLeaveV1(token: string, channelId: number) {
   if (checkChannelId(channelId) &&
       checkToken(token) &&
-      authInChannel(channelId, tokenToAuthUserId(token).authUserId) 
+      authInChannel(channelId, tokenToAuthUserId(token).authUserId)
   ) {
     const dataStore: any = getData();
     const uId = tokenToAuthUserId(token).authUserId;
@@ -290,7 +290,7 @@ function channelLeaveV1(token: string, channelId: number) {
             channel.ownerMembers.splice(i, 1);
           }
         }
-        
+
         for (let i = 0; i < channel.allMembers.length; i++) {
           if (channel.allMembers[i].uId === uId) {
             channel.allMembers.splice(i, 1);
@@ -301,7 +301,6 @@ function channelLeaveV1(token: string, channelId: number) {
       }
     }
   }
-
 
   return ERROR;
 }
