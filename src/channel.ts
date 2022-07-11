@@ -276,11 +276,42 @@ function channelRemoveownerV1(token: string, channelId: number, uId: number) {
   }
 }
 
+function channelLeaveV1(token: string, channelId: number) {
+  if (checkChannelId(channelId) &&
+      checkToken(token) &&
+      authInChannel(channelId, tokenToAuthUserId(token).authUserId) 
+  ) {
+    const dataStore: any = getData();
+    const uId = tokenToAuthUserId(token).authUserId;
+    for (const channel of dataStore.channels) {
+      if (channel.channelId === channelId) {
+        for (let i = 0; i < channel.ownerMembers.length; i++) {
+          if (channel.ownerMembers[i].uId === uId) {
+            channel.ownerMembers.splice(i, 1);
+          }
+        }
+        
+        for (let i = 0; i < channel.allMembers.length; i++) {
+          if (channel.allMembers[i].uId === uId) {
+            channel.allMembers.splice(i, 1);
+            setData(dataStore);
+            return {};
+          }
+        }
+      }
+    }
+  }
+
+
+  return ERROR;
+}
+
 export {
   channelMessagesV1,
   channelInviteV1,
   channelJoinV1,
   channelDetailsV1,
   channelRemoveownerV1,
-  channelAddownerV1
+  channelAddownerV1,
+  channelLeaveV1
 };

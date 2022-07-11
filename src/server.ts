@@ -8,7 +8,7 @@ import { echo } from './echo';
 import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
-import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1, channelRemoveownerV1, channelAddownerV1 } from './channel';
+import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1, channelRemoveownerV1, channelAddownerV1, channelLeaveV1 } from './channel';
 import { userProfileV1 } from './users';
 import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1 } from './dm';
 
@@ -185,6 +185,16 @@ app.post('/channel/removeowner/v1', (req, res, next) => {
   try {
     const { token, channelId, uId } = req.body;
     const returnData = channelRemoveownerV1(token, channelId, uId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/channel/leave/v1', (req, res, next) => {
+  try {
+    const { token, channelId} = req.body;
+    const returnData = channelLeaveV1(token, channelId);
     return res.json(returnData);
   } catch (err) {
     next(err);
