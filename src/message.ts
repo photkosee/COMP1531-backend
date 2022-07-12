@@ -68,54 +68,54 @@ object: {error: 'error'}
 }
 
 export function messageEditV1(token: string, messageId: number, message: string) {
-	/*
-	Description:
-	messageSendV1 send a message from the authorised 
-	user to the channel specified by channelId
-	
-	Arguments:
-	token string type -- Input string supplied by user
-	channelId number type -- Input number supplied by user
-	message string type -- Input string supplied by user
-	
-	Return Value:
-	interger: messageId
-	object: {error: 'error'}
-	*/
-		const data: any = getData();
-	
-		if (message.length > 1000) {
-			return ERROR;
-		}
-	
-		let checkToken = false;
-		let uId: number = 0;
-		for (const user of data.users) {
-			if (token === user.token) {
-				uId = user.authUserId;
-				checkToken = true;
-			}
-		}
-	
-		if (checkToken === false) {
-			return ERROR;
-		}
-		
-		for (const channel of data.channels) {
-			let i: number = 0;
-			for (const channelMessage of channel.messages) {
-				if (channelMessage.uId === uId && 
-					  channelMessage.messageId === messageId) {
-					if (message !== '') {
-						channelMessage.message = message;
-					} else {
-						channel.messages.splice(i, 1);
-					}
-					return {};
-				}
-				i++;
-			}
-		}
-	
-		return ERROR;
-	}
+/*
+Description:
+messageEditV1 given a message, update its text with new text.
+If the new message is an empty string, the message is deleted
+
+Arguments:
+token string type -- Input string supplied by user
+messageId number type -- Input number supplied by user
+message string type -- Input string supplied by user
+
+Return Value:
+object: {}
+object: {error: 'error'}
+*/
+  const data: any = getData();
+
+  if (message.length > 1000) {
+    return ERROR;
+  }
+
+  let checkToken = false;
+  let uId = 0;
+  for (const user of data.users) {
+    if (token === user.token) {
+      uId = user.authUserId;
+      checkToken = true;
+    }
+  }
+
+  if (checkToken === false) {
+    return ERROR;
+  }
+  
+  for (const channel of data.channels) {
+    let i = 0;
+    for (const channelMessage of channel.messages) {
+      if (channelMessage.uId === uId && 
+          channelMessage.messageId === messageId) {
+        if (message !== '') {
+          channelMessage.message = message;
+        } else {
+          channel.messages.splice(i, 1);
+        }
+        return {};
+      }
+      i++;
+    }
+  }
+
+  return ERROR;
+}
