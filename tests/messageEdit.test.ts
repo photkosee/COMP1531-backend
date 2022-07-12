@@ -46,7 +46,7 @@ describe('Testing success editing and removing message - message/edit/v1', () =>
     expect(res.statusCode).toBe(OK);
     expect(message).toStrictEqual({ messageId: 1 });
 
-    res = request('POST', `${url}:${port}/message/edit/v1`, {
+    res = request('PUT', `${url}:${port}/message/edit/v1`, {
       json: {
         token: token,
         messageId: 1, 
@@ -57,7 +57,7 @@ describe('Testing success editing and removing message - message/edit/v1', () =>
     expect(res.statusCode).toBe(OK);
     expect(message2).toStrictEqual({});
 
-    res = request('POST', `${url}:${port}/message/edit/v1`, {
+    res = request('PUT', `${url}:${port}/message/edit/v1`, {
       json: {
         token: token,
         messageId: 1, 
@@ -117,7 +117,7 @@ describe('Testing success editing and removing message - message/edit/v1', () =>
       expect(res.statusCode).toBe(OK);
       expect(message).toStrictEqual({ messageId: 1 });
   
-      res = request('POST', `${url}:${port}/message/edit/v1`, {
+      res = request('PUT', `${url}:${port}/message/edit/v1`, {
         json: {
           token: token,
           messageId: 2, 
@@ -128,7 +128,7 @@ describe('Testing success editing and removing message - message/edit/v1', () =>
       expect(res.statusCode).toBe(OK);
       expect(message2).toStrictEqual(ERROR);
 
-      res = request('POST', `${url}:${port}/message/edit/v1`, {
+      res = request('PUT', `${url}:${port}/message/edit/v1`, {
         json: {
           token: token2,
           messageId: 1, 
