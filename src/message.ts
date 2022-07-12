@@ -101,7 +101,7 @@ object: {error: 'error'}
   }
 
   for (const dm of data.dms) {
-    for (const member of dm.uIds) {
+    for (const member of dm.members) {
       if (dmId === dm.dmId && member.uId === uId) {
         const messageId: number = getMessageId();
         setMessageId(messageId + 1);
