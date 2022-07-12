@@ -117,11 +117,11 @@ object: {error: 'error'}
     }
   }
 
-	for (const dm of data.dms) {
+  for (const dm of data.dms) {
     let j = 0;
     for (const dmMessage of dm.messages) {
       if (dmMessage.uId === uId &&
-				dmMessage.messageId === messageId) {
+        dmMessage.messageId === messageId) {
         if (message !== '') {
           dmMessage.message = message;
         } else {
