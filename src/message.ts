@@ -67,55 +67,58 @@ object: {error: 'error'}
   return ERROR;
 }
 
-export function messageEditV1(token: string, messageId: number, message: string) {
-	/*
-	Description:
-	messageSendV1 send a message from the authorised 
-	user to the channel specified by channelId
-	
-	Arguments:
-	token string type -- Input string supplied by user
-	channelId number type -- Input number supplied by user
-	message string type -- Input string supplied by user
-	
-	Return Value:
-	interger: messageId
-	object: {error: 'error'}
-	*/
-		const data: any = getData();
-	
-		if (message.length > 1000) {
-			return ERROR;
+export function messageRemoveV1(token: string, messageId: number) {
+/*
+Description:
+messageRemoveV1 given a messageId for a message,
+this message is removed from the channel/DM
+
+Arguments:
+token string type -- Input string supplied by user
+messageId number type -- Input number supplied by user
+
+Return Value:
+object: {}
+object: {error: 'error'}
+*/
+	const data: any = getData();
+
+	let checkToken = false;
+	let uId = 0;
+	for (const user of data.users) {
+		if (token === user.token) {
+			uId = user.authUserId;
+			checkToken = true;
 		}
-	
-		let checkToken = false;
-		let uId: number = 0;
-		for (const user of data.users) {
-			if (token === user.token) {
-				uId = user.authUserId;
-				checkToken = true;
-			}
-		}
-	
-		if (checkToken === false) {
-			return ERROR;
-		}
-		
-		for (const channel of data.channels) {
-			let i: number = 0;
-			for (const channelMessage of channel.messages) {
-				if (channelMessage.uId === uId && 
-					  channelMessage.messageId === messageId) {
-					if (message !== '') {
-						channelMessage.message = message;
-					} else {
-						channel.messages.splice(i, 1);
-					}
-					return {};
-				}
-				i++;
-			}
-		}
-	
+	}
+
+	if (checkToken === false) {
 		return ERROR;
 	}
+
+	for (const channel of data.channels) {
+		let i = 0;
+		for (const channelMessage of channel.messages) {
+			if (channelMessage.uId === uId &&
+					channelMessage.messageId === messageId) {
+				channel.messages.splice(i, 1);
+				return {};
+			}
+			i++;
+		}
+	}
+
+	for (const dm of data.dms) {
+		let j = 0;
+		for (const dmMessage of dm.messages) {
+			if (dmMessage.uId === uId &&
+					dmMessage.messageId === messageId) {
+				dm.messages.splice(j, 1);
+				return {};
+			}
+			j++;
+		}
+	}
+
+	return ERROR;
+}
