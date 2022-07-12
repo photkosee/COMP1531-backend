@@ -16,6 +16,14 @@ interface authUserIdObj {
   authUserId?: number
 }
 
+interface newUser {
+  uId: number,
+  email: string,
+  nameFirst: string,
+  nameLast: string,
+  handleStr: string
+}
+
 function channelJoinV1(token: string, channelId: number) {
 /*
   Description:
@@ -146,13 +154,15 @@ function channelInviteV1(token: string, channelId: number, uId: number) {
       if (channel.channelId === channelId) {
         for (const element of dataStore.users) {
           if (uId === element.authUserId) {
-            channel.allMembers.push({
+            const newMember: newUser =
+            {
               uId: uId,
               email: element.email,
               nameFirst: element.nameFirst,
               nameLast: element.nameLast,
               handleStr: element.handleStr
-            });
+            };
+            channel.allMembers.push(newMember);
 
             setData(dataStore);
             return {};
@@ -192,8 +202,8 @@ function channelMessagesV1(token: string, channelId: number, start: number) {
     return ERROR;
   }
 
-  const messagesArray = [];
-  const messages = getMessages(channelId);
+  const messagesArray: any = [];
+  const messages: any = getMessages(channelId);
 
   for (let i = 0; i < 50 && (start + i < messages.length); i++) {
     messagesArray.push(messages[start + i]);
@@ -213,6 +223,19 @@ function channelMessagesV1(token: string, channelId: number, start: number) {
 }
 
 function channelAddownerV1(token: string, channelId: number, uId: number) {
+  /*
+      Description:
+        channelAddownerV1 adds owner to a channel
+
+      Arguments:
+        token       string type    -- Input integer supplied by user
+        channelId   integer type   -- Input integer supplied by user
+        uId         integer type   -- Input integer supplied by user
+
+      Return Value:
+        object: {} when owner is added
+        object: {error: 'error'}
+  */
   if (checkChannelId(channelId) &&
       checkToken(token) &&
       checkAuthUserId(uId) &&
@@ -227,13 +250,14 @@ function channelAddownerV1(token: string, channelId: number, uId: number) {
       if (channel.channelId === channelId) {
         for (const element of dataStore.users) {
           if (uId === element.authUserId) {
-            channel.ownerMembers.push({
+            const newOwner: newUser = {
               uId: uId,
               email: element.email,
               nameFirst: element.nameFirst,
               nameLast: element.nameLast,
               handleStr: element.handleStr
-            });
+            };
+            channel.ownerMembers.push(newOwner);
 
             setData(dataStore);
             return {};
