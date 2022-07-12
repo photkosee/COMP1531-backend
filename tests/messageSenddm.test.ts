@@ -59,17 +59,6 @@ describe('Testing success sending message - message/senddm/v1', () => {
 
     let res = request('POST', `${url}:${port}/message/senddm/v1`, {
       json: {
-        token: registrationData[1].token,
-        dmId: 1, 
-        message: 'abc'
-      }
-    });
-    const message = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(message).toStrictEqual({ messageId: 1 });
-
-    res = request('POST', `${url}:${port}/message/senddm/v1`, {
-      json: {
         token: registrationData[0].token,
         dmId: 2, 
         message: 'abc'
@@ -77,7 +66,7 @@ describe('Testing success sending message - message/senddm/v1', () => {
     });
     const message2 = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
-    expect(message2).toStrictEqual({ messageId: 2 });
+    expect(message2).toStrictEqual({ messageId: 1 });
   });
 
   describe('Testing for error - message/send/v1', () => {
