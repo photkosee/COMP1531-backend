@@ -59,7 +59,7 @@ describe('Testing success sending message - message/senddm/v1', () => {
 
     let res = request('POST', `${url}:${port}/message/senddm/v1`, {
       json: {
-        token: registrationData[2].token,
+        token: registrationData[1].token,
         dmId: 1, 
         message: 'abc'
       }
