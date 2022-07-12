@@ -9,9 +9,10 @@ import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
-import { userProfileV1 } from './users';
+import { userProfileV1 } from './user';
 import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1 } from './dm';
 import { messageSendV1, messageEditV1 } from './message';
+import { usersAllV1 } from './users';
 
 // Set up web app, use JSON
 const app = express();
@@ -238,6 +239,16 @@ app.put('/message/edit/v1', (req, res, next) => {
   try {
     const { token, messageId, message } = req.body;
     const returnData = messageEditV1(token, messageId, message);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/users/all/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const returnData = usersAllV1(token);
     return res.json(returnData);
   } catch (err) {
     next(err);
