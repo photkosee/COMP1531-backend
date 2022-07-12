@@ -271,9 +271,9 @@ function channelAddownerV1(token: string, channelId: number, uId: number) {
 }
 
 function channelRemoveownerV1(token: string, channelId: number, uId: number) {
-   /*
+  /*
       Description:
-        channelRemoveownerV1: user of token removes owner of uId from channel of channelId 
+        channelRemoveownerV1: user of token removes owner of uId from channel of channelId
 
       Arguments:
         token       string type    -- Input integer supplied by user
