@@ -1,7 +1,6 @@
-import { getData, setData } from './dataStore';
+import { getData, setData, getMessageId, setMessageId } from './dataStore';
 
 const ERROR = { error: 'error' };
-let messageGrobal: number = 1;
 
 interface newMessagesDetails {
 	messageId: number,
@@ -46,9 +45,9 @@ object: {error: 'error'}
 
 	for (const channel of data.channels) {
 		for (const member of channel.allMembers) {
-			if (member.uId === uId) {
-				const messageId: number = messageGrobal;
-				messageGrobal += 1;
+			if (channelId === channel.channelId && member.uId === uId) {
+				const messageId: number = getMessageId();
+				setMessageId(messageId + 1);
 
 				const newMessagesDetails: newMessagesDetails = {
 					messageId: messageId,
