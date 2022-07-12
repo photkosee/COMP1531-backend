@@ -45,10 +45,8 @@ let data: object = {
     //     }
     //   ]
     // }
-  ],
+  ]
 };
-
-let messageId = 1;
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
@@ -74,16 +72,6 @@ function getData() {
 // Use set(newData) to pass in the entire data object, with modifications made
 function setData(newData: object) {
   data = newData;
-}
-
-// Use get() to access the Id
-export function getMessageId() {
-  return messageId;
-}
-
-// Use set(newData) to pass in the Id, with modifications made
-export function setMessageId(newId: number) {
-  messageId = newId;
 }
 
 export {
