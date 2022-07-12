@@ -1,5 +1,5 @@
 import { getData, setData, getMessageId, setMessageId } from './dataStore';
-import { tokenToAuthUserId, checkToken } from './channelHelperFunctions'
+import { tokenToAuthUserId, checkToken } from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
 
