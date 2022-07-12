@@ -10,7 +10,7 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Testing success sendind message - message/send/v1', () => {
+describe('Testing success removing message - message/remove/v1', () => {
   test('valid inputs', () => {
     let res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
@@ -45,6 +45,16 @@ describe('Testing success sendind message - message/send/v1', () => {
     const message = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
     expect(message).toStrictEqual({ messageId: 1 });
+
+    res = request('DELETE', `${url}:${port}/message/remove/v1`, {
+      json: {
+        token: token,
+        messageId: 1, 
+      }
+    });
+    const remove = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(remove).toStrictEqual({});
   });
 });
 
