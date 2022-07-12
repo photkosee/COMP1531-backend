@@ -117,5 +117,21 @@ object: {error: 'error'}
     }
   }
 
+	for (const dm of data.dms) {
+    let j = 0;
+    for (const dmMessage of dm.messages) {
+      if (dmMessage.uId === uId &&
+				dmMessage.messageId === messageId) {
+        if (message !== '') {
+          dmMessage.message = message;
+        } else {
+          dm.messages.splice(j, 1);
+        }
+        return {};
+      }
+      j++;
+    }
+  }
+
   return ERROR;
 }
