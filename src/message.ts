@@ -31,7 +31,7 @@ object: {error: 'error'}
   }
 
   let checkToken = false;
-  let uId: number = 0;
+  let uId = 0;
   for (const user of data.users) {
     if (token === user.token) {
       uId = user.authUserId;
