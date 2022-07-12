@@ -4,18 +4,18 @@ import { emailValidator } from './authHelperFunctions';
 
 const ERROR = { error: 'error' };
 
-export function userProfileV1(token: string, uId: number) {
+function userProfileV1(token: string, uId: number) {
 /*
   Description:
     userProfileV1 returns information about uId's userId,
-    email, first name, last name, and handleStr
+    email, first name, last name, and handle
 
   Arguments:
     token integer string  -- Input integer supplied by user
     uId   integer type    -- Input integer supplied by user
 
   Return Value:
-    Object: { user: { uId, email, nameFirst, nameLast, handleStrStr } }
+    Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
     object: {error: 'error'}
 */
 
@@ -33,7 +33,7 @@ export function userProfileV1(token: string, uId: number) {
           email: user.email,
           nameFirst: user.nameFirst,
           nameLast: user.nameLast,
-          handleStrStr: user.handleStrStr
+          handleStr: user.handleStr
         }
       };
     }
@@ -174,3 +174,4 @@ export function userProfileSethandleV1(token: string, handleStr: string) {
 
   return {};
 }
+

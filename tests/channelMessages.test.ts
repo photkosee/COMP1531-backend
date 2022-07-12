@@ -22,7 +22,7 @@ const channelMessages = (token: string, channelId: number, start: number) => {
   );
   expect(res.statusCode).toBe(OK);
   const bodyObj = JSON.parse(String(res.body as string));
-  
+
   return bodyObj;
 };
 
