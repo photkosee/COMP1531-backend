@@ -58,7 +58,7 @@ describe('Testing success removing message - message/remove/v1', () => {
   });
 });
 
-describe('Testing for error - message/send/v1', () => {
+describe('Testing for error - message/remove/v1', () => {
   test('Invalid inputs', () => {
     let res = request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
@@ -71,6 +71,18 @@ describe('Testing for error - message/send/v1', () => {
     const user = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
     const token = user.token;
+
+    res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'mal2@email.com',
+        password: '1234567',
+        nameFirst: 'One2',
+        nameLast: 'Number2',
+      }
+    });
+    const user2 = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    const token2 = user2.token;
 
     res = request('POST', `${url}:${port}/channels/create/v2`, {
       json: {
@@ -87,33 +99,41 @@ describe('Testing for error - message/send/v1', () => {
       json: {
         token: token,
         channelId: 1, 
-        message: ''
+        message: 'abc'
       }
     });
     const message = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
-    expect(message).toStrictEqual(ERROR);
+    expect(message).toStrictEqual({ messageId: 1 });
 
-    res = request('POST', `${url}:${port}/message/send/v1`, {
+    res = request('DELETE', `${url}:${port}/message/remove/v1`, {
       json: {
-        token: -5,
-        channelId: 1, 
-        message: 'abc'
+        token: -55,
+        messageId: 1, 
       }
     });
-    const message2 = JSON.parse(res.getBody() as string);
+    const remove = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
-    expect(message2).toStrictEqual(ERROR);
+    expect(remove).toStrictEqual(ERROR);
 
-    res = request('POST', `${url}:${port}/message/send/v1`, {
+    res = request('DELETE', `${url}:${port}/message/remove/v1`, {
       json: {
         token: token,
-        channelId: 2, 
-        message: 'abc'
+        messageId: 2, 
       }
     });
-    const message3 = JSON.parse(res.getBody() as string);
+    const remove2 = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
-    expect(message3).toStrictEqual(ERROR);
+    expect(remove2).toStrictEqual(ERROR);
+
+    res = request('DELETE', `${url}:${port}/message/remove/v1`, {
+      json: {
+        token: token2,
+        messageId: 1, 
+      }
+    });
+    const remove3 = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(remove3).toStrictEqual(ERROR);
   });
 });
