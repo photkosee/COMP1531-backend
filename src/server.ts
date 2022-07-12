@@ -234,7 +234,7 @@ app.post('/message/send/v1', (req, res, next) => {
   }
 });
 
-app.put('/user/profile/setname/v1', (req, res, next) => {
+app.put('/message/edit/v1', (req, res, next) => {
   try {
     const { token, messageId, message } = req.body;
     const returnData = messageEditV1(token, messageId, message);
