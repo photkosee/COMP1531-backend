@@ -82,12 +82,18 @@ object: {error: 'error'}
   }
 
   const uId: number = tokenToAuthUserId(token).authUserId;
-
+  let checkMember = false;
   for (const channel of data.channels) {
+    checkMember = false;
+    for (const member of channel.allMembers) {
+      if (member.uId === uId) {
+        checkMember = true;
+      }
+    }
     let i = 0;
     for (const channelMessage of channel.messages) {
       if (channelMessage.uId === uId &&
-          channelMessage.messageId === messageId) {
+          channelMessage.messageId === messageId && checkMember !== false) {
         channel.messages.splice(i, 1);
         return {};
       }
@@ -96,10 +102,16 @@ object: {error: 'error'}
   }
 
   for (const dm of data.dms) {
+    checkMember = false;
+    for (const memberId of dm.uId) {
+      if (memberId === uId) {
+        checkMember = true;
+      }
+    }
     let j = 0;
     for (const dmMessage of dm.messages) {
       if (dmMessage.uId === uId &&
-          dmMessage.messageId === messageId) {
+          dmMessage.messageId === messageId && checkMember !== false) {
         dm.messages.splice(j, 1);
         return {};
       }
