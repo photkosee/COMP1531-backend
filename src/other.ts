@@ -16,7 +16,7 @@ function clearV1() {
   data.channels = [];
   data.dms = [];
 
-  setMessageId(0);
+  setMessageId(1);
   setData(data);
   return {};
 }

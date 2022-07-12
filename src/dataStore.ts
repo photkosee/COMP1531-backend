@@ -48,7 +48,7 @@ let data: object = {
   ],
 };
 
-let messageId: number = 0;
+let messageId: number = 1;
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
