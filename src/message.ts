@@ -93,8 +93,9 @@ object: {error: 'error'}
     let i = 0;
     for (const channelMessage of channel.messages) {
       if (channelMessage.uId === uId &&
-          channelMessage.messageId === messageId && checkMember !== false) {
+        channelMessage.messageId === messageId && checkMember !== false) {
         channel.messages.splice(i, 1);
+        setData(data);
         return {};
       }
       i++;
@@ -111,8 +112,9 @@ object: {error: 'error'}
     let j = 0;
     for (const dmMessage of dm.messages) {
       if (dmMessage.uId === uId &&
-          dmMessage.messageId === messageId && checkMember !== false) {
+        dmMessage.messageId === messageId && checkMember !== false) {
         dm.messages.splice(j, 1);
+        setData(data);
         return {};
       }
       j++;
