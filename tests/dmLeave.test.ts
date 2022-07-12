@@ -15,9 +15,12 @@ const registeredUser: any = [
   { email: 'adam@gmail.com', password: 'uhud567T#$%', nameFirst: 'adam', nameLast: 'saund' },
 ];
 
+let dmIdList: any = [];
+
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
   registrationData = [];
+  dmIdList = [];
 
   for (const user of registeredUser) {
     const res = request('POST', `${url}:${port}/auth/register/v2`, {
@@ -39,12 +42,14 @@ beforeEach(() => {
   ];
 
   for (let i = 0; i < dmData.length; i++) {
-    request('POST', `${url}:${port}/dm/create/v1`, {
+    const res = request('POST', `${url}:${port}/dm/create/v1`, {
       json: {
         token: dmData[i].token,
         uIds: [...dmData[i].uIds],
       }
     });
+    const bodyObj = JSON.parse(res.body as string);
+    dmIdList.push(bodyObj.dmId);
   }
 });
 
@@ -54,10 +59,10 @@ afterAll(() => {
 
 test('Test for successful dm leave - dm/leave/v1', () => {
   const validData = [
-    { token: registrationData[0].token, dmId: 1 },
-    { token: registrationData[2].token, dmId: 1 },
-    { token: registrationData[0].token, dmId: 2 },
-    { token: registrationData[1].token, dmId: 2 }
+    { token: registrationData[0].token, dmId: dmIdList[0] },
+    { token: registrationData[2].token, dmId: dmIdList[0] },
+    { token: registrationData[0].token, dmId: dmIdList[1] },
+    { token: registrationData[1].token, dmId: dmIdList[1] }
   ];
 
   for (let i = 0; i < validData.length; i++) {
@@ -78,8 +83,8 @@ test('Test for successful dm leave - dm/leave/v1', () => {
 
 test('Test for invalid dmId - dm/leave/v1', () => {
   const invalidDmIdData = [
-    { token: registrationData[0].token, dmId: 3 },
-    { token: registrationData[2].token, dmId: 4 }
+    { token: registrationData[0].token, dmId: 3876 },
+    { token: registrationData[2].token, dmId: '' }
   ];
 
   for (let i = 0; i < invalidDmIdData.length; i++) {
@@ -100,8 +105,8 @@ test('Test for invalid dmId - dm/leave/v1', () => {
 
 test('Test for user is not a member of the DM - dm/leave/v1', () => {
   const invalidMemberData = [
-    { token: registrationData[3].token, dmId: 1 },
-    { token: registrationData[3].token, dmId: 2 }
+    { token: registrationData[3].token, dmId: dmIdList[0] },
+    { token: registrationData[3].token, dmId: dmIdList[1] }
   ];
 
   for (let i = 0; i < invalidMemberData.length; i++) {
@@ -122,8 +127,8 @@ test('Test for user is not a member of the DM - dm/leave/v1', () => {
 
 test('Test for invalid Token Data - dm/leave/v1', () => {
   const invalidTokenData = [
-    { token: '', dmId: 1 },
-    { token: 1, dmId: 2 }
+    { token: '', dmId: dmIdList[0] },
+    { token: 1, dmId: dmIdList[1] }
   ];
 
   for (let i = 0; i < invalidTokenData.length; i++) {

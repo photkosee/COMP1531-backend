@@ -53,7 +53,7 @@ test('Test for successful dm creation - dm/create/v1', () => {
     });
     const bodyObj = JSON.parse(res.body as string);
     expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual({ dmId: i + 1 });
+    expect(bodyObj).toStrictEqual({ dmId: expect.any(Number) });
   }
 });
 
