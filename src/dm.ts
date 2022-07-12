@@ -1,5 +1,6 @@
 import { getData, setData } from './dataStore';
 import { checkToken, tokenToAuthUserId } from './channelHelperFunctions';
+import { dmIdValidator, checkDmMember, getDmMessages } from './dmHelperFunctions';
 const ERROR = { error: 'error' };
 
 function dmCreateV1(token: string, uIds: number[]) {
@@ -256,10 +257,60 @@ function dmLeaveV1(token: string, dmId: number) {
   return ERROR;
 }
 
+function dmMessages(token: string, dmId: number, start: number) {
+  /*
+    Description:
+      dmMessages function will return messages from associated DMs Ids
+
+    Arguments:
+      token     string type   -- Input string supplied by user
+      dmId      number type   -- Input number supplied by user
+      start     number type   -- Input number supplied by user
+
+    Return Value:
+      object: return { messages: [messagesData], start: start, end: end}
+      object: return {error: 'error'}
+  */
+
+  if (!(checkToken(token))) {
+    return ERROR;
+  }
+
+  const authUserId: number = tokenToAuthUserId(token).authUserId;
+
+  if (!(dmIdValidator(dmId))) {
+    return ERROR;
+  }
+
+  if (!(checkDmMember(dmId, authUserId))) {
+    return ERROR;
+  }
+
+  const dmMsgData = getDmMessages(dmId);
+  const returnMsgData: any = [];
+
+  for (let i = 0; i < 50 && (start + i < dmMsgData.length); i++) {
+    returnMsgData.push(dmMsgData[start + i]);
+  }
+
+  let end = -1;
+
+  if (start + 50 < dmMsgData.length) {
+    end = start + 50;
+  }
+
+  return {
+    messages: [...returnMsgData],
+    start: start,
+    end: end
+  };
+}
+
 export {
   dmCreateV1,
   dmListV1,
   dmRemoveV1,
   dmDetailsV1,
-  dmLeaveV1
+  dmLeaveV1,
+  dmMessages
 };
