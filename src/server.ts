@@ -11,11 +11,8 @@ import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels'
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
 import { userProfileV1 } from './user';
 import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1 } from './dm';
-<<<<<<< HEAD
 import { messageSendV1 } from './message';
-=======
 import { usersAllV1 } from './users';
->>>>>>> b64dbc157bbd83b19e0811d4c5a9919efbc6b997
 
 // Set up web app, use JSON
 const app = express();
@@ -228,17 +225,20 @@ app.post('/dm/leave/v1', (req, res, next) => {
   }
 });
 
-<<<<<<< HEAD
 app.post('/message/send/v1', (req, res, next) => {
   try {
     const { token, channelId, message } = req.body;
     const returnData = messageSendV1(token, channelId, message);
-=======
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.get('/users/all/v1', (req, res, next) => {
   try {
     const token = req.query.token as string;
     const returnData = usersAllV1(token);
->>>>>>> b64dbc157bbd83b19e0811d4c5a9919efbc6b997
     return res.json(returnData);
   } catch (err) {
     next(err);
