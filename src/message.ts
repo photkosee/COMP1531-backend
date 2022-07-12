@@ -100,11 +100,11 @@ object: {error: 'error'}
   if (checkToken === false) {
     return ERROR;
   }
-  
+
   for (const channel of data.channels) {
     let i = 0;
     for (const channelMessage of channel.messages) {
-      if (channelMessage.uId === uId && 
+      if (channelMessage.uId === uId &&
           channelMessage.messageId === messageId) {
         if (message !== '') {
           channelMessage.message = message;
