@@ -236,7 +236,8 @@ app.post('/message/send/v1', (req, res, next) => {
 
 app.delete('/message/remove/v1', (req, res, next) => {
   try {
-    const { token, messageId } = req.body;
+    const token = req.query.token as string;
+    const messageId = parseInt(req.query.messageId as string);
     const returnData = messageRemoveV1(token, messageId);
     return res.json(returnData);
   } catch (err) {

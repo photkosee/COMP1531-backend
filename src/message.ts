@@ -81,44 +81,44 @@ Return Value:
 object: {}
 object: {error: 'error'}
 */
-	const data: any = getData();
+  const data: any = getData();
 
-	let checkToken = false;
-	let uId = 0;
-	for (const user of data.users) {
-		if (token === user.token) {
-			uId = user.authUserId;
-			checkToken = true;
-		}
-	}
+  let checkToken = false;
+  let uId = 0;
+  for (const user of data.users) {
+    if (token === user.token) {
+      uId = user.authUserId;
+      checkToken = true;
+    }
+  }
 
-	if (checkToken === false) {
-		return ERROR;
-	}
+  if (checkToken === false) {
+    return ERROR;
+  }
 
-	for (const channel of data.channels) {
-		let i = 0;
-		for (const channelMessage of channel.messages) {
-			if (channelMessage.uId === uId &&
-					channelMessage.messageId === messageId) {
-				channel.messages.splice(i, 1);
-				return {};
-			}
-			i++;
-		}
-	}
+  for (const channel of data.channels) {
+    let i = 0;
+    for (const channelMessage of channel.messages) {
+      if (channelMessage.uId === uId &&
+          channelMessage.messageId === messageId) {
+        channel.messages.splice(i, 1);
+        return {};
+      }
+      i++;
+    }
+  }
 
-	for (const dm of data.dms) {
-		let j = 0;
-		for (const dmMessage of dm.messages) {
-			if (dmMessage.uId === uId &&
-					dmMessage.messageId === messageId) {
-				dm.messages.splice(j, 1);
-				return {};
-			}
-			j++;
-		}
-	}
+  for (const dm of data.dms) {
+    let j = 0;
+    for (const dmMessage of dm.messages) {
+      if (dmMessage.uId === uId &&
+          dmMessage.messageId === messageId) {
+        dm.messages.splice(j, 1);
+        return {};
+      }
+      j++;
+    }
+  }
 
-	return ERROR;
+  return ERROR;
 }
