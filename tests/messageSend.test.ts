@@ -10,6 +10,10 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 describe('Testing success sendind message - message/send/v1', () => {
   test('valid inputs', () => {
     let res = request('POST', `${url}:${port}/auth/register/v2`, {
