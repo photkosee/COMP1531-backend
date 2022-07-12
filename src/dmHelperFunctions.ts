@@ -43,7 +43,7 @@ function checkDmMember(dmId: number, userId: number) {
 
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
-      if (dm.uIds.includes(userId)) {
+      if (dm.uIds.includes(userId) || dm.creatorId === userId) {
         return true;
       }
     }

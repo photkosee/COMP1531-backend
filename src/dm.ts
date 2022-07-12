@@ -272,15 +272,14 @@ function dmMessages(token: string, dmId: number, start: number) {
       object: return {error: 'error'}
   */
 
-  if (!(checkToken(token))) {
+  if (!(checkToken(token)) ||
+      !(dmIdValidator(dmId)) ||
+      start > getDmMessages(dmId).length ||
+      start < 0) {
     return ERROR;
   }
 
   const authUserId: number = tokenToAuthUserId(token).authUserId;
-
-  if (!(dmIdValidator(dmId))) {
-    return ERROR;
-  }
 
   if (!(checkDmMember(dmId, authUserId))) {
     return ERROR;

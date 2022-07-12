@@ -83,9 +83,7 @@ test('Test for invalid dmId - dm/messages/v1', () => {
 test('Test for invalid start parameter - dm/messages/v1', () => {
   const invalidStartData = [
     { token: registrationData[0].token, dmId: dmIdList[0], start: -1 },
-    { token: registrationData[1].token, dmId: dmIdList[0], start: '' },
-    { token: registrationData[2].token, dmId: dmIdList[1], start: 10000 },
-    { token: registrationData[1].token, dmId: dmIdList[1], start: 0.1 },
+    { token: registrationData[2].token, dmId: dmIdList[1], start: 10000 }
   ];
 
   for (let i = 0; i < invalidStartData.length; i++) {
@@ -154,7 +152,7 @@ test('Test for invalid Token Data - dm/messages/v1', () => {
 test('Test for correct functionality - dm/messages/v1', () => {
   const validData = [
     { token: registrationData[0].token, dmId: dmIdList[0], start: 0 },
-    { token: registrationData[2].token, dmId: dmIdList[1], start: 0 },
+    { token: registrationData[1].token, dmId: dmIdList[1], start: 0 }
   ];
 
   for (let i = 0; i < validData.length; i++) {
