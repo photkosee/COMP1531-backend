@@ -37,7 +37,7 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Testing success sendind message - message/senddm/v1', () => {
+describe('Testing success sending message - message/senddm/v1', () => {
   test('valid inputs', () => {
     const validData: any = [
       { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
