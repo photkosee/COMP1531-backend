@@ -11,7 +11,6 @@ import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels'
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
 import { userProfileV1, userProfileSetnameV1 } from './user';
 import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1 } from './dm';
-import { messageSendV1 } from './message';
 import { usersAllV1 } from './users';
 
 // Set up web app, use JSON
@@ -219,16 +218,6 @@ app.post('/dm/leave/v1', (req, res, next) => {
   try {
     const { token, dmId } = req.body;
     const returnData = dmLeaveV1(token, dmId);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.post('/message/send/v1', (req, res, next) => {
-  try {
-    const { token, channelId, message } = req.body;
-    const returnData = messageSendV1(token, channelId, message);
     return res.json(returnData);
   } catch (err) {
     next(err);
