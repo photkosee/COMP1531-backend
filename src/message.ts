@@ -1,4 +1,5 @@
 import { getData, setData, getMessageId, setMessageId } from './dataStore';
+import { tokenToAuthUserId, checkToken } from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
 
@@ -30,18 +31,11 @@ object: {error: 'error'}
     return ERROR;
   }
 
-  let checkToken = false;
-  let uId = 0;
-  for (const user of data.users) {
-    if (token === user.token) {
-      uId = user.authUserId;
-      checkToken = true;
-    }
-  }
-
-  if (checkToken === false) {
+  if (!(checkToken(token))) {
     return ERROR;
   }
+
+  const uId: number = tokenToAuthUserId(token).authUserId;
 
   for (const channel of data.channels) {
     for (const member of channel.allMembers) {
