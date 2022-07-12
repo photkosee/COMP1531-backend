@@ -66,3 +66,61 @@ object: {error: 'error'}
 
   return ERROR;
 }
+
+export function messageSenddmV1(token: string, dmId: number, message: string) {
+  /*
+  Description:
+  messageSendV1 send a message from the authorised
+  user to the channel specified by channelId
+  
+  Arguments:
+  token string type -- Input string supplied by user
+  channelId number type -- Input number supplied by user
+  message string type -- Input string supplied by user
+  
+  Return Value:
+  interger: messageId
+  object: {error: 'error'}
+  */
+    const data: any = getData();
+  
+    if (message.length < 1 || message.length > 1000) {
+      return ERROR;
+    }
+  
+    let checkToken = false;
+    let uId = 0;
+    for (const user of data.users) {
+      if (token === user.token) {
+        uId = user.authUserId;
+        checkToken = true;
+      }
+    }
+  
+    if (checkToken === false) {
+      return ERROR;
+    }
+  
+    for (const dm of data.dms) {
+      for (const member of dm.uIds) {
+        if (dmId === dm.dmId && member.uId === uId) {
+          const messageId: number = getMessageId();
+          setMessageId(messageId + 1);
+  
+          const newMessagesDetails: newMessagesDetails = {
+            messageId: messageId,
+            uId: uId,
+            message: message,
+            timeSent: Math.floor((new Date()).getTime() / 1000),
+          };
+  
+          dm.messages.push(newMessagesDetails);
+          setData(data);
+  
+          return { messageId: messageId };
+        }
+      }
+    }
+  
+    return ERROR;
+  }

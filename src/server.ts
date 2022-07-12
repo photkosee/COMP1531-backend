@@ -234,6 +234,16 @@ app.post('/message/send/v1', (req, res, next) => {
   }
 });
 
+app.post('/message/senddm/v1', (req, res, next) => {
+  try {
+    const { token, dmId, message } = req.body;
+    const returnData = messageSendV1(token, dmId, message);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // for logging errors
 app.use(morgan('dev'));
 
