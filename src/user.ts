@@ -4,7 +4,7 @@ import { emailValidator } from './authHelperFunctions';
 
 const ERROR = { error: 'error' };
 
-function userProfileV1(token: string, uId: number) {
+export function userProfileV1(token: string, uId: number) {
 /*
   Description:
     userProfileV1 returns information about uId's userId,
@@ -174,4 +174,3 @@ export function userProfileSethandleV1(token: string, handleStr: string) {
 
   return {};
 }
-
