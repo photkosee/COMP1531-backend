@@ -160,7 +160,28 @@ test('Testing for successful leave', () => {
     expect(channel1Details.allMembers.length).toStrictEqual(1);
     expect(channel1Details.ownerMembers.length).toStrictEqual(0);
 
-    //expect(channelLeave(user2.token, channel1.channelId)).toStrictEqual(ERROR);
-    // what happens if last person leaves?
-
+    expect(channelLeave(user2.token, channel1.channelId)).toStrictEqual({});
+    
 });
+
+test('Last person is owner and leaves', () => {
+    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+        json: {
+            email: 'user1@email.com',
+            password: 'password1',
+            nameFirst: 'john',
+            nameLast: 'smith',
+        }
+    })
+    const user1 = JSON.parse(res.body as string);
+    res = request('POST', `${url}:${port}/channels/create/v2`, {
+        json: {
+            token: user1.token,
+            name: 'channel1',
+            isPublic: true,
+        }
+    })
+    const channel1 = JSON.parse(res.body as string);
+    expect(channelLeave(user1.token, channel1.channelId)).toStrictEqual({});
+
+})
