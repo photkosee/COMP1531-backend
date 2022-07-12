@@ -139,7 +139,8 @@ function dmRemoveV1(token: string, dmId: number) {
 
   const data: any = getData();
 
-  if (!(checkToken(token))) {
+  if (!(checkToken(token)) ||
+      !(dmIdValidator(dmId))) {
     return ERROR;
   }
 
@@ -156,7 +157,6 @@ function dmRemoveV1(token: string, dmId: number) {
       }
     }
   }
-  return ERROR;
 }
 
 function dmDetailsV1(token: string, dmId: number) {
@@ -175,7 +175,8 @@ function dmDetailsV1(token: string, dmId: number) {
 
   const data: any = getData();
 
-  if (!(checkToken(token))) {
+  if (!(checkToken(token)) ||
+      !(dmIdValidator(dmId))) {
     return ERROR;
   }
 
@@ -183,7 +184,7 @@ function dmDetailsV1(token: string, dmId: number) {
 
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
-      if (dm.uIds.includes(authUserId) || dm.creatorId === authUserId) {
+      if (checkDmMember(dmId, authUserId)) {
         const userData: object[] = [];
         for (const user of data.users) {
           if (dm.uIds.includes(user.authUserId)) {
@@ -217,7 +218,6 @@ function dmDetailsV1(token: string, dmId: number) {
       }
     }
   }
-  return ERROR;
 }
 
 function dmLeaveV1(token: string, dmId: number) {
@@ -236,7 +236,8 @@ function dmLeaveV1(token: string, dmId: number) {
 
   const data: any = getData();
 
-  if (!(checkToken(token))) {
+  if (!(checkToken(token)) ||
+      !(dmIdValidator(dmId))) {
     return ERROR;
   }
 
@@ -251,10 +252,11 @@ function dmLeaveV1(token: string, dmId: number) {
       } else if (dm.creatorId === authUserId) {
         dm.creatorId = -1;
         return {};
+      } else {
+        return ERROR;
       }
     }
   }
-  return ERROR;
 }
 
 function dmMessages(token: string, dmId: number, start: number) {
