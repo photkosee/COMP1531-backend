@@ -1,44 +1,38 @@
 import { getData } from './dataStore';
-import { checkAuthUserId, checkToken } from './channelHelperFunctions';
+import { checkToken } from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
 
-function userProfileV1(token: string, uId: number) {
+export function usersAllV1(token: string) {
 /*
   Description:
-    userProfileV1 returns information about uId's userId,
+    usersAllV1 returns information about all users' userId,
     email, first name, last name, and handle
 
   Arguments:
     token integer string  -- Input integer supplied by user
-    uId   integer type    -- Input integer supplied by user
 
   Return Value:
-    Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
-    object: {error: 'error'}
+    Object: { users: users } on success
+    Object: {error: 'error'} when given invaid token
 */
 
-  const data: any = getData();
-
-  if (!(checkToken(token)) || !(checkAuthUserId(uId))) {
+  if (!checkToken(token)) {
     return ERROR;
   }
 
+  const data: any = getData();
+  const users: any = [];
+
   for (const user of data.users) {
-    if (user.authUserId === uId) {
-      return {
-        user: {
-          uId: user.authUserId,
-          email: user.email,
-          nameFirst: user.nameFirst,
-          nameLast: user.nameLast,
-          handleStr: user.handleStr
-        }
-      };
-    }
+    users.push({
+      uId: user.authUserId,
+      email: user.email,
+      nameFirst: user.nameFirst,
+      nameLast: user.nameLast,
+      handleStr: user.handleStr
+    });
   }
 
-  return ERROR;
+  return { users: users };
 }
-
-export { userProfileV1 };
