@@ -7,6 +7,7 @@ const url = config.url;
 const ERROR = { error: 'error' };
 
 let registrationData: any = [];
+let dmIdList: any = [];
 
 const registeredUser: any = [
   { email: 'mridul@gmail.com', password: 'uhunr567T#$%', nameFirst: 'Mridul', nameLast: 'Anand' },
@@ -18,6 +19,7 @@ const registeredUser: any = [
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
   registrationData = [];
+  dmIdList = [];
 
   for (const user of registeredUser) {
     const res = request('POST', `${url}:${port}/auth/register/v2`, {
@@ -39,12 +41,14 @@ beforeEach(() => {
   ];
 
   for (let i = 0; i < dmData.length; i++) {
-    request('POST', `${url}:${port}/dm/create/v1`, {
+    const res = request('POST', `${url}:${port}/dm/create/v1`, {
       json: {
         token: dmData[i].token,
         uIds: [...dmData[i].uIds],
       }
     });
+    const bodyObj = JSON.parse(res.body as string);
+    dmIdList.push(bodyObj.dmId);
   }
 });
 
@@ -54,9 +58,9 @@ afterAll(() => {
 
 test('Test for success dm list fetch - dm/list/v1', () => {
   const validData = [
-    { token: registrationData[0].token, expected: [{ dmId: 1, name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: 2, name: 'anandsingh, mridulanand, mridulrathor' }] },
-    { token: registrationData[1].token, expected: [{ dmId: 1, name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: 2, name: 'anandsingh, mridulanand, mridulrathor' }] },
-    { token: registrationData[2].token, expected: [{ dmId: 1, name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: 2, name: 'anandsingh, mridulanand, mridulrathor' }] },
+    { token: registrationData[0].token, expected: [{ dmId: dmIdList[0], name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: dmIdList[1], name: 'anandsingh, mridulanand, mridulrathor' }] },
+    { token: registrationData[1].token, expected: [{ dmId: dmIdList[0], name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: dmIdList[1], name: 'anandsingh, mridulanand, mridulrathor' }] },
+    { token: registrationData[2].token, expected: [{ dmId: dmIdList[0], name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: dmIdList[1], name: 'anandsingh, mridulanand, mridulrathor' }] },
     { token: registrationData[3].token, expected: [] }
   ];
 
