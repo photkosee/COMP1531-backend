@@ -45,22 +45,40 @@ describe('Testing success sending message - message/senddm/v1', () => {
       { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
     ];
   
-    for (let i = 0; i < validData.length; i++) {
-      const res = request('POST', `${url}:${port}/dm/create/v1`, {
-        json: {
-          token: validData[i].token,
-          uIds: [...validData[i].uIds],
-        }
-      });
-      const bodyObj = JSON.parse(res.body as string);
-      expect(res.statusCode).toBe(OK);
-      expect(bodyObj).toStrictEqual({ dmId: i + 1 });
-    }
+    let res = request('POST', `${url}:${port}/dm/create/v1`, {
+      json: {
+        token: validData[0].token,
+        uIds: [...validData[0].uIds],
+      }
+    });
+    const bodyObj0 = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(OK);
+    expect(bodyObj0).toStrictEqual({ dmId: expect.any(Number) });
 
-    let res = request('POST', `${url}:${port}/message/senddm/v1`, {
+    res = request('POST', `${url}:${port}/dm/create/v1`, {
+      json: {
+        token: validData[1].token,
+        uIds: [...validData[1].uIds],
+      }
+    });
+    const bodyObj1 = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(OK);
+    expect(bodyObj1).toStrictEqual({ dmId: expect.any(Number) });
+
+    res = request('POST', `${url}:${port}/dm/create/v1`, {
+      json: {
+        token: validData[2].token,
+        uIds: [...validData[2].uIds],
+      }
+    });
+    const bodyObj2 = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(OK);
+    expect(bodyObj2).toStrictEqual({ dmId: expect.any(Number) });
+
+    res = request('POST', `${url}:${port}/message/senddm/v1`, {
       json: {
         token: registrationData[0].token,
-        dmId: 2, 
+        dmId: bodyObj2.dmId, 
         message: 'abc'
       }
     });
@@ -68,59 +86,77 @@ describe('Testing success sending message - message/senddm/v1', () => {
     expect(res.statusCode).toBe(OK);
     expect(message2).toStrictEqual({ messageId: 1 });
   });
+});
 
-  describe('Testing for error - message/send/v1', () => {
-    test('Invalid inputs', () => {
-      const validData: any = [
-        { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
-        { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
-        { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
-      ];
-    
-      for (let i = 0; i < validData.length; i++) {
-        const res = request('POST', `${url}:${port}/dm/create/v1`, {
-          json: {
-            token: validData[i].token,
-            uIds: [...validData[i].uIds],
-          }
-        });
-        const bodyObj = JSON.parse(res.body as string);
-        expect(res.statusCode).toBe(OK);
-        expect(bodyObj).toStrictEqual({ dmId: i + 1 });
+describe('Testing for error - message/send/v1', () => {
+  test('Invalid inputs', () => {
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
+
+    let res = request('POST', `${url}:${port}/dm/create/v1`, {
+      json: {
+        token: validData[0].token,
+        uIds: [...validData[0].uIds],
       }
-  
-      let res = request('POST', `${url}:${port}/message/send/v1`, {
-        json: {
-          token: registrationData[0].token,
-          dmId: 1, 
-          message: ''
-        }
-      });
-      const message = JSON.parse(res.getBody() as string);
-      expect(res.statusCode).toBe(OK);
-      expect(message).toStrictEqual(ERROR);
-  
-      res = request('POST', `${url}:${port}/message/send/v1`, {
-        json: {
-          token: registrationData[0].token,
-          dmId: 1, 
-          message: 'abc'
-        }
-      });
-      const message2 = JSON.parse(res.getBody() as string);
-      expect(res.statusCode).toBe(OK);
-      expect(message2).toStrictEqual(ERROR);
-
-      res = request('POST', `${url}:${port}/message/send/v1`, {
-        json: {
-          token: registrationData[0].token,
-          dmId: 999, 
-          message: 'abc'
-        }
-      });
-      const message3 = JSON.parse(res.getBody() as string);
-      expect(res.statusCode).toBe(OK);
-      expect(message3).toStrictEqual(ERROR);
     });
+    const bodyObj0 = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(OK);
+    expect(bodyObj0).toStrictEqual({ dmId: expect.any(Number) });
+
+    res = request('POST', `${url}:${port}/dm/create/v1`, {
+      json: {
+        token: validData[1].token,
+        uIds: [...validData[1].uIds],
+      }
+    });
+    const bodyObj1 = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(OK);
+    expect(bodyObj1).toStrictEqual({ dmId: expect.any(Number) });
+
+    res = request('POST', `${url}:${port}/dm/create/v1`, {
+      json: {
+        token: validData[2].token,
+        uIds: [...validData[2].uIds],
+      }
+    });
+    const bodyObj2 = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(OK);
+    expect(bodyObj2).toStrictEqual({ dmId: expect.any(Number) });
+
+    res = request('POST', `${url}:${port}/message/send/v1`, {
+      json: {
+        token: registrationData[0].token,
+        dmId: bodyObj1.dmId, 
+        message: ''
+      }
+    });
+    const message = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(message).toStrictEqual(ERROR);
+
+    res = request('POST', `${url}:${port}/message/send/v1`, {
+      json: {
+        token: registrationData[0].token,
+        dmId: bodyObj1.dmId, 
+        message: 'abc'
+      }
+    });
+    const message2 = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(message2).toStrictEqual(ERROR);
+
+    res = request('POST', `${url}:${port}/message/send/v1`, {
+      json: {
+        token: registrationData[0].token,
+        dmId: -555, 
+        message: 'abc'
+      }
+    });
+    const message3 = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(message3).toStrictEqual(ERROR);
   });
 });
