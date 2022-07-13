@@ -10,6 +10,10 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 describe('Return user', () => {
   test('Valid user and autherised user', () => {
     let res = request('POST', `${url}:${port}/auth/register/v2`, {

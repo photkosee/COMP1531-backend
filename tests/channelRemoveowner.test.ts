@@ -10,6 +10,10 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
+afterAll(() => {
+    request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 const removeOwner = (token: string, channelId: number, uId: number) => {
     const res = request('POST', `${url}:${port}/channel/removeowner/v1`,
       {
