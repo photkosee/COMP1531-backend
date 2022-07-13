@@ -50,7 +50,7 @@ object: {error: 'error'}
           timeSent: Math.floor((new Date()).getTime() / 1000),
         };
 
-        channel.messages.push(newMessagesDetails);
+        channel.messages.unshift(newMessagesDetails);
         setData(data);
 
         return { messageId: messageId };
