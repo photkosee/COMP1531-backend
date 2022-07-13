@@ -193,6 +193,35 @@ function tokenToAuthUserId(token: string) {
   return {};
 }
 
+function authIsOwner (channelId: number, uId: number) {
+  /*
+  Description:
+    authIsOwner checks if uId is a owner of channelId
+
+  Arguments:
+    channelId integer type  --  Input integer supplied by user
+    uId       integer type  --  Input integer supplied by user
+
+  Return Value:
+    true: if uId is owner of channelId
+    false: if uId is not owner of channelId
+
+*/
+  const dataStore: any = getData();
+
+  for (const channel of dataStore.channels) {
+    if (channel.channelId === channelId) {
+      for (const element of channel.ownerMembers) {
+        if (uId === element.uId) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
 export {
   checkAuthUserId,
   checkChannelId,
@@ -200,5 +229,6 @@ export {
   authInChannel,
   getMessages,
   checkToken,
-  tokenToAuthUserId
+  tokenToAuthUserId,
+  authIsOwner
 };
