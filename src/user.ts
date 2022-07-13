@@ -74,12 +74,9 @@ export function userProfileSetnameV1(token: string, nameFirst: string,
 
   const data: any = getData();
 
-<<<<<<< HEAD
-=======
   nameFirst = nameFirst.trim();
   nameLast = nameLast.trim();
 
->>>>>>> dd1936e8f01e17f1b1a9e317f6eabcfa13d721f7
   for (const user of data.users) {
     if (token === user.token) {
       user.nameFirst = nameFirst;
