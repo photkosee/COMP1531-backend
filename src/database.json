@@ -1,45 +1,6 @@
 {
-  "users": [
-    {
-      "token": "6451750549",
-      "authUserId": 1,
-      "nameFirst": "first",
-      "nameLast": "last",
-      "email": "email@email.com",
-      "password": "password",
-      "handleStr": "firstlast",
-      "permissionId": 1,
-      "sessionList": [
-        "first1"
-      ],
-      "isActive": true
-    }
-  ],
-  "channels": [
-    {
-      "channelId": 1,
-      "name": "channel name",
-      "ownerMembers": [
-        {
-          "uId": 1,
-          "email": "email@email.com",
-          "nameFirst": "first",
-          "nameLast": "last",
-          "handleStr": "firstlast"
-        }
-      ],
-      "allMembers": [
-        {
-          "uId": 1,
-          "email": "email@email.com",
-          "nameFirst": "first",
-          "nameLast": "last",
-          "handleStr": "firstlast"
-        }
-      ],
-      "isPublic": true,
-      "messages": []
-    }
-  ],
-  "dms": []
+  "users": [],
+  "channels": [],
+  "dms": [],
+  "messageId": 1
 }

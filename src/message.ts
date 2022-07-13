@@ -1,4 +1,4 @@
-import { getData, setData, getMessageId, setMessageId } from './dataStore';
+import { getData, setData } from './dataStore';
 import { tokenToAuthUserId, checkToken } from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
@@ -40,8 +40,8 @@ object: {error: 'error'}
   for (const channel of data.channels) {
     for (const member of channel.allMembers) {
       if (channelId === channel.channelId && member.uId === uId) {
-        const messageId: number = getMessageId();
-        setMessageId(messageId + 1);
+        const messageId: number = data.messageId;
+        data.messageId += 1;
 
         const newMessagesDetails: newMessagesDetails = {
           messageId: messageId,
