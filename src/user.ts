@@ -64,6 +64,9 @@ export function userProfileSetnameV1(token: string, nameFirst: string,
     return ERROR;
   }
 
+  nameFirst = nameFirst.trim();
+  nameLast = nameLast.trim();
+
   if (nameFirst.length <= 1 || nameFirst.length >= 50 ||
   nameLast.length <= 1 || nameLast.length >= 50) {
     return ERROR;
@@ -105,6 +108,8 @@ export function userProfileSetemailV1(token: string, email: string) {
   if (typeof (email) !== 'string') {
     return ERROR;
   }
+
+  email = email.trim();
 
   const updatedEmail = email.trim();
 
