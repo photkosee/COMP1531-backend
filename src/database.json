@@ -1,20 +1,5 @@
 {
-  "users": [
-    {
-      "token": "1524499170",
-      "authUserId": 1,
-      "nameFirst": "First",
-      "nameLast": "Last",
-      "email": "original@email.com",
-      "password": "password",
-      "handleStr": "firstlast",
-      "permissionId": 1,
-      "sessionList": [
-        "first1"
-      ],
-      "isActive": true
-    }
-  ],
+  "users": [],
   "channels": [],
   "dms": []
 }
