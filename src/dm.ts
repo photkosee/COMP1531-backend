@@ -1,5 +1,6 @@
 import { getData, setData } from './dataStore';
 import { checkToken, tokenToAuthUserId } from './channelHelperFunctions';
+import { dmIdValidator, checkDmMember, getDmMessages } from './dmHelperFunctions';
 const ERROR = { error: 'error' };
 
 function dmCreateV1(token: string, uIds: number[]) {
@@ -28,7 +29,7 @@ function dmCreateV1(token: string, uIds: number[]) {
   }
 
   const newCreatorId: number = tokenToAuthUserId(token).authUserId;
-  const newDmId: number = data.dms.length + 1;
+  const newDmId: number = parseInt(`${(Math.floor(Math.random() * Date.now())).toString().substring(0, 4)}`);
 
   const dmName: string[] = [];
 
@@ -138,7 +139,8 @@ function dmRemoveV1(token: string, dmId: number) {
 
   const data: any = getData();
 
-  if (!(checkToken(token))) {
+  if (!(checkToken(token)) ||
+      !(dmIdValidator(dmId))) {
     return ERROR;
   }
 
@@ -155,7 +157,6 @@ function dmRemoveV1(token: string, dmId: number) {
       }
     }
   }
-  return ERROR;
 }
 
 function dmDetailsV1(token: string, dmId: number) {
@@ -174,7 +175,8 @@ function dmDetailsV1(token: string, dmId: number) {
 
   const data: any = getData();
 
-  if (!(checkToken(token))) {
+  if (!(checkToken(token)) ||
+      !(dmIdValidator(dmId))) {
     return ERROR;
   }
 
@@ -182,7 +184,7 @@ function dmDetailsV1(token: string, dmId: number) {
 
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
-      if (dm.uIds.includes(authUserId) || dm.creatorId === authUserId) {
+      if (checkDmMember(dmId, authUserId)) {
         const userData: object[] = [];
         for (const user of data.users) {
           if (dm.uIds.includes(user.authUserId)) {
@@ -216,7 +218,6 @@ function dmDetailsV1(token: string, dmId: number) {
       }
     }
   }
-  return ERROR;
 }
 
 function dmLeaveV1(token: string, dmId: number) {
@@ -235,7 +236,8 @@ function dmLeaveV1(token: string, dmId: number) {
 
   const data: any = getData();
 
-  if (!(checkToken(token))) {
+  if (!(checkToken(token)) ||
+      !(dmIdValidator(dmId))) {
     return ERROR;
   }
 
@@ -250,10 +252,59 @@ function dmLeaveV1(token: string, dmId: number) {
       } else if (dm.creatorId === authUserId) {
         dm.creatorId = -1;
         return {};
+      } else {
+        return ERROR;
       }
     }
   }
-  return ERROR;
+}
+
+function dmMessages(token: string, dmId: number, start: number) {
+  /*
+    Description:
+      dmMessages function will return messages from associated DMs Ids
+
+    Arguments:
+      token     string type   -- Input string supplied by user
+      dmId      number type   -- Input number supplied by user
+      start     number type   -- Input number supplied by user
+
+    Return Value:
+      object: return { messages: [messagesData], start: start, end: end}
+      object: return {error: 'error'}
+  */
+
+  if (!(checkToken(token)) ||
+      !(dmIdValidator(dmId)) ||
+      start > getDmMessages(dmId).length ||
+      start < 0) {
+    return ERROR;
+  }
+
+  const authUserId: number = tokenToAuthUserId(token).authUserId;
+
+  if (!(checkDmMember(dmId, authUserId))) {
+    return ERROR;
+  }
+
+  const dmMsgData = getDmMessages(dmId);
+  const returnMsgData: any = [];
+
+  for (let i = 0; i < 50 && (start + i < dmMsgData.length); i++) {
+    returnMsgData.push(dmMsgData[start + i]);
+  }
+
+  let end = -1;
+
+  if (start + 50 < dmMsgData.length) {
+    end = start + 50;
+  }
+
+  return {
+    messages: [...returnMsgData],
+    start: start,
+    end: end
+  };
 }
 
 export {
@@ -261,5 +312,6 @@ export {
   dmListV1,
   dmRemoveV1,
   dmDetailsV1,
-  dmLeaveV1
+  dmLeaveV1,
+  dmMessages
 };
