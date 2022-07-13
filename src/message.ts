@@ -181,7 +181,6 @@ object: {error: 'error'}
       if (dmId === dm.dmId && member === uId) {
         const messageId: number = data.messageId;
         data.messageId += 1;
-        
         const newMessagesDetails: newMessagesDetails = {
           messageId: messageId,
           uId: uId,
