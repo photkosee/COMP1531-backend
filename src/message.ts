@@ -88,16 +88,24 @@ object: {error: 'error'}
 
   const uId: number = tokenToAuthUserId(token).authUserId;
   let checkMember = false;
+  let checkOwner = false;
   for (const channel of data.channels) {
     checkMember = false;
+    checkOwner = false;
     for (const member of channel.allMembers) {
       if (member.uId === uId) {
         checkMember = true;
       }
     }
+    for (const owner of channel.ownerMembers) {
+      if (owner.uId === uId) {
+        checkMember = true;
+        checkOwner = true;
+      }
+    }
     let i = 0;
     for (const channelMessage of channel.messages) {
-      if (channelMessage.uId === uId &&
+      if ((channelMessage.uId === uId || checkOwner !== false) &&
           channelMessage.messageId === messageId && checkMember !== false) {
         if (message !== '') {
           channelMessage.message = message;
@@ -113,14 +121,19 @@ object: {error: 'error'}
 
   for (const dm of data.dms) {
     checkMember = false;
+    checkOwner = false;
     for (const memberId of dm.uId) {
       if (memberId === uId) {
         checkMember = true;
       }
     }
+    if (dm.creatorId === uId) {
+      checkMember = true;
+      checkOwner = true;
+    }
     let j = 0;
     for (const dmMessage of dm.messages) {
-      if (dmMessage.uId === uId &&
+      if ((dmMessage.uId === uId || checkOwner !== false) &&
           dmMessage.messageId === messageId && checkMember !== false) {
         if (message !== '') {
           dmMessage.message = message;
@@ -209,6 +222,7 @@ object: {error: 'error'}
 
   const uId: number = tokenToAuthUserId(token).authUserId;
   let checkMember = false;
+  let checkOwner = false;
   for (const channel of data.channels) {
     checkMember = false;
     for (const member of channel.allMembers) {
@@ -216,9 +230,15 @@ object: {error: 'error'}
         checkMember = true;
       }
     }
+    for (const owner of channel.ownerMembers) {
+      if (owner.uId === uId) {
+        checkMember = true;
+        checkOwner = true;
+      }
+    }
     let i = 0;
     for (const channelMessage of channel.messages) {
-      if (channelMessage.uId === uId &&
+      if ((channelMessage.uId === uId || checkOwner !== false) &&
         channelMessage.messageId === messageId && checkMember !== false) {
         channel.messages.splice(i, 1);
         setData(data);
@@ -230,14 +250,19 @@ object: {error: 'error'}
 
   for (const dm of data.dms) {
     checkMember = false;
+    checkOwner = false;
     for (const memberId of dm.uId) {
       if (memberId === uId) {
         checkMember = true;
       }
     }
+    if (dm.creatorId === uId) {
+      checkMember = true;
+      checkOwner = true;
+    }
     let j = 0;
     for (const dmMessage of dm.messages) {
-      if (dmMessage.uId === uId &&
+      if ((dmMessage.uId === uId || checkOwner !== false) &&
         dmMessage.messageId === messageId && checkMember !== false) {
         dm.messages.splice(j, 1);
         setData(data);
