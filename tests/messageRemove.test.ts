@@ -51,7 +51,7 @@ describe('Testing success removing message - message/remove/v1', () => {
     expect(message).toStrictEqual({ messageId: 1 });
 
     res = request('DELETE', `${url}:${port}/message/remove/v1`, {
-      json: {
+      qs: {
         token: token,
         messageId: 1, 
       }
@@ -111,7 +111,7 @@ describe('Testing for error - message/remove/v1', () => {
     expect(message).toStrictEqual({ messageId: 1 });
 
     res = request('DELETE', `${url}:${port}/message/remove/v1`, {
-      json: {
+      qs: {
         token: -55,
         messageId: 1, 
       }
@@ -121,7 +121,7 @@ describe('Testing for error - message/remove/v1', () => {
     expect(remove).toStrictEqual(ERROR);
 
     res = request('DELETE', `${url}:${port}/message/remove/v1`, {
-      json: {
+      qs: {
         token: token,
         messageId: 2, 
       }
@@ -131,7 +131,7 @@ describe('Testing for error - message/remove/v1', () => {
     expect(remove2).toStrictEqual(ERROR);
 
     res = request('DELETE', `${url}:${port}/message/remove/v1`, {
-      json: {
+      qs: {
         token: token2,
         messageId: 1, 
       }

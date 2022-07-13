@@ -9,9 +9,9 @@ import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
-import { userProfileV1 } from './user';
-import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1 } from './dm';
-import { messageSendV1, messageRemoveV1 } from './message';
+import { messageSendV1, messageEditV1, messageSenddmV1, messageRemoveV1 } from './message';
+import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1, dmMessages } from './dm';
+import { userProfileV1, userProfileSetnameV1 } from './user';
 import { usersAllV1 } from './users';
 
 // Set up web app, use JSON
@@ -246,10 +246,52 @@ app.delete('/message/remove/v1', (req, res, next) => {
   }
 });
 
+app.put('/message/edit/v1', (req, res, next) => {
+  try {
+    const { token, messageId, message } = req.body;
+    const returnData = messageEditV1(token, messageId, message);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/message/senddm/v1', (req, res, next) => {
+  try {
+    const { token, dmId, message } = req.body;
+    const returnData = messageSenddmV1(token, dmId, message);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/dm/messages/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const dmId = parseInt(req.query.dmId as string);
+    const start = parseInt(req.query.start as string);
+    const returnData = dmMessages(token, dmId, start);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.get('/users/all/v1', (req, res, next) => {
   try {
     const token = req.query.token as string;
     const returnData = usersAllV1(token);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/user/profile/setname/v1', (req, res, next) => {
+  try {
+    const { token, nameFirst, nameLast } = req.body;
+    const returnData = userProfileSetnameV1(token, nameFirst, nameLast);
     return res.json(returnData);
   } catch (err) {
     next(err);

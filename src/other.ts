@@ -1,4 +1,4 @@
-import { getData, setData, setMessageId } from './dataStore';
+import { getData, setData } from './dataStore';
 
 function clearV1() {
   /*
@@ -15,8 +15,8 @@ function clearV1() {
   data.users = [];
   data.channels = [];
   data.dms = [];
+  data.messageId = 1;
 
-  setMessageId(1);
   setData(data);
   return {};
 }
