@@ -9,9 +9,7 @@ import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
-import { userProfileV1 } from './user';
-import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1 } from './dm';
-import { messageSendV1, messageEditV1 } from './message';
+import { messageSendV1, messageEditV1, messageSenddmV1 } from './message';
 import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1, dmMessages } from './dm';
 import { userProfileV1, userProfileSetnameV1 } from './user';
 import { usersAllV1 } from './users';
@@ -241,6 +239,16 @@ app.put('/message/edit/v1', (req, res, next) => {
   try {
     const { token, messageId, message } = req.body;
     const returnData = messageEditV1(token, messageId, message);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/message/senddm/v1', (req, res, next) => {
+  try {
+    const { token, dmId, message } = req.body;
+    const returnData = messageSenddmV1(token, dmId, message);
     return res.json(returnData);
   } catch (err) {
     next(err);
