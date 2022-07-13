@@ -15,6 +15,10 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 describe('Valid return', () => {
   test('Valid change of handle', () => {
     let res = request('POST', `${url}:${port}/auth/register/v2`, {
