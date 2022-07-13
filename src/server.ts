@@ -9,8 +9,6 @@ import { clearV1 } from './other';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
-import { userProfileV1 } from './user';
-import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1 } from './dm';
 import { messageSendV1, messageSenddmV1 } from './message';
 import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1, dmMessages } from './dm';
 import { userProfileV1, userProfileSetnameV1 } from './user';
