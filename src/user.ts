@@ -74,9 +74,12 @@ export function userProfileSetnameV1(token: string, nameFirst: string,
 
   const data: any = getData();
 
+<<<<<<< HEAD
   nameFirst = nameFirst.trim();
   nameLast = nameLast.trim();
 
+=======
+>>>>>>> 4609de8034ef3761414cc655db28758f981d5ef6
   for (const user of data.users) {
     if (token === user.token) {
       user.nameFirst = nameFirst;
@@ -111,9 +114,7 @@ export function userProfileSetemailV1(token: string, email: string) {
 
   email = email.trim();
 
-  const updatedEmail = email.trim();
-
-  if (emailValidator(updatedEmail) === false) {
+  if (emailValidator(email) === false) {
     return ERROR;
   }
 
@@ -121,7 +122,7 @@ export function userProfileSetemailV1(token: string, email: string) {
 
   for (const user of data.users) {
     if (token !== user.token) {
-      if (updatedEmail === user.email) {
+      if (email === user.email) {
         return ERROR;
       }
     }
@@ -129,7 +130,7 @@ export function userProfileSetemailV1(token: string, email: string) {
 
   for (const user of data.users) {
     if (token === user.token) {
-      user.email = updatedEmail;
+      user.email = email;
     }
   }
   return {};
