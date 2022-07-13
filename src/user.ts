@@ -74,6 +74,12 @@ export function userProfileSetnameV1(token: string, nameFirst: string,
 
   const data: any = getData();
 
+<<<<<<< HEAD
+=======
+  nameFirst = nameFirst.trim();
+  nameLast = nameLast.trim();
+
+>>>>>>> dd1936e8f01e17f1b1a9e317f6eabcfa13d721f7
   for (const user of data.users) {
     if (token === user.token) {
       user.nameFirst = nameFirst;
@@ -127,5 +133,50 @@ export function userProfileSetemailV1(token: string, email: string) {
       user.email = email;
     }
   }
+  return {};
+}
+
+export function userProfileSethandleV1(token: string, handleStr: string) {
+  /*
+    Description:
+      userProfileSethandleV1 updates user's handleStr
+
+    Arguments:
+      token       integer string  -- Input integer supplied by user
+      handleStr   integer string  -- Input integer supplied by user
+
+    Return Value:
+      Object: {} on success
+      object: {error: 'error'} on error
+*/
+  if (!checkToken(token) || typeof (handleStr) !== 'string') {
+    return ERROR;
+  }
+
+  handleStr = handleStr.trim();
+
+  if ((handleStr.length <= 3 || handleStr.length >= 20)) {
+    return ERROR;
+  }
+  if (!(/^[a-zA-Z0-9]+$/.test(handleStr))) {
+    return ERROR;
+  }
+
+  const data: any = getData();
+
+  for (const user of data.users) {
+    if (token !== user.token) {
+      if (handleStr === user.handleStr) {
+        return ERROR;
+      }
+    }
+  }
+
+  for (const user of data.users) {
+    if (token === user.token) {
+      user.handleStr = handleStr;
+    }
+  }
+
   return {};
 }
