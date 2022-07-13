@@ -10,7 +10,7 @@ import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1 } from './channel';
 import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1, dmMessages } from './dm';
-import { userProfileV1, userProfileSetnameV1, userProfileSetemailV1 } from './user';
+import { userProfileV1, userProfileSetnameV1, userProfileSetemailV1, userProfileSethandleV1 } from './user';
 import { usersAllV1 } from './users';
 
 // Set up web app, use JSON
@@ -260,6 +260,16 @@ app.put('/user/profile/setemail/v1', (req, res, next) => {
   try {
     const { token, email } = req.body;
     const returnData = userProfileSetemailV1(token, email);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/user/profile/sethandle/v1', (req, res, next) => {
+  try {
+    const { token, handle } = req.body;
+    const returnData = userProfileSethandleV1(token, handle);
     return res.json(returnData);
   } catch (err) {
     next(err);
