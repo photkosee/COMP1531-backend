@@ -270,10 +270,55 @@ function channelAddownerV1(token: string, channelId: number, uId: number) {
   }
 }
 
+function channelRemoveownerV1(token: string, channelId: number, uId: number) {
+  /*
+      Description:
+        channelRemoveownerV1: user of token removes owner of uId from channel of channelId
+
+      Arguments:
+        token       string type    -- Input integer supplied by user
+        channelId   integer type   -- Input integer supplied by user
+        uId         integer type   -- Input integer supplied by user
+
+      Return Value:
+        object: {} when owner is removed
+        object: {error: 'error'}
+  */
+
+  if (checkChannelId(channelId) &&
+      checkToken(token) &&
+      checkAuthUserId(uId) &&
+      authInChannel(channelId, uId) &&
+      authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
+      authIsOwner(channelId, tokenToAuthUserId(token).authUserId) &&
+      authIsOwner(channelId, uId)
+
+  ) {
+    const data: any = getData();
+    for (const channel of data.channels) {
+      if (channel.channelId === channelId) {
+        if (channel.ownerMembers.length === 1) {
+          return ERROR;
+        }
+        for (let i = 0; i < channel.ownerMembers.length; i++) {
+          if (channel.ownerMembers[i].uId === uId) {
+            channel.ownerMembers.splice(i, 1);
+            setData(data);
+            return {};
+          }
+        }
+      }
+    }
+  } else {
+    return ERROR;
+  }
+}
+
 export {
   channelMessagesV1,
   channelInviteV1,
   channelJoinV1,
   channelDetailsV1,
+  channelRemoveownerV1,
   channelAddownerV1
 };
