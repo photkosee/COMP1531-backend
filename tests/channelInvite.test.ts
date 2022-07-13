@@ -10,6 +10,10 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 test('Testing for successful invite - channel/invite/v2', () => {
   const registrationData = [];
   const registeredUsers = [

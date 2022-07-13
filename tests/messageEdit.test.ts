@@ -42,7 +42,7 @@ describe('Testing success editing and removing message - message/edit/v1', () =>
     res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: token,
-        channelId: 1, 
+        channelId: 1,
         message: 'abc'
       }
     });
@@ -53,7 +53,7 @@ describe('Testing success editing and removing message - message/edit/v1', () =>
     res = request('PUT', `${url}:${port}/message/edit/v1`, {
       json: {
         token: token,
-        messageId: 1, 
+        messageId: 1,
         message: 'zzz'
       }
     });
@@ -64,7 +64,7 @@ describe('Testing success editing and removing message - message/edit/v1', () =>
     res = request('PUT', `${url}:${port}/message/edit/v1`, {
       json: {
         token: token,
-        messageId: 1, 
+        messageId: 1,
         message: ''
       }
     });
@@ -114,7 +114,7 @@ describe('Testing for error - message/edit/v1', () => {
     res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: token,
-        channelId: 1, 
+        channelId: 1,
         message: 'abc'
       }
     });
@@ -125,7 +125,7 @@ describe('Testing for error - message/edit/v1', () => {
     res = request('PUT', `${url}:${port}/message/edit/v1`, {
       json: {
         token: token,
-        messageId: 2, 
+        messageId: 2,
         message: 'zzz'
       }
     });
@@ -136,7 +136,7 @@ describe('Testing for error - message/edit/v1', () => {
     res = request('PUT', `${url}:${port}/message/edit/v1`, {
       json: {
         token: token2,
-        messageId: 1, 
+        messageId: 1,
         message: 'zzz'
       }
     });

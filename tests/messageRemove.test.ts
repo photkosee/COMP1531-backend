@@ -42,7 +42,7 @@ describe('Testing success removing message - message/remove/v1', () => {
     res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: token,
-        channelId: 1, 
+        channelId: 1,
         message: 'abc'
       }
     });
@@ -53,7 +53,7 @@ describe('Testing success removing message - message/remove/v1', () => {
     res = request('DELETE', `${url}:${port}/message/remove/v1`, {
       qs: {
         token: token,
-        messageId: 1, 
+        messageId: 1,
       }
     });
     const remove = JSON.parse(res.getBody() as string);
@@ -102,7 +102,7 @@ describe('Testing for error - message/remove/v1', () => {
     res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: token,
-        channelId: 1, 
+        channelId: 1,
         message: 'abc'
       }
     });
@@ -113,7 +113,7 @@ describe('Testing for error - message/remove/v1', () => {
     res = request('DELETE', `${url}:${port}/message/remove/v1`, {
       qs: {
         token: -55,
-        messageId: 1, 
+        messageId: 1,
       }
     });
     const remove = JSON.parse(res.getBody() as string);
@@ -123,7 +123,7 @@ describe('Testing for error - message/remove/v1', () => {
     res = request('DELETE', `${url}:${port}/message/remove/v1`, {
       qs: {
         token: token,
-        messageId: 2, 
+        messageId: 2,
       }
     });
     const remove2 = JSON.parse(res.getBody() as string);
@@ -133,7 +133,7 @@ describe('Testing for error - message/remove/v1', () => {
     res = request('DELETE', `${url}:${port}/message/remove/v1`, {
       qs: {
         token: token2,
-        messageId: 1, 
+        messageId: 1,
       }
     });
     const remove3 = JSON.parse(res.getBody() as string);

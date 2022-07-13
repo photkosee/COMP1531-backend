@@ -136,28 +136,28 @@ describe('Handle error returns', () => {
     expect(data).toStrictEqual(ERROR);
   });
   test('Handle is used by another user', () => {
-       // ======================== SET UP START ===========================
-       const userData: authRegisterObj[] = [];
-       const userInput = [
-         { email: 'original@email.com', password: '1234567', nameFirst: 'original', nameLast: 'Last' },
-         { email: 'copy@email.com', password: '1234567', nameFirst: 'user', nameLast: 'Last' },
-       ];
-   
-       for (const users of userInput) {
-         const res = request('POST', `${url}:${port}/auth/register/v2`, {
-           json: {
-             email: users.email,
-             password: users.password,
-             nameFirst: users.nameFirst,
-             nameLast: users.nameLast
-           }
-         });
-         const user: authRegisterObj = JSON.parse(res.getBody() as string);
-         expect(res.statusCode).toBe(OK);
-         userData.push({ token: user.token, authUserId: user.authUserId });
-       }
+    // ======================== SET UP START ===========================
+    const userData: authRegisterObj[] = [];
+    const userInput = [
+      { email: 'original@email.com', password: '1234567', nameFirst: 'original', nameLast: 'Last' },
+      { email: 'copy@email.com', password: '1234567', nameFirst: 'user', nameLast: 'Last' },
+    ];
+
+    for (const users of userInput) {
+      const res = request('POST', `${url}:${port}/auth/register/v2`, {
+        json: {
+          email: users.email,
+          password: users.password,
+          nameFirst: users.nameFirst,
+          nameLast: users.nameLast
+        }
+      });
+      const user: authRegisterObj = JSON.parse(res.getBody() as string);
+      expect(res.statusCode).toBe(OK);
+      userData.push({ token: user.token, authUserId: user.authUserId });
+    }
     // ======================== SET UP END ===========================
-    let res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
+    const res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {
         token: userData[0].token,
         handle: 'userlast'
@@ -203,8 +203,6 @@ describe('Token error returns', () => {
         nameLast: 'Last',
       }
     });
-    const user = JSON.parse(res.getBody() as string);
-    const token = user.token;
 
     res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {

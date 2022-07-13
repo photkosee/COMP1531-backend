@@ -1,30 +1,55 @@
-import express from 'express';
+import express, { json, NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import config from './config.json';
 import fs from 'fs';
-import { getData, setData } from './dataStore';
 import { echo } from './echo';
 import { clearV1 } from './other';
+import config from './config.json';
+import { usersAllV1 } from './users';
+import { getData, setData } from './dataStore';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
-import { messageSendV1, messageEditV1, messageSenddmV1, messageRemoveV1 } from './message';
-import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1, channelRemoveownerV1, channelAddownerV1, channelLeaveV1 } from './channel';
-import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1, dmMessages } from './dm';
-import { userProfileV1, userProfileSetnameV1, userProfileSetemailV1, userProfileSethandleV1 } from './user';
-import { usersAllV1 } from './users';
+import {
+  messageSendV1,
+  messageEditV1,
+  messageSenddmV1,
+  messageRemoveV1
+} from './message';
+import {
+  dmCreateV1,
+  dmListV1,
+  dmRemoveV1,
+  dmDetailsV1,
+  dmLeaveV1,
+  dmMessages
+} from './dm';
+import {
+  userProfileV1,
+  userProfileSetnameV1,
+  userProfileSetemailV1,
+  userProfileSethandleV1
+} from './user';
+import {
+  channelJoinV1,
+  channelDetailsV1,
+  channelInviteV1,
+  channelMessagesV1,
+  channelRemoveownerV1,
+  channelAddownerV1,
+  channelLeaveV1
+} from './channel';
 
 // Set up web app, use JSON
 const app = express();
-app.use(express.json());
-app.use(cors({ origin: true }));
+app.use(json());
+app.use(cors());
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 const databasePath: string = __dirname + '/database.json';
 
 // Express middleware to save data to database.json on every request end
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   res.on('finish', function () {
     const newData: any = getData();
 
@@ -32,7 +57,7 @@ app.use((req, res, next) => {
       if (error) {
         console.log(error);
       } else {
-        console.log('Succesfully written to database.json');
+        // console.log('Succesfully written to database.json');
       }
     });
   });
@@ -40,7 +65,7 @@ app.use((req, res, next) => {
 });
 
 // Example get request
-app.get('/echo', (req, res, next) => {
+app.get('/echo', (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = req.query.echo as string;
     return res.json(echo(data));
@@ -49,7 +74,7 @@ app.get('/echo', (req, res, next) => {
   }
 });
 
-app.delete('/clear/v1', (req, res, next) => {
+app.delete('/clear/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     return res.json(clearV1());
   } catch (err) {
@@ -57,7 +82,7 @@ app.delete('/clear/v1', (req, res, next) => {
   }
 });
 
-app.post('/auth/register/v2', (req, res, next) => {
+app.post('/auth/register/v2', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password, nameFirst, nameLast } = req.body;
     const returnData = authRegisterV1(email, password, nameFirst, nameLast);
@@ -67,7 +92,7 @@ app.post('/auth/register/v2', (req, res, next) => {
   }
 });
 
-app.post('/auth/login/v2', (req, res, next) => {
+app.post('/auth/login/v2', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
     const returnData = authLoginV1(email, password);
@@ -77,7 +102,7 @@ app.post('/auth/login/v2', (req, res, next) => {
   }
 });
 
-app.post('/auth/logout/v1', (req, res, next) => {
+app.post('/auth/logout/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { token } = req.body;
     const returnData = authLogoutV1(token);
@@ -87,7 +112,7 @@ app.post('/auth/logout/v1', (req, res, next) => {
   }
 });
 
-app.post('/channels/create/v2', (req, res, next) => {
+app.post('/channels/create/v2', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { token, name, isPublic } = req.body;
     const returnData = channelsCreateV1(token, name, isPublic);
@@ -97,7 +122,7 @@ app.post('/channels/create/v2', (req, res, next) => {
   }
 });
 
-app.get('/channels/list/v2', (req, res, next) => {
+app.get('/channels/list/v2', (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.query.token as string;
     const returnData = channelsListV1(token);
@@ -107,7 +132,7 @@ app.get('/channels/list/v2', (req, res, next) => {
   }
 });
 
-app.get('/channels/listall/v2', (req, res, next) => {
+app.get('/channels/listall/v2', (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.query.token as string;
     const returnData = channelsListallV1(token);
@@ -117,7 +142,7 @@ app.get('/channels/listall/v2', (req, res, next) => {
   }
 });
 
-app.post('/channel/invite/v2', (req, res, next) => {
+app.post('/channel/invite/v2', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { token, channelId, uId } = req.body;
     const returnData = channelInviteV1(token, channelId, uId);
@@ -127,7 +152,7 @@ app.post('/channel/invite/v2', (req, res, next) => {
   }
 });
 
-app.get('/channel/details/v2', (req, res, next) => {
+app.get('/channel/details/v2', (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.query.token as string;
     const channelIdReq = req.query.channelId;
@@ -139,7 +164,7 @@ app.get('/channel/details/v2', (req, res, next) => {
   }
 });
 
-app.post('/channel/join/v2', (req, res, next) => {
+app.post('/channel/join/v2', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { token, channelId } = req.body;
     const returnData = channelJoinV1(token, channelId);
@@ -149,7 +174,7 @@ app.post('/channel/join/v2', (req, res, next) => {
   }
 });
 
-app.post('/channel/addowner/v1', (req, res, next) => {
+app.post('/channel/addowner/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { token, channelId, uId } = req.body;
     const returnData = channelAddownerV1(token, channelId, uId);
@@ -159,19 +184,7 @@ app.post('/channel/addowner/v1', (req, res, next) => {
   }
 });
 
-app.get('/user/profile/v2', (req, res, next) => {
-  try {
-    const token = req.query.token as string;
-    const uIdReq = req.query.uId;
-    const uId = +uIdReq;
-    const returnData = userProfileV1(token, uId);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.get('/channel/messages/v2', (req, res, next) => {
+app.get('/channel/messages/v2', (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.query.token as string;
     const channelId = +req.query.channelId;
@@ -183,7 +196,7 @@ app.get('/channel/messages/v2', (req, res, next) => {
   }
 });
 
-app.post('/channel/removeowner/v1', (req, res, next) => {
+app.post('/channel/removeowner/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { token, channelId, uId } = req.body;
     const returnData = channelRemoveownerV1(token, channelId, uId);
@@ -193,7 +206,7 @@ app.post('/channel/removeowner/v1', (req, res, next) => {
   }
 });
 
-app.post('/channel/leave/v1', (req, res, next) => {
+app.post('/channel/leave/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { token, channelId } = req.body;
     const returnData = channelLeaveV1(token, channelId);
@@ -203,7 +216,59 @@ app.post('/channel/leave/v1', (req, res, next) => {
   }
 });
 
-app.post('/dm/create/v1', (req, res, next) => {
+app.get('/user/profile/v2', (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = req.query.token as string;
+    const uIdReq = req.query.uId;
+    const uId = +uIdReq;
+    const returnData = userProfileV1(token, uId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/users/all/v1', (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = req.query.token as string;
+    const returnData = usersAllV1(token);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/user/profile/setname/v1', (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token, nameFirst, nameLast } = req.body;
+    const returnData = userProfileSetnameV1(token, nameFirst, nameLast);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/user/profile/setemail/v1', (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token, email } = req.body;
+    const returnData = userProfileSetemailV1(token, email);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token, handle } = req.body;
+    const returnData = userProfileSethandleV1(token, handle);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/dm/create/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { token, uIds } = req.body;
     const returnData = dmCreateV1(token, uIds);
@@ -213,7 +278,7 @@ app.post('/dm/create/v1', (req, res, next) => {
   }
 });
 
-app.get('/dm/list/v1', (req, res, next) => {
+app.get('/dm/list/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.query.token as string;
     const returnData = dmListV1(token);
@@ -223,7 +288,7 @@ app.get('/dm/list/v1', (req, res, next) => {
   }
 });
 
-app.delete('/dm/remove/v1', (req, res, next) => {
+app.delete('/dm/remove/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.query.token as string;
     const dmId = parseInt(req.query.dmId as string);
@@ -234,7 +299,7 @@ app.delete('/dm/remove/v1', (req, res, next) => {
   }
 });
 
-app.get('/dm/details/v1', (req, res, next) => {
+app.get('/dm/details/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.query.token as string;
     const dmId = parseInt(req.query.dmId as string);
@@ -245,7 +310,7 @@ app.get('/dm/details/v1', (req, res, next) => {
   }
 });
 
-app.post('/dm/leave/v1', (req, res, next) => {
+app.post('/dm/leave/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { token, dmId } = req.body;
     const returnData = dmLeaveV1(token, dmId);
@@ -255,48 +320,7 @@ app.post('/dm/leave/v1', (req, res, next) => {
   }
 });
 
-app.post('/message/send/v1', (req, res, next) => {
-  try {
-    const { token, channelId, message } = req.body;
-    const returnData = messageSendV1(token, channelId, message);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.delete('/message/remove/v1', (req, res, next) => {
-  try {
-    const token = req.query.token as string;
-    const messageId = parseInt(req.query.messageId as string);
-    const returnData = messageRemoveV1(token, messageId);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.put('/message/edit/v1', (req, res, next) => {
-  try {
-    const { token, messageId, message } = req.body;
-    const returnData = messageEditV1(token, messageId, message);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.post('/message/senddm/v1', (req, res, next) => {
-  try {
-    const { token, dmId, message } = req.body;
-    const returnData = messageSenddmV1(token, dmId, message);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.get('/dm/messages/v1', (req, res, next) => {
+app.get('/dm/messages/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.query.token as string;
     const dmId = parseInt(req.query.dmId as string);
@@ -308,40 +332,41 @@ app.get('/dm/messages/v1', (req, res, next) => {
   }
 });
 
-app.get('/users/all/v1', (req, res, next) => {
+app.post('/message/send/v1', (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { token, channelId, message } = req.body;
+    const returnData = messageSendV1(token, channelId, message);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.delete('/message/remove/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = req.query.token as string;
-    const returnData = usersAllV1(token);
+    const messageId = parseInt(req.query.messageId as string);
+    const returnData = messageRemoveV1(token, messageId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.put('/user/profile/setname/v1', (req, res, next) => {
+app.put('/message/edit/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, nameFirst, nameLast } = req.body;
-    const returnData = userProfileSetnameV1(token, nameFirst, nameLast);
+    const { token, messageId, message } = req.body;
+    const returnData = messageEditV1(token, messageId, message);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.put('/user/profile/setemail/v1', (req, res, next) => {
+app.post('/message/senddm/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, email } = req.body;
-    const returnData = userProfileSetemailV1(token, email);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.put('/user/profile/sethandle/v1', (req, res, next) => {
-  try {
-    const { token, handle } = req.body;
-    const returnData = userProfileSethandleV1(token, handle);
+    const { token, dmId, message } = req.body;
+    const returnData = messageSenddmV1(token, dmId, message);
     return res.json(returnData);
   } catch (err) {
     next(err);

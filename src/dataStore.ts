@@ -24,7 +24,7 @@ let data: object = {
     //     {
     //       messageId: 'number',
     //       message: 'string',
-    //       authUserId: 'number',
+    //       uId: 'number',
     //       timeCreated: 'number',
     //     }
     //   ],
@@ -40,7 +40,7 @@ let data: object = {
     //     {
     //       messageId: 'number',
     //       message: 'string',
-    //       authUserId: 'number',
+    //       uId: 'number',
     //       timeCreated: 'number',
     //     }
     //   ]
