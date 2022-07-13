@@ -6,13 +6,22 @@ import {
   authInChannel,
   getMessages,
   checkToken,
-  tokenToAuthUserId
+  tokenToAuthUserId,
+  authIsOwner
 } from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
 
 interface authUserIdObj {
   authUserId?: number
+}
+
+interface newUser {
+  uId: number,
+  email: string,
+  nameFirst: string,
+  nameLast: string,
+  handleStr: string
 }
 
 function channelJoinV1(token: string, channelId: number) {
@@ -145,13 +154,15 @@ function channelInviteV1(token: string, channelId: number, uId: number) {
       if (channel.channelId === channelId) {
         for (const element of dataStore.users) {
           if (uId === element.authUserId) {
-            channel.allMembers.push({
+            const newMember: newUser =
+            {
               uId: uId,
               email: element.email,
               nameFirst: element.nameFirst,
               nameLast: element.nameLast,
               handleStr: element.handleStr
-            });
+            };
+            channel.allMembers.push(newMember);
 
             setData(dataStore);
             return {};
@@ -191,8 +202,8 @@ function channelMessagesV1(token: string, channelId: number, start: number) {
     return ERROR;
   }
 
-  const messagesArray = [];
-  const messages = getMessages(channelId);
+  const messagesArray: any = [];
+  const messages: any = getMessages(channelId);
 
   for (let i = 0; i < 50 && (start + i < messages.length); i++) {
     messagesArray.push(messages[start + i]);
@@ -211,9 +222,145 @@ function channelMessagesV1(token: string, channelId: number, start: number) {
   };
 }
 
+function channelAddownerV1(token: string, channelId: number, uId: number) {
+  /*
+      Description:
+        channelAddownerV1 adds owner to a channel
+
+      Arguments:
+        token       string type    -- Input integer supplied by user
+        channelId   integer type   -- Input integer supplied by user
+        uId         integer type   -- Input integer supplied by user
+
+      Return Value:
+        object: {} when owner is added
+        object: {error: 'error'}
+  */
+  if (checkChannelId(channelId) &&
+      checkToken(token) &&
+      checkAuthUserId(uId) &&
+      authInChannel(channelId, uId) &&
+      authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
+      authIsOwner(channelId, tokenToAuthUserId(token).authUserId) &&
+      !authIsOwner(channelId, uId)
+  ) {
+    const dataStore: any = getData();
+
+    for (const channel of dataStore.channels) {
+      if (channel.channelId === channelId) {
+        for (const element of dataStore.users) {
+          if (uId === element.authUserId) {
+            const newOwner: newUser = {
+              uId: uId,
+              email: element.email,
+              nameFirst: element.nameFirst,
+              nameLast: element.nameLast,
+              handleStr: element.handleStr
+            };
+            channel.ownerMembers.push(newOwner);
+
+            setData(dataStore);
+            return {};
+          }
+        }
+      }
+    }
+  } else {
+    return ERROR;
+  }
+}
+
+function channelRemoveownerV1(token: string, channelId: number, uId: number) {
+  /*
+      Description:
+        channelRemoveownerV1: user of token removes owner of uId from channel of channelId
+
+      Arguments:
+        token       string type    -- Input integer supplied by user
+        channelId   integer type   -- Input integer supplied by user
+        uId         integer type   -- Input integer supplied by user
+
+      Return Value:
+        object: {} when owner is removed
+        object: {error: 'error'}
+  */
+
+  if (checkChannelId(channelId) &&
+      checkToken(token) &&
+      checkAuthUserId(uId) &&
+      authInChannel(channelId, uId) &&
+      authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
+      authIsOwner(channelId, tokenToAuthUserId(token).authUserId) &&
+      authIsOwner(channelId, uId)
+
+  ) {
+    const data: any = getData();
+    for (const channel of data.channels) {
+      if (channel.channelId === channelId) {
+        if (channel.ownerMembers.length === 1) {
+          return ERROR;
+        }
+        for (let i = 0; i < channel.ownerMembers.length; i++) {
+          if (channel.ownerMembers[i].uId === uId) {
+            channel.ownerMembers.splice(i, 1);
+            setData(data);
+            return {};
+          }
+        }
+      }
+    }
+  } else {
+    return ERROR;
+  }
+}
+
+function channelLeaveV1(token: string, channelId: number) {
+  /*
+      Description:
+        channelLeaveV1 makes a user of token leave channel of channelId
+
+      Arguments:
+        token       string type    -- Input integer supplied by user
+        channelId   integer type   -- Input integer supplied by user
+
+      Return Value:
+        object: {} when user is removed
+        object: {error: 'error'}
+  */
+  if (checkChannelId(channelId) &&
+      checkToken(token) &&
+      authInChannel(channelId, tokenToAuthUserId(token).authUserId)
+  ) {
+    const dataStore: any = getData();
+    const uId: number = tokenToAuthUserId(token).authUserId;
+    for (const channel of dataStore.channels) {
+      if (channel.channelId === channelId) {
+        for (let i = 0; i < channel.ownerMembers.length; i++) {
+          if (channel.ownerMembers[i].uId === uId) {
+            channel.ownerMembers.splice(i, 1);
+          }
+        }
+
+        for (let i = 0; i < channel.allMembers.length; i++) {
+          if (channel.allMembers[i].uId === uId) {
+            channel.allMembers.splice(i, 1);
+            setData(dataStore);
+            return {};
+          }
+        }
+      }
+    }
+  }
+
+  return ERROR;
+}
+
 export {
   channelMessagesV1,
   channelInviteV1,
   channelJoinV1,
-  channelDetailsV1
+  channelDetailsV1,
+  channelRemoveownerV1,
+  channelAddownerV1,
+  channelLeaveV1
 };
