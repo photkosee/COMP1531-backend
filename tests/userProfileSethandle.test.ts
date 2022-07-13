@@ -35,7 +35,7 @@ describe('Valid return', () => {
     res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {
         token: token,
-        handle: 'newHandle1'
+        handleStr: 'newHandle1'
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -57,7 +57,7 @@ describe('Valid return', () => {
     res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {
         token: token,
-        handle: 'firstlast'
+        handleStr: 'firstlast'
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -82,7 +82,7 @@ describe('Handle error returns', () => {
     res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {
         token: token,
-        handle: 'fir'
+        handleStr: 'fir'
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -105,7 +105,7 @@ describe('Handle error returns', () => {
     res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {
         token: token,
-        handle: 'fir!rgse'
+        handleStr: 'fir!rgse'
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -128,7 +128,7 @@ describe('Handle error returns', () => {
     res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {
         token: token,
-        handle: true
+        handleStr: true
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -160,7 +160,7 @@ describe('Handle error returns', () => {
     const res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {
         token: userData[0].token,
-        handle: 'userlast'
+        handleStr: 'userlast'
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -186,7 +186,7 @@ describe('Token error returns', () => {
     res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {
         token: dummyToken,
-        handle: 'newHandle'
+        handleStr: 'newHandle'
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -207,7 +207,7 @@ describe('Token error returns', () => {
     res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {
         token: 1,
-        handle: 'newHandle'
+        handleStr: 'newHandle'
       }
     });
     const data = JSON.parse(res.getBody() as string);

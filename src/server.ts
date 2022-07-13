@@ -260,8 +260,8 @@ app.put('/user/profile/setemail/v1', (req: Request, res: Response, next: NextFun
 
 app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, handle } = req.body;
-    const returnData = userProfileSethandleV1(token, handle);
+    const { token, handleStr } = req.body;
+    const returnData = userProfileSethandleV1(token, handleStr);
     return res.json(returnData);
   } catch (err) {
     next(err);
