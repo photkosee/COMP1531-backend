@@ -12,6 +12,10 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
+afterAll(() => {
+    request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 const channelLeave = (token: string, channelId: number) => {
     const res = request('POST', `${url}:${port}/channel/leave/v1`, {
         json: {

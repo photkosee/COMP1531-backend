@@ -22,6 +22,10 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 describe('Valid returns', () => {
   test('User is owner', () => {
   // ===================== SET UP START ================================

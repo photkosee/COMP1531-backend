@@ -10,6 +10,10 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 describe('Testing with wrong typeof parameter - channels/create/v2', () => {
   test('Invalid inputs', () => {
     let res = request('POST', `${url}:${port}/auth/register/v2`, {

@@ -33,6 +33,10 @@ beforeEach(() => {
   }
 });
 
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 test('Tests for login successful - auth/login/v2', () => {
   for (let i = 0; i < registeredUser.length; i++) {
     const res = request('POST', `${url}:${port}/auth/login/v2`, {

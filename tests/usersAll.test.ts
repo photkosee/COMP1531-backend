@@ -15,6 +15,10 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 describe('Valid returns', () => {
   test('Return list of users', () => {
     // ======================== SET UP START ===========================

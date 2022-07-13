@@ -10,6 +10,10 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 const channelMessages = (token: string, channelId: number, start: number) => {
   const res = request('GET', `${url}:${port}/channel/messages/v2`,
     {

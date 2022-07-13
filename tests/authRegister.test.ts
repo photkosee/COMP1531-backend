@@ -6,6 +6,10 @@ const port = config.port;
 const url = config.url;
 const ERROR = { error: 'error' };
 
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 describe('Testing for empty field values - auth/register/v2', () => {
   beforeAll(() => {
     request('DELETE', `${url}:${port}/clear/v1`);
