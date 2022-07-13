@@ -1,23 +1,48 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import config from './config.json';
 import fs from 'fs';
-import { getData, setData } from './dataStore';
 import { echo } from './echo';
 import { clearV1 } from './other';
+import config from './config.json';
+import { usersAllV1 } from './users';
+import { getData, setData } from './dataStore';
 import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
-import { messageSendV1, messageEditV1, messageSenddmV1, messageRemoveV1 } from './message';
-import { channelJoinV1, channelDetailsV1, channelInviteV1, channelMessagesV1, channelRemoveownerV1, channelAddownerV1, channelLeaveV1 } from './channel';
-import { dmCreateV1, dmListV1, dmRemoveV1, dmDetailsV1, dmLeaveV1, dmMessages } from './dm';
-import { userProfileV1, userProfileSetnameV1, userProfileSetemailV1, userProfileSethandleV1 } from './user';
-import { usersAllV1 } from './users';
+import {
+  messageSendV1,
+  messageEditV1,
+  messageSenddmV1,
+  messageRemoveV1
+} from './message';
+import {
+  dmCreateV1,
+  dmListV1,
+  dmRemoveV1,
+  dmDetailsV1,
+  dmLeaveV1,
+  dmMessages
+} from './dm';
+import {
+  userProfileV1,
+  userProfileSetnameV1,
+  userProfileSetemailV1,
+  userProfileSethandleV1
+} from './user';
+import {
+  channelJoinV1,
+  channelDetailsV1,
+  channelInviteV1,
+  channelMessagesV1,
+  channelRemoveownerV1,
+  channelAddownerV1,
+  channelLeaveV1
+} from './channel';
 
 // Set up web app, use JSON
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: true }));
+app.use(cors());
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
@@ -32,7 +57,7 @@ app.use((req, res, next) => {
       if (error) {
         console.log(error);
       } else {
-        console.log('Succesfully written to database.json');
+        // console.log('Succesfully written to database.json');
       }
     });
   });
@@ -159,18 +184,6 @@ app.post('/channel/addowner/v1', (req, res, next) => {
   }
 });
 
-app.get('/user/profile/v2', (req, res, next) => {
-  try {
-    const token = req.query.token as string;
-    const uIdReq = req.query.uId;
-    const uId = +uIdReq;
-    const returnData = userProfileV1(token, uId);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
 app.get('/channel/messages/v2', (req, res, next) => {
   try {
     const token = req.query.token as string;
@@ -197,6 +210,58 @@ app.post('/channel/leave/v1', (req, res, next) => {
   try {
     const { token, channelId } = req.body;
     const returnData = channelLeaveV1(token, channelId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/user/profile/v2', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const uIdReq = req.query.uId;
+    const uId = +uIdReq;
+    const returnData = userProfileV1(token, uId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/users/all/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const returnData = usersAllV1(token);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/user/profile/setname/v1', (req, res, next) => {
+  try {
+    const { token, nameFirst, nameLast } = req.body;
+    const returnData = userProfileSetnameV1(token, nameFirst, nameLast);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/user/profile/setemail/v1', (req, res, next) => {
+  try {
+    const { token, email } = req.body;
+    const returnData = userProfileSetemailV1(token, email);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put('/user/profile/sethandle/v1', (req, res, next) => {
+  try {
+    const { token, handle } = req.body;
+    const returnData = userProfileSethandleV1(token, handle);
     return res.json(returnData);
   } catch (err) {
     next(err);
@@ -255,6 +320,18 @@ app.post('/dm/leave/v1', (req, res, next) => {
   }
 });
 
+app.get('/dm/messages/v1', (req, res, next) => {
+  try {
+    const token = req.query.token as string;
+    const dmId = parseInt(req.query.dmId as string);
+    const start = parseInt(req.query.start as string);
+    const returnData = dmMessages(token, dmId, start);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.post('/message/send/v1', (req, res, next) => {
   try {
     const { token, channelId, message } = req.body;
@@ -290,58 +367,6 @@ app.post('/message/senddm/v1', (req, res, next) => {
   try {
     const { token, dmId, message } = req.body;
     const returnData = messageSenddmV1(token, dmId, message);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.get('/dm/messages/v1', (req, res, next) => {
-  try {
-    const token = req.query.token as string;
-    const dmId = parseInt(req.query.dmId as string);
-    const start = parseInt(req.query.start as string);
-    const returnData = dmMessages(token, dmId, start);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.get('/users/all/v1', (req, res, next) => {
-  try {
-    const token = req.query.token as string;
-    const returnData = usersAllV1(token);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.put('/user/profile/setname/v1', (req, res, next) => {
-  try {
-    const { token, nameFirst, nameLast } = req.body;
-    const returnData = userProfileSetnameV1(token, nameFirst, nameLast);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.put('/user/profile/setemail/v1', (req, res, next) => {
-  try {
-    const { token, email } = req.body;
-    const returnData = userProfileSetemailV1(token, email);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.put('/user/profile/sethandle/v1', (req, res, next) => {
-  try {
-    const { token, handle } = req.body;
-    const returnData = userProfileSethandleV1(token, handle);
     return res.json(returnData);
   } catch (err) {
     next(err);
