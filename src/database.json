@@ -1,6 +1,10 @@
 {
   "users": [],
   "channels": [],
+<<<<<<< HEAD
   "dms": [],
   "messageId": 1
+=======
+  "dms": []
+>>>>>>> 75ece6b28aff239c8794a80e40fd20c1d1edc5f5
 }
