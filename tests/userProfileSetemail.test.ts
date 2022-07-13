@@ -113,7 +113,7 @@ describe('Email error returns', () => {
       userData.push({ token: user.token, authUserId: user.authUserId });
     }
     // ======================== SET UP START ===========================
-    let res = request('PUT', `${url}:${port}/user/profile/setemail/v1`, {
+    const res = request('PUT', `${url}:${port}/user/profile/setemail/v1`, {
       json: {
         token: userData[0].token,
         email: 'copy@email.com'
@@ -174,7 +174,7 @@ describe('Token error returns', () => {
   });
 
   test('Invalid token type', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    request('POST', `${url}:${port}/auth/register/v2`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -182,10 +182,8 @@ describe('Token error returns', () => {
         nameLast: 'Last',
       }
     });
-    const user = JSON.parse(res.getBody() as string);
-    const token = user.token;
 
-    res = request('PUT', `${url}:${port}/user/profile/setemail/v1`, {
+    const res = request('PUT', `${url}:${port}/user/profile/setemail/v1`, {
       json: {
         token: 1,
         email: 'updated@email.com'
@@ -196,4 +194,3 @@ describe('Token error returns', () => {
     expect(data).toStrictEqual(ERROR);
   });
 });
-

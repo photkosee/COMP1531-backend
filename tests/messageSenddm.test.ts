@@ -44,7 +44,7 @@ describe('Testing success sending message - message/senddm/v1', () => {
       { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
       { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
     ];
-  
+
     let res = request('POST', `${url}:${port}/dm/create/v1`, {
       json: {
         token: validData[0].token,
@@ -78,7 +78,7 @@ describe('Testing success sending message - message/senddm/v1', () => {
     res = request('POST', `${url}:${port}/message/senddm/v1`, {
       json: {
         token: registrationData[0].token,
-        dmId: bodyObj2.dmId, 
+        dmId: bodyObj2.dmId,
         message: 'abc'
       }
     });
@@ -129,7 +129,7 @@ describe('Testing for error - message/send/v1', () => {
     res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: registrationData[0].token,
-        dmId: bodyObj1.dmId, 
+        dmId: bodyObj1.dmId,
         message: ''
       }
     });
@@ -140,7 +140,7 @@ describe('Testing for error - message/send/v1', () => {
     res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: registrationData[0].token,
-        dmId: bodyObj1.dmId, 
+        dmId: bodyObj1.dmId,
         message: 'abc'
       }
     });
@@ -151,7 +151,7 @@ describe('Testing for error - message/send/v1', () => {
     res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: registrationData[0].token,
-        dmId: -555, 
+        dmId: -555,
         message: 'abc'
       }
     });

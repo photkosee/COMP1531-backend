@@ -42,7 +42,7 @@ describe('Testing success sendind message - message/send/v1', () => {
     res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: token,
-        channelId: 1, 
+        channelId: 1,
         message: 'abc'
       }
     });
@@ -51,7 +51,6 @@ describe('Testing success sendind message - message/send/v1', () => {
     expect(message).toStrictEqual({ messageId: 1 });
   });
 });
-
 
 describe('Testing for error - message/send/v1', () => {
   test('Invalid inputs', () => {
@@ -81,7 +80,7 @@ describe('Testing for error - message/send/v1', () => {
     res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: token,
-        channelId: 1, 
+        channelId: 1,
         message: ''
       }
     });
@@ -92,7 +91,7 @@ describe('Testing for error - message/send/v1', () => {
     res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: -5,
-        channelId: 1, 
+        channelId: 1,
         message: 'abc'
       }
     });
@@ -103,7 +102,7 @@ describe('Testing for error - message/send/v1', () => {
     res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: token,
-        channelId: 2, 
+        channelId: 2,
         message: 'abc'
       }
     });

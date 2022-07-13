@@ -22,6 +22,10 @@ beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
+afterAll(() => {
+  request('DELETE', `${url}:${port}/clear/v1`);
+});
+
 describe('Valid return', () => {
   test('Add new user to a public channel', () => {
     // ======================== SET UP START ===========================
