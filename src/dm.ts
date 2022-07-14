@@ -61,7 +61,7 @@ function dmCreateV1(token: string, uIds: number[]) {
 
   dmName.sort();
 
-  const newNameString = dmName.toString().split(',').join(', ');
+  const newNameString: string = dmName.toString().split(',').join(', ');
 
   data.dms.push({
     dmId: newDmId,
@@ -245,7 +245,7 @@ function dmLeaveV1(token: string, dmId: number) {
 
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
-      const index = dm.uIds.indexOf(authUserId);
+      const index: number = dm.uIds.indexOf(authUserId);
       if (index > -1) {
         dm.uIds.splice(index, 1);
         return {};
@@ -287,7 +287,7 @@ function dmMessages(token: string, dmId: number, start: number) {
     return ERROR;
   }
 
-  const dmMsgData = getDmMessages(dmId);
+  const dmMsgData: object[] = getDmMessages(dmId);
   const returnMsgData: any = [];
 
   for (let i = 0; i < 50 && (start + i < dmMsgData.length); i++) {

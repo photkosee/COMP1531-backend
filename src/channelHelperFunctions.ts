@@ -63,7 +63,7 @@ function checkIfMember(authUserId: number, channelId: number) {
 
   Arguments:
     authUserId  integer type   -- Input integer supplied by user
-    channelId integer type   -- Input integer supplied by user
+    channelId   integer type   -- Input integer supplied by user
 
   Return Value:
     object: returns details of channel if the user is a member,
@@ -97,7 +97,7 @@ function authInChannel(channelId: number, userId: number) {
 
   Arguments:
     channelId integer type   -- Input integer supplied by user
-    userId  integer type   -- Input integer supplied by user
+    userId    integer type   -- Input integer supplied by user
 
   Return Value:
     boolean: 'true' if user in channel, 'false' if not in channel
