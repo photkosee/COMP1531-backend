@@ -85,6 +85,17 @@ describe('Testing success sending message - message/senddm/v1', () => {
     const message2 = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
     expect(message2).toStrictEqual({ messageId: 1 });
+
+    res = request('POST', `${url}:${port}/message/senddm/v1`, {
+      json: {
+        token: registrationData[0].token,
+        dmId: bodyObj0.dmId,
+        message: 'abc'
+      }
+    });
+    const message3 = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(message3).toStrictEqual({ messageId: 2 });
   });
 });
 
