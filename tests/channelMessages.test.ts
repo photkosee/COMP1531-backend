@@ -74,7 +74,7 @@ test('Testing for invalid start parameter', () => {
   res = channelMessages(user1.token, channel1.channelId, 2);
   expect(res).toStrictEqual(ERROR);
 });
-test('Testing for correct no. messages return', () => {
+test('Testing for correct messages return', () => {
   let res = request('POST', `${url}:${port}/auth/register/v2`, {
     json: {
       email: 'user1@email.com',
@@ -92,11 +92,48 @@ test('Testing for correct no. messages return', () => {
     }
   });
   const channel1 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/message/send/v1`, {
+    json: {
+      token: user1.token,
+      channelId: channel1.channelId,
+      message: "hello",
+    }
+  });
+  const message1 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/message/send/v1`, {
+    json: {
+      token: user1.token,
+      channelId: channel1.channelId,
+      message: "bye",
+    }
+  });
+  const message2 = JSON.parse(res.body as string);
 
-  const messagesReturn = channelMessages(user1.token, channel1.channelId, 0);
-  expect(messagesReturn.start).toStrictEqual(0);
-  expect(messagesReturn.end).toStrictEqual(-1);
-  expect(messagesReturn.messages.length).toStrictEqual(0);
+  expect(channelMessages(user1.token, channel1.channelId, 0)).toStrictEqual({ messages: 
+  [
+    { messageId: expect.any(Number), uId: user1.authUserId, message: 'bye', timeSent: expect.any(Number) },
+    { messageId: expect.any(Number), uId: user1.authUserId, message: 'hello', timeSent: expect.any(Number) },
+  ],
+  start: 0, end: -1});
+
+  for (let i = 0; i < 50; i++) {
+    request('POST', `${url}:${port}/message/send/v1`, {
+      json: {
+        token: user1.token,
+        channelId: channel1.channelId,
+        message: "message" + i,
+      }
+    });
+  }
+
+  expect(channelMessages(user1.token, channel1.channelId, 1).start).toStrictEqual(1);
+  expect(channelMessages(user1.token, channel1.channelId, 1).end).toStrictEqual(51);
+  expect(channelMessages(user1.token, channel1.channelId, 1).messages.length).toStrictEqual(50);
+
+  expect(channelMessages(user1.token, channel1.channelId, 45).start).toStrictEqual(45);
+  expect(channelMessages(user1.token, channel1.channelId, 45).end).toStrictEqual(-1);
+  expect(channelMessages(user1.token, channel1.channelId, 45).messages.length).toStrictEqual(7);
+
 });
 test('Testing for token not in channel or invalid', () => {
   let res = request('POST', `${url}:${port}/auth/register/v2`, {
