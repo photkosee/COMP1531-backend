@@ -237,6 +237,7 @@ object: {error: 'error'}
   let checkOwner = false;
   for (const channel of data.channels) {
     checkMember = false;
+    checkOwner = false;
     for (const member of channel.allMembers) {
       if (member.uId === uId) {
         checkMember = true;
