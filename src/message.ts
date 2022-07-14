@@ -190,7 +190,6 @@ object: {error: 'error'}
 
       return { messageId: messageId };
     }
-
     for (const member of dm.uIds) {
       if (dmId === dm.dmId && member === uId) {
         const messageId: number = data.messageId;
