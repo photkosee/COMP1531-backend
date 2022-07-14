@@ -13,16 +13,16 @@ messages: any,
 
 function channelsListallV1(token: string) {
 /*
-Description:
-channelsListallV1  returning all existing
-channels if the given authUserId is valid
+  Description:
+    channelsListallV1  returning all existing
+    channels if the given authUserId is valid
 
-Arguments:
-token string type -- Input string supplied by user
+  Arguments:
+    token   string type -- Input string supplied by user
 
-Return Value:
-array of object: having details of channelId and name
-object: {error: 'error'}
+  Return Value:
+    array of object: having details of channelId and name
+    object: {error: 'error'}
 */
 
   const data: any = getData();
@@ -52,16 +52,16 @@ object: {error: 'error'}
 
 function channelsListV1(token: string) {
 /*
-Description:
-channelsListV1 returning all channels that the
-given authUserId is part of the channels
+  Description:
+    channelsListV1 returning all channels that the
+    given authUserId is part of the channels
 
-Arguments:
-token string type -- Input string supplied by user
+  Arguments:
+    token string type -- Input string supplied by user
 
-Return Value:
-array of object: having details of channelId and name
-object: {error: 'error'}
+  Return Value:
+    array of object: having details of channelId and name
+    object: {error: 'error'}
 */
 
   const data: any = getData();
@@ -96,18 +96,18 @@ object: {error: 'error'}
 
 function channelsCreateV1(token: string, name: string, isPublic: boolean) {
 /*
-Description:
-channelsCreateV1  creating a new channel from given authUserId,
-name and set if the channel is private or public.
+  Description:
+    channelsCreateV1  creating a new channel from given authUserId,
+    name and set if the channel is private or public.
 
-Arguments:
-token string type -- Input string supplied by user
-name string type -- Input string supplied by user
-isPublic boolean type -- Input boolean supplied by user
+  Arguments:
+    token     string type -- Input string supplied by user
+    name      string type -- Input string supplied by user
+    isPublic  boolean type -- Input boolean supplied by user
 
-Return Value:
-interger: channelId
-object: {error: 'error'}
+  Return Value:
+    interger: channelId
+    object: {error: 'error'}
 */
 
   const data: any = getData();

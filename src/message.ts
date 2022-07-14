@@ -14,18 +14,18 @@ interface newMessagesDetails {
 
 export function messageSendV1(token: string, channelId: number, message: string) {
 /*
-Description:
-messageSendV1 send a message from the authorised
-user to the channel specified by channelId
+  Description:
+    messageSendV1 send a message from the authorised
+    user to the channel specified by channelId
 
-Arguments:
-token string type -- Input string supplied by user
-channelId number type -- Input number supplied by user
-message string type -- Input string supplied by user
+  Arguments:
+    token     string type -- Input string supplied by user
+    channelId number type -- Input number supplied by user
+    message   string type -- Input string supplied by user
 
-Return Value:
-interger: messageId
-object: {error: 'error'}
+  Return Value:
+    interger: { messageId: messageId }
+    object: {error: 'error'}
 */
   const data: any = getData();
 
@@ -91,9 +91,9 @@ export function messageEditV1(token: string, messageId: number, message: string)
   const authUserId: number = tokenToAuthUserId(token).authUserId;
 
   for (const channel of data.channels) {
-    const index = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
+    const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
-      const msgSenderId = channel.messages[index].uId;
+      const msgSenderId: number = channel.messages[index].uId;
       if (msgSenderId === authUserId || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
         if (message.length !== 0) {
           channel.messages[index].message = message;
@@ -106,9 +106,9 @@ export function messageEditV1(token: string, messageId: number, message: string)
   }
 
   for (const dm of data.dms) {
-    const index = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
+    const index: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkDmMember(dm.dmId, authUserId))) {
-      const msgSenderId = dm.messages[index].uId;
+      const msgSenderId: number = dm.messages[index].uId;
       if (msgSenderId === authUserId || dm.creatorId === authUserId) {
         if (message.length !== 0) {
           dm.messages[index].message = message;
@@ -213,9 +213,9 @@ export function messageRemoveV1(token: string, messageId: number) {
   const authUserId: number = tokenToAuthUserId(token).authUserId;
 
   for (const channel of data.channels) {
-    const index = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
+    const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
-      const msgSenderId = channel.messages[index].uId;
+      const msgSenderId: number = channel.messages[index].uId;
       if (msgSenderId === authUserId || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
         channel.messages.splice(index, 1);
         return {};
@@ -224,9 +224,9 @@ export function messageRemoveV1(token: string, messageId: number) {
   }
 
   for (const dm of data.dms) {
-    const index = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
+    const index: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkDmMember(dm.dmId, authUserId))) {
-      const msgSenderId = dm.messages[index].uId;
+      const msgSenderId: number = dm.messages[index].uId;
       if (msgSenderId === authUserId || dm.creatorId === authUserId) {
         dm.messages.splice(index, 1);
         return {};

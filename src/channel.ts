@@ -95,15 +95,15 @@ function channelJoinV1(token: string, channelId: number) {
 function channelDetailsV1(token: string, channelId: number) {
 /*
   Description:
-  channelDetailsV1 provide basic details about the channel
+    channelDetailsV1 provide basic details about the channel
 
   Arguments:
-  token       string type    -- Input integer supplied by user
-  channelId   integer type   -- Input integer supplied by user
+    token       string type    -- Input integer supplied by user
+    channelId   integer type   -- Input integer supplied by user
 
   Return Value:
-  object: { name, isPublic, ownerMembers, allMembers }
-  object: {error: 'error'}
+    object: { name, isPublic, ownerMembers, allMembers }
+    object: {error: 'error'}
 */
 
   if (!(checkToken(token)) && !(checkChannelId(channelId))) {
@@ -177,21 +177,21 @@ function channelInviteV1(token: string, channelId: number, uId: number) {
 
 function channelMessagesV1(token: string, channelId: number, start: number) {
   /*
-      Description:
-        channelMessagesV1 checks the message history of a given channel
+    Description:
+      channelMessagesV1 checks the message history of a given channel
 
-      Arguments:
-        token       string type   -- Input integer supplied by user
-        channelId   integer type   -- Input integer supplied by user
-        start       integer type   -- Input integer supplied by user
+    Arguments:
+      token       string type   -- Input integer supplied by user
+      channelId   integer type   -- Input integer supplied by user
+      start       integer type   -- Input integer supplied by user
 
-      Return Value:
-        object: {
-          messages: [messages],
-          start: start,
-          end: end,
-        }
-        object: {error: 'error'}
+    Return Value:
+      object: {
+        messages: [messages],
+        start: start,
+        end: end,
+      }
+      object: {error: 'error'}
   */
 
   if (!checkChannelId(channelId) ||
@@ -224,17 +224,17 @@ function channelMessagesV1(token: string, channelId: number, start: number) {
 
 function channelAddownerV1(token: string, channelId: number, uId: number) {
   /*
-      Description:
-        channelAddownerV1 adds owner to a channel
+    Description:
+      channelAddownerV1 adds owner to a channel
 
-      Arguments:
-        token       string type    -- Input integer supplied by user
-        channelId   integer type   -- Input integer supplied by user
-        uId         integer type   -- Input integer supplied by user
+    Arguments:
+      token       string type    -- Input integer supplied by user
+      channelId   integer type   -- Input integer supplied by user
+      uId         integer type   -- Input integer supplied by user
 
-      Return Value:
-        object: {} when owner is added
-        object: {error: 'error'}
+    Return Value:
+      object: {} when owner is added
+      object: {error: 'error'}
   */
   if (checkChannelId(channelId) &&
       checkToken(token) &&
@@ -272,17 +272,17 @@ function channelAddownerV1(token: string, channelId: number, uId: number) {
 
 function channelRemoveownerV1(token: string, channelId: number, uId: number) {
   /*
-      Description:
-        channelRemoveownerV1: user of token removes owner of uId from channel of channelId
+    Description:
+      channelRemoveownerV1: user of token removes owner of uId from channel of channelId
 
-      Arguments:
-        token       string type    -- Input integer supplied by user
-        channelId   integer type   -- Input integer supplied by user
-        uId         integer type   -- Input integer supplied by user
+    Arguments:
+      token       string type    -- Input integer supplied by user
+      channelId   integer type   -- Input integer supplied by user
+      uId         integer type   -- Input integer supplied by user
 
-      Return Value:
-        object: {} when owner is removed
-        object: {error: 'error'}
+    Return Value:
+      object: {} when owner is removed
+      object: {error: 'error'}
   */
 
   if (checkChannelId(channelId) &&
@@ -316,16 +316,16 @@ function channelRemoveownerV1(token: string, channelId: number, uId: number) {
 
 function channelLeaveV1(token: string, channelId: number) {
   /*
-      Description:
-        channelLeaveV1 makes a user of token leave channel of channelId
+    Description:
+      channelLeaveV1 makes a user of token leave channel of channelId
 
-      Arguments:
-        token       string type    -- Input integer supplied by user
-        channelId   integer type   -- Input integer supplied by user
+    Arguments:
+      token       string type    -- Input integer supplied by user
+      channelId   integer type   -- Input integer supplied by user
 
-      Return Value:
-        object: {} when user is removed
-        object: {error: 'error'}
+    Return Value:
+      object: {} when user is removed
+      object: {error: 'error'}
   */
   if (checkChannelId(channelId) &&
       checkToken(token) &&
