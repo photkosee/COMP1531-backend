@@ -36,7 +36,6 @@ object: {error: 'error'}
   }
 
   const uId: number = tokenToAuthUserId(token).authUserId;
-
   for (const channel of data.channels) {
     for (const member of channel.allMembers) {
       if (channelId === channel.channelId && member.uId === uId) {
@@ -175,8 +174,23 @@ object: {error: 'error'}
   }
 
   const uId: number = tokenToAuthUserId(token).authUserId;
-
   for (const dm of data.dms) {
+    if (dmId === dm.dmId && dm.creatorId === uId) {
+      const messageId: number = data.messageId;
+      data.messageId += 1;
+      const newMessagesDetails: newMessagesDetails = {
+        messageId: messageId,
+        uId: uId,
+        message: message,
+        timeSent: Math.floor((new Date()).getTime() / 1000),
+      };
+
+      dm.messages.unshift(newMessagesDetails);
+      setData(data);
+
+      return { messageId: messageId };
+    }
+
     for (const member of dm.uIds) {
       if (dmId === dm.dmId && member === uId) {
         const messageId: number = data.messageId;
