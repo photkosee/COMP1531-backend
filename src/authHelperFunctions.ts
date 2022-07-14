@@ -152,7 +152,7 @@ function genNewSessionId(token: string, userData: string[] | any[]) {
   for (const user of userData) {
     if (user.token === token &&
         user.isActive === true) {
-      const sessionListLength = user.sessionList.length;
+      const sessionListLength: number = user.sessionList.length;
       const newSessionId = `${user.nameFirst.toLowerCase().replace(/[^a-z]/gi, '') + (sessionListLength + 1).toString()}`;
       user.sessionList.push(newSessionId);
       return {};
