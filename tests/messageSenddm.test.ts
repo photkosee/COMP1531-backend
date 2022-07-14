@@ -77,7 +77,7 @@ describe('Testing success sending message - message/senddm/v1', () => {
 
     res = request('POST', `${url}:${port}/message/senddm/v1`, {
       json: {
-        token: validData[0].token,
+        token: registrationData[0].token,
         dmId: bodyObj2.dmId,
         message: 'abc'
       }
@@ -85,17 +85,6 @@ describe('Testing success sending message - message/senddm/v1', () => {
     const message2 = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
     expect(message2).toStrictEqual({ messageId: 1 });
-
-    res = request('POST', `${url}:${port}/message/senddm/v1`, {
-      json: {
-        token: validData[0].token,
-        dmId: bodyObj0.dmId,
-        message: '0 is creator but not in uIds'
-      }
-    });
-    const message3 = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(message3).toStrictEqual({ messageId: 2 });
   });
 });
 
@@ -137,7 +126,7 @@ describe('Testing for error - message/send/v1', () => {
     expect(res.statusCode).toBe(OK);
     expect(bodyObj2).toStrictEqual({ dmId: expect.any(Number) });
 
-    res = request('POST', `${url}:${port}/message/senddm/v1`, {
+    res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: registrationData[0].token,
         dmId: bodyObj1.dmId,
@@ -148,7 +137,18 @@ describe('Testing for error - message/send/v1', () => {
     expect(res.statusCode).toBe(OK);
     expect(message).toStrictEqual(ERROR);
 
-    res = request('POST', `${url}:${port}/message/senddm/v1`, {
+    res = request('POST', `${url}:${port}/message/send/v1`, {
+      json: {
+        token: registrationData[0].token,
+        dmId: bodyObj1.dmId,
+        message: 'abc'
+      }
+    });
+    const message2 = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(message2).toStrictEqual(ERROR);
+
+    res = request('POST', `${url}:${port}/message/send/v1`, {
       json: {
         token: registrationData[0].token,
         dmId: -555,
