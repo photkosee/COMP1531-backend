@@ -1,5 +1,20 @@
 {
-  "users": [],
+  "users": [
+    {
+      "token": "7630017783",
+      "authUserId": 1,
+      "nameFirst": "One",
+      "nameLast": "Number",
+      "email": "mal1@email.com",
+      "password": "1234567",
+      "handleStr": "onenumber",
+      "permissionId": 1,
+      "sessionList": [
+        "one1"
+      ],
+      "isActive": true
+    }
+  ],
   "channels": [],
   "dms": [],
   "messageId": 1
