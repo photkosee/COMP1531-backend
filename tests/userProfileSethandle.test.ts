@@ -57,7 +57,7 @@ describe('Valid return', () => {
     res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {
         token: token,
-        handleStr: 'firstlast'
+        handleStr: 'firstlast123length20'
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -82,7 +82,7 @@ describe('Handle error returns', () => {
     res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
       json: {
         token: token,
-        handleStr: 'fir'
+        handleStr: 'fi'
       }
     });
     const data = JSON.parse(res.getBody() as string);

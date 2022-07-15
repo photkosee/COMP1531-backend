@@ -67,8 +67,8 @@ export function userProfileSetnameV1(token: string, nameFirst: string,
   nameFirst = nameFirst.trim();
   nameLast = nameLast.trim();
 
-  if (nameFirst.length <= 1 || nameFirst.length >= 50 ||
-  nameLast.length <= 1 || nameLast.length >= 50) {
+  if (nameFirst.length < 1 || nameFirst.length > 50 ||
+  nameLast.length < 1 || nameLast.length > 50) {
     return ERROR;
   }
 
@@ -152,7 +152,7 @@ export function userProfileSethandleV1(token: string, handleStr: string) {
 
   handleStr = handleStr.trim();
 
-  if ((handleStr.length <= 3 || handleStr.length >= 20)) {
+  if (handleStr.length < 3 || handleStr.length > 20) {
     return ERROR;
   }
   if (!(/^[a-zA-Z0-9]+$/.test(handleStr))) {
