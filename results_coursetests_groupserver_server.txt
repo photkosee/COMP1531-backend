@@ -1,0 +1,17 @@
+
+> start
+> ts-node src/server.ts
+
+⚡️ Server listening on port 48237 at localhost
+DataStore Initialized Successfully
+TypeError: Cannot read properties of undefined (reading 'length')
+    at checkIfMember (/import/kamen/3/cs1531/project-automarking/tempstore/src/channelHelperFunctions.ts:84:25)
+    at channelDetailsV1 (/import/kamen/3/cs1531/project-automarking/tempstore/src/channel.ts:116:44)
+    at /import/kamen/3/cs1531/project-automarking/tempstore/src/server.ts:160:40
+    at Layer.handle [as handle_request] (/import/kamen/3/cs1531/project-automarking/tempstore/node_modules/express/lib/router/layer.js:95:5)
+    at next (/import/kamen/3/cs1531/project-automarking/tempstore/node_modules/express/lib/router/route.js:144:13)
+    at Route.dispatch (/import/kamen/3/cs1531/project-automarking/tempstore/node_modules/express/lib/router/route.js:114:3)
+    at Layer.handle [as handle_request] (/import/kamen/3/cs1531/project-automarking/tempstore/node_modules/express/lib/router/layer.js:95:5)
+    at /import/kamen/3/cs1531/project-automarking/tempstore/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/import/kamen/3/cs1531/project-automarking/tempstore/node_modules/express/lib/router/index.js:346:12)
+    at next (/import/kamen/3/cs1531/project-automarking/tempstore/node_modules/express/lib/router/index.js:280:10)

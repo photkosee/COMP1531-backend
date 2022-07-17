@@ -1,0 +1,81 @@
+npm verb cli [
+npm verb cli   '/import/kamen/3/cs1531/.nvm/versions/node/v16.14.2/bin/node',
+npm verb cli   '/import/kamen/3/cs1531/.nvm/versions/node/v16.14.2/bin/npm',
+npm verb cli   'run',
+npm verb cli   'test',
+npm verb cli   '--verbose',
+npm verb cli   '--testMatch',
+npm verb cli   '**/?(*.)+(test).ts'
+npm verb cli ]
+npm info using npm@8.5.0
+npm info using node@v16.14.2
+npm timing npm:load:whichnode Completed in 0ms
+npm timing config:load:defaults Completed in 3ms
+npm timing config:load:file:/import/kamen/3/cs1531/.nvm/versions/node/v16.14.2/lib/node_modules/npm/npmrc Completed in 1ms
+npm timing config:load:builtin Completed in 1ms
+npm timing config:load:cli Completed in 4ms
+npm timing config:load:env Completed in 0ms
+npm timing config:load:file:/import/kamen/3/cs1531/project-automarking/tempstore/.npmrc Completed in 1ms
+npm timing config:load:project Completed in 13ms
+npm timing config:load:file:/import/kamen/3/cs1531/.npmrc Completed in 0ms
+npm timing config:load:user Completed in 0ms
+npm timing config:load:file:/import/kamen/3/cs1531/.nvm/versions/node/v16.14.2/etc/npmrc Completed in 0ms
+npm timing config:load:global Completed in 0ms
+npm timing config:load:validate Completed in 0ms
+npm timing config:load:credentials Completed in 2ms
+npm timing config:load:setEnvs Completed in 1ms
+npm timing config:load Completed in 26ms
+npm timing npm:load:configload Completed in 26ms
+npm timing npm:load:setTitle Completed in 0ms
+npm timing config:load:flatten Completed in 4ms
+npm timing npm:load:display Completed in 8ms
+npm verb logfile /import/kamen/3/cs1531/.npm/_logs/2022-07-16T06_31_45_753Z-debug-0.log
+npm timing npm:load:logFile Completed in 23ms
+npm timing npm:load:timers Completed in 1ms
+npm timing npm:load:configScope Completed in 0ms
+npm timing npm:load Completed in 60ms
+
+> test
+> jest "**/?(*.)+(test).ts"
+
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+PASS tests/other.test.ts (5.417 s)
+PASS tests/channelRemoveowner.test.ts
+PASS tests/channelInvite.test.ts
+PASS tests/authRegister.test.ts
+PASS tests/channelJoin.test.ts
+PASS tests/channelAddowner.test.ts
+PASS tests/channelDetails.test.ts
+PASS tests/userProfileSethandle.test.ts
+PASS tests/dmDetails.test.ts
+PASS tests/userProfileSetemail.test.ts
+PASS tests/messageSenddm.test.ts
+PASS tests/channelLeave.test.ts
+PASS tests/dmCreate.test.ts
+PASS tests/dmMessages.test.ts
+PASS tests/channelMessages.test.ts
+PASS tests/dmLeave.test.ts
+PASS tests/dmRemove.test.ts
+PASS tests/channelsListall.test.ts
+PASS tests/userProfileSetname.test.ts
+PASS tests/messageEdit.test.ts
+PASS tests/messageRemove.test.ts
+PASS tests/dmList.test.ts
+PASS tests/channelsCreate.test.ts
+PASS tests/channelsList.test.ts
+PASS tests/authLogin.test.ts
+PASS tests/messageSend.test.ts
+PASS tests/userProfile.test.ts
+PASS tests/authLogout.test.ts
+PASS tests/usersAll.test.ts
+
+Test Suites: 29 passed, 29 total
+Tests:       131 passed, 131 total
+Snapshots:   0 total
+Time:        61.689 s
+Ran all test suites.
+npm timing command:run Completed in 64303ms
+npm verb exit 0
+npm timing npm Completed in 64729ms
+npm info ok 
