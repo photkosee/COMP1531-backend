@@ -162,7 +162,7 @@ function checkToken(token: string) {
   }
 
   for (const user of data.users) {
-    if (token === user.token) {
+    if (user.sessionList.includes(token)) {
       return true;
     }
   }
@@ -186,14 +186,14 @@ function tokenToAuthUserId(token: string) {
   const data: any = getData();
 
   for (const user of data.users) {
-    if (token === user.token) {
+    if (user.sessionList.includes(token)) {
       return { authUserId: user.authUserId };
     }
   }
   return {};
 }
 
-function authIsOwner (channelId: number, uId: number) {
+function authIsOwner(channelId: number, uId: number) {
   /*
   Description:
     authIsOwner checks if uId is a owner of channelId

@@ -108,7 +108,10 @@ function loginVerifier(email: string, password: string, userData: string[] | any
     if (user.email === email &&
         user.password === password &&
         user.isActive === true) {
-      return { token: user.token, authUserId: user.authUserId };
+      let newToken = `${(Math.floor(Math.random() * Date.now())).toString()}`;
+      newToken = newToken.substring(0, 10);
+      user.sessionList.push(newToken);
+      return { token: newToken, authUserId: user.authUserId };
     }
   }
   return false;
@@ -128,36 +131,13 @@ function tryLogout(token: string, userData: string[] | any[]) {
   */
 
   for (const user of userData) {
-    if (user.token === token &&
-        user.isActive === true) {
+    const index: number = user.sessionList.indexOf(token);
+    if (index > -1) {
+      user.sessionList.splice(index, 1);
       return true;
     }
   }
   return false;
-}
-
-function genNewSessionId(token: string, userData: string[] | any[]) {
-  /*
-    Description:
-      Helper function to generate newSessionId
-
-    Arguments:
-      token       string type   -- Input string supplied by function authRegisterV1
-      userData    array  type   -- Users array supplied by function authRegisterV1
-
-    Return Value:
-      {}
-  */
-
-  for (const user of userData) {
-    if (user.token === token &&
-        user.isActive === true) {
-      const sessionListLength: number = user.sessionList.length;
-      const newSessionId = `${user.nameFirst.toLowerCase().replace(/[^a-z]/gi, '') + (sessionListLength + 1).toString()}`;
-      user.sessionList.push(newSessionId);
-      return {};
-    }
-  }
 }
 
 export {
@@ -165,6 +145,5 @@ export {
   genHandleStr,
   emailValidator,
   loginVerifier,
-  genNewSessionId,
   tryLogout
 };

@@ -2,7 +2,7 @@
     "scripts": {
         "test": "jest",
         "tsc": "tsc --noImplicitAny",
-        "lint": "eslint src/**.ts",
+        "lint": "eslint .",
         "lint-fix": "eslint --fix src/**.ts",
         "start": "ts-node src/server.ts",
         "dev": "nodemon --ignore src/database.json src/server.ts"

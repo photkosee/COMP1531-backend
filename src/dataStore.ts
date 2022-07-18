@@ -1,17 +1,16 @@
 let data: object = {
   users: [
-    // {
-    //   token: 'string',
-    //   authUserId: 'number',
-    //   nameFirst: 'string',
-    //   nameLast: 'string',
-    //   email: 'string',
-    //   password: 'string',
-    //   handleStr: 'string',
-    //   permissionId: 'number',
-    //   sessionList: 'Array',
-    //   isActive: 'boolean',
-    // }
+    {
+      // authUserId: 'number',
+      // nameFirst: 'string',
+      // nameLast: 'string',
+      // email: 'string',
+      // password: 'string',
+      // handleStr: 'string',
+      // permissionId: 'number',
+      // isActive: 'boolean',
+      // sessionList: 'Array<tokens>'
+    }
   ],
   channels: [
     // {
