@@ -63,7 +63,7 @@ test('Testing for successful invite - channel/invite/v2', () => {
       channelId: channel1.channelId,
     }
   });
-  let channel1Details = JSON.parse(res.body as string);
+  const channel1Details = JSON.parse(res.body as string);
   res = request('GET', `${url}:${port}/user/profile/v2`, {
     qs: {
       token: registrationData[0].token,
@@ -121,7 +121,6 @@ test('Testing for successful invite - channel/invite/v2', () => {
   expect(res.statusCode).toBe(OK);
   const invite3 = JSON.parse(res.body as string);
   expect(invite3).toStrictEqual(ERROR);
-
 });
 
 test('Testing with valid channelId and invalid uId', () => {
@@ -192,7 +191,6 @@ test('Testing with valid channelId and invalid uId', () => {
   const channelInviteResponse2 = JSON.parse(res.body as string);
   expect(res.statusCode).toBe(OK);
   expect(channelInviteResponse2).toStrictEqual(ERROR);
-
 });
 
 test('Testing for invalid channel', () => {
@@ -246,7 +244,6 @@ test('Testing for invalid channel', () => {
   const channelInvite3 = JSON.parse(res.body as string);
   expect(res.statusCode).toBe(OK);
   expect(channelInvite3).toStrictEqual(ERROR);
-
 });
 
 test('Testing for token and uId are same person', () => {

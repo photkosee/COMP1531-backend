@@ -4,14 +4,12 @@ import {
   genHandleStr,
   emailValidator,
   loginVerifier,
-  tryLogout,
-  genNewSessionId
+  tryLogout
 } from './authHelperFunctions';
 
 const ERROR = { error: 'error' };
 
 interface newUserDetails {
-  token: string,
   authUserId: number,
   nameFirst: string,
   nameLast: string,
@@ -19,8 +17,8 @@ interface newUserDetails {
   password: string,
   handleStr: string,
   permissionId: number,
-  sessionList: Array<string>,
   isActive: boolean,
+  sessionList: Array<string>
 }
 
 interface loginDetail {
@@ -86,10 +84,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
 
     newToken = newToken.substring(0, 10);
 
-    const newSessionId = `${nameFirst.toLowerCase().replace(/[^a-z]/gi, '') + '1'}`;
-
     const newUserDetails: newUserDetails = {
-      token: newToken,
       authUserId: newAuthId,
       nameFirst: nameFirst,
       nameLast: nameLast,
@@ -97,8 +92,8 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
       password: password,
       handleStr: newHandleStr,
       permissionId: permissionId,
-      sessionList: [newSessionId],
       isActive: true,
+      sessionList: [newToken]
     };
 
     data.users.push(newUserDetails);
@@ -135,9 +130,6 @@ function authLoginV1(email: string, password: string) {
   if (loginDetail === false) {
     return ERROR;
   }
-
-  genNewSessionId(loginDetail.token, data.users);
-
   return loginDetail;
 }
 
@@ -160,7 +152,6 @@ function authLogoutV1(token: string) {
   if (!(logoutDetail)) {
     return ERROR;
   }
-
   return {};
 }
 

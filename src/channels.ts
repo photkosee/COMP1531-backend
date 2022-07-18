@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore';
+import { checkToken, tokenToAuthUserId } from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
 
@@ -26,15 +27,8 @@ function channelsListallV1(token: string) {
 */
 
   const data: any = getData();
-  let checkToken = false;
 
-  for (const user of data.users) {
-    if (token === user.token) {
-      checkToken = true;
-    }
-  }
-
-  if (checkToken === false) {
+  if (!(checkToken(token))) {
     return ERROR;
   }
 
@@ -66,17 +60,11 @@ function channelsListV1(token: string) {
 
   const data: any = getData();
 
-  let authUserId = -1;
-
-  for (const user of data.users) {
-    if (token === user.token) {
-      authUserId = user.authUserId;
-    }
-  }
-
-  if (authUserId === -1) {
+  if (!(checkToken(token))) {
     return ERROR;
   }
+
+  const authUserId = tokenToAuthUserId(token).authUserId;
 
   const channels: any = [];
 
@@ -120,20 +108,12 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
     return ERROR;
   }
 
-  let checkToken = false;
-
-  for (const user of data.users) {
-    if (token === user.token) {
-      checkToken = true;
-    }
-  }
-
-  if (checkToken === false) {
+  if (!(checkToken(token))) {
     return ERROR;
   }
 
   for (let i = 0; i < data.users.length; i++) {
-    if (data.users[i].token === token) {
+    if (data.users[i].sessionList.includes(token)) {
       const channelId: number = (data.channels.length) + 1;
 
       const newChannelDetails: newChannelDetails = {

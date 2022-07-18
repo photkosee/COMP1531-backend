@@ -42,8 +42,7 @@ export function userProfileV1(token: string, uId: number) {
   return ERROR;
 }
 
-export function userProfileSetnameV1(token: string, nameFirst: string,
-  nameLast: string) {
+export function userProfileSetnameV1(token: string, nameFirst: string, nameLast: string) {
   /*
     Description:
       userProfileSetnameV1 updates user's nameFirst and nameLast
@@ -78,7 +77,7 @@ export function userProfileSetnameV1(token: string, nameFirst: string,
   nameLast = nameLast.trim();
 
   for (const user of data.users) {
-    if (token === user.token) {
+    if (user.sessionList.includes(token)) {
       user.nameFirst = nameFirst;
       user.nameLast = nameLast;
     }
@@ -118,7 +117,7 @@ export function userProfileSetemailV1(token: string, email: string) {
   const data: any = getData();
 
   for (const user of data.users) {
-    if (token !== user.token) {
+    if (!(user.sessionList.includes(token))) {
       if (email === user.email) {
         return ERROR;
       }
@@ -126,7 +125,7 @@ export function userProfileSetemailV1(token: string, email: string) {
   }
 
   for (const user of data.users) {
-    if (token === user.token) {
+    if (user.sessionList.includes(token)) {
       user.email = email;
     }
   }
@@ -162,7 +161,7 @@ export function userProfileSethandleV1(token: string, handleStr: string) {
   const data: any = getData();
 
   for (const user of data.users) {
-    if (token !== user.token) {
+    if (!(user.sessionList.includes(token))) {
       if (handleStr === user.handleStr) {
         return ERROR;
       }
@@ -170,10 +169,9 @@ export function userProfileSethandleV1(token: string, handleStr: string) {
   }
 
   for (const user of data.users) {
-    if (token === user.token) {
+    if (user.sessionList.includes(token)) {
       user.handleStr = handleStr;
     }
   }
-
   return {};
 }

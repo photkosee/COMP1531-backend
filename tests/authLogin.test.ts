@@ -47,7 +47,7 @@ test('Tests for login successful - auth/login/v2', () => {
     });
     const bodyObj = JSON.parse(res.body as string);
     expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual(registrationData[i]);
+    expect(bodyObj).toStrictEqual({ token: expect.any(String), authUserId: registrationData[i].authUserId });
   }
 });
 
