@@ -38,10 +38,12 @@ import {
   channelAddownerV1,
   channelLeaveV1
 } from './channel';
+import errorHandler from 'middleware-http-errors';
 
 // Set up web app, use JSON
 const app = express();
 app.use(json());
+// Use middleware that allows for access from other domains
 app.use(cors());
 
 const PORT: number = parseInt(process.env.PORT || config.port);
@@ -375,6 +377,9 @@ app.post('/message/senddm/v1', (req: Request, res: Response, next: NextFunction)
 
 // for logging errors
 app.use(morgan('dev'));
+
+// handles errors nicely
+app.use(errorHandler());
 
 // start server
 app.listen(PORT, HOST, () => {
