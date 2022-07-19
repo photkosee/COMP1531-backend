@@ -94,10 +94,10 @@ app.post('/auth/register/v3', async (req: Request, res: Response, next: NextFunc
   }
 });
 
-app.post('/auth/login/v2', (req: Request, res: Response, next: NextFunction) => {
+app.post('/auth/login/v3', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
-    const returnData = authLoginV1(email, password);
+    const returnData = await authLoginV1(email, password);
     return res.json(returnData);
   } catch (err) {
     next(err);

@@ -1,13 +1,13 @@
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
-import bcrypt from 'bcryptjs';
 import {
   paramTypeChecker,
   genHandleStr,
   emailValidator,
   loginVerifier,
   tryLogout,
-  generateJwtToken
+  generateJwtToken,
+  hashPassword
 } from './authHelperFunctions';
 
 const ERROR = { error: 'error' };
@@ -41,9 +41,14 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
       nameFirst string type   -- Input string supplied by user
       nameLast  string type   -- Input string supplied by user
 
+    Exceptions:
+      BADREQUEST - Occurs when any of the fields is empty string.
+      BADREQUEST - Occurs when email format is wrong.
+      BADREQUEST - Occurs when length of password or nameFirst or nameLast is not valid.
+      BADREQUEST - Occurs when user is already registered.
+
     Return Value:
-      object: {token: token, authUserId: authUserId} will return users authId
-      object: return {error: 'error'}
+      object: {token: token, authUserId: authUserId}
   */
 
   const data: any = getData();
@@ -86,8 +91,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
     let newSessionId = `${(Math.floor(Math.random() * Date.now())).toString()}`;
     newSessionId = newSessionId.substring(0, 10);
 
-    const salt = await bcrypt.genSalt();
-    const passwordHash = await bcrypt.hash(password, salt);
+    const passwordHash = await hashPassword(password);
 
     const newUserDetails: newUserDetails = {
       authUserId: newAuthId,
@@ -102,17 +106,17 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
     };
 
     data.users.push(newUserDetails);
-
     setData(data);
 
     const newToken = await generateJwtToken(newAuthId, newSessionId);
+
     return { token: newToken, authUserId: newAuthId };
   } else {
     throw HTTPError(400, 'Received invalid data type');
   }
 }
 
-function authLoginV1(email: string, password: string) {
+async function authLoginV1(email: string, password: string) {
   /*
     Description:
       authLoginV1 function will help user to login if the user
@@ -122,20 +126,22 @@ function authLoginV1(email: string, password: string) {
       email     string type   -- Input string supplied by user
       passwrd   string type   -- Input string supplied by user
 
+    Exceptions:
+      BADREQUEST - Occurs when email entered does not belong to a user.
+      BADREQUEST - Occurs when password is not correct.
+
     Return Value:
-      object: {token: token, authUserId: authUserId} will return users authId
-      object: return {error: 'error'}
+      object: {token: token, authUserId: authUserId}
   */
 
   email = email.trim();
 
   const data: any = getData();
 
-  const loginDetail: loginDetail | boolean = loginVerifier(email, password, data.users);
+  const loginDetail: loginDetail = await loginVerifier(email, password, data.users);
 
-  if (loginDetail === false) {
-    return ERROR;
-  }
+  setData(data);
+
   return loginDetail;
 }
 
