@@ -1,4 +1,5 @@
 import express, { json, NextFunction, Request, Response } from 'express';
+import errorHandler from 'middleware-http-errors';
 import morgan from 'morgan';
 import cors from 'cors';
 import fs from 'fs';
@@ -38,7 +39,6 @@ import {
   channelAddownerV1,
   channelLeaveV1
 } from './channel';
-import errorHandler from 'middleware-http-errors';
 
 // Set up web app, use JSON
 const app = express();
@@ -84,10 +84,10 @@ app.delete('/clear/v1', (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-app.post('/auth/register/v2', (req: Request, res: Response, next: NextFunction) => {
+app.post('/auth/register/v3', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password, nameFirst, nameLast } = req.body;
-    const returnData = authRegisterV1(email, password, nameFirst, nameLast);
+    const returnData = await authRegisterV1(email, password, nameFirst, nameLast);
     return res.json(returnData);
   } catch (err) {
     next(err);

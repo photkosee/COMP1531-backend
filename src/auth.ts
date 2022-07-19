@@ -1,10 +1,13 @@
 import { getData, setData } from './dataStore';
+import HTTPError from 'http-errors';
+import bcrypt from 'bcryptjs';
 import {
   paramTypeChecker,
   genHandleStr,
   emailValidator,
   loginVerifier,
-  tryLogout
+  tryLogout,
+  generateJwtToken
 } from './authHelperFunctions';
 
 const ERROR = { error: 'error' };
@@ -26,7 +29,7 @@ interface loginDetail {
   authUserId: number,
 }
 
-function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
+async function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
   /*
     Description:
       authRegisterV1 function will register new users with
@@ -57,52 +60,55 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     const permissionId: number = (newAuthId === 1) ? 1 : 2;
 
     if (!(nameFirst.length >= 1 && nameFirst.length <= 50)) {
-      return ERROR;
+      throw HTTPError(400, 'Invalid first name length');
     }
 
     if (!(nameLast.length >= 1 && nameLast.length <= 50)) {
-      return ERROR;
+      throw HTTPError(400, 'Invalid last name length');
     }
 
     if (emailValidator(email) === false) {
-      return ERROR;
+      throw HTTPError(400, 'Invalid email');
     }
 
     for (const user of data.users) {
       if (user.email === email) {
-        return ERROR;
+        throw HTTPError(400, 'Email already in use');
       }
     }
 
     if (password.length < 6) {
-      return ERROR;
+      throw HTTPError(400, 'Invalid password length');
     }
 
     const newHandleStr: string = genHandleStr(nameFirst, nameLast, data.users);
 
-    let newToken = `${(Math.floor(Math.random() * Date.now())).toString()}`;
+    let newSessionId = `${(Math.floor(Math.random() * Date.now())).toString()}`;
+    newSessionId = newSessionId.substring(0, 10);
 
-    newToken = newToken.substring(0, 10);
+    const salt = await bcrypt.genSalt();
+    const passwordHash = await bcrypt.hash(password, salt);
 
     const newUserDetails: newUserDetails = {
       authUserId: newAuthId,
       nameFirst: nameFirst,
       nameLast: nameLast,
       email: email,
-      password: password,
+      password: passwordHash,
       handleStr: newHandleStr,
       permissionId: permissionId,
       isActive: true,
-      sessionList: [newToken]
+      sessionList: [newSessionId]
     };
 
     data.users.push(newUserDetails);
 
     setData(data);
 
+    const newToken = await generateJwtToken(newAuthId, newSessionId);
     return { token: newToken, authUserId: newAuthId };
   } else {
-    return ERROR;
+    throw HTTPError(400, 'Received invalid data type');
   }
 }
 

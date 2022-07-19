@@ -1,4 +1,7 @@
+require('dotenv').config();
 import validator from 'validator';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
 function paramTypeChecker(email: string, password: string, nameFirst: string, nameLast: string) {
   /*
@@ -140,10 +143,30 @@ function tryLogout(token: string, userData: string[] | any[]) {
   return false;
 }
 
+async function generateJwtToken(authUserId: number, newSessionId: string) {
+  /*
+    Description:
+      generateJwtToken Helper function to generate JWT Token
+
+    Arguments:
+      authUserId    number type   -- Input string supplied by authRegisterV1
+      newSessionId  string type   -- Input string supplied by authRegisterV1
+
+    Return Value:
+      string: token
+  */
+  const salt = await bcrypt.genSalt();
+  const sessionHash = await bcrypt.hash(newSessionId, salt);
+
+  const payload = { id: authUserId, salt: sessionHash };
+  return jwt.sign(payload, process.env.JWT_SECRET);
+}
+
 export {
   paramTypeChecker,
   genHandleStr,
   emailValidator,
   loginVerifier,
-  tryLogout
+  tryLogout,
+  generateJwtToken
 };
