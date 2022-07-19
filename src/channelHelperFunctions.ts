@@ -222,6 +222,32 @@ function authIsOwner(channelId: number, uId: number) {
   return false;
 }
 
+function authIsGlobalOwner(uId: number) {
+  /*
+  Description:
+    authIsGlobalOwner checks if uId is a global owner
+
+  Arguments:
+    uId       integer type  --  Input integer supplied by user
+
+  Return Value:
+    true: if uId is global owner 
+    false: if uId is not global owner 
+
+  */
+  const dataStore: any = getData();
+  for (const user of dataStore.users) {
+    if (user.uId === uId) {
+      if (user.permissionId === 1) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+  return false; 
+}
+
 export {
   checkAuthUserId,
   checkChannelId,
@@ -230,5 +256,6 @@ export {
   getMessages,
   checkToken,
   tokenToAuthUserId,
-  authIsOwner
+  authIsOwner,
+  authIsGlobalOwner
 };
