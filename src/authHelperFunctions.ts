@@ -131,10 +131,10 @@ async function loginVerifier(email: string, password: string, userData: string[]
   throw HTTPError(400, 'Invalid Email');
 }
 
-function tryLogout(token: string, userData: string[] | any[]) {
+async function tryLogout(token: string, userData: string[] | any[]) {
   /*
     Description:
-      Helper function to invalidates the token to log the user out
+      Helper function to invalidate the sessionId to log the user out
 
     Arguments:
       token       string type   -- Input string supplied by function authLogoutV1
@@ -145,10 +145,13 @@ function tryLogout(token: string, userData: string[] | any[]) {
   */
 
   for (const user of userData) {
-    const index: number = user.sessionList.indexOf(token);
-    if (index > -1) {
-      user.sessionList.splice(index, 1);
-      return true;
+    for (const sessionId of user.sessionList) {
+      const checkSessionId = await bcrypt.compare(sessionId, token);
+      if (checkSessionId) {
+        const index: number = user.sessionList.indexOf(sessionId);
+        user.sessionList.splice(index, 1);
+        return true;
+      }
     }
   }
   return false;

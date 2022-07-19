@@ -1,5 +1,8 @@
+require('dotenv').config();
 import express, { json, NextFunction, Request, Response } from 'express';
 import errorHandler from 'middleware-http-errors';
+import HTTPError from 'http-errors';
+import jwt from 'jsonwebtoken';
 import morgan from 'morgan';
 import cors from 'cors';
 import fs from 'fs';
@@ -39,6 +42,7 @@ import {
   channelAddownerV1,
   channelLeaveV1
 } from './channel';
+import console from 'console';
 
 // Set up web app, use JSON
 const app = express();
@@ -65,6 +69,23 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   });
   next();
 });
+
+// Express middleware to validate JWT Token
+function validateJwtToken(req: Request, res: Response, next: NextFunction) {
+  const token = req.header('token');
+  if (token === undefined || token === null) {
+    throw HTTPError(403, 'Invalid Token');
+  } else {
+    jwt.verify(token, process.env.JWT_SECRET, (err, token) => {
+      if (err) {
+        throw HTTPError(403, 'Invalid Token');
+      } else {
+        res.locals.token = token;
+        next();
+      }
+    });
+  }
+}
 
 // Example get request
 app.get('/echo', (req: Request, res: Response, next: NextFunction) => {
@@ -104,10 +125,10 @@ app.post('/auth/login/v3', async (req: Request, res: Response, next: NextFunctio
   }
 });
 
-app.post('/auth/logout/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/auth/logout/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token } = req.body;
-    const returnData = authLogoutV1(token);
+    const token = res.locals.token.salt;
+    const returnData = await authLogoutV1(token);
     return res.json(returnData);
   } catch (err) {
     next(err);
