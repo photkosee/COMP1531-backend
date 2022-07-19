@@ -7,7 +7,8 @@ import {
   getMessages,
   checkToken,
   tokenToAuthUserId,
-  authIsOwner
+  authIsOwner,
+  authIsGlobalOwner
 } from './channelHelperFunctions';
 
 const ERROR = { error: 'error' };
@@ -236,12 +237,13 @@ function channelAddownerV1(token: string, channelId: number, uId: number) {
       object: {} when owner is added
       object: {error: 'error'}
   */
+  const authId = tokenToAuthUserId(token).authUserId;
   if (checkChannelId(channelId) &&
       checkToken(token) &&
       checkAuthUserId(uId) &&
       authInChannel(channelId, uId) &&
-      authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
-      authIsOwner(channelId, tokenToAuthUserId(token).authUserId) &&
+      authInChannel(channelId, authId) &&
+      (authIsOwner(channelId, authId) || authIsGlobalOwner(authId)) &&
       !authIsOwner(channelId, uId)
   ) {
     const dataStore: any = getData();
@@ -284,13 +286,13 @@ function channelRemoveownerV1(token: string, channelId: number, uId: number) {
       object: {} when owner is removed
       object: {error: 'error'}
   */
-
+  const authId = tokenToAuthUserId(token).authUserId;
   if (checkChannelId(channelId) &&
       checkToken(token) &&
       checkAuthUserId(uId) &&
       authInChannel(channelId, uId) &&
-      authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
-      authIsOwner(channelId, tokenToAuthUserId(token).authUserId) &&
+      authInChannel(channelId, authId) &&
+      (authIsOwner(channelId, authId) || authIsGlobalOwner(authId)) &&
       authIsOwner(channelId, uId)
 
   ) {
