@@ -231,8 +231,8 @@ function authIsGlobalOwner(uId: number) {
     uId       integer type  --  Input integer supplied by user
 
   Return Value:
-    true: if uId is global owner 
-    false: if uId is not global owner 
+    true: if uId is global owner
+    false: if uId is not global owner
 
   */
   const dataStore: any = getData();
@@ -245,7 +245,7 @@ function authIsGlobalOwner(uId: number) {
       }
     }
   }
-  return false; 
+  return false;
 }
 
 export {
