@@ -244,4 +244,27 @@ describe('Return error', () => {
     expect(res.statusCode).toBe(OK);
     expect(data).toStrictEqual(ERROR);
   });
+
+  test('No channels exist yet', () => {
+    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+      json: {
+        email: 'mal1@email.com',
+        password: '1234567',
+        nameFirst: 'One',
+        nameLast: 'Number',
+      }
+    });
+    const user: authRegisterObj = JSON.parse(res.getBody() as string);
+    const token = user.token;
+
+    res = request('GET', `${url}:${port}/channel/details/v2`, {
+      qs: {
+        token: token,
+        channelId: -1
+      }
+    });
+    const data = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(data).toStrictEqual(ERROR);
+  });
 });

@@ -111,6 +111,11 @@ function channelDetailsV1(token: string, channelId: number) {
     return ERROR;
   }
 
+  const data: any = getData();
+  if (data.channels.length === 0) {
+    return ERROR;
+  }
+
   const authUserIdRet: authUserIdObj = tokenToAuthUserId(token);
   const authUserId: number = authUserIdRet.authUserId;
 
