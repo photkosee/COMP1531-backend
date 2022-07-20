@@ -344,10 +344,12 @@ app.get('/dm/details/v2', validateJwtToken, async(req: Request, res: Response, n
   }
 });
 
-app.post('/dm/leave/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/dm/leave/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, dmId } = req.body;
-    const returnData = dmLeaveV1(token, dmId);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { dmId } = req.body;
+    const returnData = await dmLeaveV1(token, authUserId, dmId);
     return res.json(returnData);
   } catch (err) {
     next(err);
