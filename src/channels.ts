@@ -1,35 +1,40 @@
 import { getData, setData } from './dataStore';
 import { checkToken, tokenToAuthUserId } from './channelHelperFunctions';
+import HTTPError from 'http-errors';
 
-const ERROR = { error: 'error' };
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 
 interface newChannelDetails {
-channelId: number,
-name: string,
-ownerMembers: any,
-allMembers: any,
-isPublic: boolean,
-messages: any,
+  channelId: number,
+  name: string,
+  ownerMembers: any,
+  allMembers: any,
+  isPublic: boolean,
+  messages: any,
 }
 
-function channelsListallV1(token: string) {
+async function channelsListallV1(token: string) {
 /*
   Description:
     channelsListallV1  returning all existing
     channels if the given authUserId is valid
 
   Arguments:
-    token   string type -- Input string supplied by user
+    token       string type -- Input string supplied by user
+    authUserId  string type -- Input string supplied by request header
+
+  Exceptions:
+    FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
   Return Value:
     array of object: having details of channelId and name
-    object: {error: 'error'}
 */
 
   const data: any = getData();
 
-  if (!(checkToken(token))) {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const channels: any = [];
@@ -44,7 +49,7 @@ function channelsListallV1(token: string) {
   return { channels: channels };
 }
 
-function channelsListV1(token: string) {
+async function channelsListV1(token: string, authUserId: number) {
 /*
   Description:
     channelsListV1 returning all channels that the
@@ -53,18 +58,18 @@ function channelsListV1(token: string) {
   Arguments:
     token string type -- Input string supplied by user
 
+  Exceptions:
+    FORBIDDEN  - Occurs when sessionId/token is not found in database.
+
   Return Value:
     array of object: having details of channelId and name
-    object: {error: 'error'}
 */
 
   const data: any = getData();
 
-  if (!(checkToken(token))) {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
-
-  const authUserId = tokenToAuthUserId(token).authUserId;
 
   const channels: any = [];
 
@@ -82,7 +87,7 @@ function channelsListV1(token: string) {
   return { channels: channels };
 }
 
-function channelsCreateV1(token: string, name: string, isPublic: boolean) {
+async function channelsCreateV1(token: string, authUserId: number, name: string, isPublic: boolean) {
 /*
   Description:
     channelsCreateV1  creating a new channel from given authUserId,
@@ -93,6 +98,10 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
     name      string type -- Input string supplied by user
     isPublic  boolean type -- Input boolean supplied by user
 
+  Exceptions:
+    BADREQUEST - Occurs when length of name is not valid
+    FORBIDDEN  - Occurs when sessionId/token is not found in database.
+
   Return Value:
     interger: channelId
     object: {error: 'error'}
@@ -101,19 +110,19 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
   const data: any = getData();
 
   if (typeof isPublic !== 'boolean') {
-    return ERROR;
+    throw HTTPError(FORBIDDEN, 'Invalid type of isPublic');
   }
 
   if (name.length < 1 || name.length > 20) {
-    return ERROR;
+    throw HTTPError(BADREQUEST, 'Invalid name length');
   }
 
-  if (!(checkToken(token))) {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   for (let i = 0; i < data.users.length; i++) {
-    if (data.users[i].sessionList.includes(token)) {
+    if (data.users[i].authUserId === authUserId) {
       const channelId: number = (data.channels.length) + 1;
 
       const newChannelDetails: newChannelDetails = {
@@ -144,7 +153,7 @@ function channelsCreateV1(token: string, name: string, isPublic: boolean) {
     }
   }
 
-  return ERROR;
+  throw HTTPError(BADREQUEST, 'Invalid input');
 }
 
 export {
