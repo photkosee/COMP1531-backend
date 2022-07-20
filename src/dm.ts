@@ -93,7 +93,8 @@ async function dmListV1(token: string, authUserId: number) {
       dmListV1 function will return list of dms that the caller is part of.
 
     Arguments:
-      token     string type   -- Input string supplied by user
+      token           string type   -- string supplied by request header
+      authUserId      string type   -- string supplied by request header
 
     Exceptions:
       FORBIDDEN  - Occurs when sessionId/token is not found in database.
@@ -134,29 +135,36 @@ async function dmListV1(token: string, authUserId: number) {
   };
 }
 
-function dmRemoveV1(token: string, dmId: number) {
+async function dmRemoveV1(token: string, authUserId: number, dmId: number) {
   /*
     Description:
       dmRemoveV1 function will remove an existing DM, so all members are no longer in the DM,
       original creator of the DM can only remove dms.
 
     Arguments:
-      token     string type   -- Input string supplied by user
-      dmId      number type   -- Input number supplied by user
+      token         string type   -- string supplied by request header
+      authUserId    string type   -- string supplied by request header
+      dmId          number type   -- Input number supplied by user
+
+    Exceptions:
+      BADREQUEST - Occurs when dmId does not refer to a valid DM.
+      FORBIDDEN  - Occurs when dmId is valid and the authorised user is not the original DM creator.
+      FORBIDDEN  - Occurs when dmId is valid and the authorised user is no longer in the DM.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
     Return Value:
       object: return {}
-      object: return {error: 'error'}
   */
 
   const data: any = getData();
 
-  if (!(checkToken(token)) ||
-      !(dmIdValidator(dmId))) {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
-  const authUserId: number = tokenToAuthUserId(token).authUserId;
+  if (!(dmIdValidator(dmId))) {
+    throw HTTPError(BADREQUEST, 'dmId does not refer to a valid DM');
+  }
 
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
@@ -165,7 +173,7 @@ function dmRemoveV1(token: string, dmId: number) {
         data.dms.splice(dmIndex, 1);
         return {};
       } else {
-        return ERROR;
+        throw HTTPError(FORBIDDEN, 'Authorised user is not the original DM creator');
       }
     }
   }

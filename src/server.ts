@@ -317,11 +317,12 @@ app.get('/dm/list/v2', validateJwtToken, async(req: Request, res: Response, next
   }
 });
 
-app.delete('/dm/remove/v1', (req: Request, res: Response, next: NextFunction) => {
+app.delete('/dm/remove/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const dmId = parseInt(req.query.dmId as string);
-    const returnData = dmRemoveV1(token, dmId);
+    const returnData = await dmRemoveV1(token, authUserId, dmId);
     return res.json(returnData);
   } catch (err) {
     next(err);
