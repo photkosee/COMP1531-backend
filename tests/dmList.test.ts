@@ -2,9 +2,9 @@ import request from 'sync-request';
 import config from '../src/config.json';
 
 const OK = 200;
+const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
-const FORBIDDEN = 403;
 
 let registrationData: any = [];
 let dmIdList: any = [];

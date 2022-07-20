@@ -320,44 +320,49 @@ app.get('/dm/list/v2', validateJwtToken, async(req: Request, res: Response, next
   }
 });
 
-app.delete('/dm/remove/v1', (req: Request, res: Response, next: NextFunction) => {
+app.delete('/dm/remove/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const dmId = parseInt(req.query.dmId as string);
-    const returnData = dmRemoveV1(token, dmId);
+    const returnData = await dmRemoveV1(token, authUserId, dmId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/dm/details/v1', (req: Request, res: Response, next: NextFunction) => {
+app.get('/dm/details/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const dmId = parseInt(req.query.dmId as string);
-    const returnData = dmDetailsV1(token, dmId);
+    const returnData = await dmDetailsV1(token, authUserId, dmId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.post('/dm/leave/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/dm/leave/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, dmId } = req.body;
-    const returnData = dmLeaveV1(token, dmId);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { dmId } = req.body;
+    const returnData = await dmLeaveV1(token, authUserId, dmId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/dm/messages/v1', (req: Request, res: Response, next: NextFunction) => {
+app.get('/dm/messages/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const dmId = parseInt(req.query.dmId as string);
     const start = parseInt(req.query.start as string);
-    const returnData = dmMessages(token, dmId, start);
+    const returnData = await dmMessages(token, authUserId, dmId, start);
     return res.json(returnData);
   } catch (err) {
     next(err);

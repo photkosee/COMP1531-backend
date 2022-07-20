@@ -86,7 +86,7 @@ describe('Testing listing channels - channels/list/v3', () => {
       }
     });
 
-    const response = request('GET', `${url}:${port}/channels/list/3`, {
+    const response = request('GET', `${url}:${port}/channels/list/v3`, {
       headers: {
         'Content-type': 'application/json',
         token: token

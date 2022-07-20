@@ -101,7 +101,7 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
 
   Exceptions:
     BADREQUEST - Occurs when Invalid data type of isPublic.
-    BADREQUEST - Occurs when length of name is not valid
+    BADREQUEST - Occurs when length of name is not valid.
     FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
   Return Value:
@@ -154,8 +154,6 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
       return { channelId: channelId };
     }
   }
-
-  throw HTTPError(BADREQUEST, 'Invalid input');
 }
 
 export {

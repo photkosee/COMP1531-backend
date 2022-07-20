@@ -2,9 +2,10 @@ import request from 'sync-request';
 import config from '../src/config.json';
 
 const OK = 200;
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
-const ERROR = { error: 'error' };
 
 let registrationData: any = [];
 
@@ -23,7 +24,7 @@ beforeEach(() => {
   dmIdList = [];
 
   for (const user of registeredUser) {
-    const res = request('POST', `${url}:${port}/auth/register/v2`, {
+    const res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: user.email,
         password: user.password,
@@ -32,7 +33,6 @@ beforeEach(() => {
       }
     });
     const bodyObj = JSON.parse(res.body as string);
-
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
   }
 
@@ -42,10 +42,13 @@ beforeEach(() => {
   ];
 
   for (let i = 0; i < dmData.length; i++) {
-    const res = request('POST', `${url}:${port}/dm/create/v1`, {
-      json: {
-        token: dmData[i].token,
-        uIds: [...dmData[i].uIds],
+    const res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [...dmData[i].uIds]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: dmData[i].token
       }
     });
     const bodyObj = JSON.parse(res.body as string);
@@ -57,7 +60,7 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-test('Test for invalid dmId - dm/messages/v1', () => {
+test('Test for invalid dmId - dm/messages/v2', () => {
   const invalidDmIdData = [
     { token: registrationData[0].token, dmId: 3876, start: 0 },
     { token: registrationData[2].token, dmId: '', start: 0 }
@@ -65,22 +68,23 @@ test('Test for invalid dmId - dm/messages/v1', () => {
 
   for (let i = 0; i < invalidDmIdData.length; i++) {
     const res = request(
-      'GET', `${url}:${port}/dm/messages/v1`,
+      'GET', `${url}:${port}/dm/messages/v2`,
       {
         qs: {
-          token: invalidDmIdData[i].token,
           dmId: invalidDmIdData[i].dmId,
           start: invalidDmIdData[i].start
+        },
+        headers: {
+          'Content-type': 'application/json',
+          token: invalidDmIdData[i].token
         }
       }
     );
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   }
 });
 
-test('Test for invalid start parameter - dm/messages/v1', () => {
+test('Test for invalid start parameter - dm/messages/v2', () => {
   const invalidStartData = [
     { token: registrationData[0].token, dmId: dmIdList[0], start: -1 },
     { token: registrationData[2].token, dmId: dmIdList[1], start: 10000 }
@@ -88,22 +92,23 @@ test('Test for invalid start parameter - dm/messages/v1', () => {
 
   for (let i = 0; i < invalidStartData.length; i++) {
     const res = request(
-      'GET', `${url}:${port}/dm/messages/v1`,
+      'GET', `${url}:${port}/dm/messages/v2`,
       {
         qs: {
-          token: invalidStartData[i].token,
           dmId: invalidStartData[i].dmId,
           start: invalidStartData[i].start
+        },
+        headers: {
+          'Content-type': 'application/json',
+          token: invalidStartData[i].token
         }
       }
     );
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   }
 });
 
-test('Test for user is not a member of the DM - dm/messages/v1', () => {
+test('Test for user is not a member of the DM - dm/messages/v2', () => {
   const invalidMemberData = [
     { token: registrationData[3].token, dmId: dmIdList[0], start: 0 },
     { token: registrationData[3].token, dmId: dmIdList[1], start: 0 }
@@ -111,45 +116,40 @@ test('Test for user is not a member of the DM - dm/messages/v1', () => {
 
   for (let i = 0; i < invalidMemberData.length; i++) {
     const res = request(
-      'GET', `${url}:${port}/dm/messages/v1`,
+      'GET', `${url}:${port}/dm/messages/v2`,
       {
         qs: {
-          token: invalidMemberData[i].token,
           dmId: invalidMemberData[i].dmId,
           start: invalidMemberData[i].start
+        },
+        headers: {
+          'Content-type': 'application/json',
+          token: invalidMemberData[i].token
         }
       }
     );
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(FORBIDDEN);
   }
 });
 
-test('Test for invalid Token Data - dm/messages/v1', () => {
-  const invalidTokenData = [
-    { token: '', dmId: dmIdList[0], start: 0 },
-    { token: 1, dmId: dmIdList[1], start: 0 }
-  ];
-
-  for (let i = 0; i < invalidTokenData.length; i++) {
-    const res = request(
-      'GET', `${url}:${port}/dm/messages/v1`,
-      {
-        qs: {
-          token: invalidTokenData[i].token,
-          dmId: invalidTokenData[i].dmId,
-          start: invalidTokenData[i].start
-        }
+test('Test for invalid Token Data - dm/messages/v2', () => {
+  const res = request(
+    'GET', `${url}:${port}/dm/messages/v2`,
+    {
+      qs: {
+        dmId: 1,
+        start: 0
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: ' '
       }
-    );
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual(ERROR);
-  }
+    }
+  );
+  expect(res.statusCode).toBe(FORBIDDEN);
 });
 
-test('Test for correct functionality - dm/messages/v1', () => {
+test('Test for correct functionality - dm/messages/v2', () => {
   const validData = [
     { token: registrationData[0].token, dmId: dmIdList[0], start: 0 },
     { token: registrationData[1].token, dmId: dmIdList[1], start: 0 }
@@ -157,17 +157,18 @@ test('Test for correct functionality - dm/messages/v1', () => {
 
   for (let i = 0; i < validData.length; i++) {
     const res = request(
-      'GET', `${url}:${port}/dm/messages/v1`,
+      'GET', `${url}:${port}/dm/messages/v2`,
       {
         qs: {
-          token: validData[i].token,
           dmId: validData[i].dmId,
           start: validData[i].start
+        },
+        headers: {
+          'Content-type': 'application/json',
+          token: validData[i].token
         }
       }
     );
-    const bodyObj = JSON.parse(res.body as string);
     expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual({ messages: expect.any(Array), start: 0, end: -1 });
   }
 });
