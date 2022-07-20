@@ -306,10 +306,11 @@ app.post('/dm/create/v2', validateJwtToken, async(req: Request, res: Response, n
   }
 });
 
-app.get('/dm/list/v1', (req: Request, res: Response, next: NextFunction) => {
+app.get('/dm/list/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
-    const returnData = dmListV1(token);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const returnData = await dmListV1(token, authUserId);
     return res.json(returnData);
   } catch (err) {
     next(err);

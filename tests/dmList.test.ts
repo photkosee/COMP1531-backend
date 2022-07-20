@@ -4,7 +4,7 @@ import config from '../src/config.json';
 const OK = 200;
 const port = config.port;
 const url = config.url;
-const ERROR = { error: 'error' };
+const FORBIDDEN = 403;
 
 let registrationData: any = [];
 let dmIdList: any = [];
@@ -22,7 +22,7 @@ beforeEach(() => {
   dmIdList = [];
 
   for (const user of registeredUser) {
-    const res = request('POST', `${url}:${port}/auth/register/v2`, {
+    const res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: user.email,
         password: user.password,
@@ -31,7 +31,6 @@ beforeEach(() => {
       }
     });
     const bodyObj = JSON.parse(res.body as string);
-
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
   }
 
@@ -41,10 +40,13 @@ beforeEach(() => {
   ];
 
   for (let i = 0; i < dmData.length; i++) {
-    const res = request('POST', `${url}:${port}/dm/create/v1`, {
-      json: {
-        token: dmData[i].token,
-        uIds: [...dmData[i].uIds],
+    const res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [...dmData[i].uIds]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: dmData[i].token
       }
     });
     const bodyObj = JSON.parse(res.body as string);
@@ -56,7 +58,7 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-test('Test for success dm list fetch - dm/list/v1', () => {
+test('Test for success dm list fetch - dm/list/v2', () => {
   const validData = [
     { token: registrationData[0].token, expected: [{ dmId: dmIdList[0], name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: dmIdList[1], name: 'anandsingh, mridulanand, mridulrathor' }] },
     { token: registrationData[1].token, expected: [{ dmId: dmIdList[0], name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: dmIdList[1], name: 'anandsingh, mridulanand, mridulrathor' }] },
@@ -66,9 +68,10 @@ test('Test for success dm list fetch - dm/list/v1', () => {
 
   for (let i = 0; i < validData.length; i++) {
     const res = request(
-      'GET', `${url}:${port}/dm/list/v1`,
+      'GET', `${url}:${port}/dm/list/v2`,
       {
-        qs: {
+        headers: {
+          'Content-type': 'application/json',
           token: validData[i].token
         }
       }
@@ -79,23 +82,20 @@ test('Test for success dm list fetch - dm/list/v1', () => {
   }
 });
 
-test('Test for invalid Token Data - dm/list/v1', () => {
+test('Test for invalid Token Data - dm/list/v2', () => {
   const invalidTokenData = [
-    { token: '' },
-    { token: 9876545434 },
-    { token: 1 }
+    { token: ' ' }
   ];
   for (let i = 0; i < invalidTokenData.length; i++) {
     const res = request(
-      'GET', `${url}:${port}/dm/list/v1`,
+      'GET', `${url}:${port}/dm/list/v2`,
       {
-        qs: {
+        headers: {
+          'Content-type': 'application/json',
           token: invalidTokenData[i].token
         }
       }
     );
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(FORBIDDEN);
   }
 });
