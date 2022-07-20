@@ -50,10 +50,10 @@ describe('Testing success removing message - message/remove/v2', () => {
       }
     });
 
-    res = request('PUT', `${url}:${port}/message/remove/v2`, {
-      body: JSON.stringify({
+    res = request('DELETE', `${url}:${port}/message/remove/v2`, {
+      qs: {
         messageId: 1
-      }),
+      },
       headers: {
         'Content-type': 'application/json',
         token: token
@@ -69,7 +69,7 @@ describe('Testing for error - message/remove/v2', () => {
   test('Invalid inputs', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
-        email: 'mal1@email.com',
+        email: 'mal2@email.com',
         password: '1234567',
         nameFirst: 'One',
         nameLast: 'Number',
@@ -80,7 +80,7 @@ describe('Testing for error - message/remove/v2', () => {
 
     res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
-        email: 'mal1@email.com',
+        email: 'mal3@email.com',
         password: '1234567',
         nameFirst: 'One',
         nameLast: 'Number',
@@ -111,10 +111,10 @@ describe('Testing for error - message/remove/v2', () => {
       }
     });
 
-    res = request('PUT', `${url}:${port}/message/remove/v2`, {
-      body: JSON.stringify({
+    res = request('DELETE', `${url}:${port}/message/remove/v2`, {
+      qs: {
         messageId: 2
-      }),
+      },
       headers: {
         'Content-type': 'application/json',
         token: token
@@ -122,10 +122,10 @@ describe('Testing for error - message/remove/v2', () => {
     });
     expect(res.statusCode).toBe(BADREQUEST);
 
-    res = request('PUT', `${url}:${port}/message/remove/v2`, {
-      body: JSON.stringify({
+    res = request('DELETE', `${url}:${port}/message/remove/v2`, {
+      qs: {
         messageId: 1
-      }),
+      },
       headers: {
         'Content-type': 'application/json',
         token: token2

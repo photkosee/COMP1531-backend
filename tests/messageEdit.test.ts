@@ -95,7 +95,7 @@ describe('Testing for error - message/edit/v2', () => {
 
     res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
-        email: 'mal1@email.com',
+        email: 'mal2@email.com',
         password: '1234567',
         nameFirst: 'One',
         nameLast: 'Number',
