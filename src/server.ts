@@ -138,30 +138,30 @@ app.post('/auth/logout/v2', validateJwtToken, async(req: Request, res: Response,
   }
 });
 
-app.post('/channels/create/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+app.post('/channels/create/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
     const authUserId = res.locals.token.id;
     const { name, isPublic } = req.body;
-    const returnData = channelsCreateV1(token, authUserId, name, isPublic);
+    const returnData = await channelsCreateV1(token, authUserId, name, isPublic);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/channels/list/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+app.get('/channels/list/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
     const authUserId = res.locals.token.id;
-    const returnData = channelsListV1(token, authUserId);
+    const returnData = await channelsListV1(token, authUserId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/channels/listall/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+app.get('/channels/listall/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
     const returnData = await channelsListallV1(token);
@@ -364,41 +364,48 @@ app.get('/dm/messages/v1', (req: Request, res: Response, next: NextFunction) => 
   }
 });
 
-app.post('/message/send/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/message/send/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, channelId, message } = req.body;
-    const returnData = messageSendV1(token, channelId, message);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId, message } = req.body;
+    const returnData = await messageSendV1(token, authUserId, channelId, message);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.delete('/message/remove/v1', (req: Request, res: Response, next: NextFunction) => {
+app.delete('/message/remove/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const messageId = parseInt(req.query.messageId as string);
-    const returnData = messageRemoveV1(token, messageId);
+    const returnData = await messageRemoveV1(token, authUserId, messageId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.put('/message/edit/v1', (req: Request, res: Response, next: NextFunction) => {
+app.put('/message/edit/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, messageId, message } = req.body;
-    const returnData = messageEditV1(token, messageId, message);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { messageId, message } = req.body;
+    const returnData = await messageEditV1(token, authUserId, messageId, message);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.post('/message/senddm/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/message/senddm/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, dmId, message } = req.body;
-    const returnData = messageSenddmV1(token, dmId, message);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { dmId, message } = req.body;
+    const returnData = await messageSenddmV1(token, authUserId, dmId, message);
     return res.json(returnData);
   } catch (err) {
     next(err);

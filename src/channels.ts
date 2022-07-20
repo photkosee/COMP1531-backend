@@ -1,5 +1,5 @@
 import { getData, setData } from './dataStore';
-import { checkToken, tokenToAuthUserId } from './channelHelperFunctions';
+import { checkToken } from './channelHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -21,8 +21,7 @@ async function channelsListallV1(token: string) {
     channels if the given authUserId is valid
 
   Arguments:
-    token       string type -- Input string supplied by user
-    authUserId  string type -- Input string supplied by request header
+    token       string type -- Input string supplied by request header
 
   Exceptions:
     FORBIDDEN  - Occurs when sessionId/token is not found in database.
@@ -56,7 +55,8 @@ async function channelsListV1(token: string, authUserId: number) {
     given authUserId is part of the channels
 
   Arguments:
-    token string type -- Input string supplied by user
+    token       string type -- Input string supplied by request header
+    authUserId  string type -- Input string supplied by request header
 
   Exceptions:
     FORBIDDEN  - Occurs when sessionId/token is not found in database.
@@ -94,11 +94,13 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
     name and set if the channel is private or public.
 
   Arguments:
-    token     string type -- Input string supplied by user
-    name      string type -- Input string supplied by user
-    isPublic  boolean type -- Input boolean supplied by user
+    token       string type   -- Input string supplied by request header
+    authUserId  string type   -- Input string supplied by request header
+    name        string type   -- Input string supplied by user
+    isPublic    boolean type  -- Input boolean supplied by user
 
   Exceptions:
+    BADREQUEST - Occurs when Invalid data type of isPublic.
     BADREQUEST - Occurs when length of name is not valid
     FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
@@ -110,7 +112,7 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
   const data: any = getData();
 
   if (typeof isPublic !== 'boolean') {
-    throw HTTPError(FORBIDDEN, 'Invalid type of isPublic');
+    throw HTTPError(BADREQUEST, 'Invalid type of isPublic');
   }
 
   if (name.length < 1 || name.length > 20) {
