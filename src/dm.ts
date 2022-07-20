@@ -87,7 +87,7 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
   return { dmId: newDmId };
 }
 
-function dmListV1(token: string) {
+async function dmListV1(token: string, authUserId: number) {
   /*
     Description:
       dmListV1 function will return list of dms that the caller is part of.
@@ -95,19 +95,19 @@ function dmListV1(token: string) {
     Arguments:
       token     string type   -- Input string supplied by user
 
+    Exceptions:
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
+
     Return Value:
       object: return {dms: [{dmId: dmId, name : name}]}
-      object: return {error: 'error'}
   */
 
   const data: any = getData();
   const dmsList: object[] = [];
 
-  if (!(checkToken(token))) {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
-
-  const authUserId: number = tokenToAuthUserId(token).authUserId;
 
   for (const dm of data.dms) {
     if (dm.creatorId === authUserId) {

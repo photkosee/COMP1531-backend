@@ -3,7 +3,6 @@ import HTTPError from 'http-errors';
 import bcrypt from 'bcryptjs';
 
 const BADREQUEST = 400;
-const FORBIDDEN = 403;
 
 function checkAuthUserId(authUserId: number) {
 /*
