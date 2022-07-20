@@ -1,5 +1,6 @@
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
+import config from './config.json';
 import {
   paramTypeChecker,
   genHandleStr,
@@ -10,7 +11,8 @@ import {
   hashPassword
 } from './authHelperFunctions';
 
-const ERROR = { error: 'error' };
+const HOST: string = process.env.IP || 'localhost';
+const PORT: number = parseInt(process.env.PORT || config.port);
 
 interface newUserDetails {
   authUserId: number,
@@ -19,6 +21,7 @@ interface newUserDetails {
   email: string,
   password: string,
   handleStr: string,
+  profileImgUrl: string,
   permissionId: number,
   isActive: boolean,
   sessionList: Array<string>
@@ -93,6 +96,8 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
 
     const passwordHash = await hashPassword(password);
 
+    const defaultProfileImgUrl = `${(HOST === 'localhost') ? 'http://' : 'https://'} + ${HOST + ':' + PORT}/static/profile.png`;
+
     const newUserDetails: newUserDetails = {
       authUserId: newAuthId,
       nameFirst: nameFirst,
@@ -100,6 +105,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
       email: email,
       password: passwordHash,
       handleStr: newHandleStr,
+      profileImgUrl: defaultProfileImgUrl,
       permissionId: permissionId,
       isActive: true,
       sessionList: [newSessionId]

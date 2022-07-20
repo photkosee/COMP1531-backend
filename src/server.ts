@@ -2,6 +2,7 @@ require('dotenv').config();
 import express, { json, NextFunction, Request, Response } from 'express';
 import errorHandler from 'middleware-http-errors';
 import HTTPError from 'http-errors';
+import path from 'path';
 import jwt from 'jsonwebtoken';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -53,6 +54,8 @@ app.use(cors());
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 const databasePath: string = __dirname + '/database.json';
+
+app.use('/static', express.static(path.join(__dirname, 'static')));
 
 // Express middleware to save data to database.json on every request end
 app.use((req: Request, res: Response, next: NextFunction) => {

@@ -7,6 +7,7 @@ let data: object = {
       // email: 'string',
       // password: 'string',
       // handleStr: 'string',
+      // profileImgUrl: 'string',
       // permissionId: 'number',
       // isActive: 'boolean',
       // sessionList: 'Array<tokens>'
