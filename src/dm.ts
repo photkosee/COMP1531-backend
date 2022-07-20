@@ -1,11 +1,10 @@
 import HTTPError from 'http-errors';
 import { getData, setData } from './dataStore';
-import { checkToken, tokenToAuthUserId } from './channelHelperFunctions';
+import { checkToken } from './channelHelperFunctions';
 import { dmIdValidator, checkDmMember, getDmMessages } from './dmHelperFunctions';
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
-const ERROR = { error: 'error' };
 
 async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
   /*
@@ -291,32 +290,42 @@ async function dmLeaveV1(token: string, authUserId: number, dmId: number) {
   }
 }
 
-function dmMessages(token: string, dmId: number, start: number) {
+async function dmMessages(token: string, authUserId: number, dmId: number, start: number) {
   /*
     Description:
       dmMessages function will return messages from associated DMs Ids
 
     Arguments:
-      token     string type   -- Input string supplied by user
-      dmId      number type   -- Input number supplied by user
-      start     number type   -- Input number supplied by user
+      token       string type   -- Input string supplied by request header
+      authUserId  string type   -- string supplied by request header
+      dmId        number type   -- Input number supplied by user
+      start       number type   -- Input number supplied by user
+
+    Exceptions:
+      BADREQUEST - Occurs when dmId does not refer to a valid DM.
+      BADREQUEST - Occurs when start is greater than the total number of messages in the channel.
+      FORBIDDEN  - Occurs when Authorised user is not a member of the DM.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
     Return Value:
       object: return { messages: [messagesData], start: start, end: end}
-      object: return {error: 'error'}
   */
 
-  if (!(checkToken(token)) ||
-      !(dmIdValidator(dmId)) ||
-      start > getDmMessages(dmId).length ||
-      start < 0) {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
-  const authUserId: number = tokenToAuthUserId(token).authUserId;
+  if (!(dmIdValidator(dmId))) {
+    throw HTTPError(BADREQUEST, 'dmId does not refer to a valid DM');
+  }
+
+  if (start > getDmMessages(dmId).length ||
+      start < 0) {
+    throw HTTPError(BADREQUEST, 'Start is greater than the total number of messages in the channel');
+  }
 
   if (!(checkDmMember(dmId, authUserId))) {
-    return ERROR;
+    throw HTTPError(FORBIDDEN, 'Authorised user is not a member of the DM');
   }
 
   const dmMsgData: object[] = getDmMessages(dmId);
