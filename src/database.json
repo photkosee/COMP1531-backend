@@ -2,5 +2,6 @@
   "users": [],
   "channels": [],
   "dms": [],
-  "messageId": 1
+  "messageId": 1,
+  "dmId": 1
 }

@@ -294,10 +294,12 @@ app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next: NextFu
   }
 });
 
-app.post('/dm/create/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/dm/create/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, uIds } = req.body;
-    const returnData = dmCreateV1(token, uIds);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { uIds } = req.body;
+    const returnData = await dmCreateV1(token, authUserId, uIds);
     return res.json(returnData);
   } catch (err) {
     next(err);

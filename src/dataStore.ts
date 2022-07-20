@@ -1,17 +1,17 @@
 let data: object = {
   users: [
-    {
-      // authUserId: 'number',
-      // nameFirst: 'string',
-      // nameLast: 'string',
-      // email: 'string',
-      // password: 'string',
-      // handleStr: 'string',
-      // profileImgUrl: 'string',
-      // permissionId: 'number',
-      // isActive: 'boolean',
-      // sessionList: 'Array<tokens>'
-    }
+    // {
+    //   authUserId: 'number',
+    //   nameFirst: 'string',
+    //   nameLast: 'string',
+    //   email: 'string',
+    //   password: 'string',
+    //   handleStr: 'string',
+    //   profileImgUrl: 'string',
+    //   permissionId: 'number',
+    //   isActive: 'boolean',
+    //   sessionList: 'Array<tokens>'
+    // }
   ],
   channels: [
     // {
@@ -47,6 +47,7 @@ let data: object = {
     // }
   ],
   messageId: 1,
+  dmId: 1
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

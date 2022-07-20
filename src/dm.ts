@@ -1,35 +1,47 @@
+import HTTPError from 'http-errors';
 import { getData, setData } from './dataStore';
 import { checkToken, tokenToAuthUserId } from './channelHelperFunctions';
 import { dmIdValidator, checkDmMember, getDmMessages } from './dmHelperFunctions';
+
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 const ERROR = { error: 'error' };
 
-function dmCreateV1(token: string, uIds: number[]) {
+async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
   /*
     Description:
       dmCreateV1 function will create a dm with members: supplied uIds
       and creator to be the caller.
 
     Arguments:
-      token     string type   -- Input string supplied by user
-      uIds      array type    -- Input array supplied by user
+      token           string type   -- string supplied by request header
+      authUserId      string type   -- string supplied by request header
+      uIds            array type    -- Input array supplied by user
+
+    Exceptions:
+      BADREQUEST - Occurs when any uId in uIds does not refer to a valid user.
+      BADREQUEST - Occurs when there are duplicate 'uId's in uIds.
+      BADREQUEST - Occurs when received invalid data type.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
     Return Value:
       object: return {dmId: dmId}
-      object: return {error: 'error'}
   */
 
   const data: any = getData();
 
-  if (!(checkToken(token))) {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   if (typeof uIds !== 'object' || uIds.length === 0) {
-    return ERROR;
+    throw HTTPError(BADREQUEST, 'Received invalid data type');
   }
 
-  const newCreatorId: number = tokenToAuthUserId(token).authUserId;
-  const newDmId: number = parseInt(`${(Math.floor(Math.random() * Date.now())).toString().substring(0, 4)}`);
+  const newCreatorId = authUserId;
+  const newDmId: number = data.dmId;
+
+  data.dmId += 1;
 
   const dmName: string[] = [];
 
@@ -37,7 +49,7 @@ function dmCreateV1(token: string, uIds: number[]) {
     for (const user of data.users) {
       if (id === user.authUserId) {
         if (dmName.includes(user.handleStr)) {
-          return ERROR;
+          throw HTTPError(BADREQUEST, 'There are duplicate \'uId\'s in uIds');
         } else {
           dmName.push(user.handleStr);
         }
@@ -45,12 +57,12 @@ function dmCreateV1(token: string, uIds: number[]) {
     }
 
     if (id === newCreatorId) {
-      return ERROR;
+      throw HTTPError(BADREQUEST, 'uIds should not include creator');
     }
   }
 
   if (dmName.length !== uIds.length) {
-    return ERROR;
+    throw HTTPError(BADREQUEST, 'Any uId in uIds does not refer to a valid user');
   }
 
   for (const user of data.users) {

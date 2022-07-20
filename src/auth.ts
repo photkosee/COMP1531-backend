@@ -14,6 +14,9 @@ import {
 const HOST: string = process.env.IP || 'localhost';
 const PORT: number = parseInt(process.env.PORT || config.port);
 
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
+
 interface newUserDetails {
   authUserId: number,
   nameFirst: string,
@@ -68,25 +71,25 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
     const permissionId: number = (newAuthId === 1) ? 1 : 2;
 
     if (!(nameFirst.length >= 1 && nameFirst.length <= 50)) {
-      throw HTTPError(400, 'Invalid first name length');
+      throw HTTPError(BADREQUEST, 'Invalid first name length');
     }
 
     if (!(nameLast.length >= 1 && nameLast.length <= 50)) {
-      throw HTTPError(400, 'Invalid last name length');
+      throw HTTPError(BADREQUEST, 'Invalid last name length');
     }
 
     if (emailValidator(email) === false) {
-      throw HTTPError(400, 'Invalid email');
+      throw HTTPError(BADREQUEST, 'Invalid email');
     }
 
     for (const user of data.users) {
       if (user.email === email) {
-        throw HTTPError(400, 'Email already in use');
+        throw HTTPError(BADREQUEST, 'Email already in use');
       }
     }
 
     if (password.length < 6) {
-      throw HTTPError(400, 'Invalid password length');
+      throw HTTPError(BADREQUEST, 'Invalid password length');
     }
 
     const newHandleStr: string = genHandleStr(nameFirst, nameLast, data.users);
@@ -96,7 +99,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
 
     const passwordHash = await hashPassword(password);
 
-    const defaultProfileImgUrl = `${(HOST === 'localhost') ? 'http://' : 'https://'} + ${HOST + ':' + PORT}/static/profile.png`;
+    const defaultProfileImgUrl = `${(HOST === 'localhost') ? 'http://' : 'https://'}${HOST + ':' + PORT}/static/profile.png`;
 
     const newUserDetails: newUserDetails = {
       authUserId: newAuthId,
@@ -118,7 +121,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
 
     return { token: newToken, authUserId: newAuthId };
   } else {
-    throw HTTPError(400, 'Received invalid data type');
+    throw HTTPError(BADREQUEST, 'Received invalid data type');
   }
 }
 
@@ -157,7 +160,7 @@ async function authLogoutV1(token: string) {
       authLogoutV1 function invalidates the token to log the user out
 
     Arguments:
-      token     string type   -- token string supplied by browser
+      token     string type   -- string supplied by request header
 
     Exceptions:
       FORBIDDEN - Occurs when sessionId/token is not found in database.
@@ -170,7 +173,7 @@ async function authLogoutV1(token: string) {
   const logoutDetail = await tryLogout(token, data.users);
 
   if (!(logoutDetail)) {
-    throw HTTPError(403, 'Invalid Session ID or Token');
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
   setData(data);
   return {};
