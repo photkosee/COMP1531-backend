@@ -138,30 +138,33 @@ app.post('/auth/logout/v2', validateJwtToken, async(req: Request, res: Response,
   }
 });
 
-app.post('/channels/create/v2', (req: Request, res: Response, next: NextFunction) => {
+app.post('/channels/create/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, name, isPublic } = req.body;
-    const returnData = channelsCreateV1(token, name, isPublic);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { name, isPublic } = req.body;
+    const returnData = channelsCreateV1(token, authUserId, name, isPublic);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/channels/list/v2', (req: Request, res: Response, next: NextFunction) => {
+app.get('/channels/list/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
-    const returnData = channelsListV1(token);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const returnData = channelsListV1(token, authUserId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/channels/listall/v2', (req: Request, res: Response, next: NextFunction) => {
+app.get('/channels/listall/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
-    const returnData = channelsListallV1(token);
+    const token = res.locals.token.salt;
+    const returnData = await channelsListallV1(token);
     return res.json(returnData);
   } catch (err) {
     next(err);
