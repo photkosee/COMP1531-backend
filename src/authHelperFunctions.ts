@@ -1,4 +1,3 @@
-require('dotenv').config();
 import HTTPError from 'http-errors';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
@@ -189,7 +188,7 @@ async function generateJwtToken(authUserId: number, newSessionId: string) {
   const sessionHash = await bcrypt.hash(newSessionId, salt);
 
   const payload = { id: authUserId, salt: sessionHash };
-  return jwt.sign(payload, process.env.JWT_SECRET);
+  return jwt.sign(payload, '4ee66c5740fece1be9fdc0e269dd77ef7ea99874ee617bcfb2dae2c429f18acb');
 }
 
 export {
