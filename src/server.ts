@@ -181,11 +181,10 @@ app.post('/channel/invite/v2', (req: Request, res: Response, next: NextFunction)
   }
 });
 
-app.get('/channel/details/v2', (req: Request, res: Response, next: NextFunction) => {
+app.get('/channel/details/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
-    const channelIdReq = req.query.channelId;
-    const channelId = +channelIdReq;
+    const token = res.locals.token.salt;
+    const channelId = parseInt(req.query.channelId as string);
     const returnData = channelDetailsV1(token, channelId);
     return res.json(returnData);
   } catch (err) {
