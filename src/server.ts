@@ -191,9 +191,10 @@ app.get('/channel/details/v2', validateJwtToken, async(req: Request, res: Respon
   }
 });
 
-app.post('/channel/join/v2', (req: Request, res: Response, next: NextFunction) => {
+app.post('/channel/join/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, channelId } = req.body;
+    const token = res.locals.token.salt;
+    const { channelId } = req.body;
     const returnData = channelJoinV1(token, channelId);
     return res.json(returnData);
   } catch (err) {
@@ -243,11 +244,10 @@ app.post('/channel/leave/v1', (req: Request, res: Response, next: NextFunction) 
   }
 });
 
-app.get('/user/profile/v2', (req: Request, res: Response, next: NextFunction) => {
+app.get('/user/profile/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
-    const uIdReq = req.query.uId;
-    const uId = +uIdReq;
+    const token = res.locals.token.salt;
+    const uId = parseInt(req.query.uId as string);
     const returnData = userProfileV1(token, uId);
     return res.json(returnData);
   } catch (err) {
@@ -265,9 +265,10 @@ app.get('/users/all/v1', (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-app.put('/user/profile/setname/v1', (req: Request, res: Response, next: NextFunction) => {
+app.put('/user/profile/setname/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, nameFirst, nameLast } = req.body;
+    const token = res.locals.token.salt;
+    const { nameFirst, nameLast } = req.body;
     const returnData = userProfileSetnameV1(token, nameFirst, nameLast);
     return res.json(returnData);
   } catch (err) {
@@ -275,9 +276,10 @@ app.put('/user/profile/setname/v1', (req: Request, res: Response, next: NextFunc
   }
 });
 
-app.put('/user/profile/setemail/v1', (req: Request, res: Response, next: NextFunction) => {
+app.put('/user/profile/setemail/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, email } = req.body;
+    const token = res.locals.token.salt;
+    const { email } = req.body;
     const returnData = userProfileSetemailV1(token, email);
     return res.json(returnData);
   } catch (err) {
@@ -285,9 +287,10 @@ app.put('/user/profile/setemail/v1', (req: Request, res: Response, next: NextFun
   }
 });
 
-app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next: NextFunction) => {
+app.put('/user/profile/sethandle/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, handleStr } = req.body;
+    const token = res.locals.token.salt;
+    const { handleStr } = req.body;
     const returnData = userProfileSethandleV1(token, handleStr);
     return res.json(returnData);
   } catch (err) {
