@@ -1,10 +1,10 @@
 import request from 'sync-request';
 import config from '../src/config.json';
 
+const FORBIDDEN = 403;
 const OK = 200;
 const port = config.port;
 const url = config.url;
-const ERROR = { error: 'error' };
 
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
@@ -14,43 +14,21 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Testing with unexisting token - channels/list/v2', () => {
+describe('Testing with unexisting token - channels/list/v3', () => {
   test('Invalid inputs', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
-      json: {
-        email: 'mal1@email.com',
-        password: '1234567',
-        nameFirst: 'One',
-        nameLast: 'Number',
+    const res = request('GET', `${url}:${port}/channels/list/v3`, {
+      headers: {
+        'Content-type': 'application/json',
+        token: ''
       }
     });
-    const user = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    const token = user.token;
-
-    res = request('POST', `${url}:${port}/channels/create/v2`, {
-      json: {
-        token: token,
-        name: 'DOTA2',
-        isPublic: false
-      }
-    });
-    expect(res.statusCode).toBe(OK);
-
-    res = request('GET', `${url}:${port}/channels/list/v2`, {
-      qs: {
-        token: -678
-      }
-    });
-    const channelList = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(channelList).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(FORBIDDEN);
   });
 });
 
-describe('Testing listing no channels - channels/list/v2', () => {
+describe('Testing listing no channels - channels/list/v3', () => {
   test('Valid inputs', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'mal1@email.com',
         password: '1234567',
@@ -59,11 +37,11 @@ describe('Testing listing no channels - channels/list/v2', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
     const token = user.token;
 
-    res = request('GET', `${url}:${port}/channels/list/v2`, {
-      qs: {
+    res = request('GET', `${url}:${port}/channels/list/v3`, {
+      headers: {
+        'Content-type': 'application/json',
         token: token
       }
     });
@@ -73,9 +51,9 @@ describe('Testing listing no channels - channels/list/v2', () => {
   });
 });
 
-describe('Testing listing channels - channels/list/v2', () => {
+describe('Testing listing channels - channels/list/v3', () => {
   test('Valid inputs', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    const res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'mal1@email.com',
         password: '1234567',
@@ -84,34 +62,38 @@ describe('Testing listing channels - channels/list/v2', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
     const token = user.token;
 
-    const res2 = request('POST', `${url}:${port}/channels/create/v2`, {
-      json: {
-        token: token,
+    request('POST', `${url}:${port}/channels/create/v3`, {
+      body: JSON.stringify({
         name: 'DOTA2',
         isPublic: false
-      }
-    });
-    expect(res2.statusCode).toBe(OK);
-
-    res = request('POST', `${url}:${port}/channels/create/v2`, {
-      json: {
-        token: token,
-        name: 'LoL',
-        isPublic: true
-      }
-    });
-    expect(res.statusCode).toBe(OK);
-
-    res = request('GET', `${url}:${port}/channels/list/v2`, {
-      qs: {
+      }),
+      headers: {
+        'Content-type': 'application/json',
         token: token
       }
     });
-    const channelList = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
+
+    request('POST', `${url}:${port}/channels/create/v3`, {
+      body: JSON.stringify({
+        name: 'LoL',
+        isPublic: true
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    });
+
+    const response = request('GET', `${url}:${port}/channels/list/v3`, {
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    });
+    const channelList = JSON.parse(response.getBody() as string);
+    expect(response.statusCode).toBe(OK);
     expect(channelList).toStrictEqual({
       channels: [{
         channelId: 1,

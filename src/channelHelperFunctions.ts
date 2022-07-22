@@ -1,4 +1,8 @@
 import { getData } from './dataStore';
+import HTTPError from 'http-errors';
+import bcrypt from 'bcryptjs';
+
+const BADREQUEST = 400;
 
 function checkAuthUserId(authUserId: number) {
 /*
@@ -142,13 +146,16 @@ function getMessages(channelId: number) {
   return {};
 }
 
-function checkToken(token: string) {
+async function checkToken(token: string) {
 /*
   Description:
-    checkToken checks validity and existence of token
+    checkToken checks validity and existence of sessionId/token
 
   Arguments:
     token integer string  -- Input integer supplied by user
+
+  Exceptions:
+    BADREQUEST - Occurs when received invalid data type.
 
   Return Value:
     boolean: 'true' if valid, 'false' if invalid or non-existent
@@ -158,12 +165,15 @@ function checkToken(token: string) {
   const data: any = getData();
 
   if (typeof token !== 'string') {
-    return false;
+    throw HTTPError(BADREQUEST, 'Received invalid token type');
   }
 
   for (const user of data.users) {
-    if (user.sessionList.includes(token)) {
-      return true;
+    for (const sessionId of user.sessionList) {
+      const checkSessionId = await bcrypt.compare(sessionId, token);
+      if (checkSessionId) {
+        return true;
+      }
     }
   }
 

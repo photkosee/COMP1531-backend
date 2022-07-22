@@ -2,9 +2,10 @@ import request from 'sync-request';
 import config from '../src/config.json';
 
 const OK = 200;
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
-const ERROR = { error: 'error' };
 
 let registrationData: any = [];
 
@@ -19,7 +20,7 @@ beforeEach(() => {
   registrationData = [];
 
   for (const user of registeredUser) {
-    const res = request('POST', `${url}:${port}/auth/register/v2`, {
+    const res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: user.email,
         password: user.password,
@@ -28,7 +29,6 @@ beforeEach(() => {
       }
     });
     const bodyObj = JSON.parse(res.body as string);
-
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
   }
 });
@@ -37,7 +37,7 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-test('Test for successful dm creation - dm/create/v1', () => {
+test('Test for successful dm creation - dm/create/v2', () => {
   const validData: any = [
     { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
     { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
@@ -45,19 +45,20 @@ test('Test for successful dm creation - dm/create/v1', () => {
   ];
 
   for (let i = 0; i < validData.length; i++) {
-    const res = request('POST', `${url}:${port}/dm/create/v1`, {
-      json: {
-        token: validData[i].token,
-        uIds: [...validData[i].uIds],
+    const res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [...validData[i].uIds]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[i].token
       }
     });
-    const bodyObj = JSON.parse(res.body as string);
     expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual({ dmId: expect.any(Number) });
   }
 });
 
-test('Test for any uId in uIds does not refer to a valid user - dm/create/v1', () => {
+test('Test for any uId in uIds does not refer to a valid user - dm/create/v2', () => {
   const invalidUidData: any = [
     { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId, 4] },
     { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, 5] },
@@ -65,38 +66,40 @@ test('Test for any uId in uIds does not refer to a valid user - dm/create/v1', (
   ];
 
   for (let i = 0; i < invalidUidData.length; i++) {
-    const res = request('POST', `${url}:${port}/dm/create/v1`, {
-      json: {
-        token: invalidUidData[i].token,
-        uIds: [...invalidUidData[i].uIds],
+    const res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [...invalidUidData[i].uIds]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: invalidUidData[i].token
       }
     });
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   }
 });
 
-test('Test for duplicate uId in uIds - dm/create/v1', () => {
+test('Test for duplicate uId in uIds - dm/create/v2', () => {
   const duplicateUidData: any = [
     { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId, registrationData[1].authUserId] },
     { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[2].authUserId] },
   ];
 
   for (let i = 0; i < duplicateUidData.length; i++) {
-    const res = request('POST', `${url}:${port}/dm/create/v1`, {
-      json: {
-        token: duplicateUidData[i].token,
-        uIds: [...duplicateUidData[i].uIds],
+    const res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [...duplicateUidData[i].uIds]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: duplicateUidData[i].token
       }
     });
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   }
 });
 
-test('Test for creator In Uids Data - dm/create/v1', () => {
+test('Test for creator In Uids Data - dm/create/v2', () => {
   const creatorInUidData: any = [
     { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[0].authUserId, registrationData[2].authUserId] },
     { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[1].authUserId] },
@@ -104,19 +107,20 @@ test('Test for creator In Uids Data - dm/create/v1', () => {
   ];
 
   for (let i = 0; i < creatorInUidData.length; i++) {
-    const res = request('POST', `${url}:${port}/dm/create/v1`, {
-      json: {
-        token: creatorInUidData[i].token,
-        uIds: [...creatorInUidData[i].uIds],
+    const res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [...creatorInUidData[i].uIds]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: creatorInUidData[i].token
       }
     });
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   }
 });
 
-test('Test for invalid Token Data - dm/create/v1', () => {
+test('Test for invalid Token Data - dm/create/v2', () => {
   const invalidTokenData: any = [
     { token: '', uIds: [registrationData[1].authUserId, registrationData[0].authUserId, registrationData[2].authUserId] },
     { token: 8265434234, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[1].authUserId] },
@@ -124,14 +128,15 @@ test('Test for invalid Token Data - dm/create/v1', () => {
   ];
 
   for (let i = 0; i < invalidTokenData.length; i++) {
-    const res = request('POST', `${url}:${port}/dm/create/v1`, {
-      json: {
-        token: invalidTokenData[i].token,
-        uIds: [...invalidTokenData[i].uIds],
+    const res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [...invalidTokenData[i].uIds]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: invalidTokenData[i].token
       }
     });
-    const bodyObj = JSON.parse(res.body as string);
-    expect(res.statusCode).toBe(OK);
-    expect(bodyObj).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(FORBIDDEN);
   }
 });

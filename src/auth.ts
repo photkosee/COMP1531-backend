@@ -1,13 +1,21 @@
 import { getData, setData } from './dataStore';
+import HTTPError from 'http-errors';
+import config from './config.json';
 import {
   paramTypeChecker,
   genHandleStr,
   emailValidator,
   loginVerifier,
-  tryLogout
+  tryLogout,
+  generateJwtToken,
+  hashPassword
 } from './authHelperFunctions';
 
-const ERROR = { error: 'error' };
+const HOST: string = process.env.IP || 'localhost';
+const PORT: number = parseInt(process.env.PORT || config.port);
+
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 
 interface newUserDetails {
   authUserId: number,
@@ -16,6 +24,7 @@ interface newUserDetails {
   email: string,
   password: string,
   handleStr: string,
+  profileImgUrl: string,
   permissionId: number,
   isActive: boolean,
   sessionList: Array<string>
@@ -26,7 +35,7 @@ interface loginDetail {
   authUserId: number,
 }
 
-function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
+async function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
   /*
     Description:
       authRegisterV1 function will register new users with
@@ -38,9 +47,14 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
       nameFirst string type   -- Input string supplied by user
       nameLast  string type   -- Input string supplied by user
 
+    Exceptions:
+      BADREQUEST - Occurs when any of the fields is empty string.
+      BADREQUEST - Occurs when email format is wrong.
+      BADREQUEST - Occurs when length of password or nameFirst or nameLast is not valid.
+      BADREQUEST - Occurs when user is already registered.
+
     Return Value:
-      object: {token: token, authUserId: authUserId} will return users authId
-      object: return {error: 'error'}
+      object: {token: token, authUserId: authUserId}
   */
 
   const data: any = getData();
@@ -57,56 +71,61 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
     const permissionId: number = (newAuthId === 1) ? 1 : 2;
 
     if (!(nameFirst.length >= 1 && nameFirst.length <= 50)) {
-      return ERROR;
+      throw HTTPError(BADREQUEST, 'Invalid first name length');
     }
 
     if (!(nameLast.length >= 1 && nameLast.length <= 50)) {
-      return ERROR;
+      throw HTTPError(BADREQUEST, 'Invalid last name length');
     }
 
     if (emailValidator(email) === false) {
-      return ERROR;
+      throw HTTPError(BADREQUEST, 'Invalid email');
     }
 
     for (const user of data.users) {
       if (user.email === email) {
-        return ERROR;
+        throw HTTPError(BADREQUEST, 'Email already in use');
       }
     }
 
     if (password.length < 6) {
-      return ERROR;
+      throw HTTPError(BADREQUEST, 'Invalid password length');
     }
 
     const newHandleStr: string = genHandleStr(nameFirst, nameLast, data.users);
 
-    let newToken = `${(Math.floor(Math.random() * Date.now())).toString()}`;
+    let newSessionId = `${(Math.floor(Math.random() * Date.now())).toString()}`;
+    newSessionId = newSessionId.substring(0, 10);
 
-    newToken = newToken.substring(0, 10);
+    const passwordHash = await hashPassword(password);
+
+    const defaultProfileImgUrl = `${(HOST === 'localhost') ? 'http://' : 'https://'}${HOST + ':' + PORT}/static/profile.png`;
 
     const newUserDetails: newUserDetails = {
       authUserId: newAuthId,
       nameFirst: nameFirst,
       nameLast: nameLast,
       email: email,
-      password: password,
+      password: passwordHash,
       handleStr: newHandleStr,
+      profileImgUrl: defaultProfileImgUrl,
       permissionId: permissionId,
       isActive: true,
-      sessionList: [newToken]
+      sessionList: [newSessionId]
     };
 
     data.users.push(newUserDetails);
-
     setData(data);
+
+    const newToken = await generateJwtToken(newAuthId, newSessionId);
 
     return { token: newToken, authUserId: newAuthId };
   } else {
-    return ERROR;
+    throw HTTPError(BADREQUEST, 'Received invalid data type');
   }
 }
 
-function authLoginV1(email: string, password: string) {
+async function authLoginV1(email: string, password: string) {
   /*
     Description:
       authLoginV1 function will help user to login if the user
@@ -116,42 +135,47 @@ function authLoginV1(email: string, password: string) {
       email     string type   -- Input string supplied by user
       passwrd   string type   -- Input string supplied by user
 
+    Exceptions:
+      BADREQUEST - Occurs when email entered does not belong to a user.
+      BADREQUEST - Occurs when password is not correct.
+
     Return Value:
-      object: {token: token, authUserId: authUserId} will return users authId
-      object: return {error: 'error'}
+      object: {token: token, authUserId: authUserId}
   */
 
   email = email.trim();
 
   const data: any = getData();
 
-  const loginDetail: loginDetail | boolean = loginVerifier(email, password, data.users);
+  const loginDetail: loginDetail = await loginVerifier(email, password, data.users);
 
-  if (loginDetail === false) {
-    return ERROR;
-  }
+  setData(data);
+
   return loginDetail;
 }
 
-function authLogoutV1(token: string) {
+async function authLogoutV1(token: string) {
   /*
     Description:
       authLogoutV1 function invalidates the token to log the user out
 
     Arguments:
-      token     string type   -- token string supplied by browser
+      token     string type   -- string supplied by request header
+
+    Exceptions:
+      FORBIDDEN - Occurs when sessionId/token is not found in database.
 
     Return Value:
       object: return {} if logout is successful
-      object: return {error: 'error'} if token is invalid
   */
 
   const data: any = getData();
-  const logoutDetail = tryLogout(token, data.users);
+  const logoutDetail = await tryLogout(token, data.users);
 
   if (!(logoutDetail)) {
-    return ERROR;
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+  setData(data);
   return {};
 }
 

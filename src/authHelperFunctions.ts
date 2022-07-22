@@ -1,4 +1,8 @@
+require('dotenv').config();
+import HTTPError from 'http-errors';
 import validator from 'validator';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
 function paramTypeChecker(email: string, password: string, nameFirst: string, nameLast: string) {
   /*
@@ -89,7 +93,7 @@ function emailValidator(email: string) {
   }
 }
 
-function loginVerifier(email: string, password: string, userData: string[] | any[]) {
+async function loginVerifier(email: string, password: string, userData: string[] | any[]) {
   /*
     Description:
       Helper function to validate user Email and password for login
@@ -99,28 +103,38 @@ function loginVerifier(email: string, password: string, userData: string[] | any
       password    string type   -- Input string supplied by function authLoginV1
       userData    array  type   -- Users array supplied by function authLoginV1
 
+    Exceptions:
+      BADREQUEST - Occurs when email entered does not belong to a user.
+      BADREQUEST - Occurs when password is not correct.
+
     Return Value:
       object: { token: user.token, authUserId: user.authUserId }
-      boolean: false
   */
 
   for (const user of userData) {
-    if (user.email === email &&
-        user.password === password &&
-        user.isActive === true) {
-      let newToken = `${(Math.floor(Math.random() * Date.now())).toString()}`;
-      newToken = newToken.substring(0, 10);
-      user.sessionList.push(newToken);
-      return { token: newToken, authUserId: user.authUserId };
+    if (user.email === email && user.isActive) {
+      const checkPassword: boolean = await bcrypt.compare(password, user.password);
+      if (checkPassword) {
+        let newSessionId = `${(Math.floor(Math.random() * Date.now())).toString()}`;
+        newSessionId = newSessionId.substring(0, 10);
+
+        user.sessionList.push(newSessionId);
+
+        const newToken = await generateJwtToken(user.authUserId, newSessionId);
+
+        return { token: newToken, authUserId: user.authUserId };
+      } else {
+        throw HTTPError(400, 'Invalid Password');
+      }
     }
   }
-  return false;
+  throw HTTPError(400, 'Invalid Email');
 }
 
-function tryLogout(token: string, userData: string[] | any[]) {
+async function tryLogout(token: string, userData: string[] | any[]) {
   /*
     Description:
-      Helper function to invalidates the token to log the user out
+      Helper function to invalidate the sessionId to log the user out
 
     Arguments:
       token       string type   -- Input string supplied by function authLogoutV1
@@ -131,13 +145,51 @@ function tryLogout(token: string, userData: string[] | any[]) {
   */
 
   for (const user of userData) {
-    const index: number = user.sessionList.indexOf(token);
-    if (index > -1) {
-      user.sessionList.splice(index, 1);
-      return true;
+    for (const sessionId of user.sessionList) {
+      const checkSessionId = await bcrypt.compare(sessionId, token);
+      if (checkSessionId) {
+        const index: number = user.sessionList.indexOf(sessionId);
+        user.sessionList.splice(index, 1);
+        return true;
+      }
     }
   }
   return false;
+}
+
+async function hashPassword(password: string) {
+  /*
+    Description:
+      hashPassword Helper function to hash user Password
+
+    Arguments:
+      password  string type   -- Input string supplied by authRegisterV1
+
+    Return Value:
+      string: hashPassword
+  */
+  const salt = await bcrypt.genSalt();
+  const passwordHash = await bcrypt.hash(password, salt);
+  return passwordHash.toString();
+}
+
+async function generateJwtToken(authUserId: number, newSessionId: string) {
+  /*
+    Description:
+      generateJwtToken Helper function to generate JWT Token
+
+    Arguments:
+      authUserId    number type   -- Input string supplied by authRegisterV1
+      newSessionId  string type   -- Input string supplied by authRegisterV1
+
+    Return Value:
+      string: token
+  */
+  const salt = await bcrypt.genSalt();
+  const sessionHash = await bcrypt.hash(newSessionId, salt);
+
+  const payload = { id: authUserId, salt: sessionHash };
+  return jwt.sign(payload, process.env.JWT_SECRET);
 }
 
 export {
@@ -145,5 +197,7 @@ export {
   genHandleStr,
   emailValidator,
   loginVerifier,
-  tryLogout
+  tryLogout,
+  hashPassword,
+  generateJwtToken
 };

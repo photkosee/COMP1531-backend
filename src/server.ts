@@ -1,4 +1,9 @@
+require('dotenv').config();
 import express, { json, NextFunction, Request, Response } from 'express';
+import errorHandler from 'middleware-http-errors';
+import HTTPError from 'http-errors';
+import path from 'path';
+import jwt from 'jsonwebtoken';
 import morgan from 'morgan';
 import cors from 'cors';
 import fs from 'fs';
@@ -38,7 +43,7 @@ import {
   channelAddownerV1,
   channelLeaveV1
 } from './channel';
-import errorHandler from 'middleware-http-errors';
+import console from 'console';
 
 // Set up web app, use JSON
 const app = express();
@@ -49,6 +54,8 @@ app.use(cors());
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 const databasePath: string = __dirname + '/database.json';
+
+app.use('/static', express.static(path.join(__dirname, 'static')));
 
 // Express middleware to save data to database.json on every request end
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -65,6 +72,23 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   });
   next();
 });
+
+// Express middleware to validate JWT Token
+function validateJwtToken(req: Request, res: Response, next: NextFunction) {
+  const token = req.header('token');
+  if (token === undefined || token === null) {
+    throw HTTPError(403, 'Invalid Token');
+  } else {
+    jwt.verify(token, process.env.JWT_SECRET, (err, token) => {
+      if (err) {
+        throw HTTPError(403, 'Invalid Token');
+      } else {
+        res.locals.token = token;
+        next();
+      }
+    });
+  }
+}
 
 // Example get request
 app.get('/echo', (req: Request, res: Response, next: NextFunction) => {
@@ -84,60 +108,63 @@ app.delete('/clear/v1', (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-app.post('/auth/register/v2', (req: Request, res: Response, next: NextFunction) => {
+app.post('/auth/register/v3', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password, nameFirst, nameLast } = req.body;
-    const returnData = authRegisterV1(email, password, nameFirst, nameLast);
+    const returnData = await authRegisterV1(email, password, nameFirst, nameLast);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.post('/auth/login/v2', (req: Request, res: Response, next: NextFunction) => {
+app.post('/auth/login/v3', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
-    const returnData = authLoginV1(email, password);
+    const returnData = await authLoginV1(email, password);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.post('/auth/logout/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/auth/logout/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token } = req.body;
-    const returnData = authLogoutV1(token);
+    const token = res.locals.token.salt;
+    const returnData = await authLogoutV1(token);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.post('/channels/create/v2', (req: Request, res: Response, next: NextFunction) => {
+app.post('/channels/create/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, name, isPublic } = req.body;
-    const returnData = channelsCreateV1(token, name, isPublic);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { name, isPublic } = req.body;
+    const returnData = await channelsCreateV1(token, authUserId, name, isPublic);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/channels/list/v2', (req: Request, res: Response, next: NextFunction) => {
+app.get('/channels/list/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
-    const returnData = channelsListV1(token);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const returnData = await channelsListV1(token, authUserId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/channels/listall/v2', (req: Request, res: Response, next: NextFunction) => {
+app.get('/channels/listall/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
-    const returnData = channelsListallV1(token);
+    const token = res.locals.token.salt;
+    const returnData = await channelsListallV1(token);
     return res.json(returnData);
   } catch (err) {
     next(err);
@@ -270,105 +297,120 @@ app.put('/user/profile/sethandle/v1', (req: Request, res: Response, next: NextFu
   }
 });
 
-app.post('/dm/create/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/dm/create/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, uIds } = req.body;
-    const returnData = dmCreateV1(token, uIds);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { uIds } = req.body;
+    const returnData = await dmCreateV1(token, authUserId, uIds);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/dm/list/v1', (req: Request, res: Response, next: NextFunction) => {
+app.get('/dm/list/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
-    const returnData = dmListV1(token);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const returnData = await dmListV1(token, authUserId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.delete('/dm/remove/v1', (req: Request, res: Response, next: NextFunction) => {
+app.delete('/dm/remove/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const dmId = parseInt(req.query.dmId as string);
-    const returnData = dmRemoveV1(token, dmId);
+    const returnData = await dmRemoveV1(token, authUserId, dmId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/dm/details/v1', (req: Request, res: Response, next: NextFunction) => {
+app.get('/dm/details/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const dmId = parseInt(req.query.dmId as string);
-    const returnData = dmDetailsV1(token, dmId);
+    const returnData = await dmDetailsV1(token, authUserId, dmId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.post('/dm/leave/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/dm/leave/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, dmId } = req.body;
-    const returnData = dmLeaveV1(token, dmId);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { dmId } = req.body;
+    const returnData = await dmLeaveV1(token, authUserId, dmId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/dm/messages/v1', (req: Request, res: Response, next: NextFunction) => {
+app.get('/dm/messages/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const dmId = parseInt(req.query.dmId as string);
     const start = parseInt(req.query.start as string);
-    const returnData = dmMessages(token, dmId, start);
+    const returnData = await dmMessages(token, authUserId, dmId, start);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.post('/message/send/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/message/send/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, channelId, message } = req.body;
-    const returnData = messageSendV1(token, channelId, message);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId, message } = req.body;
+    const returnData = await messageSendV1(token, authUserId, channelId, message);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.delete('/message/remove/v1', (req: Request, res: Response, next: NextFunction) => {
+app.delete('/message/remove/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const messageId = parseInt(req.query.messageId as string);
-    const returnData = messageRemoveV1(token, messageId);
+    const returnData = await messageRemoveV1(token, authUserId, messageId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.put('/message/edit/v1', (req: Request, res: Response, next: NextFunction) => {
+app.put('/message/edit/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, messageId, message } = req.body;
-    const returnData = messageEditV1(token, messageId, message);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { messageId, message } = req.body;
+    const returnData = await messageEditV1(token, authUserId, messageId, message);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.post('/message/senddm/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/message/senddm/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, dmId, message } = req.body;
-    const returnData = messageSenddmV1(token, dmId, message);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { dmId, message } = req.body;
+    const returnData = await messageSenddmV1(token, authUserId, dmId, message);
     return res.json(returnData);
   } catch (err) {
     next(err);

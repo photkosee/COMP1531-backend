@@ -2,9 +2,10 @@ import request from 'sync-request';
 import config from '../src/config.json';
 
 const OK = 200;
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
-const ERROR = { error: 'error' };
 
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
@@ -14,9 +15,9 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Testing success removing message - message/remove/v1', () => {
+describe('Testing success removing message - message/remove/v2', () => {
   test('valid inputs', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'mal1@email.com',
         password: '1234567',
@@ -25,119 +26,111 @@ describe('Testing success removing message - message/remove/v1', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
     const token = user.token;
 
-    res = request('POST', `${url}:${port}/channels/create/v2`, {
-      json: {
-        token: token,
+    res = request('POST', `${url}:${port}/channels/create/v3`, {
+      body: JSON.stringify({
         name: 'DOTA2',
         isPublic: true
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
-    const channel = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(channel).toStrictEqual({ channelId: 1 });
 
-    res = request('POST', `${url}:${port}/message/send/v1`, {
-      json: {
-        token: token,
+    res = request('POST', `${url}:${port}/message/send/v2`, {
+      body: JSON.stringify({
         channelId: 1,
         message: 'abc'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
-    const message = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(message).toStrictEqual({ messageId: 1 });
 
-    res = request('DELETE', `${url}:${port}/message/remove/v1`, {
+    res = request('DELETE', `${url}:${port}/message/remove/v2`, {
       qs: {
-        token: token,
-        messageId: 1,
+        messageId: 1
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
-    const remove = JSON.parse(res.getBody() as string);
+    const message3 = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
-    expect(remove).toStrictEqual({});
+    expect(message3).toStrictEqual({});
   });
 });
 
-describe('Testing for error - message/remove/v1', () => {
+describe('Testing for error - message/remove/v2', () => {
   test('Invalid inputs', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
-        email: 'mal1@email.com',
+        email: 'mal2@email.com',
         password: '1234567',
         nameFirst: 'One',
         nameLast: 'Number',
       }
     });
     const user = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
     const token = user.token;
 
-    res = request('POST', `${url}:${port}/auth/register/v2`, {
+    res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
-        email: 'mal2@email.com',
+        email: 'mal3@email.com',
         password: '1234567',
-        nameFirst: 'One2',
-        nameLast: 'Number2',
+        nameFirst: 'One',
+        nameLast: 'Number',
       }
     });
     const user2 = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
     const token2 = user2.token;
 
-    res = request('POST', `${url}:${port}/channels/create/v2`, {
-      json: {
-        token: token,
+    res = request('POST', `${url}:${port}/channels/create/v3`, {
+      body: JSON.stringify({
         name: 'DOTA2',
         isPublic: true
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
-    const channel = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(channel).toStrictEqual({ channelId: 1 });
 
-    res = request('POST', `${url}:${port}/message/send/v1`, {
-      json: {
-        token: token,
+    res = request('POST', `${url}:${port}/message/send/v2`, {
+      body: JSON.stringify({
         channelId: 1,
         message: 'abc'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
-    const message = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(message).toStrictEqual({ messageId: 1 });
 
-    res = request('DELETE', `${url}:${port}/message/remove/v1`, {
+    res = request('DELETE', `${url}:${port}/message/remove/v2`, {
       qs: {
-        token: -55,
-        messageId: 1,
+        messageId: 2
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
-    const remove = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(remove).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
 
-    res = request('DELETE', `${url}:${port}/message/remove/v1`, {
+    res = request('DELETE', `${url}:${port}/message/remove/v2`, {
       qs: {
-        token: token,
-        messageId: 2,
+        messageId: 1
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token2
       }
     });
-    const remove2 = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(remove2).toStrictEqual(ERROR);
-
-    res = request('DELETE', `${url}:${port}/message/remove/v1`, {
-      qs: {
-        token: token2,
-        messageId: 1,
-      }
-    });
-    const remove3 = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(remove3).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(FORBIDDEN);
   });
 });
