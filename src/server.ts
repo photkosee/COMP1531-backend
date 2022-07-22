@@ -1,4 +1,3 @@
-require('dotenv').config();
 import express, { json, NextFunction, Request, Response } from 'express';
 import errorHandler from 'middleware-http-errors';
 import HTTPError from 'http-errors';
@@ -79,7 +78,7 @@ function validateJwtToken(req: Request, res: Response, next: NextFunction) {
   if (token === undefined || token === null) {
     throw HTTPError(403, 'Invalid Token');
   } else {
-    jwt.verify(token, process.env.JWT_SECRET, (err, token) => {
+    jwt.verify(token, '4ee66c5740fece1be9fdc0e269dd77ef7ea99874ee617bcfb2dae2c429f18acb', (err, token) => {
       if (err) {
         throw HTTPError(403, 'Invalid Token');
       } else {
