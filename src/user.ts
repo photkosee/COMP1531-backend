@@ -6,7 +6,6 @@ import bcrypt from 'bcryptjs';
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
-const ERROR = { error: 'error' };
 
 export async function userProfileV1(token: string, uId: number) {
 /*
@@ -156,7 +155,7 @@ export async function userProfileSetemailV1(token: string, email: string) {
   return {};
 }
 
-export function userProfileSethandleV1(token: string, handleStr: string) {
+export async function userProfileSethandleV1(token: string, handleStr: string) {
   /*
     Description:
       userProfileSethandleV1 updates user's handleStr
@@ -165,29 +164,39 @@ export function userProfileSethandleV1(token: string, handleStr: string) {
       token       integer string  -- Input integer supplied by user
       handleStr   integer string  -- Input integer supplied by user
 
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
+
     Return Value:
       Object: {} on success
       object: {error: 'error'} on error
 */
-  if (!checkToken(token) || typeof (handleStr) !== 'string') {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
+  if (typeof (handleStr) !== 'string') {
+    throw HTTPError(BADREQUEST, 'Invalid handleStr type');
   }
 
   handleStr = handleStr.trim();
 
   if (handleStr.length < 3 || handleStr.length > 20) {
-    return ERROR;
+    throw HTTPError(BADREQUEST, 'handleStr must be 3-20 characters');
   }
   if (!(/^[a-zA-Z0-9]+$/.test(handleStr))) {
-    return ERROR;
+    throw HTTPError(BADREQUEST, 'handleStr must only be alphanumeric');
   }
 
   const data: any = getData();
 
   for (const user of data.users) {
-    if (!(user.sessionList.includes(token))) {
-      if (handleStr === user.handleStr) {
-        return ERROR;
+    for (const sessionId of user.sessionList) {
+      const checkSessionId = await bcrypt.compare(sessionId, token);
+      if (!checkSessionId) {
+        if (handleStr === user.handleStr) {
+          throw HTTPError(BADREQUEST, 'handleStr is used by another user');
+        }
       }
     }
   }
@@ -197,5 +206,6 @@ export function userProfileSethandleV1(token: string, handleStr: string) {
       user.handleStr = handleStr;
     }
   }
+
   return {};
 }

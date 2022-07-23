@@ -289,11 +289,11 @@ app.put('/user/profile/setemail/v2', validateJwtToken, async(req: Request, res: 
   }
 });
 
-app.put('/user/profile/sethandle/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+app.put('/user/profile/sethandle/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
     const { handleStr } = req.body;
-    const returnData = userProfileSethandleV1(token, handleStr);
+    const returnData = await userProfileSethandleV1(token, handleStr);
     return res.json(returnData);
   } catch (err) {
     next(err);
