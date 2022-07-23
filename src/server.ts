@@ -278,11 +278,11 @@ app.put('/user/profile/setname/v2', validateJwtToken, async(req: Request, res: R
   }
 });
 
-app.put('/user/profile/setemail/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+app.put('/user/profile/setemail/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
     const { email } = req.body;
-    const returnData = userProfileSetemailV1(token, email);
+    const returnData = await userProfileSetemailV1(token, email);
     return res.json(returnData);
   } catch (err) {
     next(err);

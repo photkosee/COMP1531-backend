@@ -2,9 +2,10 @@ import request from 'sync-request';
 import config from '../src/config.json';
 
 const OK = 200;
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
-const ERROR = { error: 'error' };
 
 interface authRegisterObj {
   token: string,
@@ -21,7 +22,7 @@ afterAll(() => {
 
 describe('Valid return', () => {
   test('return empty object', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -32,10 +33,13 @@ describe('Valid return', () => {
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('PUT', `${url}:${port}/user/profile/setemail/v1`, {
+    res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
       json: {
-        token: token,
         email: 'updated@email.com'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -44,7 +48,7 @@ describe('Valid return', () => {
   });
 
   test('Change email to user\'s current email', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -55,10 +59,13 @@ describe('Valid return', () => {
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('PUT', `${url}:${port}/user/profile/setemail/v1`, {
+    res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
       json: {
-        token: token,
         email: 'original@email.com'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -69,7 +76,7 @@ describe('Valid return', () => {
 
 describe('Email error returns', () => {
   test('Invalid email', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -80,15 +87,16 @@ describe('Email error returns', () => {
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('PUT', `${url}:${port}/user/profile/setemail/v1`, {
+    res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
       json: {
-        token: token,
         email: 'updated#@email.com'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   });
 
   test('Email is used for another user', () => {
@@ -100,7 +108,7 @@ describe('Email error returns', () => {
     ];
 
     for (const users of userInput) {
-      const res = request('POST', `${url}:${port}/auth/register/v2`, {
+      const res = request('POST', `${url}:${port}/auth/register/v3`, {
         json: {
           email: users.email,
           password: users.password,
@@ -113,19 +121,20 @@ describe('Email error returns', () => {
       userData.push({ token: user.token, authUserId: user.authUserId });
     }
     // ======================== SET UP START ===========================
-    const res = request('PUT', `${url}:${port}/user/profile/setemail/v1`, {
+    const res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
       json: {
-        token: userData[0].token,
         email: 'copy@email.com'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: userData[0].token,
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   });
 
   test('Invalid email type', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -136,21 +145,22 @@ describe('Email error returns', () => {
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('PUT', `${url}:${port}/user/profile/setemail/v1`, {
+    res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
       json: {
-        token: token,
         email: 0
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token,
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   });
 });
 
 describe('Token error returns', () => {
   test('Nonexistant token', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -162,19 +172,20 @@ describe('Token error returns', () => {
     const token = user.token;
     const dummyToken = token + 'abc';
 
-    res = request('PUT', `${url}:${port}/user/profile/setemail/v1`, {
+    res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
       json: {
-        token: dummyToken,
         email: 'updated@email.com'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: dummyToken,
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(FORBIDDEN);
   });
 
   test('Invalid token type', () => {
-    request('POST', `${url}:${port}/auth/register/v2`, {
+    request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -183,14 +194,16 @@ describe('Token error returns', () => {
       }
     });
 
-    const res = request('PUT', `${url}:${port}/user/profile/setemail/v1`, {
+    const badToken: any = { token: 1 };
+    const res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
       json: {
-        token: 1,
         email: 'updated@email.com'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: badToken.token
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(FORBIDDEN);
   });
 });

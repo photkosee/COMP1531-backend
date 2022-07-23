@@ -2,6 +2,7 @@ import { getData } from './dataStore';
 import { checkAuthUserId, checkToken } from './channelHelperFunctions';
 import { emailValidator } from './authHelperFunctions';
 import HTTPError from 'http-errors';
+import bcrypt from 'bcryptjs';
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
@@ -63,6 +64,8 @@ export async function userProfileSetnameV1(token: string, nameFirst: string, nam
 
     Exceptions:
       FORBIDDEN   - Invalid Session ID or Token
+      BADREQUEST  - Invalid name type
+      BADREQUEST  - Length of name is not 1-50 characters
 
     Return Value:
       Object: {} on success
@@ -99,7 +102,7 @@ export async function userProfileSetnameV1(token: string, nameFirst: string, nam
   return {};
 }
 
-export function userProfileSetemailV1(token: string, email: string) {
+export async function userProfileSetemailV1(token: string, email: string) {
   /*
     Description:
       userProfileSetemailV1 updates user's email
@@ -108,31 +111,39 @@ export function userProfileSetemailV1(token: string, email: string) {
       token       integer string  -- Input integer supplied by user
       email       integer string  -- Input integer supplied by user
 
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
+      BADREQUEST  - Invalid email type
+      BADREQUEST  - Email is not valid
+      BADREQUEST  - Email is used by another user
+
     Return Value:
       Object: {} on success
-      object: {error: 'error'} on error
 */
 
-  if (!checkToken(token)) {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   if (typeof (email) !== 'string') {
-    return ERROR;
+    throw HTTPError(BADREQUEST, 'Invalid email type');
   }
 
   email = email.trim();
 
   if (emailValidator(email) === false) {
-    return ERROR;
+    throw HTTPError(BADREQUEST, 'Email is not valid');
   }
 
   const data: any = getData();
 
   for (const user of data.users) {
-    if (!(user.sessionList.includes(token))) {
-      if (email === user.email) {
-        return ERROR;
+    for (const sessionId of user.sessionList) {
+      const checkSessionId = await bcrypt.compare(sessionId, token);
+      if (!checkSessionId) {
+        if (email === user.email) {
+          throw HTTPError(BADREQUEST, 'Email is used by another user');
+        }
       }
     }
   }
