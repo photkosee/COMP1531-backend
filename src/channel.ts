@@ -16,10 +16,6 @@ const ERROR = { error: 'error' };
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 
-interface authUserIdObj {
-  authUserId?: number
-}
-
 interface newUser {
   uId: number,
   email: string,
@@ -36,10 +32,15 @@ async function channelJoinV1(token: string, authUserId: number, channelId: numbe
   Arguments:
       token           string type   -- string supplied by request header
       authUserId      string type   -- string supplied by request header
-             channelId   integer type  -- Input integer supplied by user
+      channelId   integer type  -- Input integer supplied by user
+
+  Exceptions:
+  FORBIDDEN   - Invalid Session ID or Token
+  BADREQUETS  - Invalid Channel ID
+  BADREQUEST  - User already a member
+  FORBIDDEN   - Channel is private and user not global owner
 
   Return Value:
-    object: returns empty object on success
     object: {error: 'error'}
 */
 
@@ -48,7 +49,7 @@ async function channelJoinV1(token: string, authUserId: number, channelId: numbe
   }
 
   if (!checkChannelId(channelId)) {
-    throw HTTPError(BADREQUEST, 'Invalid Channel Id');
+    throw HTTPError(BADREQUEST, 'Invalid Channel ID');
   }
 
   const channelDetails: any = checkIfMember(authUserId, channelId);
@@ -98,36 +99,46 @@ async function channelJoinV1(token: string, authUserId: number, channelId: numbe
   return {};
 }
 
-function channelDetailsV1(token: string, channelId: number) {
+async function channelDetailsV1(token: string, authUserId: number, channelId: number) {
 /*
   Description:
     channelDetailsV1 provide basic details about the channel
 
   Arguments:
-    token       string type    -- Input integer supplied by user
-    channelId   integer type   -- Input integer supplied by user
+    token         string type   -- string supplied by request header
+    uthUserId     string type   -- string supplied by request header
+    channelId     integer type   -- Input integer supplied by user
+
+  Exeptions:
+  FORBIDDEN   - Invalid Session ID or Token
+  BADREQUETS  - Invalid Channel ID
+  BADREQUETS  - No channels available
+  FORBIDDEN   - User is not a member of the channel
+
+  BADREQUEST  - User already a member
+  FORBIDDEN   - Channel is private and user not global owner
 
   Return Value:
-    object: { name, isPublic, ownerMembers, allMembers }
     object: {error: 'error'}
 */
 
-  if (!(checkToken(token)) && !(checkChannelId(channelId))) {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
+  if (!checkChannelId(channelId)) {
+    throw HTTPError(BADREQUEST, 'Invalid Channel ID');
   }
 
   const data: any = getData();
   if (data.channels.length === 0) {
-    return ERROR;
+    throw HTTPError(BADREQUEST, 'No channels available');
   }
-
-  const authUserIdRet: authUserIdObj = tokenToAuthUserId(token);
-  const authUserId: number = authUserIdRet.authUserId;
 
   const channelDetails: any = checkIfMember(authUserId, channelId);
 
   if (Object.keys(channelDetails).length === 0) {
-    return ERROR;
+    throw HTTPError(FORBIDDEN, 'User is not a member of the channel');
   }
 
   return {
