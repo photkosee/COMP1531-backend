@@ -1,28 +1,36 @@
 import { getData } from './dataStore';
 import { checkAuthUserId, checkToken } from './channelHelperFunctions';
 import { emailValidator } from './authHelperFunctions';
+import HTTPError from 'http-errors';
 
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 const ERROR = { error: 'error' };
 
-export function userProfileV1(token: string, uId: number) {
+export async function userProfileV1(token: string, uId: number) {
 /*
   Description:
     userProfileV1 returns information about uId's userId,
     email, first name, last name, and handle
 
   Arguments:
-    token integer string  -- Input integer supplied by user
+    token integer string  -- Input integer supplied by header
     uId   integer type    -- Input integer supplied by user
 
+  Exceptions:
+  FORBIDDEN   - Invalid Session ID or Token
   Return Value:
     Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
-    object: {error: 'error'}
 */
 
   const data: any = getData();
 
-  if (!(checkToken(token)) || !(checkAuthUserId(uId))) {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
+  if (!(checkAuthUserId(uId))) {
+    throw HTTPError(BADREQUEST, 'User Id is invalid');
   }
 
   for (const user of data.users) {
@@ -39,7 +47,7 @@ export function userProfileV1(token: string, uId: number) {
     }
   }
 
-  return ERROR;
+  return {};
 }
 
 export function userProfileSetnameV1(token: string, nameFirst: string, nameLast: string) {

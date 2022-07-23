@@ -246,11 +246,11 @@ app.post('/channel/leave/v1', (req: Request, res: Response, next: NextFunction) 
   }
 });
 
-app.get('/user/profile/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+app.get('/user/profile/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
     const uId = parseInt(req.query.uId as string);
-    const returnData = userProfileV1(token, uId);
+    const returnData = await userProfileV1(token, uId);
     return res.json(returnData);
   } catch (err) {
     next(err);
