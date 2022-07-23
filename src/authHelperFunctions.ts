@@ -146,10 +146,8 @@ async function tryLogout(token: string, userData: string[] | any[]) {
   for (const user of userData) {
     for (const sessionId of user.sessionList) {
       const checkSessionId = await bcrypt.compare(sessionId, token);
-      console.log(checkSessionId);
-      if (checkSessionId === true) {
+      if (checkSessionId) {
         const index: number = user.sessionList.indexOf(sessionId);
-        console.log(index);
         user.sessionList.splice(index, 1);
         return true;
       }

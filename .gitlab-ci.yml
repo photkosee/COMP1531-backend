@@ -16,7 +16,7 @@ tests with coverage:
     - SERVER_LOG=$(mktemp)
     - npm run ts-node-coverage >& $SERVER_LOG &
     - sleep 10
-    # - npm run test
+    - npm run test 
     - kill -SIGINT %1
     - cat $SERVER_LOG
   coverage: '/All files\s*\|\s*(\d+(?:\.\d+)?)/'
