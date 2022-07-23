@@ -6,13 +6,12 @@ import {
   authInChannel,
   getMessages,
   checkToken,
-  tokenToAuthUserId,
+  // tokenToAuthUserId,
   authIsOwner,
-  authIsGlobalOwner
+  // authIsGlobalOwner
 } from './channelHelperFunctions';
 import HTTPError from 'http-errors';
 
-const ERROR = { error: 'error' };
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 
@@ -149,7 +148,7 @@ async function channelDetailsV1(token: string, authUserId: number, channelId: nu
   };
 }
 
-function channelInviteV1(token: string, channelId: number, uId: number) {
+async function channelInviteV1(token: string, authUserId: number, channelId: number, uId: number) {
   /*
     Description:
       channelInviteV1 Will invite and add a user into a channel
@@ -164,40 +163,47 @@ function channelInviteV1(token: string, channelId: number, uId: number) {
       object: {error: 'error'}
   */
 
-  if (checkAuthUserId(uId) &&
-      checkToken(token) &&
-      checkChannelId(channelId) &&
-      authInChannel(channelId, tokenToAuthUserId(token).authUserId) &&
-      !authInChannel(channelId, uId)
-  ) {
-    const dataStore: any = getData();
+  if (!checkAuthUserId(authUserId)) {
+    throw HTTPError(BADREQUEST, 'Invalid user token');
+  }
+  if (!checkChannelId(channelId)) {
+    throw HTTPError(BADREQUEST, 'Invalid channel');
+  }
+  if (!checkAuthUserId(uId)) {
+    throw HTTPError(BADREQUEST, 'User to invite does not exist');
+  }
+  if (authInChannel(channelId, uId)) {
+    throw HTTPError(BADREQUEST, 'User to invite already in channel');
+  }
+  if (!authInChannel(channelId, authUserId)) {
+    throw HTTPError(FORBIDDEN, 'User not in channel so cannot invite others');
+  }
 
-    for (const channel of dataStore.channels) {
-      if (channel.channelId === channelId) {
-        for (const element of dataStore.users) {
-          if (uId === element.authUserId) {
-            const newMember: newUser =
-            {
-              uId: uId,
-              email: element.email,
-              nameFirst: element.nameFirst,
-              nameLast: element.nameLast,
-              handleStr: element.handleStr
-            };
-            channel.allMembers.push(newMember);
+  const dataStore: any = getData();
 
-            setData(dataStore);
-            return {};
-          }
+  for (const channel of dataStore.channels) {
+    if (channel.channelId === channelId) {
+      for (const element of dataStore.users) {
+        if (uId === element.authUserId) {
+          const newMember: newUser =
+          {
+            uId: uId,
+            email: element.email,
+            nameFirst: element.nameFirst,
+            nameLast: element.nameLast,
+            handleStr: element.handleStr
+          };
+          channel.allMembers.push(newMember);
+
+          setData(dataStore);
+          return {};
         }
       }
     }
-  } else {
-    return ERROR;
   }
 }
 
-function channelMessagesV1(token: string, channelId: number, start: number) {
+async function channelMessagesV1(token: string, authUserId: number, channelId: number, start: number) {
   /*
     Description:
       channelMessagesV1 checks the message history of a given channel
@@ -215,13 +221,17 @@ function channelMessagesV1(token: string, channelId: number, start: number) {
       }
       object: {error: 'error'}
   */
-
-  if (!checkChannelId(channelId) ||
-    !checkToken(token) ||
-    !authInChannel(channelId, tokenToAuthUserId(token).authUserId) ||
-    start > getMessages(channelId).length ||
-    start < 0) {
-    return ERROR;
+  if (!checkChannelId(channelId)) {
+    throw HTTPError(BADREQUEST, 'Invalid channel');
+  }
+  if (!checkAuthUserId(authUserId)) {
+    throw HTTPError(BADREQUEST, 'User is not valid user');
+  }
+  if (!authInChannel(channelId, authUserId)) {
+    throw HTTPError(FORBIDDEN, 'User is not member of channel');
+  }
+  if (start > getMessages(channelId).length || start < 0) {
+    throw HTTPError(BADREQUEST, 'Start is invalid or greater than total messages');
   }
 
   const messagesArray: any = [];
@@ -244,7 +254,7 @@ function channelMessagesV1(token: string, channelId: number, start: number) {
   };
 }
 
-function channelAddownerV1(token: string, channelId: number, uId: number) {
+async function channelAddownerV1(token: string, authUserId: number, channelId: number, uId: number) {
   /*
     Description:
       channelAddownerV1 adds owner to a channel
@@ -258,42 +268,52 @@ function channelAddownerV1(token: string, channelId: number, uId: number) {
       object: {} when owner is added
       object: {error: 'error'}
   */
-  const authId = tokenToAuthUserId(token).authUserId;
-  if (checkChannelId(channelId) &&
-      checkToken(token) &&
-      checkAuthUserId(uId) &&
-      authInChannel(channelId, uId) &&
-      authInChannel(channelId, authId) &&
-      (authIsOwner(channelId, authId) || authIsGlobalOwner(authId)) &&
-      !authIsOwner(channelId, uId)
-  ) {
-    const dataStore: any = getData();
+  if (!checkAuthUserId(authUserId)) {
+    throw HTTPError(BADREQUEST, 'Invalid user token');
+  }
+  if (!checkChannelId(channelId)) {
+    throw HTTPError(BADREQUEST, 'Invalid channel');
+  }
+  if (!checkAuthUserId(uId)) {
+    throw HTTPError(BADREQUEST, 'User to make owner does not exist');
+  }
+  if (!authInChannel(channelId, uId)) {
+    throw HTTPError(BADREQUEST, 'User to make owner is not in channel');
+  }
+  if (!authInChannel(channelId, authUserId)) {
+    throw HTTPError(BADREQUEST, 'User is not in channel');
+  }
+  if (authIsOwner(channelId, uId)) {
+    throw HTTPError(BADREQUEST, 'User to make owner is already owner');
+  }
+  if (!authIsOwner(channelId, authUserId)) {
+    throw HTTPError(FORBIDDEN, 'User does not have owner permissions');
+  }
 
-    for (const channel of dataStore.channels) {
-      if (channel.channelId === channelId) {
-        for (const element of dataStore.users) {
-          if (uId === element.authUserId) {
-            const newOwner: newUser = {
-              uId: uId,
-              email: element.email,
-              nameFirst: element.nameFirst,
-              nameLast: element.nameLast,
-              handleStr: element.handleStr
-            };
-            channel.ownerMembers.push(newOwner);
+  const dataStore: any = getData();
 
-            setData(dataStore);
-            return {};
-          }
+  for (const channel of dataStore.channels) {
+    if (channel.channelId === channelId) {
+      for (const element of dataStore.users) {
+        if (uId === element.authUserId) {
+          const newOwner: newUser = {
+            uId: uId,
+            email: element.email,
+            nameFirst: element.nameFirst,
+            nameLast: element.nameLast,
+            handleStr: element.handleStr
+          };
+          channel.ownerMembers.push(newOwner);
+
+          setData(dataStore);
+          return {};
         }
       }
     }
-  } else {
-    return ERROR;
   }
 }
 
-function channelRemoveownerV1(token: string, channelId: number, uId: number) {
+async function channelRemoveownerV1(token: string, authUserId: number, channelId: number, uId: number) {
   /*
     Description:
       channelRemoveownerV1: user of token removes owner of uId from channel of channelId
@@ -307,37 +327,43 @@ function channelRemoveownerV1(token: string, channelId: number, uId: number) {
       object: {} when owner is removed
       object: {error: 'error'}
   */
-  const authId = tokenToAuthUserId(token).authUserId;
-  if (checkChannelId(channelId) &&
-      checkToken(token) &&
-      checkAuthUserId(uId) &&
-      authInChannel(channelId, uId) &&
-      authInChannel(channelId, authId) &&
-      (authIsOwner(channelId, authId) || authIsGlobalOwner(authId)) &&
-      authIsOwner(channelId, uId)
+  if (!checkAuthUserId(authUserId)) {
+    throw HTTPError(BADREQUEST, 'Invalid user token');
+  }
+  if (!checkChannelId(channelId)) {
+    throw HTTPError(BADREQUEST, 'Invalid channel');
+  }
+  if (!checkAuthUserId(uId)) {
+    throw HTTPError(BADREQUEST, 'User to make owner does not exist');
+  }
+  if (!authInChannel(channelId, authUserId)) {
+    throw HTTPError(BADREQUEST, 'User is not in channel');
+  }
+  if (!authIsOwner(channelId, uId) || !authInChannel(channelId, uId)) {
+    throw HTTPError(BADREQUEST, 'User to remove as owner is not a owner');
+  }
+  if (!authIsOwner(channelId, authUserId)) {
+    throw HTTPError(FORBIDDEN, 'User does not have owner permissions');
+  }
 
-  ) {
-    const data: any = getData();
-    for (const channel of data.channels) {
-      if (channel.channelId === channelId) {
-        if (channel.ownerMembers.length === 1) {
-          return ERROR;
-        }
-        for (let i = 0; i < channel.ownerMembers.length; i++) {
-          if (channel.ownerMembers[i].uId === uId) {
-            channel.ownerMembers.splice(i, 1);
-            setData(data);
-            return {};
-          }
+  const data: any = getData();
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      if (channel.ownerMembers.length === 1) {
+        throw HTTPError(BADREQUEST, 'Cannot remove last owner of channel');
+      }
+      for (let i = 0; i < channel.ownerMembers.length; i++) {
+        if (channel.ownerMembers[i].uId === uId) {
+          channel.ownerMembers.splice(i, 1);
+          setData(data);
+          return {};
         }
       }
     }
-  } else {
-    return ERROR;
   }
 }
 
-function channelLeaveV1(token: string, channelId: number) {
+async function channelLeaveV1(token: string, authUserId: number, channelId: number) {
   /*
     Description:
       channelLeaveV1 makes a user of token leave channel of channelId
@@ -350,32 +376,35 @@ function channelLeaveV1(token: string, channelId: number) {
       object: {} when user is removed
       object: {error: 'error'}
   */
-  if (checkChannelId(channelId) &&
-      checkToken(token) &&
-      authInChannel(channelId, tokenToAuthUserId(token).authUserId)
-  ) {
-    const dataStore: any = getData();
-    const uId: number = tokenToAuthUserId(token).authUserId;
-    for (const channel of dataStore.channels) {
-      if (channel.channelId === channelId) {
-        for (let i = 0; i < channel.ownerMembers.length; i++) {
-          if (channel.ownerMembers[i].uId === uId) {
-            channel.ownerMembers.splice(i, 1);
-          }
-        }
+  if (!checkAuthUserId(authUserId)) {
+    throw HTTPError(BADREQUEST, 'Invalid user token');
+  }
+  if (!checkChannelId(channelId)) {
+    throw HTTPError(BADREQUEST, 'Invalid channel');
+  }
+  if (!authInChannel(channelId, authUserId)) {
+    throw HTTPError(FORBIDDEN, 'User is not in channel');
+  }
 
-        for (let i = 0; i < channel.allMembers.length; i++) {
-          if (channel.allMembers[i].uId === uId) {
-            channel.allMembers.splice(i, 1);
-            setData(dataStore);
-            return {};
-          }
+  const dataStore: any = getData();
+  const uId: number = authUserId;
+  for (const channel of dataStore.channels) {
+    if (channel.channelId === channelId) {
+      for (let i = 0; i < channel.ownerMembers.length; i++) {
+        if (channel.ownerMembers[i].uId === uId) {
+          channel.ownerMembers.splice(i, 1);
+        }
+      }
+
+      for (let i = 0; i < channel.allMembers.length; i++) {
+        if (channel.allMembers[i].uId === uId) {
+          channel.allMembers.splice(i, 1);
+          setData(dataStore);
+          return {};
         }
       }
     }
   }
-
-  return ERROR;
 }
 
 export {

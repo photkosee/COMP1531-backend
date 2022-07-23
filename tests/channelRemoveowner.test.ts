@@ -1,10 +1,12 @@
 import request from 'sync-request';
 import config from '../src/config.json';
 
+
 const OK = 200;
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
-const ERROR = { error: 'error' };
 
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
@@ -15,22 +17,23 @@ afterAll(() => {
 });
 
 const removeOwner = (token: string, channelId: number, uId: number) => {
-  const res = request('POST', `${url}:${port}/channel/removeowner/v1`,
+  const res = request('POST', `${url}:${port}/channel/removeowner/v2`,
     {
       json: {
-        token: token,
         channelId: channelId,
         uId: uId,
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     }
   );
-  expect(res.statusCode).toBe(OK);
-  const bodyObj = JSON.parse(res.body as string);
-  return bodyObj;
+  return res;
 };
 
 test('Testing for invalid channelId', () => {
-  let res = request('POST', `${url}:${port}/auth/register/v2`, {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user1@email.com',
       password: 'password1',
@@ -39,7 +42,7 @@ test('Testing for invalid channelId', () => {
     }
   });
   const user1 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/auth/register/v2`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user2@email.com',
       password: 'password2',
@@ -48,13 +51,12 @@ test('Testing for invalid channelId', () => {
     }
   });
   const user2 = JSON.parse(res.body as string);
-  expect(removeOwner(user1.token, 0.1, user2.authUserId)).toStrictEqual(ERROR);
-  expect(removeOwner('randomString', 0.1, user2.authUserId)).toStrictEqual(ERROR);
-  expect(removeOwner(user1.token, 0.1, 0.1)).toStrictEqual(ERROR);
+  expect(removeOwner(user1.token, 0.1, user2.authUserId).statusCode).toStrictEqual(BADREQUEST);
+  expect(removeOwner('randomString', 0.1, user2.authUserId).statusCode).toStrictEqual(FORBIDDEN);
 });
 
 test('Testing for invalid uId and token', () => {
-  let res = request('POST', `${url}:${port}/auth/register/v2`, {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user1@email.com',
       password: 'password1',
@@ -63,7 +65,7 @@ test('Testing for invalid uId and token', () => {
     }
   });
   const user1 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/auth/register/v2`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user2@email.com',
       password: 'password2',
@@ -72,30 +74,23 @@ test('Testing for invalid uId and token', () => {
     }
   });
   const user2 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/channels/create/v2`, {
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
-      token: user1.token,
       name: 'channel1',
       isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
     }
   });
   const channel1 = JSON.parse(res.body as string);
-  expect(removeOwner(user1.token, channel1.channelId, 0.1)).toStrictEqual(ERROR);
-  expect(removeOwner('randomString', channel1.channelId, user2.authUserId)).toStrictEqual(ERROR);
-  expect(removeOwner(user1.token, channel1.channelId, user2.authUserId)).toStrictEqual(ERROR);
-  res = request('GET', `${url}:${port}/channel/details/v2`, {
-    qs: {
-      token: user1.token,
-      channelId: channel1.channelId,
-    }
-  });
-  const channel1Details = JSON.parse(res.body as string);
-  expect(channel1Details.allMembers.length).toStrictEqual(1);
-  expect(channel1Details.ownerMembers.length).toStrictEqual(1);
+  expect(removeOwner(user1.token, channel1.channelId, 0.1).statusCode).toStrictEqual(BADREQUEST);
+  expect(removeOwner(user1.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(BADREQUEST);
 });
 
 test('Testing for token not in channel and uId not owner', () => {
-  let res = request('POST', `${url}:${port}/auth/register/v2`, {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user1@email.com',
       password: 'password1',
@@ -104,7 +99,7 @@ test('Testing for token not in channel and uId not owner', () => {
     }
   });
   const user1 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/auth/register/v2`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user2@email.com',
       password: 'password2',
@@ -113,7 +108,7 @@ test('Testing for token not in channel and uId not owner', () => {
     }
   });
   const user2 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/auth/register/v2`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user3@email.com',
       password: 'password3',
@@ -122,54 +117,47 @@ test('Testing for token not in channel and uId not owner', () => {
     }
   });
   const user3 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/channels/create/v2`, {
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
-      token: user1.token,
       name: 'channel1',
       isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
     }
   });
   const channel1 = JSON.parse(res.body as string);
-
-  expect(removeOwner(user2.token, channel1.channelId, user3.authUserId)).toStrictEqual(ERROR);
-  expect(removeOwner(user2.token, channel1.channelId, user1.authUserId)).toStrictEqual(ERROR);
-  request('POST', `${url}:${port}/channel/join/v2`, {
+  request('POST', `${url}:${port}/channel/join/v3`, {
     json: {
-      token: user2.token,
       channelId: channel1.channelId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user2.token
     }
   });
-  expect(removeOwner(user1.token, channel1.channelId, user2.authUserId)).toStrictEqual(ERROR);
-  request('POST', `${url}:${port}/channel/addowner/v1`, {
+  expect(removeOwner(user2.token, channel1.channelId, user3.authUserId).statusCode).toStrictEqual(BADREQUEST);
+  expect(removeOwner(user2.token, channel1.channelId, user1.authUserId).statusCode).toStrictEqual(FORBIDDEN);
+  expect(removeOwner(user1.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(BADREQUEST);
+  request('POST', `${url}:${port}/channel/addowner/v2`, {
     json: {
-      token: user1.token,
       channelId: channel1.channelId,
       uId: user2.authUserId
-    }
-  });
-  expect(removeOwner(user2.token, channel1.channelId, user3.authUserId)).toStrictEqual(ERROR);
-  request('POST', `${url}:${port}/channel/join/v2`, {
-    json: {
-      token: user3.token,
-      channelId: channel1.channelId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
     }
   });
 
-  expect(removeOwner(user1.token, channel1.channelId, user2.authUserId)).toStrictEqual({});
-  expect(removeOwner(user1.token, channel1.channelId, user2.authUserId)).toStrictEqual(ERROR);
-  res = request('GET', `${url}:${port}/channel/details/v2`, {
-    qs: {
-      token: user1.token,
-      channelId: channel1.channelId,
-    }
-  });
-  const channel1Details = JSON.parse(res.body as string);
-  expect(channel1Details.allMembers.length).toStrictEqual(3);
-  expect(channel1Details.ownerMembers.length).toStrictEqual(1);
+  expect(removeOwner(user1.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(OK);
+  expect(removeOwner(user1.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(BADREQUEST);
+ 
 });
 
 test('Testing for remove last person and remove yourself', () => {
-  let res = request('POST', `${url}:${port}/auth/register/v2`, {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user1@email.com',
       password: 'password1',
@@ -178,7 +166,7 @@ test('Testing for remove last person and remove yourself', () => {
     }
   });
   const user1 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/auth/register/v2`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user2@email.com',
       password: 'password2',
@@ -187,7 +175,7 @@ test('Testing for remove last person and remove yourself', () => {
     }
   });
   const user2 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/auth/register/v2`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user3@email.com',
       password: 'password3',
@@ -196,7 +184,7 @@ test('Testing for remove last person and remove yourself', () => {
     }
   });
   const user3 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/auth/register/v2`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user4@email.com',
       password: 'password4',
@@ -205,41 +193,51 @@ test('Testing for remove last person and remove yourself', () => {
     }
   });
   const user4 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/channels/create/v2`, {
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
-      token: user1.token,
       name: 'channel1',
       isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
     }
   });
   const channel1 = JSON.parse(res.body as string);
-  request('POST', `${url}:${port}/channel/join/v2`, {
+  request('POST', `${url}:${port}/channel/join/v3`, {
     json: {
-      token: user2.token,
       channelId: channel1.channelId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user2.token
     }
   });
-  request('POST', `${url}:${port}/channel/addowner/v1`, {
+  request('POST', `${url}:${port}/channel/addowner/v2`, {
     json: {
-      token: user1.token,
       channelId: channel1.channelId,
       uId: user2.authUserId
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
     }
   });
-  request('POST', `${url}:${port}/channel/join/v2`, {
+  request('POST', `${url}:${port}/channel/join/v3`, {
     json: {
-      token: user3.token,
       channelId: channel1.channelId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user3.token
     }
   });
-  expect(removeOwner(user2.token, channel1.channelId, user2.authUserId)).toStrictEqual({});
-  expect(removeOwner(user3.token, channel1.channelId, user3.authUserId)).toStrictEqual(ERROR);
-  expect(removeOwner(user4.token, channel1.channelId, user4.authUserId)).toStrictEqual(ERROR);
-  expect(removeOwner(user1.token, channel1.channelId, user1.authUserId)).toStrictEqual(ERROR);
+  expect(removeOwner(user2.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(OK);
+  expect(removeOwner(user1.token, channel1.channelId, user1.authUserId).statusCode).toStrictEqual(BADREQUEST);
 });
 
 test('Testing for successful remove owner', () => {
-  let res = request('POST', `${url}:${port}/auth/register/v2`, {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user1@email.com',
       password: 'password1',
@@ -248,7 +246,7 @@ test('Testing for successful remove owner', () => {
     }
   });
   const user1 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/auth/register/v2`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user2@email.com',
       password: 'password2',
@@ -257,7 +255,7 @@ test('Testing for successful remove owner', () => {
     }
   });
   const user2 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/auth/register/v2`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user3@email.com',
       password: 'password3',
@@ -266,57 +264,38 @@ test('Testing for successful remove owner', () => {
     }
   });
   const user3 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/channels/create/v2`, {
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
-      token: user1.token,
       name: 'channel1',
       isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
     }
   });
   const channel1 = JSON.parse(res.body as string);
-  request('POST', `${url}:${port}/channel/join/v2`, {
+  request('POST', `${url}:${port}/channel/join/v3`, {
     json: {
-      token: user2.token,
       channelId: channel1.channelId,
-    }
-  });
-  request('POST', `${url}:${port}/channel/join/v2`, {
-    json: {
-      token: user3.token,
-      channelId: channel1.channelId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user2.token
     }
   });
 
-  request('POST', `${url}:${port}/channel/addowner/v1`, {
+  request('POST', `${url}:${port}/channel/addowner/v2`, {
     json: {
-      token: user1.token,
       channelId: channel1.channelId,
       uId: user2.authUserId
-    }
-  });
-  request('POST', `${url}:${port}/channel/addowner/v1`, {
-    json: {
-      token: user2.token,
-      channelId: channel1.channelId,
-      uId: user3.authUserId
-    }
-  });
-  res = request('GET', `${url}:${port}/channel/details/v2`, {
-    qs: {
-      token: user1.token,
-      channelId: channel1.channelId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
     }
   });
 
-  expect(removeOwner(user2.token, channel1.channelId, user3.authUserId)).toStrictEqual({});
-  expect(removeOwner(user1.token, channel1.channelId, user2.authUserId)).toStrictEqual({});
-  res = request('GET', `${url}:${port}/channel/details/v2`, {
-    qs: {
-      token: user1.token,
-      channelId: channel1.channelId,
-    }
-  });
-  const channel1Details = JSON.parse(res.body as string);
-  expect(channel1Details.allMembers.length).toStrictEqual(3);
-  expect(channel1Details.ownerMembers.length).toStrictEqual(1);
+  expect(removeOwner(user1.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(OK);
+  
 });

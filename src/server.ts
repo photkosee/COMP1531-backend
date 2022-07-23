@@ -170,10 +170,12 @@ app.get('/channels/listall/v3', validateJwtToken, async(req: Request, res: Respo
   }
 });
 
-app.post('/channel/invite/v2', (req: Request, res: Response, next: NextFunction) => {
+app.post('/channel/invite/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, channelId, uId } = req.body;
-    const returnData = channelInviteV1(token, channelId, uId);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId, uId } = req.body;
+    const returnData = await channelInviteV1(token, authUserId, channelId, uId);
     return res.json(returnData);
   } catch (err) {
     next(err);
@@ -204,42 +206,49 @@ app.post('/channel/join/v3', validateJwtToken, async(req: Request, res: Response
   }
 });
 
-app.post('/channel/addowner/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/channel/addowner/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, channelId, uId } = req.body;
-    const returnData = channelAddownerV1(token, channelId, uId);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId, uId } = req.body;
+    const returnData = await channelAddownerV1(token, authUserId, channelId, uId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.get('/channel/messages/v2', (req: Request, res: Response, next: NextFunction) => {
+app.get('/channel/messages/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
-    const channelId = +req.query.channelId;
-    const start = +req.query.start;
-    const returnData = channelMessagesV1(token, channelId, start);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const channelId = parseInt(req.query.channelId as string);
+    const start = parseInt(req.query.start as string);
+    const returnData = await channelMessagesV1(token, authUserId, channelId, start);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.post('/channel/removeowner/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/channel/removeowner/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, channelId, uId } = req.body;
-    const returnData = channelRemoveownerV1(token, channelId, uId);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId, uId } = req.body;
+    const returnData = await channelRemoveownerV1(token, authUserId, channelId, uId);
     return res.json(returnData);
   } catch (err) {
     next(err);
   }
 });
 
-app.post('/channel/leave/v1', (req: Request, res: Response, next: NextFunction) => {
+app.post('/channel/leave/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
-    const { token, channelId } = req.body;
-    const returnData = channelLeaveV1(token, channelId);
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId } = req.body;
+    const returnData = await channelLeaveV1(token, authUserId, channelId);
     return res.json(returnData);
   } catch (err) {
     next(err);
