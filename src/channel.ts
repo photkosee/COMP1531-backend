@@ -10,8 +10,11 @@ import {
   authIsOwner,
   authIsGlobalOwner
 } from './channelHelperFunctions';
+import HTTPError from 'http-errors';
 
 const ERROR = { error: 'error' };
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 
 interface authUserIdObj {
   authUserId?: number
@@ -25,31 +28,33 @@ interface newUser {
   handleStr: string
 }
 
-function channelJoinV1(token: string, channelId: number) {
+async function channelJoinV1(token: string, authUserId: number, channelId: number) {
 /*
   Description:
     channelJoinV1 helps user join a channel
 
   Arguments:
-    token       string type   -- Input integer supplied by user
-    channelId   integer type  -- Input integer supplied by user
+      token           string type   -- string supplied by request header
+      authUserId      string type   -- string supplied by request header
+             channelId   integer type  -- Input integer supplied by user
 
   Return Value:
     object: returns empty object on success
     object: {error: 'error'}
 */
 
-  if (!(checkToken(token)) || !(checkChannelId(channelId))) {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
-  const authUserIdRet: authUserIdObj = tokenToAuthUserId(token);
-  const authUserId: number = authUserIdRet.authUserId;
+  if (!checkChannelId(channelId)) {
+    throw HTTPError(BADREQUEST, 'Invalid Channel Id');
+  }
 
   const channelDetails: any = checkIfMember(authUserId, channelId);
 
   if (Object.keys(channelDetails).length !== 0) {
-    return ERROR;
+    throw HTTPError(BADREQUEST, 'User already a member');
   }
 
   const data: any = getData();
@@ -62,7 +67,7 @@ function channelJoinV1(token: string, channelId: number) {
 
       for (const element of channel.allMembers) {
         if (authUserId === element.uId) {
-          return ERROR;
+          throw HTTPError(BADREQUEST, 'User already a member');
         }
       }
     }
@@ -78,7 +83,7 @@ function channelJoinV1(token: string, channelId: number) {
 
   if (chosenChannel.isPublic === false) {
     if (chosenUser.permissionId !== 1) {
-      return ERROR;
+      throw HTTPError(FORBIDDEN, 'Channel is private and user not global owner');
     }
   }
 

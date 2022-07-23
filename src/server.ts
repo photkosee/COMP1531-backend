@@ -191,11 +191,12 @@ app.get('/channel/details/v2', validateJwtToken, async(req: Request, res: Respon
   }
 });
 
-app.post('/channel/join/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+app.post('/channel/join/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const { channelId } = req.body;
-    const returnData = channelJoinV1(token, channelId);
+    const returnData = await channelJoinV1(token, authUserId, channelId);
     return res.json(returnData);
   } catch (err) {
     next(err);
