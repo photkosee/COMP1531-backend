@@ -257,10 +257,10 @@ app.get('/user/profile/v3', validateJwtToken, async(req: Request, res: Response,
   }
 });
 
-app.get('/users/all/v1', (req: Request, res: Response, next: NextFunction) => {
+app.get('/users/all/v2', validateJwtToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const token = req.query.token as string;
-    const returnData = usersAllV1(token);
+    const token = res.locals.token.salt;
+    const returnData = await usersAllV1(token);
     return res.json(returnData);
   } catch (err) {
     next(err);
