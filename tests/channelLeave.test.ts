@@ -121,7 +121,6 @@ test('Testing for successful leave', () => {
       nameLast: 'virn',
     }
   });
-  const user3 = JSON.parse(res.body as string);
   res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
       name: 'channel1',

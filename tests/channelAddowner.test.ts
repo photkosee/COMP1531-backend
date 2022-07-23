@@ -7,7 +7,6 @@ const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
 
-
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
@@ -147,7 +146,6 @@ test('Testing for token not in channel and uId already owner', () => {
   expect(addowner(user2.token, channel1.channelId, user3.authUserId).statusCode).toStrictEqual(FORBIDDEN);
   expect(addowner(user2.token, channel1.channelId, user1.authUserId).statusCode).toStrictEqual(BADREQUEST);
 
-
   expect(addowner(user1.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(OK);
   expect(addowner(user1.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(BADREQUEST);
 });
@@ -203,7 +201,6 @@ test('Testing for adding yourself', () => {
   expect(addowner(user1.token, channel1.channelId, user1.authUserId).statusCode).toStrictEqual(BADREQUEST);
   expect(addowner(user2.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(BADREQUEST);
   expect(addowner(user3.token, channel1.channelId, user3.authUserId).statusCode).toStrictEqual(BADREQUEST);
-
 });
 
 test('Testing successful addowner', () => {

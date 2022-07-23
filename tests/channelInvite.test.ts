@@ -7,7 +7,6 @@ const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
 
-
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
@@ -15,7 +14,6 @@ beforeEach(() => {
 afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
-
 
 test('Testing for successful invite - channel/invite/v2', () => {
   const registrationData = [];
@@ -47,7 +45,6 @@ test('Testing for successful invite - channel/invite/v2', () => {
     }
   });
   const channel1 = JSON.parse(res.body as string);
-  
 
   res = request('POST', `${url}:${port}/channel/invite/v3`, {
     json: {
@@ -115,7 +112,6 @@ test('Testing for cases where user already in channel', () => {
   });
   expect(res.statusCode).toStrictEqual(BADREQUEST);
 });
-  
 
 test('Testing with valid channelId and invalid uId', () => {
   const registrationData = [];
@@ -202,7 +198,7 @@ test('Testing for invalid channel', () => {
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
   }
 
-  let res = request('POST', `${url}:${port}/channel/invite/v3`, {
+  const res = request('POST', `${url}:${port}/channel/invite/v3`, {
     json: {
       channelId: 0.1,
       uId: registrationData[1].authUserId,
@@ -213,7 +209,6 @@ test('Testing for invalid channel', () => {
     }
   });
   expect(res.statusCode).toStrictEqual(BADREQUEST);
-
 });
 
 test('Testing for token and uId are same person', () => {

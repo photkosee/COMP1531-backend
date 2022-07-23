@@ -1,7 +1,6 @@
 import request from 'sync-request';
 import config from '../src/config.json';
 
-
 const OK = 200;
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
@@ -153,7 +152,6 @@ test('Testing for token not in channel and uId not owner', () => {
 
   expect(removeOwner(user1.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(OK);
   expect(removeOwner(user1.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(BADREQUEST);
- 
 });
 
 test('Testing for remove last person and remove yourself', () => {
@@ -192,7 +190,6 @@ test('Testing for remove last person and remove yourself', () => {
       nameLast: 'glass',
     }
   });
-  const user4 = JSON.parse(res.body as string);
   res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
       name: 'channel1',
@@ -263,7 +260,6 @@ test('Testing for successful remove owner', () => {
       nameLast: 'virn',
     }
   });
-  const user3 = JSON.parse(res.body as string);
   res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
       name: 'channel1',
@@ -297,5 +293,4 @@ test('Testing for successful remove owner', () => {
   });
 
   expect(removeOwner(user1.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(OK);
-  
 });
