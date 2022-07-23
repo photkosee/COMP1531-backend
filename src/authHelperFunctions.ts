@@ -1,3 +1,4 @@
+import sgMail from '@sendgrid/mail';
 import HTTPError from 'http-errors';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
@@ -191,6 +192,40 @@ async function generateJwtToken(authUserId: number, newSessionId: string) {
   return jwt.sign(payload, '4ee66c5740fece1be9fdc0e269dd77ef7ea99874ee617bcfb2dae2c429f18acb');
 }
 
+async function sendEmail(email: string, name: string, resetCode: string) {
+  /*
+    Description:
+      sendEmail Helper function to send password reset code to user
+
+    Arguments:
+      email       string type   -- string supplied by authPasswordResetRequestV1
+      resetCode   string type   -- string supplied by authPasswordResetRequestV1
+
+    Return Value:
+      object: {}
+  */
+
+  sgMail.setApiKey('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');
+
+  const message = {
+    to: {
+      name: name,
+      email: email,
+    },
+    from: {
+      name: 'UNSW Treats',
+      email: 'f09acrunchie@gmail.com',
+    },
+    templateId: 'd-00b56886e66142da94579df5803180e3',
+    dynamicTemplateData: {
+      name: name,
+      code: resetCode,
+    }
+  };
+
+  await sgMail.send(message);
+}
+
 export {
   paramTypeChecker,
   genHandleStr,
@@ -198,5 +233,6 @@ export {
   loginVerifier,
   tryLogout,
   hashPassword,
-  generateJwtToken
+  generateJwtToken,
+  sendEmail
 };
