@@ -19,6 +19,7 @@ export async function userProfileV1(token: string, uId: number) {
 
   Exceptions:
   FORBIDDEN   - Invalid Session ID or Token
+
   Return Value:
     Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
 */
@@ -50,7 +51,7 @@ export async function userProfileV1(token: string, uId: number) {
   return {};
 }
 
-export function userProfileSetnameV1(token: string, nameFirst: string, nameLast: string) {
+export async function userProfileSetnameV1(token: string, nameFirst: string, nameLast: string) {
   /*
     Description:
       userProfileSetnameV1 updates user's nameFirst and nameLast
@@ -60,15 +61,19 @@ export function userProfileSetnameV1(token: string, nameFirst: string, nameLast:
       nameFirst   integer string  -- Input integer supplied by user
       nameLast    integer string  -- Input integer supplied by user
 
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
+
     Return Value:
       Object: {} on success
-      object: {error: 'error'} on error
 */
 
-  if (!checkToken(token) ||
-  typeof (nameFirst) !== 'string' ||
-  typeof (nameLast) !== 'string') {
-    return ERROR;
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
+  if (typeof (nameFirst) !== 'string' || typeof (nameLast) !== 'string') {
+    throw HTTPError(BADREQUEST, 'Invalid name type');
   }
 
   nameFirst = nameFirst.trim();
@@ -76,7 +81,7 @@ export function userProfileSetnameV1(token: string, nameFirst: string, nameLast:
 
   if (nameFirst.length < 1 || nameFirst.length > 50 ||
   nameLast.length < 1 || nameLast.length > 50) {
-    return ERROR;
+    throw HTTPError(BADREQUEST, 'Length of name is not 1-50 characters');
   }
 
   const data: any = getData();

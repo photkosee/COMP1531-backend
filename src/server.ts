@@ -267,11 +267,11 @@ app.get('/users/all/v2', validateJwtToken, async (req: Request, res: Response, n
   }
 });
 
-app.put('/user/profile/setname/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+app.put('/user/profile/setname/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
     const { nameFirst, nameLast } = req.body;
-    const returnData = userProfileSetnameV1(token, nameFirst, nameLast);
+    const returnData = await userProfileSetnameV1(token, nameFirst, nameLast);
     return res.json(returnData);
   } catch (err) {
     next(err);
