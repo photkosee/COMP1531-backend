@@ -164,10 +164,6 @@ async function checkToken(token: string) {
 
   const data: any = getData();
 
-  if (typeof token !== 'string') {
-    throw HTTPError(BADREQUEST, 'Received invalid token type');
-  }
-
   for (const user of data.users) {
     for (const sessionId of user.sessionList) {
       const checkSessionId = await bcrypt.compare(sessionId, token);

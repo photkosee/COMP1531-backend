@@ -142,7 +142,7 @@ test('Test for invalid Token Data - dm/messages/v2', () => {
       },
       headers: {
         'Content-type': 'application/json',
-        token: ' '
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRxN2tmSjV0MnUzSktYMGZDNGtqUlEubS51OVUycmxJSC9tLnZHTERTZEMwUHFYSVc4ZlQ5aSIsImlhdCI6MTY1ODU3MTc5Mn0.Zu15e4_mPiVXp6mEIqO9I4NYquLJ-TFGy_a9oheXmsY'
       }
     }
   );
@@ -171,4 +171,49 @@ test('Test for correct functionality - dm/messages/v2', () => {
     );
     expect(res.statusCode).toBe(OK);
   }
+});
+
+test('Test for succes messages return- dm/messages/v2', () => {
+  const res = request('POST', `${url}:${port}/dm/create/v2`, {
+    body: JSON.stringify({
+      uIds: [registrationData[1].authUserId, registrationData[2].authUserId]
+    }),
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[0].token
+    }
+  });
+  const dmId = JSON.parse(res.body as string).dmId;
+
+  for (let i = 0; i < 60; i++) {
+    request('POST', `${url}:${port}/message/senddm/v2`, {
+      body: JSON.stringify({
+        dmId: dmId,
+        message: `${Math.floor(Math.random() * Date.now())}`
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[1].token
+      }
+    });
+  }
+
+  const response = request(
+    'GET', `${url}:${port}/dm/messages/v2`,
+    {
+      qs: {
+        dmId: dmId,
+        start: 0
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[2].token
+      }
+    }
+  );
+  const resData = JSON.parse(response.body as string);
+  expect(response.statusCode).toBe(OK);
+  expect(resData.start).toBe(0);
+  expect(resData.end).toBe(50);
+  expect(resData.messages.length).toBe(50);
 });
