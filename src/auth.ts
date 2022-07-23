@@ -183,7 +183,7 @@ async function authLogoutV1(token: string) {
 async function authPasswordResetRequestV1(email: string) {
   /*
     Description:
-      authPasswordResetRequestV1 function helps the user reset their password when email is valid
+      authPasswordResetRequestV1 function helps the user to request for a password reset
 
     Arguments:
       email     string type   -- Input string supplied by user
@@ -211,9 +211,45 @@ async function authPasswordResetRequestV1(email: string) {
   return {};
 }
 
+async function authPasswordResetV1(resetCode: string, newPassword: string) {
+  /*
+    Description:
+      authPasswordResetV1 function helps the user reset their password
+
+    Arguments:
+      resetCode     string type   -- Input string supplied by user
+      newPassword   string type   -- Input string supplied by user
+
+    Return Value:
+      object: {}
+  */
+
+  if (newPassword.length < 6) {
+    throw HTTPError(BADREQUEST, 'Invalid password length');
+  }
+
+  const data: any = getData();
+
+  const index: number = data.passwordReset.findIndex((object: { resetCode: string; }) => object.resetCode === resetCode);
+
+  if (index !== -1) {
+    for (const user of data.users) {
+      if (data.passwordReset[index].email === user.email) {
+        data.passwordReset.splice(index, 1);
+        user.password = await hashPassword(newPassword);
+        setData(data);
+        return {};
+      }
+    }
+  }
+
+  throw HTTPError(BADREQUEST, 'Invalid reset code');
+}
+
 export {
   authRegisterV1,
   authLoginV1,
   authLogoutV1,
-  authPasswordResetRequestV1
+  authPasswordResetRequestV1,
+  authPasswordResetV1
 };
