@@ -1,0 +1,15 @@
+
+> ts-node-coverage
+> nyc --reporter=text --reporter=lcov ts-node src/server.ts
+
+⚡️ Server listening on port 3200 at localhost
+Cannot echo "echo"
+[0mGET /echo?echo=echo [33m400[0m - ms - 44[0m
+Shutting down server gracefully.
+-----------|---------|----------|---------|---------|-------------------
+File       | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------|---------|----------|---------|---------|-------------------
+All files  |     100 |      100 |     100 |     100 |                   
+ echo.ts   |     100 |      100 |     100 |     100 |                   
+ server.ts |     100 |      100 |     100 |     100 |                   
+-----------|---------|----------|---------|---------|-------------------
