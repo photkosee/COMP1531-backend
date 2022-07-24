@@ -11,8 +11,13 @@ import { clearV1 } from './other';
 import config from './config.json';
 import { usersAllV1 } from './users';
 import { getData, setData } from './dataStore';
-import { authRegisterV1, authLoginV1, authLogoutV1 } from './auth';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
+import {
+  authRegisterV1,
+  authLoginV1,
+  authLogoutV1,
+  authPasswordResetRequestV1
+} from './auth';
 import {
   messageSendV1,
   messageEditV1,
@@ -423,6 +428,16 @@ app.post('/message/senddm/v2', validateJwtToken, async(req: Request, res: Respon
     const authUserId = res.locals.token.id;
     const { dmId, message } = req.body;
     const returnData = await messageSenddmV1(token, authUserId, dmId, message);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/auth/passwordreset/request/v1', async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email } = req.body;
+    const returnData = await authPasswordResetRequestV1(email);
     return res.json(returnData);
   } catch (err) {
     next(err);

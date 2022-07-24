@@ -46,6 +46,12 @@ let data: object = {
     //   ]
     // }
   ],
+  passwordReset: [
+    // {
+    //   email: 'string',
+    //   resetCode: 'string',
+    // }
+  ],
   messageId: 1,
   dmId: 1
 };

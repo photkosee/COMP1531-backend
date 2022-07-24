@@ -1,8 +1,5 @@
 import { getData } from './dataStore';
-import HTTPError from 'http-errors';
 import bcrypt from 'bcryptjs';
-
-const BADREQUEST = 400;
 
 function checkAuthUserId(authUserId: number) {
 /*

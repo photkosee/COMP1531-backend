@@ -8,7 +8,8 @@ import {
   loginVerifier,
   tryLogout,
   generateJwtToken,
-  hashPassword
+  hashPassword,
+  sendEmail
 } from './authHelperFunctions';
 
 const HOST: string = process.env.IP || 'localhost';
@@ -179,8 +180,40 @@ async function authLogoutV1(token: string) {
   return {};
 }
 
+async function authPasswordResetRequestV1(email: string) {
+  /*
+    Description:
+      authPasswordResetRequestV1 function helps the user reset their password when email is valid
+
+    Arguments:
+      email     string type   -- Input string supplied by user
+
+    Return Value:
+      object: return {}
+  */
+
+  email = email.trim();
+  const data: any = getData();
+
+  for (const user of data.users) {
+    if (user.email === email) {
+      const newResetCode = `${Math.floor(100000 + Math.random() * 900000)}`;
+      const resetObj = {
+        email: email,
+        resetCode: newResetCode
+      };
+      data.passwordReset.push(resetObj);
+      user.sessionList = [];
+      setData(data);
+      await sendEmail(email, user.nameFirst, newResetCode);
+    }
+  }
+  return {};
+}
+
 export {
   authRegisterV1,
   authLoginV1,
-  authLogoutV1
+  authLogoutV1,
+  authPasswordResetRequestV1
 };
