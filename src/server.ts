@@ -16,7 +16,8 @@ import {
   authRegisterV1,
   authLoginV1,
   authLogoutV1,
-  authPasswordResetRequestV1
+  authPasswordResetRequestV1,
+  authPasswordResetV1
 } from './auth';
 import {
   messageSendV1,
@@ -438,6 +439,16 @@ app.post('/auth/passwordreset/request/v1', async(req: Request, res: Response, ne
   try {
     const { email } = req.body;
     const returnData = await authPasswordResetRequestV1(email);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/auth/passwordreset/reset/v1', async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { resetCode, newPassword } = req.body;
+    const returnData = await authPasswordResetV1(resetCode, newPassword);
     return res.json(returnData);
   } catch (err) {
     next(err);
