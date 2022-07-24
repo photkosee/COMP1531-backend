@@ -16,10 +16,6 @@ function checkAuthUserId(authUserId: number) {
 
   const data: any = getData();
 
-  if (typeof authUserId !== 'number') {
-    return false;
-  }
-
   for (const user of data.users) {
     if (authUserId === user.authUserId) {
       return true;
@@ -139,8 +135,6 @@ function getMessages(channelId: number) {
       return channel.messages;
     }
   }
-
-  return {};
 }
 
 async function checkToken(token: string) {
@@ -173,29 +167,6 @@ async function checkToken(token: string) {
   return false;
 }
 
-function tokenToAuthUserId(token: string) {
-/*
-  Description:
-    tokenToAuthUserId finds authUserId for corresponding token
-
-  Arguments:
-    token integer string  --  Input integer supplied by user
-
-  Return Value:
-    object: { authUserId: authUserId } on success
-    empty object if failed
-
-*/
-  const data: any = getData();
-
-  for (const user of data.users) {
-    if (user.sessionList.includes(token)) {
-      return { authUserId: user.authUserId };
-    }
-  }
-  return {};
-}
-
 function authIsOwner(channelId: number, uId: number) {
   /*
   Description:
@@ -225,32 +196,6 @@ function authIsOwner(channelId: number, uId: number) {
   return false;
 }
 
-function authIsGlobalOwner(uId: number) {
-  /*
-  Description:
-    authIsGlobalOwner checks if uId is a global owner
-
-  Arguments:
-    uId       integer type  --  Input integer supplied by user
-
-  Return Value:
-    true: if uId is global owner
-    false: if uId is not global owner
-
-  */
-  const dataStore: any = getData();
-  for (const user of dataStore.users) {
-    if (user.uId === uId) {
-      if (user.permissionId === 1) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }
-  return false;
-}
-
 export {
   checkAuthUserId,
   checkChannelId,
@@ -258,7 +203,5 @@ export {
   authInChannel,
   getMessages,
   checkToken,
-  tokenToAuthUserId,
   authIsOwner,
-  authIsGlobalOwner
 };

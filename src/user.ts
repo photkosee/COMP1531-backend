@@ -47,8 +47,6 @@ export async function userProfileV1(token: string, uId: number) {
       };
     }
   }
-
-  return {};
 }
 
 export async function userProfileSetnameV1(token: string, nameFirst: string, nameLast: string) {
@@ -92,9 +90,12 @@ export async function userProfileSetnameV1(token: string, nameFirst: string, nam
   nameLast = nameLast.trim();
 
   for (const user of data.users) {
-    if (user.sessionList.includes(token)) {
-      user.nameFirst = nameFirst;
-      user.nameLast = nameLast;
+    for (const sessionId of user.sessionList) {
+      const checkSessionId = await bcrypt.compare(sessionId, token);
+      if (checkSessionId) {
+        user.nameFirst = nameFirst;
+        user.nameLast = nameLast;
+      }
     }
   }
 
@@ -143,15 +144,12 @@ export async function userProfileSetemailV1(token: string, email: string) {
         if (email === user.email) {
           throw HTTPError(BADREQUEST, 'Email is used by another user');
         }
+      } else {
+        user.email = email;
       }
     }
   }
 
-  for (const user of data.users) {
-    if (user.sessionList.includes(token)) {
-      user.email = email;
-    }
-  }
   return {};
 }
 
@@ -197,13 +195,9 @@ export async function userProfileSethandleV1(token: string, handleStr: string) {
         if (handleStr === user.handleStr) {
           throw HTTPError(BADREQUEST, 'handleStr is used by another user');
         }
+      } else {
+        user.handleStr = handleStr;
       }
-    }
-  }
-
-  for (const user of data.users) {
-    if (user.sessionList.includes(token)) {
-      user.handleStr = handleStr;
     }
   }
 

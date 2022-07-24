@@ -28,6 +28,16 @@ describe('Valid return', () => {
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
+    res = request('POST', `${url}:${port}/auth/login/v3`, {
+      body: JSON.stringify({
+        email: 'auth@gmail.com',
+        password: 'password'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+
     res = request('PUT', `${url}:${port}/user/profile/setname/v2`, {
       json: {
         nameFirst: 'Updated First Name8',
@@ -116,9 +126,7 @@ describe('Error returns', () => {
         nameLast: 'Original Last Name',
       }
     });
-    const user = JSON.parse(res.getBody() as string);
-    const token = user.token;
-    const dummyToken = token + 'abc';
+    const dummyToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCR4M3drRGVCdEpSblJQOUdyRUNzUnlPVDVpU29OellIdVozc0ZRN29wbXpUN3Y0MzJNMXQ5bSIsImlhdCI6MTY1ODU3NzY4M30.pTjzScWD468f4umwPtoOundclYoDYEdSV_7YXqD7RmA';
 
     res = request('PUT', `${url}:${port}/user/profile/setname/v2`, {
       json: {

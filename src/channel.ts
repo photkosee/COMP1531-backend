@@ -6,9 +6,7 @@ import {
   authInChannel,
   getMessages,
   checkToken,
-  // tokenToAuthUserId,
   authIsOwner,
-  // authIsGlobalOwner
 } from './channelHelperFunctions';
 import HTTPError from 'http-errors';
 
@@ -136,7 +134,7 @@ async function channelDetailsV1(token: string, authUserId: number, channelId: nu
     name: channelDetails.name,
     isPublic: channelDetails.isPublic,
     ownerMembers: channelDetails.ownerMembers,
-    allMembers: channelDetails.allMembers
+    allMembers: channelDetails.allMembers,
   };
 }
 

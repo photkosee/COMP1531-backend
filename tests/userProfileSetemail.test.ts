@@ -33,6 +33,25 @@ describe('Valid return', () => {
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
+    res = request('POST', `${url}:${port}/auth/login/v3`, {
+      body: JSON.stringify({
+        email: 'original@gmail.com',
+        password: 'password'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+
+    res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'different@email.com',
+        password: 'password',
+        nameFirst: 'First',
+        nameLast: 'Last',
+      }
+    });
+
     res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
       json: {
         email: 'updated@email.com'
@@ -58,6 +77,16 @@ describe('Valid return', () => {
     });
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
+
+    res = request('POST', `${url}:${port}/auth/login/v3`, {
+      body: JSON.stringify({
+        email: 'original@gmail.com',
+        password: 'password'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
 
     res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
       json: {
@@ -168,9 +197,7 @@ describe('Token error returns', () => {
         nameLast: 'Last',
       }
     });
-    const user = JSON.parse(res.getBody() as string);
-    const token = user.token;
-    const dummyToken = token + 'abc';
+    const dummyToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCR4M3drRGVCdEpSblJQOUdyRUNzUnlPVDVpU29OellIdVozc0ZRN29wbXpUN3Y0MzJNMXQ5bSIsImlhdCI6MTY1ODU3NzY4M30.pTjzScWD468f4umwPtoOundclYoDYEdSV_7YXqD7RmA';
 
     res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
       json: {

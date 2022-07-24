@@ -77,11 +77,10 @@ describe('Error returns', () => {
         nameLast: 'Last'
       }
     });
-    const user: authRegisterObj = JSON.parse(res.getBody() as string);
-    const token = user.token;
     // ======================== SET UP START ===========================
 
-    const dummyToken = token + 'abc';
+    const dummyToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRESTU4YWh0VnZ2eTRHVzA4MEF5VkxPZDloaHExL3N5OEJxc0NUMjdGQ3JMeXlRR1dLRFRUeSIsImlhdCI6MTY1ODU3NzY3NH0.tHBgizmzQXo1EKTdXoaCkt8DLu8XNFkYVZ8ycLlOLv0';
+
     res = request('GET', `${url}:${port}/users/all/v2`, {
       headers: {
         'Content-type': 'application/json',
