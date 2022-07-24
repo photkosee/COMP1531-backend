@@ -60,21 +60,13 @@ async function channelJoinV1(token: string, authUserId: number, channelId: numbe
   const data: any = getData();
 
   let chosenChannel: any = {};
-
   for (const channel of data.channels) {
     if (channelId === channel.channelId) {
       chosenChannel = channel;
-
-      for (const element of channel.allMembers) {
-        if (authUserId === element.uId) {
-          throw HTTPError(BADREQUEST, 'User already a member');
-        }
-      }
     }
   }
 
   let chosenUser: any = {};
-
   for (const user of data.users) {
     if (authUserId === user.authUserId) {
       chosenUser = user;
@@ -125,13 +117,13 @@ async function channelDetailsV1(token: string, authUserId: number, channelId: nu
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
-  if (!checkChannelId(channelId)) {
-    throw HTTPError(BADREQUEST, 'Invalid Channel ID');
-  }
-
   const data: any = getData();
   if (data.channels.length === 0) {
     throw HTTPError(BADREQUEST, 'No channels available');
+  }
+
+  if (!checkChannelId(channelId)) {
+    throw HTTPError(BADREQUEST, 'Invalid Channel ID');
   }
 
   const channelDetails: any = checkIfMember(authUserId, channelId);

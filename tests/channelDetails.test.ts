@@ -199,7 +199,7 @@ describe('Return error', () => {
     const channel: channelsCreateObj = JSON.parse(res.getBody() as string);
     const channelId = channel.channelId;
     // ========================= SET UP END ================================
-    const dummyToken: string = token + 'abc';
+    const dummyToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRGRmRGLkN0aW5Oai8yR0hJdklpaUNPbXpWekhmdXF6aGF1VlV6U1NHa1VuUW5Zci9iUlFCcSIsImlhdCI6MTY1ODU3NzY2Mn0.A4f61mkebUTex1U50rp7z6hT-vfjmlMtcsmBpVUICHQ';
 
     const invalidPassData: any = [
       { token: dummyToken, channelId: channelId },

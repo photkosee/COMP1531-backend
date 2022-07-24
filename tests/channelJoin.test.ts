@@ -154,7 +154,7 @@ describe('Error returns', () => {
     const channel: channelsCreateObj = JSON.parse(res.getBody() as string);
     const channelId: number = channel.channelId;
     // ======================== SET UP END ===========================
-    const dummyToken: string = token + 'abc';
+    const dummyToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRqMkdrY3FJUFEvZ3hiRjRzbUYvck1lcndPUU13VHJYSnIwRy5hRnRxcURUVkppWTdpZFhLbSIsImlhdCI6MTY1ODU3NzYzNH0.yH6ATBlI46lkfxdojeOFi0ZdDfZMDeV6GoXcDNQjL9Y';
 
     const invalidPassData: any = [
       { token: dummyToken, channelId: channelId, error: FORBIDDEN },
