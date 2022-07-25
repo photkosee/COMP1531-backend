@@ -23,7 +23,8 @@ import {
   messageSendV1,
   messageEditV1,
   messageSenddmV1,
-  messageRemoveV1
+  messageRemoveV1,
+  messageReactV1
 } from './message';
 import {
   dmCreateV1,
@@ -451,6 +452,18 @@ app.post('/auth/passwordreset/reset/v1', async(req: Request, res: Response, next
   try {
     const { resetCode, newPassword } = req.body;
     const returnData = await authPasswordResetV1(resetCode, newPassword);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/message/react/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { messageId, reactId } = req.body;
+    const returnData = await messageReactV1(token, authUserId, messageId, reactId);
     return res.json(returnData);
   } catch (err) {
     next(err);
