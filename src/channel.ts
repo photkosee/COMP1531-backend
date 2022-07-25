@@ -38,7 +38,7 @@ async function channelJoinV1(token: string, authUserId: number, channelId: numbe
     FORBIDDEN   - Channel is private and user not global owner
 
   Return Value:
-    object: {error: 'error'}
+    object: {}
 */
 
   if (!(await checkToken(token, authUserId))) {
@@ -379,7 +379,6 @@ async function channelLeaveV1(token: string, authUserId: number, channelId: numb
 
     Return Value:
       object: {} when user is removed
-      object: {error: 'error'}
   */
 
   if (!(await checkToken(token, authUserId))) {

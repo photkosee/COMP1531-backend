@@ -24,7 +24,7 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
       FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
     Return Value:
-      object: return {dmId: dmId}
+      object: {dmId: dmId}
   */
 
   if (!(await checkToken(token, authUserId))) {
@@ -99,7 +99,7 @@ async function dmListV1(token: string, authUserId: number) {
       FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
     Return Value:
-      object: return {dms: [{dmId: dmId, name : name}]}
+      object: {dms: [{dmId: dmId, name : name}]}
   */
 
   if (!(await checkToken(token, authUserId))) {
@@ -152,7 +152,7 @@ async function dmRemoveV1(token: string, authUserId: number, dmId: number) {
       FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
     Return Value:
-      object: return {}
+      object: {}
   */
 
   if (!(await checkToken(token, authUserId))) {
@@ -194,7 +194,7 @@ async function dmDetailsV1(token: string, authUserId: number, dmId: number) {
       FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
     Return Value:
-      object: return { name: name, members: [user] }
+      object: { name: name, members: [user] }
   */
 
   if (!(await checkToken(token, authUserId))) {
@@ -261,7 +261,7 @@ async function dmLeaveV1(token: string, authUserId: number, dmId: number) {
       FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
     Return Value:
-      object: return {}
+      object: {}
   */
 
   if (!(await checkToken(token, authUserId))) {
@@ -308,7 +308,7 @@ async function dmMessages(token: string, authUserId: number, dmId: number, start
       FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
     Return Value:
-      object: return { messages: [messagesData], start: start, end: end}
+      object: { messages: [messagesData], start: start, end: end}
   */
 
   if (!(await checkToken(token, authUserId))) {

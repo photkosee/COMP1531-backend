@@ -106,7 +106,6 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
 
   Return Value:
     interger: channelId
-    object: {error: 'error'}
 */
 
   if (!(await checkToken(token, authUserId))) {

@@ -33,7 +33,7 @@ async function messageSendV1(token: string, authUserId: number, channelId: numbe
     FORBIDDEN  - Occurs when the authorised user is not a member of the channel.
 
   Return Value:
-    interger: { messageId: messageId }
+    object: { messageId: messageId }
 */
 
   if (!(await checkToken(token, authUserId))) {
