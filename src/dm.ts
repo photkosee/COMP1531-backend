@@ -14,7 +14,7 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
 
     Arguments:
       token           string type   -- string supplied by request header
-      authUserId      string type   -- string supplied by request header
+      authUserId      number type   -- number supplied by request header
       uIds            array type    -- Input array supplied by user
 
     Exceptions:
@@ -27,11 +27,11 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
       object: return {dmId: dmId}
   */
 
-  const data: any = getData();
-
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
+  const data: any = getData();
 
   if (typeof uIds !== 'object' || uIds.length === 0) {
     throw HTTPError(BADREQUEST, 'Received invalid data type');
@@ -93,7 +93,7 @@ async function dmListV1(token: string, authUserId: number) {
 
     Arguments:
       token           string type   -- string supplied by request header
-      authUserId      string type   -- string supplied by request header
+      authUserId      number type   -- number supplied by request header
 
     Exceptions:
       FORBIDDEN  - Occurs when sessionId/token is not found in database.
@@ -102,12 +102,12 @@ async function dmListV1(token: string, authUserId: number) {
       object: return {dms: [{dmId: dmId, name : name}]}
   */
 
-  const data: any = getData();
-  const dmsList: object[] = [];
-
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
+  const data: any = getData();
+  const dmsList: object[] = [];
 
   for (const dm of data.dms) {
     if (dm.creatorId === authUserId) {
@@ -142,7 +142,7 @@ async function dmRemoveV1(token: string, authUserId: number, dmId: number) {
 
     Arguments:
       token         string type   -- string supplied by request header
-      authUserId    string type   -- string supplied by request header
+      authUserId    number type   -- number supplied by request header
       dmId          number type   -- Input number supplied by user
 
     Exceptions:
@@ -155,11 +155,11 @@ async function dmRemoveV1(token: string, authUserId: number, dmId: number) {
       object: return {}
   */
 
-  const data: any = getData();
-
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
+  const data: any = getData();
 
   if (!(dmIdValidator(dmId))) {
     throw HTTPError(BADREQUEST, 'dmId does not refer to a valid DM');
@@ -185,7 +185,7 @@ async function dmDetailsV1(token: string, authUserId: number, dmId: number) {
 
     Arguments:
       token       string type   -- Input string supplied by request header
-      authUserId  string type   -- string supplied by request header
+      authUserId  number type   -- number supplied by request header
       dmId        number type   -- Input number supplied by user
 
     Exceptions:
@@ -197,11 +197,11 @@ async function dmDetailsV1(token: string, authUserId: number, dmId: number) {
       object: return { name: name, members: [user] }
   */
 
-  const data: any = getData();
-
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
+  const data: any = getData();
 
   if (!(dmIdValidator(dmId))) {
     throw HTTPError(BADREQUEST, 'dmId does not refer to a valid DM');
@@ -252,7 +252,7 @@ async function dmLeaveV1(token: string, authUserId: number, dmId: number) {
 
     Arguments:
       token       string type   -- Input string supplied by request header
-      authUserId  string type   -- string supplied by request header
+      authUserId  number type   -- number supplied by request header
       dmId        number type   -- Input number supplied by user
 
     Exceptions:
@@ -264,11 +264,11 @@ async function dmLeaveV1(token: string, authUserId: number, dmId: number) {
       object: return {}
   */
 
-  const data: any = getData();
-
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
+  const data: any = getData();
 
   if (!(dmIdValidator(dmId))) {
     throw HTTPError(BADREQUEST, 'dmId does not refer to a valid DM');
@@ -297,7 +297,7 @@ async function dmMessages(token: string, authUserId: number, dmId: number, start
 
     Arguments:
       token       string type   -- Input string supplied by request header
-      authUserId  string type   -- string supplied by request header
+      authUserId  number type   -- number supplied by request header
       dmId        number type   -- Input number supplied by user
       start       number type   -- Input number supplied by user
 

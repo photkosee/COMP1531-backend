@@ -27,15 +27,15 @@ async function channelJoinV1(token: string, authUserId: number, channelId: numbe
     channelJoinV1 helps user join a channel
 
   Arguments:
-      token           string type   -- string supplied by request header
-      authUserId      string type   -- string supplied by request header
-      channelId   integer type  -- Input integer supplied by user
+    token       string type   -- string supplied by request header
+    authUserId  number type   -- number supplied by request header
+    channelId   number type   -- Input integer supplied by user
 
   Exceptions:
-  FORBIDDEN   - Invalid Session ID or Token
-  BADREQUETS  - Invalid Channel ID
-  BADREQUEST  - User already a member
-  FORBIDDEN   - Channel is private and user not global owner
+    FORBIDDEN   - Invalid Session ID or Token
+    BADREQUETS  - Invalid Channel ID
+    BADREQUEST  - User already a member
+    FORBIDDEN   - Channel is private and user not global owner
 
   Return Value:
     object: {error: 'error'}
@@ -95,20 +95,24 @@ async function channelDetailsV1(token: string, authUserId: number, channelId: nu
 
   Arguments:
     token         string type   -- string supplied by request header
-    uthUserId     string type   -- string supplied by request header
-    channelId     integer type   -- Input integer supplied by user
+    authUserId    number type   -- number supplied by request header
+    channelId     number type   -- number supplied by user
 
   Exeptions:
-  FORBIDDEN   - Invalid Session ID or Token
-  BADREQUETS  - Invalid Channel ID
-  BADREQUETS  - No channels available
-  FORBIDDEN   - User is not a member of the channel
-
-  BADREQUEST  - User already a member
-  FORBIDDEN   - Channel is private and user not global owner
+    FORBIDDEN   - Invalid Session ID or Token
+    BADREQUETS  - Invalid Channel ID
+    BADREQUETS  - No channels available
+    FORBIDDEN   - User is not a member of the channel
+    BADREQUEST  - User already a member
+    FORBIDDEN   - Channel is private and user not global owner
 
   Return Value:
-    object: {error: 'error'}
+    object: {
+      name: channelDetails.name,
+      isPublic: channelDetails.isPublic,
+      ownerMembers: channelDetails.ownerMembers,
+      allMembers: channelDetails.allMembers,
+    }
 */
 
   if (!(await checkToken(token, authUserId))) {
@@ -144,13 +148,13 @@ async function channelInviteV1(token: string, authUserId: number, channelId: num
       channelInviteV1 Will invite and add a user into a channel
 
     Arguments:
-      token       string type   -- Input integer supplied by user
-      channelId   integer type   -- Input integer supplied by user
-      uId         integer type   -- Input integer supplied by user
+      token         string type   -- string supplied by request header
+      authUserId    number type   -- number supplied by request header
+      channelId     number type   -- Input number supplied by user
+      uId           number type   -- Input number supplied by user
 
     Return Value:
       object: {} when user is added
-      object: {error: 'error'}
   */
 
   if (!(await checkToken(token, authUserId))) {
@@ -203,9 +207,10 @@ async function channelMessagesV1(token: string, authUserId: number, channelId: n
       channelMessagesV1 checks the message history of a given channel
 
     Arguments:
-      token       string type   -- Input integer supplied by user
-      channelId   integer type   -- Input integer supplied by user
-      start       integer type   -- Input integer supplied by user
+      token       string type   -- string supplied by request header
+      authUserId  number type   -- number supplied by request header
+      channelId   number type   -- Input number supplied by user
+      start       number type   -- Input number supplied by user
 
     Return Value:
       object: {
@@ -213,7 +218,6 @@ async function channelMessagesV1(token: string, authUserId: number, channelId: n
         start: start,
         end: end,
       }
-      object: {error: 'error'}
   */
 
   if (!(await checkToken(token, authUserId))) {
@@ -258,13 +262,13 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
       channelAddownerV1 adds owner to a channel
 
     Arguments:
-      token       string type    -- Input integer supplied by user
-      channelId   integer type   -- Input integer supplied by user
-      uId         integer type   -- Input integer supplied by user
+      token       string type   -- string supplied by request header
+      authUserId  number type   -- string supplied by request header
+      channelId   number type   -- Input number supplied by user
+      uId         number type   -- Input number supplied by user
 
     Return Value:
       object: {} when owner is added
-      object: {error: 'error'}
   */
 
   if (!(await checkToken(token, authUserId))) {
@@ -319,13 +323,13 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
       channelRemoveownerV1: user of token removes owner of uId from channel of channelId
 
     Arguments:
-      token       string type    -- Input integer supplied by user
-      channelId   integer type   -- Input integer supplied by user
-      uId         integer type   -- Input integer supplied by user
+      token       string type    -- string supplied by request header
+      authUserId  number type    -- string supplied by request header
+      channelId   integer type   -- Input number supplied by user
+      uId         integer type   -- Input number supplied by user
 
     Return Value:
       object: {} when owner is removed
-      object: {error: 'error'}
   */
 
   if (!(await checkToken(token, authUserId))) {
@@ -369,8 +373,9 @@ async function channelLeaveV1(token: string, authUserId: number, channelId: numb
       channelLeaveV1 makes a user of token leave channel of channelId
 
     Arguments:
-      token       string type    -- Input integer supplied by user
-      channelId   integer type   -- Input integer supplied by user
+      token       string type   -- string supplied by request header
+      authUserId  number type   -- string supplied by request header
+      channelId   number type   -- Input number supplied by user
 
     Return Value:
       object: {} when user is removed

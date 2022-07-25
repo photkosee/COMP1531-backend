@@ -136,7 +136,8 @@ app.post('/auth/login/v3', async (req: Request, res: Response, next: NextFunctio
 app.post('/auth/logout/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
-    const returnData = await authLogoutV1(token);
+    const authUserId = res.locals.token.id;
+    const returnData = await authLogoutV1(token, authUserId);
     return res.json(returnData);
   } catch (err) {
     next(err);

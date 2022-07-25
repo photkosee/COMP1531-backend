@@ -113,8 +113,7 @@ async function loginVerifier(email: string, password: string, userData: string[]
 
   for (const user of userData) {
     if (user.email === email && user.isActive) {
-      const checkPassword: boolean = await bcrypt.compare(password, user.password);
-      if (checkPassword) {
+      if (await bcrypt.compare(password, user.password)) {
         let newSessionId = `${(Math.floor(Math.random() * Date.now())).toString()}`;
         newSessionId = newSessionId.substring(0, 10);
 
@@ -131,7 +130,7 @@ async function loginVerifier(email: string, password: string, userData: string[]
   throw HTTPError(400, 'Invalid Email');
 }
 
-async function tryLogout(token: string, userData: string[] | any[]) {
+async function tryLogout(token: string, authUserId:number, userData: string[] | any[]) {
   /*
     Description:
       Helper function to invalidate the sessionId to log the user out
@@ -139,17 +138,20 @@ async function tryLogout(token: string, userData: string[] | any[]) {
     Arguments:
       token       string type   -- Input string supplied by function authLogoutV1
       userData    array  type   -- Users array supplied by function authLogoutV1
+      authUserId  string type   -- Input string supplied by function authLogoutV1
 
     Return Value:
       boolean: true | false
   */
 
   for (const user of userData) {
-    for (const sessionId of user.sessionList) {
-      if (await bcrypt.compare(sessionId, token)) {
-        const index: number = user.sessionList.indexOf(sessionId);
-        user.sessionList.splice(index, 1);
-        return true;
+    if (user.authUserId === authUserId) {
+      for (const sessionId of user.sessionList) {
+        if (await bcrypt.compare(sessionId, token)) {
+          const index: number = user.sessionList.indexOf(sessionId);
+          user.sessionList.splice(index, 1);
+          return true;
+        }
       }
     }
   }
@@ -198,10 +200,9 @@ async function sendEmail(email: string, name: string, resetCode: string) {
 
     Arguments:
       email       string type   -- string supplied by authPasswordResetRequestV1
+      name        string type   -- string supplied by authPasswordResetRequestV1
       resetCode   string type   -- string supplied by authPasswordResetRequestV1
 
-    Return Value:
-      object: {}
   */
 
   sgMail.setApiKey('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');

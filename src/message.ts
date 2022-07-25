@@ -21,10 +21,10 @@ async function messageSendV1(token: string, authUserId: number, channelId: numbe
     user to the channel specified by channelId
 
   Arguments:
-    token     string type   -- Input string supplied by request header
-    authUserId  string type -- Input string supplied by request header
-    channelId number type   -- Input number supplied by user
-    message   string type   -- Input string supplied by user
+    token       string type   -- string supplied by request header
+    authUserId  number type   -- number supplied by request header
+    channelId   number type   -- Input number supplied by user
+    message     string type   -- Input string supplied by user
 
   Exceptions:
     BADREQUEST - Occurs when length of message is not valid.
@@ -35,14 +35,15 @@ async function messageSendV1(token: string, authUserId: number, channelId: numbe
   Return Value:
     interger: { messageId: messageId }
 */
+
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
   const data: any = getData();
 
   if (message.length < 1 || message.length > 1000) {
     throw HTTPError(BADREQUEST, 'Invalid message length');
-  }
-
-  if (!(await checkToken(token, authUserId))) {
-    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   if (!checkChannelId(channelId)) {
@@ -80,10 +81,10 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
     If the new message is an empty string, the message is deleted
 
   Arguments:
-    token     string type   -- Input string supplied by request header
-    authUserId  string type -- Input string supplied by request header
-    messageId number type   -- Input number supplied by user
-    message   string type   -- Input string supplied by user
+    token       string type   -- string supplied by request header
+    authUserId  number type   -- number supplied by request header
+    messageId   number type   -- Input number supplied by user
+    message     string type   -- Input string supplied by user
 
   Exceptions:
     BADREQUEST - Occurs when length of message is not valid.
@@ -94,13 +95,15 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
   Return Value:
     object: {}
 */
-  message = message.trim();
-  if (message.length > 1000) {
-    throw HTTPError(BADREQUEST, 'Invalid message length');
-  }
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
+  message = message.trim();
+
+  if (message.length > 1000) {
+    throw HTTPError(BADREQUEST, 'Invalid message length');
   }
 
   const data: any = getData();
@@ -155,8 +158,8 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
     messageSenddmV1 send a message from authorisedUser to the DM specified by dmId
 
   Arguments:
-    token       string type -- Input string supplied by request header
-    authUserId  string type -- Input string supplied by request header
+    token       string type -- string supplied by request header
+    authUserId  number type -- number supplied by request header
     dmId        number type -- Input number supplied by user
     message     string type -- Input string supplied by user
 
@@ -169,14 +172,15 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
   Return Value:
     object: { messageId: messageId }
 */
+
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
   const data: any = getData();
 
   if (message.length < 1 || message.length > 1000) {
     throw HTTPError(BADREQUEST, 'Invalid message length');
-  }
-
-  if (!(await checkToken(token, authUserId))) {
-    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   let checkDm = false;
@@ -234,9 +238,9 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
     this message is removed from the channel/DM
 
   Arguments:
-    token     string type   -- Input string supplied by request header
-    authUserId  string type -- Input string supplied by request header
-    messageId number type -- Input number supplied by user
+    token       string type -- string supplied by request header
+    authUserId  number type -- number supplied by request header
+    messageId   number type -- Input number supplied by user
 
   Exceptions:
     BADREQUEST - Occurs when messageId does not refer to a valid message.
@@ -253,12 +257,15 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
 
   const data: any = getData();
   let permissionId = 0;
+
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
       permissionId = user.permissionId;
     }
   }
+
   let checkErrorPermission = false;
+
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {

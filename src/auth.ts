@@ -155,13 +155,14 @@ async function authLoginV1(email: string, password: string) {
   return loginDetail;
 }
 
-async function authLogoutV1(token: string) {
+async function authLogoutV1(token: string, authUserId: number) {
   /*
     Description:
       authLogoutV1 function invalidates the token to log the user out
 
     Arguments:
-      token     string type   -- string supplied by request header
+      token       string type   -- string supplied by request header
+      authUserId  string type   -- string supplied by request header
 
     Exceptions:
       FORBIDDEN - Occurs when sessionId/token is not found in database.
@@ -171,7 +172,7 @@ async function authLogoutV1(token: string) {
   */
 
   const data: any = getData();
-  const logoutDetail = await tryLogout(token, data.users);
+  const logoutDetail = await tryLogout(token, authUserId, data.users);
 
   if (!(logoutDetail)) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
