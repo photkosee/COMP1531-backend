@@ -37,7 +37,7 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Testing success reacting message - message/react/v1', () => {
+describe('Testing success unreacting message - message/unreact/v1', () => {
   test('Channel messages', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
@@ -106,7 +106,7 @@ describe('Testing success reacting message - message/react/v1', () => {
       }
     });
 
-    res = request('POST', `${url}:${port}/channels/react/v1`, {
+    res = request('POST', `${url}:${port}/message/react/v1`, {
       body: JSON.stringify({
         messageId: 2,
         reactId: 1
@@ -116,11 +116,44 @@ describe('Testing success reacting message - message/react/v1', () => {
         token: token
       }
     });
-    const react = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(react).toStrictEqual({});
 
-    res = request('POST', `${url}:${port}/channels/react/v1`, {
+    res = request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: 2,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token2
+      }
+    });
+
+    res = request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: 1,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token2
+      }
+    });
+
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
+      body: JSON.stringify({
+        messageId: 1,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token2
+      }
+    });
+    const react3 = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(react3).toStrictEqual({});
+
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
       body: JSON.stringify({
         messageId: 2,
         reactId: 1
@@ -134,19 +167,19 @@ describe('Testing success reacting message - message/react/v1', () => {
     expect(res.statusCode).toBe(OK);
     expect(react2).toStrictEqual({});
 
-    res = request('POST', `${url}:${port}/channels/react/v1`, {
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
       body: JSON.stringify({
-        messageId: 1,
+        messageId: 2,
         reactId: 1
       }),
       headers: {
         'Content-type': 'application/json',
-        token: token2
+        token: token
       }
     });
-    const react3 = JSON.parse(res.getBody() as string);
+    const react = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
-    expect(react3).toStrictEqual({});
+    expect(react).toStrictEqual({});
   });
 
   test('Dm messages', () => {
@@ -200,7 +233,18 @@ describe('Testing success reacting message - message/react/v1', () => {
       }
     });
 
-    res = request('POST', `${url}:${port}/channels/react/v1`, {
+    res = request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: 2,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[1].token
+      }
+    });
+
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
       body: JSON.stringify({
         messageId: 2,
         reactId: 1
@@ -214,7 +258,54 @@ describe('Testing success reacting message - message/react/v1', () => {
     expect(res.statusCode).toBe(OK);
     expect(react).toStrictEqual({});
 
-    res = request('POST', `${url}:${port}/channels/react/v1`, {
+    res = request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: 2,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[0].token
+      }
+    });
+
+    res = request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: 2,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[2].token
+      }
+    });
+
+    res = request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: 1,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[2].token
+      }
+    });
+
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
+      body: JSON.stringify({
+        messageId: 1,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[2].token
+      }
+    });
+    const react4 = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(react4).toStrictEqual({});
+
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
       body: JSON.stringify({
         messageId: 2,
         reactId: 1
@@ -228,7 +319,7 @@ describe('Testing success reacting message - message/react/v1', () => {
     expect(res.statusCode).toBe(OK);
     expect(react2).toStrictEqual({});
 
-    res = request('POST', `${url}:${port}/channels/react/v1`, {
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
       body: JSON.stringify({
         messageId: 2,
         reactId: 1
@@ -241,24 +332,10 @@ describe('Testing success reacting message - message/react/v1', () => {
     const react3 = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
     expect(react3).toStrictEqual({});
-
-    res = request('POST', `${url}:${port}/channels/react/v1`, {
-      body: JSON.stringify({
-        messageId: 1,
-        reactId: 1
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[2].token
-      }
-    });
-    const react4 = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(react4).toStrictEqual({});
   });
 });
 
-describe('Testing for error - message/react/v1', () => {
+describe('Testing for error - message/unreact/v1', () => {
   test('Invalid messageId', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
@@ -282,7 +359,7 @@ describe('Testing for error - message/react/v1', () => {
       }
     });
 
-    res = request('POST', `${url}:${port}/channels/react/v1`, {
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
       body: JSON.stringify({
         messageId: 2,
         reactId: 1
@@ -329,7 +406,7 @@ describe('Testing for error - message/react/v1', () => {
       }
     });
 
-    res = request('POST', `${url}:${port}/channels/react/v1`, {
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
       body: JSON.stringify({
         messageId: 1,
         reactId: 1
@@ -376,7 +453,7 @@ describe('Testing for error - message/react/v1', () => {
       }
     });
 
-    res = request('POST', `${url}:${port}/channels/react/v1`, {
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
       body: JSON.stringify({
         messageId: 1,
         reactId: -5
@@ -389,7 +466,7 @@ describe('Testing for error - message/react/v1', () => {
     expect(res.statusCode).toBe(BADREQUEST);
   });
 
-  test('Already reacted', () => {
+  test('No react', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'mal1@email.com',
@@ -423,18 +500,7 @@ describe('Testing for error - message/react/v1', () => {
       }
     });
 
-    request('POST', `${url}:${port}/channels/react/v1`, {
-      body: JSON.stringify({
-        messageId: 1,
-        reactId: 1
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
-    });
-
-    res = request('POST', `${url}:${port}/channels/react/v1`, {
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
       body: JSON.stringify({
         messageId: 1,
         reactId: 1
