@@ -82,7 +82,10 @@ describe('Valid return', () => {
       body: JSON.stringify({
         email: 'original@email.com',
         password: 'password'
-      })
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      }
     });
 
     res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {

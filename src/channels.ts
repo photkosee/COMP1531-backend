@@ -14,7 +14,7 @@ interface newChannelDetails {
   messages: any,
 }
 
-async function channelsListallV1(token: string) {
+async function channelsListallV1(token: string, authUserId: number) {
 /*
   Description:
     channelsListallV1  returning all existing
@@ -32,7 +32,7 @@ async function channelsListallV1(token: string) {
 
   const data: any = getData();
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -67,7 +67,7 @@ async function channelsListV1(token: string, authUserId: number) {
 
   const data: any = getData();
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -108,14 +108,14 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
     object: {error: 'error'}
 */
 
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
   const data: any = getData();
 
   if (name.length < 1 || name.length > 20) {
     throw HTTPError(BADREQUEST, 'Invalid name length');
-  }
-
-  if (!(await checkToken(token))) {
-    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   for (let i = 0; i < data.users.length; i++) {

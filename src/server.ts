@@ -169,7 +169,8 @@ app.get('/channels/list/v3', validateJwtToken, async(req: Request, res: Response
 app.get('/channels/listall/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
-    const returnData = await channelsListallV1(token);
+    const authUserId = res.locals.token.id;
+    const returnData = await channelsListallV1(token, authUserId);
     return res.json(returnData);
   } catch (err) {
     next(err);
@@ -264,8 +265,9 @@ app.post('/channel/leave/v2', validateJwtToken, async(req: Request, res: Respons
 app.get('/user/profile/v3', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const uId = parseInt(req.query.uId as string);
-    const returnData = await userProfileV1(token, uId);
+    const returnData = await userProfileV1(token, authUserId, uId);
     return res.json(returnData);
   } catch (err) {
     next(err);
@@ -275,7 +277,8 @@ app.get('/user/profile/v3', validateJwtToken, async(req: Request, res: Response,
 app.get('/users/all/v2', validateJwtToken, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
-    const returnData = await usersAllV1(token);
+    const authUserId = res.locals.token.id;
+    const returnData = await usersAllV1(token, authUserId);
     return res.json(returnData);
   } catch (err) {
     next(err);
@@ -285,8 +288,9 @@ app.get('/users/all/v2', validateJwtToken, async (req: Request, res: Response, n
 app.put('/user/profile/setname/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const { nameFirst, nameLast } = req.body;
-    const returnData = await userProfileSetnameV1(token, nameFirst, nameLast);
+    const returnData = await userProfileSetnameV1(token, authUserId, nameFirst, nameLast);
     return res.json(returnData);
   } catch (err) {
     next(err);

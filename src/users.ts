@@ -4,7 +4,7 @@ import HTTPError from 'http-errors';
 
 const FORBIDDEN = 403;
 
-export async function usersAllV1(token: string) {
+export async function usersAllV1(token: string, authUserId: number) {
 /*
   Description:
     usersAllV1 returns information about all users' userId,
@@ -20,7 +20,7 @@ export async function usersAllV1(token: string) {
     Object: { users: users } on success
 */
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

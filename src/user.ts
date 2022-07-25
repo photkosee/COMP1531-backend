@@ -7,15 +7,16 @@ import bcrypt from 'bcryptjs';
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 
-export async function userProfileV1(token: string, uId: number) {
+export async function userProfileV1(token: string, authUserId: number, uId: number) {
 /*
   Description:
     userProfileV1 returns information about uId's userId,
     email, first name, last name, and handle
 
   Arguments:
-    token integer string  -- Input integer supplied by header
-    uId   integer type    -- Input integer supplied by user
+    token       string  -- Input integer supplied by header
+    uId         integer type    -- Input integer supplied by user
+    authUserId  integer     -- Input integer supplied by user
 
   Exceptions:
   FORBIDDEN   - Invalid Session ID or Token
@@ -26,7 +27,7 @@ export async function userProfileV1(token: string, uId: number) {
 
   const data: any = getData();
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -50,7 +51,7 @@ export async function userProfileV1(token: string, uId: number) {
   }
 }
 
-export async function userProfileSetnameV1(token: string, nameFirst: string, nameLast: string) {
+export async function userProfileSetnameV1(token: string, authUserId: number, nameFirst: string, nameLast: string) {
   /*
     Description:
       userProfileSetnameV1 updates user's nameFirst and nameLast
@@ -69,7 +70,7 @@ export async function userProfileSetnameV1(token: string, nameFirst: string, nam
       Object: {} on success
 */
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -123,7 +124,7 @@ export async function userProfileSetemailV1(token: string, authUserId: number, e
       Object: {} on success
 */
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -168,7 +169,7 @@ export async function userProfileSethandleV1(token: string, authUserId: number, 
       Object: {} on success
       object: {error: 'error'} on error
 */
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
