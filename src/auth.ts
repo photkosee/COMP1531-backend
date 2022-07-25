@@ -8,7 +8,8 @@ import {
   loginVerifier,
   tryLogout,
   generateJwtToken,
-  hashPassword
+  hashPassword,
+  sendEmail
 } from './authHelperFunctions';
 
 const HOST: string = process.env.IP || 'localhost';
@@ -154,13 +155,14 @@ async function authLoginV1(email: string, password: string) {
   return loginDetail;
 }
 
-async function authLogoutV1(token: string) {
+async function authLogoutV1(token: string, authUserId: number) {
   /*
     Description:
       authLogoutV1 function invalidates the token to log the user out
 
     Arguments:
-      token     string type   -- string supplied by request header
+      token       string type   -- string supplied by request header
+      authUserId  string type   -- string supplied by request header
 
     Exceptions:
       FORBIDDEN - Occurs when sessionId/token is not found in database.
@@ -170,7 +172,7 @@ async function authLogoutV1(token: string) {
   */
 
   const data: any = getData();
-  const logoutDetail = await tryLogout(token, data.users);
+  const logoutDetail = await tryLogout(token, authUserId, data.users);
 
   if (!(logoutDetail)) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -179,8 +181,76 @@ async function authLogoutV1(token: string) {
   return {};
 }
 
+async function authPasswordResetRequestV1(email: string) {
+  /*
+    Description:
+      authPasswordResetRequestV1 function helps the user to request for a password reset
+
+    Arguments:
+      email     string type   -- Input string supplied by user
+
+    Return Value:
+      object: return {}
+  */
+
+  email = email.trim();
+  const data: any = getData();
+
+  for (const user of data.users) {
+    if (user.email === email) {
+      const newResetCode = `${Math.floor(100000 + Math.random() * 900000)}`;
+      const resetObj = {
+        email: email,
+        resetCode: newResetCode
+      };
+      data.passwordReset.push(resetObj);
+      user.sessionList = [];
+      setData(data);
+      await sendEmail(email, user.nameFirst, newResetCode);
+    }
+  }
+  return {};
+}
+
+async function authPasswordResetV1(resetCode: string, newPassword: string) {
+  /*
+    Description:
+      authPasswordResetV1 function helps the user reset their password
+
+    Arguments:
+      resetCode     string type   -- Input string supplied by user
+      newPassword   string type   -- Input string supplied by user
+
+    Return Value:
+      object: {}
+  */
+
+  if (newPassword.length < 6) {
+    throw HTTPError(BADREQUEST, 'Invalid password length');
+  }
+
+  const data: any = getData();
+
+  const index: number = data.passwordReset.findIndex((object: { resetCode: string; }) => object.resetCode === resetCode);
+
+  if (index !== -1) {
+    for (const user of data.users) {
+      if (data.passwordReset[index].email === user.email) {
+        data.passwordReset.splice(index, 1);
+        user.password = await hashPassword(newPassword);
+        setData(data);
+        return {};
+      }
+    }
+  }
+
+  throw HTTPError(BADREQUEST, 'Invalid reset code');
+}
+
 export {
   authRegisterV1,
   authLoginV1,
-  authLogoutV1
+  authLogoutV1,
+  authPasswordResetRequestV1,
+  authPasswordResetV1
 };

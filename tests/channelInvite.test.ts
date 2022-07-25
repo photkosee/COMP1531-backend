@@ -2,9 +2,10 @@ import request from 'sync-request';
 import config from '../src/config.json';
 
 const OK = 200;
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
-const ERROR = { error: 'error' };
 
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
@@ -19,12 +20,9 @@ test('Testing for successful invite - channel/invite/v2', () => {
   const registeredUsers = [
     { email: 'user1@email.com', password: 'password1', nameFirst: 'john', nameLast: 'smith' },
     { email: 'user2@email.com', password: 'password2', nameFirst: 'ben', nameLast: 'affleck' },
-    { email: 'user3@email.com', password: 'password3', nameFirst: 'keith', nameLast: 'ledger' },
-    { email: 'user4@email.com', password: 'password4', nameFirst: 'annie', nameLast: 'ban' },
-    { email: 'user5@email.com', password: 'password5', nameFirst: 'kim', nameLast: 'loo' },
   ];
   for (const users of registeredUsers) {
-    const res = request('POST', `${url}:${port}/auth/register/v2`, {
+    const res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: users.email,
         password: users.password,
@@ -36,91 +34,83 @@ test('Testing for successful invite - channel/invite/v2', () => {
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
   }
 
-  let res = request('POST', `${url}:${port}/channels/create/v2`, {
+  let res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
-      token: registrationData[0].token,
       name: 'channel1',
       isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[0].token
     }
   });
   const channel1 = JSON.parse(res.body as string);
-  expect(res.statusCode).toBe(OK);
 
-  res = request('POST', `${url}:${port}/channel/invite/v2`, {
+  res = request('POST', `${url}:${port}/channel/invite/v3`, {
     json: {
-      token: registrationData[0].token,
       channelId: channel1.channelId,
       uId: registrationData[1].authUserId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[0].token
     }
   });
   expect(res.statusCode).toBe(OK);
-  const inviteResponse1 = JSON.parse(res.body as string);
-  expect(inviteResponse1).toStrictEqual({});
+});
 
-  res = request('GET', `${url}:${port}/channel/details/v2`, {
-    qs: {
-      token: registrationData[0].token,
+test('Testing for cases where user already in channel', () => {
+  const registrationData = [];
+  const registeredUsers = [
+    { email: 'user1@email.com', password: 'password1', nameFirst: 'john', nameLast: 'smith' },
+    { email: 'user2@email.com', password: 'password2', nameFirst: 'ben', nameLast: 'affleck' },
+    { email: 'user3@email.com', password: 'password3', nameFirst: 'keith', nameLast: 'ledger' },
+  ];
+  for (const users of registeredUsers) {
+    const res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: users.email,
+        password: users.password,
+        nameFirst: users.nameFirst,
+        nameLast: users.nameLast,
+      }
+    });
+    const bodyObj = JSON.parse(res.body as string);
+    registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
+  }
+  let res = request('POST', `${url}:${port}/channels/create/v3`, {
+    json: {
+      name: 'channel1',
+      isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[0].token
+    }
+  });
+  const channel1 = JSON.parse(res.body as string);
+
+  request('POST', `${url}:${port}/channel/join/v3`, {
+    json: {
       channelId: channel1.channelId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[1].token
     }
   });
-  const channel1Details = JSON.parse(res.body as string);
-  res = request('GET', `${url}:${port}/user/profile/v2`, {
-    qs: {
-      token: registrationData[0].token,
-      uId: registrationData[0].authUserId,
-    }
-  });
-  const user1Profile = JSON.parse(res.body as string);
-  res = request('GET', `${url}:${port}/user/profile/v2`, {
-    qs: {
-      token: registrationData[1].token,
+
+  res = request('POST', `${url}:${port}/channel/invite/v3`, {
+    json: {
+      channelId: channel1.channelId,
       uId: registrationData[1].authUserId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[0].token
     }
   });
-  const user2Profile = JSON.parse(res.body as string);
-  expect(channel1Details.allMembers.length).toStrictEqual(2);
-  expect(channel1Details.allMembers).toContainEqual(user1Profile.user);
-  expect(channel1Details.allMembers).toContainEqual(user2Profile.user);
-
-  request('POST', `${url}:${port}/channel/join/v2`, {
-    json: {
-      token: registrationData[3].token,
-      channelId: channel1.channelId,
-    }
-  });
-
-  res = request('POST', `${url}:${port}/channel/invite/v2`, {
-    json: {
-      token: registrationData[0].token,
-      channelId: channel1.channelId,
-      uId: registrationData[1].authUserId,
-    }
-  });
-  expect(res.statusCode).toBe(OK);
-  const invite1 = JSON.parse(res.body as string);
-  expect(invite1).toStrictEqual(ERROR);
-
-  res = request('POST', `${url}:${port}/channel/invite/v2`, {
-    json: {
-      token: registrationData[2].token,
-      channelId: channel1.channelId,
-      uId: registrationData[4].authUserId,
-    }
-  });
-  expect(res.statusCode).toBe(OK);
-  const invite2 = JSON.parse(res.body as string);
-  expect(invite2).toStrictEqual(ERROR);
-
-  res = request('POST', `${url}:${port}/channel/invite/v2`, {
-    json: {
-      token: registrationData[4].token,
-      channelId: channel1.channelId,
-      uId: registrationData[3].authUserId,
-    }
-  });
-  expect(res.statusCode).toBe(OK);
-  const invite3 = JSON.parse(res.body as string);
-  expect(invite3).toStrictEqual(ERROR);
+  expect(res.statusCode).toStrictEqual(BADREQUEST);
 });
 
 test('Testing with valid channelId and invalid uId', () => {
@@ -130,7 +120,7 @@ test('Testing with valid channelId and invalid uId', () => {
     { email: 'user2@email.com', password: '123456', nameFirst: 'first2', nameLast: 'last2' },
   ];
   for (const user of reqisteredUser) {
-    const res = request('POST', `${url}:${port}/auth/register/v2`, {
+    const res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: user.email,
         password: user.password,
@@ -142,55 +132,51 @@ test('Testing with valid channelId and invalid uId', () => {
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
   }
 
-  let res = request('POST', `${url}:${port}/channels/create/v2`, {
+  let res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
-      token: registrationData[0].token,
       name: 'channel1',
       isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[0].token
     }
   });
   const channel1 = JSON.parse(res.body as string);
 
-  request('POST', `${url}:${port}/channel/join/v2`, {
+  request('POST', `${url}:${port}/channel/join/v3`, {
     json: {
-      token: registrationData[1].token,
       channelId: channel1.channelId,
-    }
-
-  });
-
-  res = request('POST', `${url}:${port}/channel/invite/v2`, {
-    json: {
-      token: registrationData[0].token,
-      channelId: channel1.channelId,
-      uId: 0.1,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[1].token
     }
   });
-  const channelInviteResponse = JSON.parse(res.body as string);
-  expect(res.statusCode).toBe(OK);
-  expect(channelInviteResponse).toStrictEqual(ERROR);
 
-  res = request('POST', `${url}:${port}/channel/invite/v2`, {
+  res = request('POST', `${url}:${port}/channel/invite/v3`, {
     json: {
-      token: registrationData[1].token,
       channelId: channel1.channelId,
       uId: 0.1,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[0].token
     }
   });
-  const channelInviteResponse1 = JSON.parse(res.body as string);
-  expect(res.statusCode).toBe(OK);
-  expect(channelInviteResponse1).toStrictEqual(ERROR);
+  expect(res.statusCode).toStrictEqual(BADREQUEST);
 
-  res = request('POST', `${url}:${port}/channel/invite/v2`, {
+  res = request('POST', `${url}:${port}/channel/invite/v3`, {
     json: {
-      token: 'randomToken',
       channelId: channel1.channelId,
       uId: registrationData[1],
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: 'randomtoken'
     }
   });
-  const channelInviteResponse2 = JSON.parse(res.body as string);
-  expect(res.statusCode).toBe(OK);
-  expect(channelInviteResponse2).toStrictEqual(ERROR);
+  expect(res.statusCode).toStrictEqual(FORBIDDEN);
 });
 
 test('Testing for invalid channel', () => {
@@ -200,7 +186,7 @@ test('Testing for invalid channel', () => {
     { email: 'user2@bar.com', password: '123456', nameFirst: 'first2', nameLast: 'last2' },
   ];
   for (const user of reqisteredUser) {
-    const res = request('POST', `${url}:${port}/auth/register/v2`, {
+    const res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: user.email,
         password: user.password,
@@ -212,38 +198,17 @@ test('Testing for invalid channel', () => {
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
   }
 
-  let res = request('POST', `${url}:${port}/channel/invite/v2`, {
+  const res = request('POST', `${url}:${port}/channel/invite/v3`, {
     json: {
-      token: registrationData[0].token,
-      channelId: 0.1,
-      uId: 0.1,
-    }
-  });
-  const channelInvite1 = JSON.parse(res.body as string);
-  expect(res.statusCode).toBe(OK);
-  expect(channelInvite1).toStrictEqual(ERROR);
-
-  res = request('POST', `${url}:${port}/channel/invite/v2`, {
-    json: {
-      token: registrationData[0].token,
       channelId: 0.1,
       uId: registrationData[1].authUserId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[0].token
     }
   });
-  const channelInvite2 = JSON.parse(res.body as string);
-  expect(res.statusCode).toBe(OK);
-  expect(channelInvite2).toStrictEqual(ERROR);
-
-  res = request('POST', `${url}:${port}/channel/invite/v2`, {
-    json: {
-      token: 'randomToken',
-      channelId: 0.1,
-      uId: registrationData[1].authUserId,
-    }
-  });
-  const channelInvite3 = JSON.parse(res.body as string);
-  expect(res.statusCode).toBe(OK);
-  expect(channelInvite3).toStrictEqual(ERROR);
+  expect(res.statusCode).toStrictEqual(BADREQUEST);
 });
 
 test('Testing for token and uId are same person', () => {
@@ -253,7 +218,7 @@ test('Testing for token and uId are same person', () => {
     { email: 'user2@email.com', password: '123456', nameFirst: 'first2', nameLast: 'last2' },
   ];
   for (const user of reqisteredUser) {
-    const res = request('POST', `${url}:${port}/auth/register/v2`, {
+    const res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: user.email,
         password: user.password,
@@ -265,34 +230,39 @@ test('Testing for token and uId are same person', () => {
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
   }
 
-  let res = request('POST', `${url}:${port}/channels/create/v2`, {
+  let res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
-      token: registrationData[0].token,
       name: 'channel1',
       isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[0].token
     }
   });
   const channel1 = JSON.parse(res.body as string);
 
-  res = request('POST', `${url}:${port}/channel/invite/v2`, {
+  res = request('POST', `${url}:${port}/channel/invite/v3`, {
     json: {
-      token: registrationData[0].token,
       channelId: channel1.channelId,
       uId: registrationData[0].authUserId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[0].token
     }
   });
-  const channelInvite1 = JSON.parse(res.body as string);
-  expect(res.statusCode).toBe(OK);
-  expect(channelInvite1).toStrictEqual(ERROR);
+  expect(res.statusCode).toStrictEqual(BADREQUEST);
 
-  res = request('POST', `${url}:${port}/channel/invite/v2`, {
+  res = request('POST', `${url}:${port}/channel/invite/v3`, {
     json: {
-      token: registrationData[1].token,
       channelId: channel1.channelId,
       uId: registrationData[1].authUserId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[1].token
     }
   });
-  const channelInvite2 = JSON.parse(res.body as string);
-  expect(res.statusCode).toBe(OK);
-  expect(channelInvite2).toStrictEqual(ERROR);
+  expect(res.statusCode).toStrictEqual(FORBIDDEN);
 });

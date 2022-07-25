@@ -15,7 +15,7 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Testing success sendind message - message/send/v2', () => {
+describe('Testing success sending message - message/send/v2', () => {
   test('valid inputs', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       body: JSON.stringify({
@@ -59,7 +59,113 @@ describe('Testing success sendind message - message/send/v2', () => {
 });
 
 describe('Testing for error - message/send/v2', () => {
-  test('Invalid inputs', () => {
+  test('Invalid message length', () => {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+      body: JSON.stringify({
+        email: 'mal1@email.com',
+        password: '1234567',
+        nameFirst: 'One',
+        nameLast: 'Number',
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const user = JSON.parse(res.getBody() as string);
+    const token = user.token;
+
+    res = request('POST', `${url}:${port}/channels/create/v3`, {
+      body: JSON.stringify({
+        name: 'DOTA2',
+        isPublic: true
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    });
+
+    res = request('POST', `${url}:${port}/message/send/v2`, {
+      body: JSON.stringify({
+        channelId: 1,
+        message: ''
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+  });
+
+  test('Invalid channelId', () => {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+      body: JSON.stringify({
+        email: 'mal1@email.com',
+        password: '1234567',
+        nameFirst: 'One',
+        nameLast: 'Number',
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const user = JSON.parse(res.getBody() as string);
+    const token = user.token;
+
+    res = request('POST', `${url}:${port}/message/send/v2`, {
+      body: JSON.stringify({
+        channelId: 1,
+        message: 'asdf'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+  });
+
+  test('Invalid token', () => {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+      body: JSON.stringify({
+        email: 'mal1@email.com',
+        password: '1234567',
+        nameFirst: 'One',
+        nameLast: 'Number',
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const user = JSON.parse(res.getBody() as string);
+    const token = user.token;
+
+    res = request('POST', `${url}:${port}/channels/create/v3`, {
+      body: JSON.stringify({
+        name: 'DOTA2',
+        isPublic: true
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    });
+
+    res = request('POST', `${url}:${port}/message/send/v2`, {
+      body: JSON.stringify({
+        channelId: 1,
+        message: 'asdf'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCQxb3NPMG8wb1JrTmVEUllidzRIbUxlRDJXVnRDU0dMTk5yU2FBQm5XVUZJZlhSdHRzZkNJRyIsImlhdCI6MTY1ODU3NzcwNn0.LTPtFI_oV8D4YuSWnWJCMrrYFB6jTt_AOVM3M_c8k3Y'
+      }
+    });
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Not a member', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       body: JSON.stringify({
         email: 'mal1@email.com',
@@ -95,17 +201,6 @@ describe('Testing for error - message/send/v2', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: token
-      }
-    });
-
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
-      body: JSON.stringify({
-        name: 'DOTA2',
-        isPublic: true
-      }),
-      headers: {
-        'Content-type': 'application/json',
         token: token2
       }
     });
@@ -113,43 +208,7 @@ describe('Testing for error - message/send/v2', () => {
     res = request('POST', `${url}:${port}/message/send/v2`, {
       body: JSON.stringify({
         channelId: 1,
-        message: ''
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
-    });
-    expect(res.statusCode).toBe(BADREQUEST);
-
-    res = request('POST', `${url}:${port}/message/send/v2`, {
-      body: JSON.stringify({
-        channelId: 3,
-        message: 'asdf'
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
-    });
-    expect(res.statusCode).toBe(BADREQUEST);
-
-    res = request('POST', `${url}:${port}/message/send/v2`, {
-      body: JSON.stringify({
-        channelId: 2,
-        message: 'asdf'
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: ''
-      }
-    });
-    expect(res.statusCode).toBe(FORBIDDEN);
-
-    res = request('POST', `${url}:${port}/message/send/v2`, {
-      body: JSON.stringify({
-        channelId: 2,
-        message: 'asdf'
+        message: 'sdfgsdg'
       }),
       headers: {
         'Content-type': 'application/json',

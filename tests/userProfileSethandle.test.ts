@@ -2,9 +2,10 @@ import request from 'sync-request';
 import config from '../src/config.json';
 
 const OK = 200;
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
-const ERROR = { error: 'error' };
 
 interface authRegisterObj {
   token: string,
@@ -21,7 +22,7 @@ afterAll(() => {
 
 describe('Valid return', () => {
   test('Valid change of handle', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -29,21 +30,54 @@ describe('Valid return', () => {
         nameLast: 'Last',
       }
     });
+
+    res = request('POST', `${url}:${port}/auth/login/v3`, {
+      body: JSON.stringify({
+        email: 'original@email.com',
+        password: 'password'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
+    res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
-        token: token,
+        email: 'different@email.com',
+        password: 'password',
+        nameFirst: 'First',
+        nameLast: 'Last',
+      }
+    });
+
+    res = request('POST', `${url}:${port}/auth/login/v3`, {
+      body: JSON.stringify({
+        email: 'original@email.com',
+        password: 'password'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+
+    res = request('PUT', `${url}:${port}/user/profile/sethandle/v2`, {
+      json: {
         handleStr: 'newHandle1'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
     const data = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
     expect(data).toStrictEqual({});
   });
+
   test('Change to existing user\'s handle', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -51,13 +85,26 @@ describe('Valid return', () => {
         nameLast: 'Last',
       }
     });
+
+    res = request('POST', `${url}:${port}/auth/login/v3`, {
+      body: JSON.stringify({
+        email: 'original@email.com',
+        password: 'password'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
+    res = request('PUT', `${url}:${port}/user/profile/sethandle/v2`, {
       json: {
-        token: token,
         handleStr: 'firstlast123length20'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -68,7 +115,7 @@ describe('Valid return', () => {
 
 describe('Handle error returns', () => {
   test('Invalid handle length', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -79,19 +126,20 @@ describe('Handle error returns', () => {
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
+    res = request('PUT', `${url}:${port}/user/profile/sethandle/v2`, {
       json: {
-        token: token,
         handleStr: 'fi'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   });
 
   test('Invaid handle characters', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -102,19 +150,20 @@ describe('Handle error returns', () => {
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
+    res = request('PUT', `${url}:${port}/user/profile/sethandle/v2`, {
       json: {
-        token: token,
         handleStr: 'fir!rgse'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   });
 
   test('Invaid handle type', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -125,16 +174,18 @@ describe('Handle error returns', () => {
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
+    res = request('PUT', `${url}:${port}/user/profile/sethandle/v2`, {
       json: {
-        token: token,
         handleStr: true
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   });
+
   test('Handle is used by another user', () => {
     // ======================== SET UP START ===========================
     const userData: authRegisterObj[] = [];
@@ -144,7 +195,7 @@ describe('Handle error returns', () => {
     ];
 
     for (const users of userInput) {
-      const res = request('POST', `${url}:${port}/auth/register/v2`, {
+      const res = request('POST', `${url}:${port}/auth/register/v3`, {
         json: {
           email: users.email,
           password: users.password,
@@ -157,21 +208,22 @@ describe('Handle error returns', () => {
       userData.push({ token: user.token, authUserId: user.authUserId });
     }
     // ======================== SET UP END ===========================
-    const res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
+    const res = request('PUT', `${url}:${port}/user/profile/sethandle/v2`, {
       json: {
-        token: userData[0].token,
         handleStr: 'userlast'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: userData[0].token,
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   });
 });
 
 describe('Token error returns', () => {
   test('Non-existent token', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -179,23 +231,22 @@ describe('Token error returns', () => {
         nameLast: 'Last',
       }
     });
-    const user = JSON.parse(res.getBody() as string);
-    const token = user.token;
-    const dummyToken = token + 'abc';
+    const dummyToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCR4M3drRGVCdEpSblJQOUdyRUNzUnlPVDVpU29OellIdVozc0ZRN29wbXpUN3Y0MzJNMXQ5bSIsImlhdCI6MTY1ODU3NzY4M30.pTjzScWD468f4umwPtoOundclYoDYEdSV_7YXqD7RmA';
 
-    res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
+    res = request('PUT', `${url}:${port}/user/profile/sethandle/v2`, {
       json: {
-        token: dummyToken,
         handleStr: 'newHandle'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: dummyToken,
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(FORBIDDEN);
   });
 
   test('Invaid token type', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'original@email.com',
         password: 'password',
@@ -204,14 +255,16 @@ describe('Token error returns', () => {
       }
     });
 
-    res = request('PUT', `${url}:${port}/user/profile/sethandle/v1`, {
+    const badToken: any = { token: 1 };
+    res = request('PUT', `${url}:${port}/user/profile/sethandle/v2`, {
       json: {
-        token: 1,
         handleStr: 'newHandle'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: badToken.token,
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(FORBIDDEN);
   });
 });

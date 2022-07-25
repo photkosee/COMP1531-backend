@@ -121,22 +121,14 @@ test('Test for creator In Uids Data - dm/create/v2', () => {
 });
 
 test('Test for invalid Token Data - dm/create/v2', () => {
-  const invalidTokenData: any = [
-    { token: '', uIds: [registrationData[1].authUserId, registrationData[0].authUserId, registrationData[2].authUserId] },
-    { token: 8265434234, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[1].authUserId] },
-    { token: 1, uIds: [registrationData[2].authUserId, registrationData[0].authUserId, registrationData[1].authUserId] },
-  ];
-
-  for (let i = 0; i < invalidTokenData.length; i++) {
-    const res = request('POST', `${url}:${port}/dm/create/v2`, {
-      body: JSON.stringify({
-        uIds: [...invalidTokenData[i].uIds]
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: invalidTokenData[i].token
-      }
-    });
-    expect(res.statusCode).toBe(FORBIDDEN);
-  }
+  const res = request('POST', `${url}:${port}/dm/create/v2`, {
+    body: JSON.stringify({
+      uIds: [registrationData[0].authUserId, registrationData[2].authUserId, registrationData[1].authUserId]
+    }),
+    headers: {
+      'Content-type': 'application/json',
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCQ4YVJvSTRaNE1obXhwcnFEMjhGa2gucS5GN1cwc09DR3VXaEFLeHd6blhnc09uaWVra0hPRyIsImlhdCI6MTY1ODU3MTc0OH0.7IbUs7eTClwpVxMdQ-8XKsDiGNNbrXhhH0ZSbB_YI5M'
+    }
+  });
+  expect(res.statusCode).toBe(FORBIDDEN);
 });

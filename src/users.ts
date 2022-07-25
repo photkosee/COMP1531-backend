@@ -1,24 +1,28 @@
 import { getData } from './dataStore';
 import { checkToken } from './channelHelperFunctions';
+import HTTPError from 'http-errors';
 
-const ERROR = { error: 'error' };
+const FORBIDDEN = 403;
 
-export function usersAllV1(token: string) {
+async function usersAllV1(token: string, authUserId: number) {
 /*
   Description:
     usersAllV1 returns information about all users' userId,
     email, first name, last name, and handle
 
   Arguments:
-    token integer string  -- Input integer supplied by user
+    token       string type  -- string supplied by header
+    authUserId  number type  -- number supplied by header
+
+  Expectations:
+    FORBIDDEN   - Invalid Session ID or Token
 
   Return Value:
     Object: { users: users } on success
-    Object: {error: 'error'} when given invaid token
 */
 
-  if (!checkToken(token)) {
-    return ERROR;
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const data: any = getData();
@@ -36,3 +40,7 @@ export function usersAllV1(token: string) {
 
   return { users: users };
 }
+
+export {
+  usersAllV1
+};

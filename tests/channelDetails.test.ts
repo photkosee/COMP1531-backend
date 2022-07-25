@@ -2,9 +2,11 @@ import request from 'sync-request';
 import config from '../src/config.json';
 
 const OK = 200;
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
+
 const port = config.port;
 const url = config.url;
-const ERROR = { error: 'error' };
 
 const GLOBAL = 0;
 const USER = 1;
@@ -29,7 +31,7 @@ afterAll(() => {
 describe('Valid returns', () => {
   test('User is owner', () => {
   // ===================== SET UP START ================================
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'mal1@email.com',
         password: '1234567',
@@ -40,20 +42,26 @@ describe('Valid returns', () => {
     const user = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('POST', `${url}:${port}/channels/create/v2`, {
+    res = request('POST', `${url}:${port}/channels/create/v3`, {
       json: {
-        token: token,
         name: 'FO9A_CRUNCHIE',
         isPublic: false
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token,
       }
     });
     const channel = JSON.parse(res.getBody() as string);
     const channelId = channel.channelId;
     // ========================= SET UP END ================================
-    res = request('GET', `${url}:${port}/channel/details/v2`, {
+    res = request('GET', `${url}:${port}/channel/details/v3`, {
       qs: {
-        token: token,
         channelId: channelId
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token,
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -87,7 +95,7 @@ describe('Valid returns', () => {
     ];
 
     for (const users of userInput) {
-      const res = request('POST', `${url}:${port}/auth/register/v2`, {
+      const res = request('POST', `${url}:${port}/auth/register/v3`, {
         json: {
           email: users.email,
           password: users.password,
@@ -100,29 +108,38 @@ describe('Valid returns', () => {
       userData.push({ token: user.token, authUserId: user.authUserId });
     }
 
-    let res = request('POST', `${url}:${port}/channels/create/v2`, {
+    let res = request('POST', `${url}:${port}/channels/create/v3`, {
       json: {
-        token: userData[GLOBAL].token,
         name: 'FO9A_CRUNCHIE',
         isPublic: true
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: userData[GLOBAL].token,
       }
     });
     const channel: channelsCreateObj = JSON.parse(res.getBody() as string);
     const channelId = channel.channelId;
 
     res = request(
-      'POST', `${url}:${port}/channel/join/v2`, {
+      'POST', `${url}:${port}/channel/join/v3`, {
         json: {
-          token: userData[USER].token,
           channelId: channelId
+        },
+        headers: {
+          'Content-type': 'application/json',
+          token: userData[USER].token,
         }
       }
     );
     // ======================== SET UP END ===========================
-    res = request('GET', `${url}:${port}/channel/details/v2`, {
+    res = request('GET', `${url}:${port}/channel/details/v3`, {
       qs: {
-        token: userData[USER].token,
         channelId: channelId
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: userData[USER].token,
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -156,9 +173,9 @@ describe('Valid returns', () => {
 });
 
 describe('Return error', () => {
-  test('Invalid/non-existent token and channelId', () => {
+  test('Invalid/non-existent token', () => {
     // ===================== SET UP START ================================
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'mal1@email.com',
         password: '1234567',
@@ -169,36 +186,84 @@ describe('Return error', () => {
     const user: authRegisterObj = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('POST', `${url}:${port}/channels/create/v2`, {
+    res = request('POST', `${url}:${port}/channels/create/v3`, {
       json: {
-        token: token,
         name: 'FO9A_CRUNCHIE',
         isPublic: false
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token,
       }
     });
     const channel: channelsCreateObj = JSON.parse(res.getBody() as string);
     const channelId = channel.channelId;
     // ========================= SET UP END ================================
-    const dummyToken: string = token + 'abc';
-    const dummyChannelId: number = channelId + 1;
+    const dummyToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRGRmRGLkN0aW5Oai8yR0hJdklpaUNPbXpWekhmdXF6aGF1VlV6U1NHa1VuUW5Zci9iUlFCcSIsImlhdCI6MTY1ODU3NzY2Mn0.A4f61mkebUTex1U50rp7z6hT-vfjmlMtcsmBpVUICHQ';
 
     const invalidPassData: any = [
       { token: dummyToken, channelId: channelId },
-      { token: token, channelId: dummyChannelId },
       { token: false, channelId: channelId },
+    ];
+
+    for (const input of invalidPassData) {
+      const res = request('GET', `${url}:${port}/channel/details/v3`, {
+        json: {
+          channelId: input.channelId
+        },
+        headers: {
+          'Content-type': 'application/json',
+          token: input.token,
+        }
+      });
+      expect(res.statusCode).toBe(FORBIDDEN);
+    }
+  });
+
+  test('Invalid/non-existent channelId', () => {
+    // ===================== SET UP START ================================
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'mal1@email.com',
+        password: '1234567',
+        nameFirst: 'One',
+        nameLast: 'Number',
+      }
+    });
+    const user: authRegisterObj = JSON.parse(res.getBody() as string);
+    const token = user.token;
+
+    res = request('POST', `${url}:${port}/channels/create/v3`, {
+      json: {
+        name: 'FO9A_CRUNCHIE',
+        isPublic: false
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token,
+      }
+    });
+    const channel: channelsCreateObj = JSON.parse(res.getBody() as string);
+    const channelId = channel.channelId;
+    // ========================= SET UP END ================================
+    const dummyChannelId: number = channelId + 1;
+
+    const invalidPassData: any = [
+      { token: token, channelId: dummyChannelId },
       { token: token, channelId: 'abc' },
     ];
 
     for (const input of invalidPassData) {
-      const res = request('GET', `${url}:${port}/channel/details/v2`, {
+      const res = request('GET', `${url}:${port}/channel/details/v3`, {
         json: {
-          token: input.token,
           channelId: input.channelId
+        },
+        headers: {
+          'Content-type': 'application/json',
+          token: input.token,
         }
       });
-      const data = JSON.parse(res.getBody() as string);
-      expect(res.statusCode).toBe(OK);
-      expect(data).toStrictEqual(ERROR);
+      expect(res.statusCode).toBe(BADREQUEST);
     }
   });
 
@@ -211,7 +276,7 @@ describe('Return error', () => {
     ];
 
     for (const users of userInput) {
-      const res = request('POST', `${url}:${port}/auth/register/v2`, {
+      const res = request('POST', `${url}:${port}/auth/register/v3`, {
         json: {
           email: users.email,
           password: users.password,
@@ -224,29 +289,33 @@ describe('Return error', () => {
       userData.push({ token: user.token, authUserId: user.authUserId });
     }
 
-    let res = request('POST', `${url}:${port}/channels/create/v2`, {
+    let res = request('POST', `${url}:${port}/channels/create/v3`, {
       json: {
-        token: userData[GLOBAL].token,
         name: 'FO9A_CRUNCHIE',
         isPublic: true
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: userData[GLOBAL].token,
       }
     });
     const channel: channelsCreateObj = JSON.parse(res.getBody() as string);
     const channelId = channel.channelId;
     // ========================= SET UP END ================================
-    res = request('GET', `${url}:${port}/channel/details/v2`, {
+    res = request('GET', `${url}:${port}/channel/details/v3`, {
       qs: {
-        token: userData[USER].token,
         channelId: channelId
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: userData[USER].token,
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(FORBIDDEN);
   });
 
   test('No channels exist yet', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v2`, {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'mal1@email.com',
         password: '1234567',
@@ -257,14 +326,15 @@ describe('Return error', () => {
     const user: authRegisterObj = JSON.parse(res.getBody() as string);
     const token = user.token;
 
-    res = request('GET', `${url}:${port}/channel/details/v2`, {
+    res = request('GET', `${url}:${port}/channel/details/v3`, {
       qs: {
-        token: token,
         channelId: -1
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token,
       }
     });
-    const data = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(data).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(BADREQUEST);
   });
 });

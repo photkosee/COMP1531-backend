@@ -2,9 +2,10 @@ import request from 'sync-request';
 import config from '../src/config.json';
 
 const OK = 200;
+const BADREQUEST = 400;
+const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
-const ERROR = { error: 'error' };
 
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
@@ -15,26 +16,26 @@ afterAll(() => {
 });
 
 const channelMessages = (token: string, channelId: number, start: number) => {
-  const res = request('GET', `${url}:${port}/channel/messages/v2`,
+  const res = request('GET', `${url}:${port}/channel/messages/v3`,
     {
       qs: {
-        token: token,
         channelId: channelId,
         start: start,
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
       }
     }
   );
-  expect(res.statusCode).toBe(OK);
-  const bodyObj = JSON.parse(String(res.body as string));
-
-  return bodyObj;
+  return res;
 };
 
 test('Testing for invalid channelId', () => {
   let res = channelMessages('randomToken', 2, 3);
-  expect(res).toStrictEqual(ERROR);
+  expect(res.statusCode).toStrictEqual(FORBIDDEN);
 
-  res = request('POST', `${url}:${port}/auth/register/v2`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user1@email.com',
       password: '123456',
@@ -45,12 +46,12 @@ test('Testing for invalid channelId', () => {
   const user1 = JSON.parse(res.body as string);
 
   res = channelMessages(user1.token, 0.1, 0);
-  expect(res).toStrictEqual(ERROR);
+  expect(res.statusCode).toStrictEqual(BADREQUEST);
   res = channelMessages('randomToken', 0.1, 0);
-  expect(res).toStrictEqual(ERROR);
+  expect(res.statusCode).toStrictEqual(FORBIDDEN);
 });
 test('Testing for invalid start parameter', () => {
-  let res = request('POST', `${url}:${port}/auth/register/v2`, {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user1@email.com',
       password: '123456',
@@ -59,23 +60,24 @@ test('Testing for invalid start parameter', () => {
     }
   });
   const user1 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/channels/create/v2`, {
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
-      token: user1.token,
       name: 'channel1',
       isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token,
     }
   });
   const channel1 = JSON.parse(res.body as string);
-  res = channelMessages(user1.token, channel1.channelId, 0.1);
-  expect(res).toStrictEqual(ERROR);
   res = channelMessages(user1.token, channel1.channelId, -1);
-  expect(res).toStrictEqual(ERROR);
+  expect(res.statusCode).toStrictEqual(BADREQUEST);
   res = channelMessages(user1.token, channel1.channelId, 2);
-  expect(res).toStrictEqual(ERROR);
+  expect(res.statusCode).toStrictEqual(BADREQUEST);
 });
-test('Testing for correct messages return', () => {
-  let res = request('POST', `${url}:${port}/auth/register/v2`, {
+test('Testing for correct order of messages returned', () => {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user1@email.com',
       password: '123456',
@@ -84,45 +86,42 @@ test('Testing for correct messages return', () => {
     }
   });
   const user1 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/channels/create/v2`, {
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
-      token: user1.token,
       name: 'channel1',
       isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token,
     }
   });
   const channel1 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/message/send/v1`, {
+  res = request('POST', `${url}:${port}/message/send/v2`, {
     json: {
-      token: user1.token,
       channelId: channel1.channelId,
       message: 'hello',
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token,
     }
   });
-  res = request('POST', `${url}:${port}/message/send/v1`, {
+  res = request('POST', `${url}:${port}/message/send/v2`, {
     json: {
-      token: user1.token,
       channelId: channel1.channelId,
       message: 'bye',
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token,
     }
   });
-
-  expect(channelMessages(user1.token, channel1.channelId, 0)).toStrictEqual({
-    messages:
-  [
-    { messageId: expect.any(Number), uId: user1.authUserId, message: 'bye', timeSent: expect.any(Number) },
-    { messageId: expect.any(Number), uId: user1.authUserId, message: 'hello', timeSent: expect.any(Number) },
-  ],
-    start: 0,
-    end: -1
-  });
-
-  expect(channelMessages(user1.token, channel1.channelId, 1).start).toStrictEqual(1);
-  expect(channelMessages(user1.token, channel1.channelId, 1).end).toStrictEqual(-1);
-  expect(channelMessages(user1.token, channel1.channelId, 1).messages.length).toStrictEqual(1);
+  expect(channelMessages(user1.token, channel1.channelId, 0).statusCode).toStrictEqual(OK);
+  expect(channelMessages(user1.token, channel1.channelId, 1).statusCode).toStrictEqual(OK);
 });
 test('Testing for token not in channel or invalid', () => {
-  let res = request('POST', `${url}:${port}/auth/register/v2`, {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user1@email.com',
       password: '123456',
@@ -131,7 +130,7 @@ test('Testing for token not in channel or invalid', () => {
     }
   });
   const user1 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/auth/register/v2`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'user2@email.com',
       password: '123456',
@@ -140,14 +139,16 @@ test('Testing for token not in channel or invalid', () => {
     }
   });
   const user2 = JSON.parse(res.body as string);
-  res = request('POST', `${url}:${port}/channels/create/v2`, {
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
-      token: user1.token,
       name: 'channel1',
       isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token,
     }
   });
   const channel1 = JSON.parse(res.body as string);
-  const messagesResponse = channelMessages(user2.token, channel1.channelId, 0);
-  expect(messagesResponse).toStrictEqual(ERROR);
+  expect(channelMessages(user2.token, channel1.channelId, 0).statusCode).toStrictEqual(FORBIDDEN);
 });

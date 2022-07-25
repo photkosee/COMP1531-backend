@@ -1,8 +1,5 @@
 import { getData } from './dataStore';
-import HTTPError from 'http-errors';
 import bcrypt from 'bcryptjs';
-
-const BADREQUEST = 400;
 
 function checkAuthUserId(authUserId: number) {
 /*
@@ -10,7 +7,7 @@ function checkAuthUserId(authUserId: number) {
     checkAuthUserId checks validity and existence of authId
 
   Arguments:
-    authUserId  integer type   -- Input integer supplied by user
+    authUserId  number type   -- Input integer supplied by user
 
   Return Value:
     boolean:  'true' if valid, 'false' if invalid or non-existent
@@ -18,10 +15,6 @@ function checkAuthUserId(authUserId: number) {
 */
 
   const data: any = getData();
-
-  if (typeof authUserId !== 'number') {
-    return false;
-  }
 
   for (const user of data.users) {
     if (authUserId === user.authUserId) {
@@ -38,7 +31,7 @@ function checkChannelId(channelId: number) {
     checkChannelId checks validity and existence of channelId
 
   Arguments:
-    channelId integer type  -- Input integer supplied by user
+    channelId   integer type  -- Input integer supplied by user
 
   Return Value:
     boolean: 'true' if valid, 'false' if invalid or non-existent
@@ -142,20 +135,16 @@ function getMessages(channelId: number) {
       return channel.messages;
     }
   }
-
-  return {};
 }
 
-async function checkToken(token: string) {
+async function checkToken(token: string, authUserId: number) {
 /*
   Description:
     checkToken checks validity and existence of sessionId/token
 
   Arguments:
-    token integer string  -- Input integer supplied by user
-
-  Exceptions:
-    BADREQUEST - Occurs when received invalid data type.
+    token       string    -- Input string supplied by user
+    authUserId  number    -- Input integer supplied by user
 
   Return Value:
     boolean: 'true' if valid, 'false' if invalid or non-existent
@@ -164,43 +153,17 @@ async function checkToken(token: string) {
 
   const data: any = getData();
 
-  if (typeof token !== 'string') {
-    throw HTTPError(BADREQUEST, 'Received invalid token type');
-  }
-
   for (const user of data.users) {
-    for (const sessionId of user.sessionList) {
-      const checkSessionId = await bcrypt.compare(sessionId, token);
-      if (checkSessionId) {
-        return true;
+    if (user.authUserId === authUserId) {
+      for (const sessionId of user.sessionList) {
+        if (await bcrypt.compare(sessionId, token)) {
+          return true;
+        }
       }
     }
   }
 
   return false;
-}
-
-function tokenToAuthUserId(token: string) {
-/*
-  Description:
-    tokenToAuthUserId finds authUserId for corresponding token
-
-  Arguments:
-    token integer string  --  Input integer supplied by user
-
-  Return Value:
-    object: { authUserId: authUserId } on success
-    empty object if failed
-
-*/
-  const data: any = getData();
-
-  for (const user of data.users) {
-    if (user.sessionList.includes(token)) {
-      return { authUserId: user.authUserId };
-    }
-  }
-  return {};
 }
 
 function authIsOwner(channelId: number, uId: number) {
@@ -232,32 +195,6 @@ function authIsOwner(channelId: number, uId: number) {
   return false;
 }
 
-function authIsGlobalOwner(uId: number) {
-  /*
-  Description:
-    authIsGlobalOwner checks if uId is a global owner
-
-  Arguments:
-    uId       integer type  --  Input integer supplied by user
-
-  Return Value:
-    true: if uId is global owner
-    false: if uId is not global owner
-
-  */
-  const dataStore: any = getData();
-  for (const user of dataStore.users) {
-    if (user.uId === uId) {
-      if (user.permissionId === 1) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }
-  return false;
-}
-
 export {
   checkAuthUserId,
   checkChannelId,
@@ -265,7 +202,5 @@ export {
   authInChannel,
   getMessages,
   checkToken,
-  tokenToAuthUserId,
   authIsOwner,
-  authIsGlobalOwner
 };

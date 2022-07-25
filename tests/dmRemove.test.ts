@@ -128,24 +128,17 @@ test('Test for authorised user is no more in the DM - dm/remove/v2', () => {
 });
 
 test('Test for invalid Token Data - dm/remove/v2', () => {
-  const invalidTokenData = [
-    { token: ' ', dmId: dmIdList[0] },
-    { token: '9876567890123', dmId: dmIdList[1] }
-  ];
-
-  for (let i = 0; i < invalidTokenData.length; i++) {
-    const res = request(
-      'DELETE', `${url}:${port}/dm/remove/v2`,
-      {
-        qs: {
-          dmId: invalidTokenData[i].dmId
-        },
-        headers: {
-          'Content-type': 'application/json',
-          token: invalidTokenData[i].token
-        }
+  const res = request(
+    'DELETE', `${url}:${port}/dm/remove/v2`,
+    {
+      qs: {
+        dmId: dmIdList[0]
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCQ4YVJvSTRaNE1obXhwcnFEMjhGa2gucS5GN1cwc09DR3VXaEFLeHd6blhnc09uaWVra0hPRyIsImlhdCI6MTY1ODU3MTc0OH0.7IbUs7eTClwpVxMdQ-8XKsDiGNNbrXhhH0ZSbB_YI5M'
       }
-    );
-    expect(res.statusCode).toBe(FORBIDDEN);
-  }
+    }
+  );
+  expect(res.statusCode).toBe(FORBIDDEN);
 });

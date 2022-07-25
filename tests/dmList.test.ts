@@ -83,19 +83,14 @@ test('Test for success dm list fetch - dm/list/v2', () => {
 });
 
 test('Test for invalid Token Data - dm/list/v2', () => {
-  const invalidTokenData = [
-    { token: ' ' }
-  ];
-  for (let i = 0; i < invalidTokenData.length; i++) {
-    const res = request(
-      'GET', `${url}:${port}/dm/list/v2`,
-      {
-        headers: {
-          'Content-type': 'application/json',
-          token: invalidTokenData[i].token
-        }
+  const res = request(
+    'GET', `${url}:${port}/dm/list/v2`,
+    {
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRsMVZucmdFaWtJWW9WaTFuMm5IUnh1c0h5RTR2eG91MUpYYVdZQUhxQVpES2ROQkxUOG5CQyIsImlhdCI6MTY1ODU3MTgyMn0.gIEJWGL8CsuXkAodgWWF7jSVleFfR9f60HW-tfao3no'
       }
-    );
-    expect(res.statusCode).toBe(FORBIDDEN);
-  }
+    }
+  );
+  expect(res.statusCode).toBe(FORBIDDEN);
 });

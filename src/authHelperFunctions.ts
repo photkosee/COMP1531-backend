@@ -1,3 +1,4 @@
+import sgMail from '@sendgrid/mail';
 import HTTPError from 'http-errors';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
@@ -112,8 +113,7 @@ async function loginVerifier(email: string, password: string, userData: string[]
 
   for (const user of userData) {
     if (user.email === email && user.isActive) {
-      const checkPassword: boolean = await bcrypt.compare(password, user.password);
-      if (checkPassword) {
+      if (await bcrypt.compare(password, user.password)) {
         let newSessionId = `${(Math.floor(Math.random() * Date.now())).toString()}`;
         newSessionId = newSessionId.substring(0, 10);
 
@@ -130,7 +130,7 @@ async function loginVerifier(email: string, password: string, userData: string[]
   throw HTTPError(400, 'Invalid Email');
 }
 
-async function tryLogout(token: string, userData: string[] | any[]) {
+async function tryLogout(token: string, authUserId:number, userData: string[] | any[]) {
   /*
     Description:
       Helper function to invalidate the sessionId to log the user out
@@ -138,18 +138,20 @@ async function tryLogout(token: string, userData: string[] | any[]) {
     Arguments:
       token       string type   -- Input string supplied by function authLogoutV1
       userData    array  type   -- Users array supplied by function authLogoutV1
+      authUserId  string type   -- Input string supplied by function authLogoutV1
 
     Return Value:
       boolean: true | false
   */
 
   for (const user of userData) {
-    for (const sessionId of user.sessionList) {
-      const checkSessionId = await bcrypt.compare(sessionId, token);
-      if (checkSessionId) {
-        const index: number = user.sessionList.indexOf(sessionId);
-        user.sessionList.splice(index, 1);
-        return true;
+    if (user.authUserId === authUserId) {
+      for (const sessionId of user.sessionList) {
+        if (await bcrypt.compare(sessionId, token)) {
+          const index: number = user.sessionList.indexOf(sessionId);
+          user.sessionList.splice(index, 1);
+          return true;
+        }
       }
     }
   }
@@ -191,6 +193,39 @@ async function generateJwtToken(authUserId: number, newSessionId: string) {
   return jwt.sign(payload, '4ee66c5740fece1be9fdc0e269dd77ef7ea99874ee617bcfb2dae2c429f18acb');
 }
 
+async function sendEmail(email: string, name: string, resetCode: string) {
+  /*
+    Description:
+      sendEmail Helper function to send password reset code to user
+
+    Arguments:
+      email       string type   -- string supplied by authPasswordResetRequestV1
+      name        string type   -- string supplied by authPasswordResetRequestV1
+      resetCode   string type   -- string supplied by authPasswordResetRequestV1
+
+  */
+
+  sgMail.setApiKey('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');
+
+  const message = {
+    to: {
+      name: name,
+      email: email,
+    },
+    from: {
+      name: 'UNSW Treats',
+      email: 'f09acrunchie@gmail.com',
+    },
+    templateId: 'd-00b56886e66142da94579df5803180e3',
+    dynamicTemplateData: {
+      name: name,
+      code: resetCode,
+    }
+  };
+
+  await sgMail.send(message);
+}
+
 export {
   paramTypeChecker,
   genHandleStr,
@@ -198,5 +233,6 @@ export {
   loginVerifier,
   tryLogout,
   hashPassword,
-  generateJwtToken
+  generateJwtToken,
+  sendEmail
 };

@@ -190,24 +190,17 @@ test('Test for user is not a member of the DM - dm/details/v2', () => {
 });
 
 test('Test for invalid Token Data - dm/details/v2', () => {
-  const invalidTokenData: any = [
-    { token: ' ', dmId: dmIdList[0] },
-    { token: 1, dmId: dmIdList[1] }
-  ];
-
-  for (let i = 0; i < invalidTokenData.length; i++) {
-    const res = request(
-      'GET', `${url}:${port}/dm/details/v2`,
-      {
-        qs: {
-          dmId: invalidTokenData[i].dmId
-        },
-        headers: {
-          'Content-type': 'application/json',
-          token: invalidTokenData[i].token
-        }
+  const res = request(
+    'GET', `${url}:${port}/dm/details/v2`,
+    {
+      qs: {
+        dmId: dmIdList[1]
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRxN2tmSjV0MnUzSktYMGZDNGtqUlEubS51OVUycmxJSC9tLnZHTERTZEMwUHFYSVc4ZlQ5aSIsImlhdCI6MTY1ODU3MTc5Mn0.Zu15e4_mPiVXp6mEIqO9I4NYquLJ-TFGy_a9oheXmsY'
       }
-    );
-    expect(res.statusCode).toBe(FORBIDDEN);
-  }
+    }
+  );
+  expect(res.statusCode).toBe(FORBIDDEN);
 });

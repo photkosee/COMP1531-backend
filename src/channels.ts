@@ -14,14 +14,15 @@ interface newChannelDetails {
   messages: any,
 }
 
-async function channelsListallV1(token: string) {
+async function channelsListallV1(token: string, authUserId: number) {
 /*
   Description:
     channelsListallV1  returning all existing
     channels if the given authUserId is valid
 
   Arguments:
-    token       string type -- Input string supplied by request header
+    token       string type   -- string supplied by request header
+    authUserId  number type   -- string supplied by request header
 
   Exceptions:
     FORBIDDEN  - Occurs when sessionId/token is not found in database.
@@ -30,11 +31,11 @@ async function channelsListallV1(token: string) {
     array of object: having details of channelId and name
 */
 
-  const data: any = getData();
-
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
+  const data: any = getData();
 
   const channels: any = [];
 
@@ -65,11 +66,11 @@ async function channelsListV1(token: string, authUserId: number) {
     array of object: having details of channelId and name
 */
 
-  const data: any = getData();
-
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
+  const data: any = getData();
 
   const channels: any = [];
 
@@ -100,27 +101,21 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
     isPublic    boolean type  -- Input boolean supplied by user
 
   Exceptions:
-    BADREQUEST - Occurs when Invalid data type of isPublic.
     BADREQUEST - Occurs when length of name is not valid.
     FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
   Return Value:
     interger: channelId
-    object: {error: 'error'}
 */
+
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
 
   const data: any = getData();
 
-  if (typeof isPublic !== 'boolean') {
-    throw HTTPError(BADREQUEST, 'Invalid type of isPublic');
-  }
-
   if (name.length < 1 || name.length > 20) {
     throw HTTPError(BADREQUEST, 'Invalid name length');
-  }
-
-  if (!(await checkToken(token))) {
-    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   for (let i = 0; i < data.users.length; i++) {

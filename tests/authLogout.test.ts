@@ -49,15 +49,15 @@ test('Tests for successful logout - auth/logout/v2', () => {
 describe('Testing with invalid token passed - auth/logout/v2', () => {
   test.each([
     {
-      token: `${(Math.floor(Math.random() * Date.now())).toString().substring(0, 10)}`,
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCQ4YVJvSTRaNE1obXhwcnFEMjhGa2gucS5GN1cwc09DR3VXaEFLeHd6blhnc09uaWVra0hPRyIsImlhdCI6MTY1ODU3MTc0OH0.7IbUs7eTClwpVxMdQ-8XKsDiGNNbrXhhH0ZSbB_YI5M',
       expected: FORBIDDEN,
     },
     {
-      token: `${(Math.floor(Math.random() * Date.now())).toString().substring(0, 10)}`,
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRxN2tmSjV0MnUzSktYMGZDNGtqUlEubS51OVUycmxJSC9tLnZHTERTZEMwUHFYSVc4ZlQ5aSIsImlhdCI6MTY1ODU3MTc5Mn0.Zu15e4_mPiVXp6mEIqO9I4NYquLJ-TFGy_a9oheXmsY',
       expected: FORBIDDEN,
     },
     {
-      token: `${(Math.floor(Math.random() * Date.now())).toString().substring(0, 10)}`,
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRsMVZucmdFaWtJWW9WaTFuMm5IUnh1c0h5RTR2eG91MUpYYVdZQUhxQVpES2ROQkxUOG5CQyIsImlhdCI6MTY1ODU3MTgyMn0.gIEJWGL8CsuXkAodgWWF7jSVleFfR9f60HW-tfao3no',
       expected: FORBIDDEN,
     },
   ])(
