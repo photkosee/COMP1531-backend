@@ -89,7 +89,7 @@ export async function messageEditV1(token: string, authUserId: number, messageId
     BADREQUEST - Occurs when length of message is not valid.
     BADREQUEST - Occurs when messageId does not refer to a valid message.
     FORBIDDEN  - Occurs when sessionId/token is not found in database.
-    FORBIDDEN  - Occurs when authorised user does not have owner permissions, and the message was not sent by them.
+    FORBIDDEN  - Occurs when authorised user does not have owner permissions and the message was not sent by them.
 
   Return Value:
     object: {}
@@ -104,12 +104,18 @@ export async function messageEditV1(token: string, authUserId: number, messageId
   }
 
   const data: any = getData();
+  let permissionId = 0;
+  for (const user of data.users) {
+    if (user.authUserId === authUserId) {
+      permissionId = user.permissionId;
+    }
+  }
   let checkErrorPermission = false;
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
       const msgSenderId: number = channel.messages[index].uId;
-      if (msgSenderId === authUserId || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
+      if (permissionId === 1 || msgSenderId === authUserId || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
         if (message.length !== 0) {
           channel.messages[index].message = message;
         } else {
@@ -246,12 +252,18 @@ export async function messageRemoveV1(token: string, authUserId: number, message
   }
 
   const data: any = getData();
+  let permissionId = 0;
+  for (const user of data.users) {
+    if (user.authUserId === authUserId) {
+      permissionId = user.permissionId;
+    }
+  }
   let checkErrorPermission = false;
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
       const msgSenderId: number = channel.messages[index].uId;
-      if (msgSenderId === authUserId || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
+      if (permissionId === 1 || msgSenderId === authUserId || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
         channel.messages.splice(index, 1);
         return {};
       }

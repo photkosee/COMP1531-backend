@@ -153,9 +153,6 @@ async function channelInviteV1(token: string, authUserId: number, channelId: num
       object: {error: 'error'}
   */
 
-  if (!checkAuthUserId(authUserId)) {
-    throw HTTPError(BADREQUEST, 'Invalid user token');
-  }
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
   }
@@ -214,9 +211,7 @@ async function channelMessagesV1(token: string, authUserId: number, channelId: n
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
   }
-  if (!checkAuthUserId(authUserId)) {
-    throw HTTPError(BADREQUEST, 'User is not valid user');
-  }
+
   if (!authInChannel(channelId, authUserId)) {
     throw HTTPError(FORBIDDEN, 'User is not member of channel');
   }
@@ -258,9 +253,7 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
       object: {} when owner is added
       object: {error: 'error'}
   */
-  if (!checkAuthUserId(authUserId)) {
-    throw HTTPError(BADREQUEST, 'Invalid user token');
-  }
+
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
   }
@@ -271,7 +264,7 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
     throw HTTPError(BADREQUEST, 'User to make owner is not in channel');
   }
   if (!authInChannel(channelId, authUserId)) {
-    throw HTTPError(BADREQUEST, 'User is not in channel');
+    throw HTTPError(FORBIDDEN, 'User is not in channel');
   }
   if (authIsOwner(channelId, uId)) {
     throw HTTPError(BADREQUEST, 'User to make owner is already owner');
@@ -317,18 +310,14 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
       object: {} when owner is removed
       object: {error: 'error'}
   */
-  if (!checkAuthUserId(authUserId)) {
-    throw HTTPError(BADREQUEST, 'Invalid user token');
-  }
+
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
   }
   if (!checkAuthUserId(uId)) {
     throw HTTPError(BADREQUEST, 'User to make owner does not exist');
   }
-  if (!authInChannel(channelId, authUserId)) {
-    throw HTTPError(BADREQUEST, 'User is not in channel');
-  }
+
   if (!authIsOwner(channelId, uId) || !authInChannel(channelId, uId)) {
     throw HTTPError(BADREQUEST, 'User to remove as owner is not a owner');
   }
@@ -366,9 +355,7 @@ async function channelLeaveV1(token: string, authUserId: number, channelId: numb
       object: {} when user is removed
       object: {error: 'error'}
   */
-  if (!checkAuthUserId(authUserId)) {
-    throw HTTPError(BADREQUEST, 'Invalid user token');
-  }
+
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
   }

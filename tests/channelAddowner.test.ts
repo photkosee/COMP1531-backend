@@ -125,6 +125,7 @@ test('Testing for token not in channel and uId already owner', () => {
     }
   });
   const channel1 = JSON.parse(res.body as string);
+
   request('POST', `${url}:${port}/channel/join/v3`, {
     json: {
       channelId: channel1.channelId,
@@ -134,6 +135,7 @@ test('Testing for token not in channel and uId already owner', () => {
       token: user2.token
     }
   });
+  expect(addowner(user3.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(FORBIDDEN);
   request('POST', `${url}:${port}/channel/join/v3`, {
     json: {
       channelId: channel1.channelId,
