@@ -15,8 +15,22 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Testing with wrong typeof parameter - channels/create/v3', () => {
-  test('Invalid inputs', () => {
+describe('Testing with invalid inputs - channels/create/v3', () => {
+  test('Invalid token', () => {
+    const res = request('POST', `${url}:${port}/channels/create/v3`, {
+      body: JSON.stringify({
+        name: 'DOTA2',
+        isPublic: false
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRER1ZlREdWQUl6Q3cwWG9ZV05tUVZPTHprbkxZOWNKWWpvVmNJTlh4eEliS0E0SGhSOGJreSIsImlhdCI6MTY1ODU3NzcxNn0.--c5eWAvAW25kp8CnDNXRTl9iCAz4eDOrq5jq8JoHzc'
+      }
+    });
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Invalid name length', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       body: JSON.stringify({
         email: 'mal1@email.com',
@@ -33,20 +47,8 @@ describe('Testing with wrong typeof parameter - channels/create/v3', () => {
 
     res = request('POST', `${url}:${port}/channels/create/v3`, {
       body: JSON.stringify({
-        name: 'DOTA2',
+        name: '',
         isPublic: false
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: ''
-      }
-    });
-    expect(res.statusCode).toBe(FORBIDDEN);
-
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
-      body: JSON.stringify({
-        name: 'DOTA2',
-        isPublic: 123
       }),
       headers: {
         'Content-type': 'application/json',
@@ -54,48 +56,18 @@ describe('Testing with wrong typeof parameter - channels/create/v3', () => {
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
-  });
 
-  describe('Testing for name length - channels/create/v3', () => {
-    test('Invalid inputs', () => {
-      let res = request('POST', `${url}:${port}/auth/register/v3`, {
-        body: JSON.stringify({
-          email: 'mal1@email.com',
-          password: '1234567',
-          nameFirst: 'One',
-          nameLast: 'Number',
-        }),
-        headers: {
-          'Content-type': 'application/json',
-        }
-      });
-      const user = JSON.parse(res.getBody() as string);
-      const token = user.token;
-
-      res = request('POST', `${url}:${port}/channels/create/v3`, {
-        body: JSON.stringify({
-          name: '',
-          isPublic: false
-        }),
-        headers: {
-          'Content-type': 'application/json',
-          token: token
-        }
-      });
-      expect(res.statusCode).toBe(BADREQUEST);
-
-      res = request('POST', `${url}:${port}/channels/create/v3`, {
-        body: JSON.stringify({
-          name: '1234567891011121314151617',
-          isPublic: false
-        }),
-        headers: {
-          'Content-type': 'application/json',
-          token: token
-        }
-      });
-      expect(res.statusCode).toBe(BADREQUEST);
+    res = request('POST', `${url}:${port}/channels/create/v3`, {
+      body: JSON.stringify({
+        name: '1234567891011121314151617',
+        isPublic: false
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
     });
+    expect(res.statusCode).toBe(BADREQUEST);
   });
 });
 

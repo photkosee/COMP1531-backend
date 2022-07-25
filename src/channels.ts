@@ -100,7 +100,6 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
     isPublic    boolean type  -- Input boolean supplied by user
 
   Exceptions:
-    BADREQUEST - Occurs when Invalid data type of isPublic.
     BADREQUEST - Occurs when length of name is not valid.
     FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
@@ -110,10 +109,6 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
 */
 
   const data: any = getData();
-
-  if (typeof isPublic !== 'boolean') {
-    throw HTTPError(BADREQUEST, 'Invalid type of isPublic');
-  }
 
   if (name.length < 1 || name.length > 20) {
     throw HTTPError(BADREQUEST, 'Invalid name length');
