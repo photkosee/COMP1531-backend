@@ -244,20 +244,6 @@ describe('Testing success unreacting message - message/unreact/v1', () => {
       }
     });
 
-    res = request('POST', `${url}:${port}/message/unreact/v1`, {
-      body: JSON.stringify({
-        messageId: 2,
-        reactId: 1
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[1].token
-      }
-    });
-    const react = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(react).toStrictEqual({});
-
     res = request('POST', `${url}:${port}/message/react/v1`, {
       body: JSON.stringify({
         messageId: 2,
@@ -332,6 +318,20 @@ describe('Testing success unreacting message - message/unreact/v1', () => {
     const react3 = JSON.parse(res.getBody() as string);
     expect(res.statusCode).toBe(OK);
     expect(react3).toStrictEqual({});
+
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
+      body: JSON.stringify({
+        messageId: 2,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[1].token
+      }
+    });
+    const react = JSON.parse(res.getBody() as string);
+    expect(res.statusCode).toBe(OK);
+    expect(react).toStrictEqual({});
   });
 });
 
@@ -367,6 +367,48 @@ describe('Testing for error - message/unreact/v1', () => {
       headers: {
         'Content-type': 'application/json',
         token: token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+  });
+
+  test('Not a member', () => {
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[1].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
+
+    let res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [...validData[0].uIds]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[0].token
+      }
+    });
+    const bodyObj0 = JSON.parse(res.body as string);
+
+    request('POST', `${url}:${port}/message/senddm/v2`, {
+      body: JSON.stringify({
+        dmId: bodyObj0.dmId,
+        message: 'abc'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[0].token
+      }
+    });
+
+    res = request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: 1,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[2].token
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
@@ -508,6 +550,59 @@ describe('Testing for error - message/unreact/v1', () => {
       headers: {
         'Content-type': 'application/json',
         token: token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+  });
+
+  test('Already reacted dm', () => {
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
+
+    let res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [...validData[0].uIds]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[0].token
+      }
+    });
+    const bodyObj0 = JSON.parse(res.body as string);
+
+    request('POST', `${url}:${port}/message/senddm/v2`, {
+      body: JSON.stringify({
+        dmId: bodyObj0.dmId,
+        message: 'abc'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[0].token
+      }
+    });
+
+    res = request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: 1,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[1].token
+      }
+    });
+
+    res = request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: 1,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[1].token
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);

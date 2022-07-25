@@ -9,7 +9,7 @@ const FORBIDDEN = 403;
 
 interface newReacts {
   reactId: number,
-  uIds: any,
+  uIds: number[],
   isThisUserReacted: boolean,
 }
 
@@ -18,7 +18,7 @@ interface newMessagesDetails {
   uId: number,
   message: string,
   timeSent: number,
-  reacts: any,
+  reacts: object[],
   isPinned: boolean,
 }
 
@@ -71,6 +71,13 @@ export async function messageSendV1(token: string, authUserId: number, channelId
           reacts: [],
           isPinned: false,
         };
+
+        const newReactsDetails: newReacts = {
+          reactId: 1,
+          uIds: [],
+          isThisUserReacted: false,
+        };
+        newMessagesDetails.reacts.push(newReactsDetails);
 
         channel.messages.unshift(newMessagesDetails);
         setData(data);
@@ -212,6 +219,13 @@ export async function messageSenddmV1(token: string, authUserId: number, dmId: n
         isPinned: false,
       };
 
+      const newReactsDetails: newReacts = {
+        reactId: 1,
+        uIds: [],
+        isThisUserReacted: false,
+      };
+      newMessagesDetails.reacts.push(newReactsDetails);
+
       dm.messages.unshift(newMessagesDetails);
       setData(data);
 
@@ -229,6 +243,13 @@ export async function messageSenddmV1(token: string, authUserId: number, dmId: n
           reacts: [],
           isPinned: false,
         };
+
+        const newReactsDetails: newReacts = {
+          reactId: 1,
+          uIds: [],
+          isThisUserReacted: false,
+        };
+        newMessagesDetails.reacts.push(newReactsDetails);
 
         dm.messages.unshift(newMessagesDetails);
         setData(data);
@@ -248,9 +269,9 @@ export async function messageRemoveV1(token: string, authUserId: number, message
     this message is removed from the channel/DM
 
   Arguments:
-    token     string type   -- Input string supplied by request header
+    token       string type -- Input string supplied by request header
     authUserId  string type -- Input string supplied by request header
-    messageId number type -- Input number supplied by user
+    messageId   number type -- Input number supplied by user
 
   Exceptions:
     BADREQUEST - Occurs when messageId does not refer to a valid message.
@@ -301,4 +322,126 @@ export async function messageRemoveV1(token: string, authUserId: number, message
     throw HTTPError(FORBIDDEN, 'Have no permission');
   }
   throw HTTPError(BADREQUEST, 'Invalid messageId');
+}
+
+export async function messageReactV1(token: string, authUserId: number, messageId: number, reactId: number) {
+/*
+  Description:
+    messageReactV1 given a messageId for a message and a reactId,
+    react to that message
+
+  Arguments:
+    token       string type -- Input string supplied by request header
+    authUserId  string type -- Input string supplied by request header
+    messageId   number type -- Input number supplied by user
+    reactId     number type -- Input number supplied by user
+
+  Exceptions:
+    BADREQUEST - Occurs when messageId does not refer to a valid message or the user not being a member.
+    BADREQUEST - Occurs when reactId does not refer to a valid react.
+    BADREQUEST - Occurs when the message is containing user's react.
+    FORBIDDEN  - Occurs when sessionId/token is not found in database.
+
+  Return Value:
+    object: {}
+*/
+
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
+  const data: any = getData();
+  if (reactId < 1 || reactId > data.numReacts) {
+    throw HTTPError(BADREQUEST, 'Invalid reactId');
+  }
+
+  for (const channel of data.channels) {
+    const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
+    if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
+      for (const id of channel.messages[index].reacts[reactId - 1].uIds) {
+        if (id === authUserId) {
+          throw HTTPError(BADREQUEST, 'Already reacted');
+        }
+      }
+      channel.messages[index].reacts[reactId - 1].uIds.push(authUserId);
+      return {};
+    }
+  }
+
+  for (const dm of data.dms) {
+    const index: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
+    if (index > -1 && (checkDmMember(dm.dmId, authUserId))) {
+      for (const id of dm.messages[index].reacts[reactId - 1].uIds) {
+        if (id === authUserId) {
+          throw HTTPError(BADREQUEST, 'Already reacted');
+        }
+      }
+      dm.messages[index].reacts[reactId - 1].uIds.push(authUserId);
+      return {};
+    }
+  }
+
+  throw HTTPError(BADREQUEST, 'Invalid messageId');
+}
+
+export async function messageUnreactV1(token: string, authUserId: number, messageId: number, reactId: number) {
+/*
+  Description:
+    messageUnreactV1 given a messageId for a message and a reactId,
+    unreact to that message
+
+  Arguments:
+    token       string type -- Input string supplied by request header
+    authUserId  string type -- Input string supplied by request header
+    messageId   number type -- Input number supplied by user
+    reactId     number type -- Input number supplied by user
+
+  Exceptions:
+    BADREQUEST - Occurs when messageId does not refer to a valid message or the user not being a member.
+    BADREQUEST - Occurs when reactId does not refer to a valid react.
+    BADREQUEST - Occurs when there's no reacts to unreact.
+    FORBIDDEN  - Occurs when sessionId/token is not found in database.
+
+  Return Value:
+    object: {}
+*/
+
+  if (!(await checkToken(token))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
+  const data: any = getData();
+  if (reactId < 1 || reactId > data.numReacts) {
+    throw HTTPError(BADREQUEST, 'Invalid reactId');
+  }
+
+  for (const channel of data.channels) {
+    const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
+    if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
+      let idIndex = 0;
+      for (const id of channel.messages[index].reacts[reactId - 1].uIds) {
+        if (id === authUserId) {
+          channel.messages[index].reacts[reactId - 1].uIds.splice(idIndex, 1);
+          return {};
+        }
+        idIndex++;
+      }
+    }
+  }
+
+  for (const dm of data.dms) {
+    const index: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
+    if (index > -1 && (checkDmMember(dm.dmId, authUserId))) {
+      let idIndex = 0;
+      for (const id of dm.messages[index].reacts[reactId - 1].uIds) {
+        if (id === authUserId) {
+          dm.messages[index].reacts[reactId - 1].uIds.splice(idIndex, 1);
+          return {};
+        }
+        idIndex++;
+      }
+    }
+  }
+
+  throw HTTPError(BADREQUEST, 'Invalid messageId or no reacts');
 }
