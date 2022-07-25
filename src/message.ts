@@ -446,11 +446,79 @@ async function messageUnreactV1(token: string, authUserId: number, messageId: nu
   throw HTTPError(BADREQUEST, 'Invalid messageId or no reacts');
 }
 
+async function messagePinV1(token: string, authUserId: number, messageId: number) {
+/*
+  Description:
+    messagePinV1 given a messageId for a message,
+    pin that message
+
+  Arguments:
+    token       string type -- Input string supplied by request header
+    authUserId  string type -- Input string supplied by request header
+    messageId   number type -- Input number supplied by user
+
+  Exceptions:
+    BADREQUEST - Occurs when messageId does not refer to a valid message or the user not being a member.
+    BADREQUEST - Occurs when the message is already pinned.
+    FORBIDDEN  - Occurs when sessionId/token is not found in database.
+    FORBIDDEN  - Occurs when authorised user does not have owner permissions.
+
+  Return Value:
+    object: {}
+*/
+
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
+  const data: any = getData();
+  let permissionId = 0;
+  for (const user of data.users) {
+    if (user.authUserId === authUserId) {
+      permissionId = user.permissionId;
+    }
+  }
+  let checkErrorPermission = false;
+  for (const channel of data.channels) {
+    const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
+    if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
+      if (channel.messages[index].isPinned === true) {
+        throw HTTPError(BADREQUEST, 'Already pinned');
+      }
+      if (permissionId === 1 || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
+        channel.messages[index].isPinned = true;
+        return {};
+      }
+      checkErrorPermission = true;
+    }
+  }
+
+  for (const dm of data.dms) {
+    const index: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
+    if (index > -1 && (checkDmMember(dm.dmId, authUserId))) {
+      if (dm.messages[index].isPinned === true) {
+        throw HTTPError(BADREQUEST, 'Already pinned');
+      }
+      if (dm.creatorId === authUserId) {
+        dm.messages[index].isPinned = true;
+        return {};
+      }
+      checkErrorPermission = true;
+    }
+  }
+
+  if (checkErrorPermission === true) {
+    throw HTTPError(FORBIDDEN, 'Have no permission');
+  }
+  throw HTTPError(BADREQUEST, 'Invalid messageId');
+}
+
 export {
   messageSendV1,
   messageEditV1,
   messageSenddmV1,
   messageRemoveV1,
   messageReactV1,
-  messageUnreactV1
+  messageUnreactV1,
+  messagePinV1
 };

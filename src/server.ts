@@ -25,7 +25,8 @@ import {
   messageSenddmV1,
   messageRemoveV1,
   messageReactV1,
-  messageUnreactV1
+  messageUnreactV1,
+  messagePinV1
 } from './message';
 import {
   dmCreateV1,
@@ -481,6 +482,18 @@ app.post('/message/unreact/v1', validateJwtToken, async(req: Request, res: Respo
     const authUserId = res.locals.token.id;
     const { messageId, reactId } = req.body;
     const returnData = await messageUnreactV1(token, authUserId, messageId, reactId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/message/pin/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { messageId } = req.body;
+    const returnData = await messagePinV1(token, authUserId, messageId);
     return res.json(returnData);
   } catch (err) {
     next(err);
