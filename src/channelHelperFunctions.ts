@@ -137,16 +137,14 @@ function getMessages(channelId: number) {
   }
 }
 
-async function checkToken(token: string) {
+async function checkToken(token: string, authUserId: number) {
 /*
   Description:
     checkToken checks validity and existence of sessionId/token
 
   Arguments:
-    token integer string  -- Input integer supplied by user
-
-  Exceptions:
-    BADREQUEST - Occurs when received invalid data type.
+    token       string    -- Input string supplied by user
+    authUserId  number    -- Input integer supplied by user
 
   Return Value:
     boolean: 'true' if valid, 'false' if invalid or non-existent
@@ -156,10 +154,11 @@ async function checkToken(token: string) {
   const data: any = getData();
 
   for (const user of data.users) {
-    for (const sessionId of user.sessionList) {
-      const checkSessionId = await bcrypt.compare(sessionId, token);
-      if (checkSessionId) {
-        return true;
+    if (user.authUserId === authUserId) {
+      for (const sessionId of user.sessionList) {
+        if (await bcrypt.compare(sessionId, token)) {
+          return true;
+        }
       }
     }
   }

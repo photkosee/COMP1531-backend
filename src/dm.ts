@@ -29,7 +29,7 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
 
   const data: any = getData();
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -105,7 +105,7 @@ async function dmListV1(token: string, authUserId: number) {
   const data: any = getData();
   const dmsList: object[] = [];
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -157,7 +157,7 @@ async function dmRemoveV1(token: string, authUserId: number, dmId: number) {
 
   const data: any = getData();
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -199,7 +199,7 @@ async function dmDetailsV1(token: string, authUserId: number, dmId: number) {
 
   const data: any = getData();
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -266,7 +266,7 @@ async function dmLeaveV1(token: string, authUserId: number, dmId: number) {
 
   const data: any = getData();
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -311,7 +311,7 @@ async function dmMessages(token: string, authUserId: number, dmId: number, start
       object: return { messages: [messagesData], start: start, end: end}
   */
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

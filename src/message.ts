@@ -22,7 +22,7 @@ interface newMessagesDetails {
   isPinned: boolean,
 }
 
-export async function messageSendV1(token: string, authUserId: number, channelId: number, message: string) {
+async function messageSendV1(token: string, authUserId: number, channelId: number, message: string) {
 /*
   Description:
     messageSendV1 send a message from the authorised
@@ -49,7 +49,7 @@ export async function messageSendV1(token: string, authUserId: number, channelId
     throw HTTPError(BADREQUEST, 'Invalid message length');
   }
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -90,7 +90,7 @@ export async function messageSendV1(token: string, authUserId: number, channelId
   throw HTTPError(FORBIDDEN, 'You are not a member');
 }
 
-export async function messageEditV1(token: string, authUserId: number, messageId: number, message: string) {
+async function messageEditV1(token: string, authUserId: number, messageId: number, message: string) {
 /*
   Description:
     messageEditV1 given a message, update its text with new text.
@@ -116,7 +116,7 @@ export async function messageEditV1(token: string, authUserId: number, messageId
     throw HTTPError(BADREQUEST, 'Invalid message length');
   }
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -166,7 +166,7 @@ export async function messageEditV1(token: string, authUserId: number, messageId
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
-export async function messageSenddmV1(token: string, authUserId: number, dmId: number, message: string) {
+async function messageSenddmV1(token: string, authUserId: number, dmId: number, message: string) {
 /*
   Description:
     messageSenddmV1 send a message from authorisedUser to the DM specified by dmId
@@ -192,7 +192,7 @@ export async function messageSenddmV1(token: string, authUserId: number, dmId: n
     throw HTTPError(BADREQUEST, 'Invalid message length');
   }
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -262,7 +262,7 @@ export async function messageSenddmV1(token: string, authUserId: number, dmId: n
   throw HTTPError(FORBIDDEN, 'Not a member');
 }
 
-export async function messageRemoveV1(token: string, authUserId: number, messageId: number) {
+async function messageRemoveV1(token: string, authUserId: number, messageId: number) {
 /*
   Description:
     messageRemoveV1 given a messageId for a message,
@@ -282,7 +282,7 @@ export async function messageRemoveV1(token: string, authUserId: number, message
     object: {}
 */
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -324,7 +324,7 @@ export async function messageRemoveV1(token: string, authUserId: number, message
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
-export async function messageReactV1(token: string, authUserId: number, messageId: number, reactId: number) {
+async function messageReactV1(token: string, authUserId: number, messageId: number, reactId: number) {
 /*
   Description:
     messageReactV1 given a messageId for a message and a reactId,
@@ -346,7 +346,7 @@ export async function messageReactV1(token: string, authUserId: number, messageI
     object: {}
 */
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -384,7 +384,7 @@ export async function messageReactV1(token: string, authUserId: number, messageI
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
-export async function messageUnreactV1(token: string, authUserId: number, messageId: number, reactId: number) {
+async function messageUnreactV1(token: string, authUserId: number, messageId: number, reactId: number) {
 /*
   Description:
     messageUnreactV1 given a messageId for a message and a reactId,
@@ -406,7 +406,7 @@ export async function messageUnreactV1(token: string, authUserId: number, messag
     object: {}
 */
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -445,3 +445,13 @@ export async function messageUnreactV1(token: string, authUserId: number, messag
 
   throw HTTPError(BADREQUEST, 'Invalid messageId or no reacts');
 }
+
+export {
+  messageSendV1,
+  messageEditV1,
+  messageSenddmV1,
+  messageRemoveV1,
+  messageReactV1,
+  messageUnreactV1
+};
+

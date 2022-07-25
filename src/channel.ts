@@ -41,7 +41,7 @@ async function channelJoinV1(token: string, authUserId: number, channelId: numbe
     object: {error: 'error'}
 */
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -111,7 +111,7 @@ async function channelDetailsV1(token: string, authUserId: number, channelId: nu
     object: {error: 'error'}
 */
 
-  if (!(await checkToken(token))) {
+  if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -153,15 +153,22 @@ async function channelInviteV1(token: string, authUserId: number, channelId: num
       object: {error: 'error'}
   */
 
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
   }
+
   if (!checkAuthUserId(uId)) {
     throw HTTPError(BADREQUEST, 'User to invite does not exist');
   }
+
   if (authInChannel(channelId, uId)) {
     throw HTTPError(BADREQUEST, 'User to invite already in channel');
   }
+
   if (!authInChannel(channelId, authUserId)) {
     throw HTTPError(FORBIDDEN, 'User not in channel so cannot invite others');
   }
@@ -208,6 +215,11 @@ async function channelMessagesV1(token: string, authUserId: number, channelId: n
       }
       object: {error: 'error'}
   */
+
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
   }
@@ -215,6 +227,7 @@ async function channelMessagesV1(token: string, authUserId: number, channelId: n
   if (!authInChannel(channelId, authUserId)) {
     throw HTTPError(FORBIDDEN, 'User is not member of channel');
   }
+
   if (start > getMessages(channelId).length || start < 0) {
     throw HTTPError(BADREQUEST, 'Start is invalid or greater than total messages');
   }
@@ -253,6 +266,10 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
       object: {} when owner is added
       object: {error: 'error'}
   */
+
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
 
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
@@ -311,6 +328,10 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
       object: {error: 'error'}
   */
 
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
   }
@@ -355,6 +376,10 @@ async function channelLeaveV1(token: string, authUserId: number, channelId: numb
       object: {} when user is removed
       object: {error: 'error'}
   */
+
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
 
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
