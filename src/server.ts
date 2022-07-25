@@ -296,8 +296,9 @@ app.put('/user/profile/setname/v2', validateJwtToken, async(req: Request, res: R
 app.put('/user/profile/setemail/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const { email } = req.body;
-    const returnData = await userProfileSetemailV1(token, email);
+    const returnData = await userProfileSetemailV1(token, authUserId, email);
     return res.json(returnData);
   } catch (err) {
     next(err);
@@ -307,8 +308,9 @@ app.put('/user/profile/setemail/v2', validateJwtToken, async(req: Request, res: 
 app.put('/user/profile/sethandle/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
     const { handleStr } = req.body;
-    const returnData = await userProfileSethandleV1(token, handleStr);
+    const returnData = await userProfileSethandleV1(token, authUserId, handleStr);
     return res.json(returnData);
   } catch (err) {
     next(err);

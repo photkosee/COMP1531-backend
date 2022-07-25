@@ -30,18 +30,18 @@ describe('Valid return', () => {
         nameLast: 'Last',
       }
     });
-    const user = JSON.parse(res.getBody() as string);
-    const token = user.token;
 
     res = request('POST', `${url}:${port}/auth/login/v3`, {
       body: JSON.stringify({
-        email: 'original@gmail.com',
+        email: 'original@email.com',
         password: 'password'
       }),
       headers: {
         'Content-type': 'application/json',
       }
     });
+    const user = JSON.parse(res.getBody() as string);
+    const token = user.token;
 
     res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
@@ -58,7 +58,7 @@ describe('Valid return', () => {
       },
       headers: {
         'Content-type': 'application/json',
-        token: token
+        token: token,
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -80,12 +80,9 @@ describe('Valid return', () => {
 
     res = request('POST', `${url}:${port}/auth/login/v3`, {
       body: JSON.stringify({
-        email: 'original@gmail.com',
+        email: 'original@email.com',
         password: 'password'
-      }),
-      headers: {
-        'Content-type': 'application/json',
-      }
+      })
     });
 
     res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
@@ -94,7 +91,7 @@ describe('Valid return', () => {
       },
       headers: {
         'Content-type': 'application/json',
-        token: token
+        token: token,
       }
     });
     const data = JSON.parse(res.getBody() as string);
@@ -114,7 +111,7 @@ describe('Email error returns', () => {
       }
     });
     const user = JSON.parse(res.getBody() as string);
-    const token = user.token;
+    const token: string = user.token;
 
     res = request('PUT', `${url}:${port}/user/profile/setemail/v2`, {
       json: {
@@ -122,7 +119,7 @@ describe('Email error returns', () => {
       },
       headers: {
         'Content-type': 'application/json',
-        token: token
+        token: token,
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);

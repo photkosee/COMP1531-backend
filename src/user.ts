@@ -56,7 +56,7 @@ export async function userProfileSetnameV1(token: string, nameFirst: string, nam
       userProfileSetnameV1 updates user's nameFirst and nameLast
 
     Arguments:
-      token       integer string  -- Input integer supplied by user
+      token       integer string  -- Input integer supplied by header
       nameFirst   integer string  -- Input integer supplied by user
       nameLast    integer string  -- Input integer supplied by user
 
@@ -103,13 +103,14 @@ export async function userProfileSetnameV1(token: string, nameFirst: string, nam
   return {};
 }
 
-export async function userProfileSetemailV1(token: string, email: string) {
+export async function userProfileSetemailV1(token: string, authUserId: number, email: string) {
   /*
     Description:
       userProfileSetemailV1 updates user's email
 
     Arguments:
-      token       integer string  -- Input integer supplied by user
+      token       integer string  -- Input integer supplied by header
+      authUserId  integer         -- Input integer supplied by header
       email       integer string  -- Input integer supplied by user
 
     Exceptions:
@@ -139,28 +140,25 @@ export async function userProfileSetemailV1(token: string, email: string) {
   const data: any = getData();
 
   for (const user of data.users) {
-    for (const sessionId of user.sessionList) {
-      const checkSessionId = await bcrypt.compare(sessionId, token);
-      if (!checkSessionId) {
-        if (email === user.email) {
-          throw HTTPError(BADREQUEST, 'Email is used by another user');
-        }
-      } else {
-        user.email = email;
+    if (authUserId !== user.authUserId) {
+      if (email === user.email) {
+        throw HTTPError(BADREQUEST, 'Email is used by another user');
       }
+    } else {
+      user.email = email;
     }
   }
 
   return {};
 }
 
-export async function userProfileSethandleV1(token: string, handleStr: string) {
+export async function userProfileSethandleV1(token: string, authUserId: number, handleStr: string) {
   /*
     Description:
       userProfileSethandleV1 updates user's handleStr
 
     Arguments:
-      token       integer string  -- Input integer supplied by user
+      token       integer string  -- Input integer supplied by header
       handleStr   integer string  -- Input integer supplied by user
 
     Exceptions:
@@ -190,15 +188,12 @@ export async function userProfileSethandleV1(token: string, handleStr: string) {
   const data: any = getData();
 
   for (const user of data.users) {
-    for (const sessionId of user.sessionList) {
-      const checkSessionId = await bcrypt.compare(sessionId, token);
-      if (!checkSessionId) {
-        if (handleStr === user.handleStr) {
-          throw HTTPError(BADREQUEST, 'handleStr is used by another user');
-        }
-      } else {
-        user.handleStr = handleStr;
+    if (authUserId !== user.authUserId) {
+      if (handleStr === user.handleStr) {
+        throw HTTPError(BADREQUEST, 'handleStr is used by another user');
       }
+    } else {
+      user.handleStr = handleStr;
     }
   }
 
