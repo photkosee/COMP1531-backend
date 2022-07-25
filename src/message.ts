@@ -7,11 +7,19 @@ import HTTPError from 'http-errors';
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 
+interface newReacts {
+  reactId: number,
+  uIds: any,
+  isThisUserReacted: boolean,
+}
+
 interface newMessagesDetails {
   messageId: number,
   uId: number,
   message: string,
   timeSent: number,
+  reacts: any,
+  isPinned: boolean,
 }
 
 export async function messageSendV1(token: string, authUserId: number, channelId: number, message: string) {
@@ -60,6 +68,8 @@ export async function messageSendV1(token: string, authUserId: number, channelId
           uId: authUserId,
           message: message,
           timeSent: Math.floor((new Date()).getTime() / 1000),
+          reacts: [],
+          isPinned: false,
         };
 
         channel.messages.unshift(newMessagesDetails);
@@ -198,6 +208,8 @@ export async function messageSenddmV1(token: string, authUserId: number, dmId: n
         uId: authUserId,
         message: message,
         timeSent: Math.floor((new Date()).getTime() / 1000),
+        reacts: [],
+        isPinned: false,
       };
 
       dm.messages.unshift(newMessagesDetails);
@@ -214,6 +226,8 @@ export async function messageSenddmV1(token: string, authUserId: number, dmId: n
           uId: authUserId,
           message: message,
           timeSent: Math.floor((new Date()).getTime() / 1000),
+          reacts: [],
+          isPinned: false,
         };
 
         dm.messages.unshift(newMessagesDetails);

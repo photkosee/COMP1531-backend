@@ -23,9 +23,17 @@ let data: object = {
     //   messages: [
     //     {
     //       messageId: 'number',
-    //       message: 'string',
     //       uId: 'number',
-    //       timeCreated: 'number',
+    //       message: 'string',
+    //       timeSent: 'number',
+    //       reacts: [
+    //         {
+    //           reactId: 'number',
+    //           uIds: 'Array',
+    //           isThisUserReacted: 'boolean'
+    //         },
+    //       ],
+    //       isPinned: 'boolean',
     //     }
     //   ],
     // }
@@ -39,11 +47,19 @@ let data: object = {
     //   messages: [
     //     {
     //       messageId: 'number',
-    //       message: 'string',
     //       uId: 'number',
-    //       timeCreated: 'number',
-    //     }
-    //   ]
+    //       message: 'string',
+    //       timeSent: 'number',
+    //       reacts: [
+    //         {
+    //           reactId: 'number',
+    //           uIds: 'Array',
+    //           isThisUserReacted: 'boolean'
+    //         },
+    //       ]
+    //       isPinned: 'boolean',
+    //     },
+    //   ],
     // }
   ],
   passwordReset: [
