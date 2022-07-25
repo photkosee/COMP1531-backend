@@ -59,6 +59,7 @@ describe('Return user', () => {
         nameFirst: 'User',
         nameLast: 'Last',
         handleStr: expect.any(String),
+        profileImgUrl: expect.any(String),
       }
     });
   });
