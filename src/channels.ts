@@ -21,7 +21,8 @@ async function channelsListallV1(token: string, authUserId: number) {
     channels if the given authUserId is valid
 
   Arguments:
-    token       string type -- Input string supplied by request header
+    token       string type   -- string supplied by request header
+    authUserId  number type   -- string supplied by request header
 
   Exceptions:
     FORBIDDEN  - Occurs when sessionId/token is not found in database.
@@ -30,11 +31,11 @@ async function channelsListallV1(token: string, authUserId: number) {
     array of object: having details of channelId and name
 */
 
-  const data: any = getData();
-
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
+  const data: any = getData();
 
   const channels: any = [];
 
@@ -65,11 +66,11 @@ async function channelsListV1(token: string, authUserId: number) {
     array of object: having details of channelId and name
 */
 
-  const data: any = getData();
-
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
+  const data: any = getData();
 
   const channels: any = [];
 
@@ -105,7 +106,6 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
 
   Return Value:
     interger: channelId
-    object: {error: 'error'}
 */
 
   if (!(await checkToken(token, authUserId))) {

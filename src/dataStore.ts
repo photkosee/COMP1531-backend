@@ -69,8 +69,7 @@ let data: object = {
     // }
   ],
   messageId: 1,
-  dmId: 1,
-  numReacts: 1
+  dmId: 1
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1

@@ -5,10 +5,8 @@ function clearV1() {
     Description:
         clearV1 clears the dataStore
 
-    Arguments:
-
     Return Value:
-
+      object: {}
   */
   const data: any = getData();
 

@@ -7,7 +7,7 @@ function checkAuthUserId(authUserId: number) {
     checkAuthUserId checks validity and existence of authId
 
   Arguments:
-    authUserId  integer type   -- Input integer supplied by user
+    authUserId  number type   -- Input integer supplied by user
 
   Return Value:
     boolean:  'true' if valid, 'false' if invalid or non-existent
@@ -31,7 +31,7 @@ function checkChannelId(channelId: number) {
     checkChannelId checks validity and existence of channelId
 
   Arguments:
-    channelId integer type  -- Input integer supplied by user
+    channelId   integer type  -- Input integer supplied by user
 
   Return Value:
     boolean: 'true' if valid, 'false' if invalid or non-existent

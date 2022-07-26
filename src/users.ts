@@ -4,14 +4,15 @@ import HTTPError from 'http-errors';
 
 const FORBIDDEN = 403;
 
-export async function usersAllV1(token: string, authUserId: number) {
+async function usersAllV1(token: string, authUserId: number) {
 /*
   Description:
     usersAllV1 returns information about all users' userId,
     email, first name, last name, and handle
 
   Arguments:
-    token integer string  -- Input integer supplied by user
+    token       string type  -- string supplied by header
+    authUserId  number type  -- number supplied by header
 
   Expectations:
     FORBIDDEN   - Invalid Session ID or Token
@@ -39,3 +40,7 @@ export async function usersAllV1(token: string, authUserId: number) {
 
   return { users: users };
 }
+
+export {
+  usersAllV1
+};
