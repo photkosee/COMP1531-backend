@@ -49,7 +49,7 @@ test('Testing for invalid channelId', () => {
   });
   const user2 = JSON.parse(res.body as string);
   expect(addowner(user1.token, 0.1, user2.authUserId).statusCode).toStrictEqual(BADREQUEST);
-  expect(addowner('randomString', 0.1, user2.authUserId).statusCode).toStrictEqual(FORBIDDEN);
+  expect(addowner('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRESTU4YWh0VnZ2eTRHVzA4MEF5VkxPZDloaHExL3N5OEJxc0NUMjdGQ3JMeXlRR1dLRFRUeSIsImlhdCI6MTY1ODU3NzY3NH0.tHBgizmzQXo1EKTdXoaCkt8DLu8XNFkYVZ8ycLlOLv0', 1, user2.authUserId).statusCode).toStrictEqual(FORBIDDEN);
   expect(addowner(user1.token, 0.1, 0.1).statusCode).toStrictEqual(BADREQUEST);
 });
 test('Testing for invalid uId and token', () => {

@@ -198,6 +198,28 @@ test('Test for succes messages return- dm/messages/v2', () => {
     });
   }
 
+  request('POST', `${url}:${port}/message/react/v1`, {
+    body: JSON.stringify({
+      messageId: 25,
+      reactId: 1
+    }),
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[1].token
+    }
+  });
+
+  request('POST', `${url}:${port}/message/react/v1`, {
+    body: JSON.stringify({
+      messageId: 25,
+      reactId: 1
+    }),
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[2].token
+    }
+  });
+
   const response = request(
     'GET', `${url}:${port}/dm/messages/v2`,
     {

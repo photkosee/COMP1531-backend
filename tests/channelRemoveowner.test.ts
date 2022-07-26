@@ -51,7 +51,7 @@ test('Testing for invalid channelId', () => {
   });
   const user2 = JSON.parse(res.body as string);
   expect(removeOwner(user1.token, 0.1, user2.authUserId).statusCode).toStrictEqual(BADREQUEST);
-  expect(removeOwner('randomString', 0.1, user2.authUserId).statusCode).toStrictEqual(FORBIDDEN);
+  expect(removeOwner('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRGRmRGLkN0aW5Oai8yR0hJdklpaUNPbXpWekhmdXF6aGF1VlV6U1NHa1VuUW5Zci9iUlFCcSIsImlhdCI6MTY1ODU3NzY2Mn0.A4f61mkebUTex1U50rp7z6hT-vfjmlMtcsmBpVUICHQ', 1, user2.authUserId).statusCode).toStrictEqual(FORBIDDEN);
 });
 
 test('Testing for invalid uId and token', () => {
@@ -258,6 +258,16 @@ test('Testing for successful remove owner', () => {
       password: 'password3',
       nameFirst: 'ajax',
       nameLast: 'virn',
+    }
+  });
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
+    json: {
+      name: 'channel0',
+      isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
     }
   });
   res = request('POST', `${url}:${port}/channels/create/v3`, {
