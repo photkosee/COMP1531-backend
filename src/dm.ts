@@ -328,10 +328,17 @@ async function dmMessages(token: string, authUserId: number, dmId: number, start
     throw HTTPError(FORBIDDEN, 'Authorised user is not a member of the DM');
   }
 
-  const dmMsgData: object[] = getDmMessages(dmId);
+  const dmMsgData: any[] = getDmMessages(dmId);
   const returnMsgData: any = [];
 
   for (let i = 0; i < 50 && (start + i < dmMsgData.length); i++) {
+    let checkAuthUserReact = false;
+    for (const id of dmMsgData[start + i].reacts[0].uIds) {
+      if (id === authUserId) {
+        checkAuthUserReact = true;
+      }
+    }
+    dmMsgData[start + i].reacts[0].isThisUserReacted = checkAuthUserReact;
     returnMsgData.push(dmMsgData[start + i]);
   }
 

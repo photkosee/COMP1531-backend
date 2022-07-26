@@ -17,6 +17,14 @@ afterAll(() => {
 
 describe('Valid return', () => {
   test('Return empty object', () => {
+    request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'authasd@gmail.com',
+        password: 'password',
+        nameFirst: 'Original 2First Name!',
+        nameLast: 'Original 2Last Name',
+      }
+    });
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'auth@gmail.com',
