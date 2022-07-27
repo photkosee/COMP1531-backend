@@ -52,6 +52,9 @@ import {
   channelAddownerV1,
   channelLeaveV1
 } from './channel';
+import {
+  adminUserpermissionChange
+} from './admin';
 import console from 'console';
 
 // Set up web app, use JSON
@@ -513,6 +516,19 @@ app.post('/message/unpin/v1', validateJwtToken, async(req: Request, res: Respons
     next(err);
   }
 });
+
+app.post('/admin/userpermission/change/v1', validateJwtToken,
+  async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const token = res.locals.token.salt;
+      const authUserId = res.locals.token.id;
+      const { uId, permissionId } = req.body;
+      const returnData = await adminUserpermissionChange(token, authUserId, uId, permissionId);
+      return res.json(returnData);
+    } catch (err) {
+      next(err);
+    }
+  });
 
 // for logging errors
 app.use(morgan('dev'));

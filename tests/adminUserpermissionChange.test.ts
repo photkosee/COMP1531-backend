@@ -26,6 +26,9 @@ describe('Successful return', () => {
         password: 'password',
         nameFirst: 'Auth',
         nameLast: 'Last',
+      },
+      headers: {
+        'Content-type': 'application/json',
       }
     });
     const authUser: any = JSON.parse(res.getBody() as string);
@@ -37,6 +40,9 @@ describe('Successful return', () => {
         password: 'password',
         nameFirst: 'User',
         nameLast: 'Last',
+      },
+      headers: {
+        'Content-type': 'application/json',
       }
     });
     const user: any = JSON.parse(res.getBody() as string);
@@ -231,7 +237,7 @@ describe('Errors', () => {
     expect(res.statusCode).toEqual(BADREQUEST);
   });
 
-  test('Error: uId is not valid', () => {
+  test('Error: uId is not existent', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'auth@gmail.com',
@@ -396,33 +402,34 @@ describe('Errors', () => {
         token: token
       }
     });
-    expect(res.statusCode).toEqual(OK);
+    expect(res.statusCode).toEqual(BADREQUEST);
   });
 
-  test('Error: changing to user\'s current permissionId (global)', () => {let res = request('POST', `${url}:${port}/auth/register/v3`, {
-    json: {
-      email: 'auth@gmail.com',
-      password: 'password',
-      nameFirst: 'Auth',
-      nameLast: 'Last',
-    }
-  });
-  const authUser: any = JSON.parse(res.getBody() as string);
-  const token: string = authUser.token;
-  const authUserId: number = authUser.authUserId;
+  test('Error: changing to user\'s current permissionId (global)', () => {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'auth@gmail.com',
+        password: 'password',
+        nameFirst: 'Auth',
+        nameLast: 'Last',
+      }
+    });
+    const authUser: any = JSON.parse(res.getBody() as string);
+    const token: string = authUser.token;
+    const authUserId: number = authUser.authUserId;
 
-  res = request('POST', `${url}:${port}/admin/userpermission/change/v1`, {
-    json: {
-      uId: authUserId,
-      permissionId: GLOBAL
-    },
-    headers: {
-      'Content-type': 'application/json',
-      token: token
-    }
+    res = request('POST', `${url}:${port}/admin/userpermission/change/v1`, {
+      json: {
+        uId: authUserId,
+        permissionId: GLOBAL
+      },
+      headers: {
+        'Content-type': 'application/body',
+        token: token
+      }
+    });
+    expect(res.statusCode).toEqual(BADREQUEST);
   });
-  expect(res.statusCode).toEqual(BADREQUEST);
-});
 
   test('Error: changing to user\'s current permissionId (member)', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
