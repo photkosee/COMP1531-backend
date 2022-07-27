@@ -47,7 +47,7 @@ describe('Testing success sharing message - message/share/v1', () => {
 
     let res = request('POST', `${url}:${port}/dm/create/v2`, {
       body: JSON.stringify({
-        uIds: [...validData[0].uIds]
+        uIds: [registrationData[2].authUserId]
       }),
       headers: {
         'Content-type': 'application/json',
@@ -121,7 +121,7 @@ describe('Testing success sharing message - message/share/v1', () => {
         token: validData[1].token
       }
     });
-    const ms1 = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(OK);
 
     res = request('POST', `${url}:${port}/message/send/v2`, {
       body: JSON.stringify({
@@ -133,6 +133,7 @@ describe('Testing success sharing message - message/share/v1', () => {
         token: validData[0].token
       }
     });
+    expect(res.statusCode).toBe(OK);
     const ms2 = JSON.parse(res.body as string);
 
     res = request('POST', `${url}:${port}/message/send/v2`, {
@@ -145,6 +146,7 @@ describe('Testing success sharing message - message/share/v1', () => {
         token: validData[2].token
       }
     });
+    expect(res.statusCode).toBe(OK);
     const ms3 = JSON.parse(res.body as string);
 
     res = request('POST', `${url}:${port}/message/senddm/v2`, {
@@ -157,6 +159,7 @@ describe('Testing success sharing message - message/share/v1', () => {
         token: validData[2].token
       }
     });
+    expect(res.statusCode).toBe(OK);
     const ms4 = JSON.parse(res.body as string);
 
     res = request('POST', `${url}:${port}/message/senddm/v2`, {
@@ -169,6 +172,7 @@ describe('Testing success sharing message - message/share/v1', () => {
         token: validData[1].token
       }
     });
+    expect(res.statusCode).toBe(OK);
     const ms5 = JSON.parse(res.body as string);
 
     res = request('POST', `${url}:${port}/message/senddm/v2`, {
@@ -181,7 +185,7 @@ describe('Testing success sharing message - message/share/v1', () => {
         token: validData[0].token
       }
     });
-    const ms6 = JSON.parse(res.body as string);
+    expect(res.statusCode).toBe(OK);
 
     res = request('POST', `${url}:${port}/message/share/v1`, {
       body: JSON.stringify({
@@ -235,6 +239,48 @@ describe('Testing success sharing message - message/share/v1', () => {
       headers: {
         'Content-type': 'application/json',
         token: validData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/share/v1`, {
+      body: JSON.stringify({
+        ogMessageId: ms4.messageId,
+        message: 'asdf',
+        channelId: -1,
+        dmId: dm1.dmId
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/share/v1`, {
+      body: JSON.stringify({
+        ogMessageId: ms3.messageId,
+        message: 'asdf',
+        channelId: -1,
+        dmId: dm2.dmId
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[1].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/share/v1`, {
+      body: JSON.stringify({
+        ogMessageId: ms3.messageId,
+        message: 'asdf',
+        channelId: -1,
+        dmId: dm2.dmId
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[2].token
       }
     });
     expect(res.statusCode).toBe(OK);
@@ -506,7 +552,7 @@ describe('Testing for error - message/share/v1', () => {
 
     res = request('POST', `${url}:${port}/dm/create/v2`, {
       body: JSON.stringify({
-        uIds: [...validData[2].uIds]
+        uIds: [registrationData[0].authUserId]
       }),
       headers: {
         'Content-type': 'application/json',
