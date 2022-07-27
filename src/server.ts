@@ -27,7 +27,8 @@ import {
   messageReactV1,
   messageUnreactV1,
   messagePinV1,
-  messageUnpinV1
+  messageUnpinV1,
+  messageShareV1
 } from './message';
 import {
   dmCreateV1,
@@ -508,6 +509,18 @@ app.post('/message/unpin/v1', validateJwtToken, async(req: Request, res: Respons
     const authUserId = res.locals.token.id;
     const { messageId } = req.body;
     const returnData = await messageUnpinV1(token, authUserId, messageId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/message/share/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { ogMessageId, message, channelId, dmId } = req.body;
+    const returnData = await messageShareV1(token, authUserId, ogMessageId, message, channelId, dmId);
     return res.json(returnData);
   } catch (err) {
     next(err);
