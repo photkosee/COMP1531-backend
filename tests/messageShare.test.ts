@@ -284,6 +284,20 @@ describe('Testing success sharing message - message/share/v1', () => {
       }
     });
     expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/share/v1`, {
+      body: JSON.stringify({
+        ogMessageId: ms5.messageId,
+        message: 'asdf',
+        channelId: ch2.channelId,
+        dmId: -1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[2].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
   });
 });
 
