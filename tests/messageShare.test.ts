@@ -441,7 +441,6 @@ describe('Testing for error - message/share/v1', () => {
         token: validData[1].token
       }
     });
-    const messageId = JSON.parse(res.body as string);
 
     res = request('POST', `${url}:${port}/message/share/v1`, {
       body: JSON.stringify({
@@ -471,7 +470,6 @@ describe('Testing for error - message/share/v1', () => {
     });
     expect(res.statusCode).toBe(BADREQUEST);
   });
-
 
   test('Invalid message length', () => {
     const validData: any = [

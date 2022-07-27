@@ -687,17 +687,17 @@ async function messageShareV1(token: string, authUserId: number, ogMessageId: nu
             reacts: [],
             isPinned: false,
           };
-    
+
           const newReactsDetails: newReacts = {
             reactId: 1,
             uIds: [],
             isThisUserReacted: false,
           };
           newMessagesDetails.reacts.push(newReactsDetails);
-    
+
           dm.messages.unshift(newMessagesDetails);
           setData(data);
-    
+
           return { shareMessageId: messageId };
         }
         for (const member of shareDm.uIds) {
@@ -712,17 +712,17 @@ async function messageShareV1(token: string, authUserId: number, ogMessageId: nu
               reacts: [],
               isPinned: false,
             };
-    
+
             const newReactsDetails: newReacts = {
               reactId: 1,
               uIds: [],
               isThisUserReacted: false,
             };
             newMessagesDetails.reacts.push(newReactsDetails);
-    
+
             dm.messages.unshift(newMessagesDetails);
             setData(data);
-    
+
             return { shareMessageId: messageId };
           }
         }
@@ -780,17 +780,17 @@ async function messageShareV1(token: string, authUserId: number, ogMessageId: nu
             reacts: [],
             isPinned: false,
           };
-    
+
           const newReactsDetails: newReacts = {
             reactId: 1,
             uIds: [],
             isThisUserReacted: false,
           };
           newMessagesDetails.reacts.push(newReactsDetails);
-    
+
           channel.messages.unshift(newMessagesDetails);
           setData(data);
-    
+
           return { shareMessageId: messageId };
         }
         for (const member of shareDm.uIds) {
@@ -805,17 +805,17 @@ async function messageShareV1(token: string, authUserId: number, ogMessageId: nu
               reacts: [],
               isPinned: false,
             };
-    
+
             const newReactsDetails: newReacts = {
               reactId: 1,
               uIds: [],
               isThisUserReacted: false,
             };
             newMessagesDetails.reacts.push(newReactsDetails);
-    
+
             channel.messages.unshift(newMessagesDetails);
             setData(data);
-    
+
             return { shareMessageId: messageId };
           }
         }
