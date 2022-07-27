@@ -8,7 +8,7 @@ function checkPermissionId(permissionId: number) {
     checkPermissionId checks validity of given permission id
 
   Arguments:
-    permissionId  number      -- number supplied by user
+    permissionId  number type -- number supplied by user
 
   Return Value:
     boolean:  'true' if valid, 'false' if invalid
@@ -31,7 +31,7 @@ function findPermissionId(userId: number) {
     findPermissionId finds the permission id given a valid user Id
 
   Arguments:
-    userId    number      -- number supplied by user
+    userId    number type -- number supplied by header
 
   Return Value:
     number: 1 if global owner, 2 if member
@@ -54,7 +54,7 @@ function isOnlyGlobalOwner(userId: number) {
     isOnlyGlobalOwner determines if user is the only global owner in Treats
 
   Arguments:
-    userId    number      -- number supplied by user
+    userId    number type -- number supplied by header
 
   Return Value:
     boolean:  'true' if they're the only global owner

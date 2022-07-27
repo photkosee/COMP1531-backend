@@ -17,12 +17,17 @@ async function adminUserpermissionChange(token: string, authUserId: number,
 
   Arguments:
     token         string type -- string supplied by header
-    authUserId    number type -- string supplied by header
-    uId           number type -- Input number supplied by user
-    permissionId  number type -- Input number supplied by user
+    authUserId    number type -- number supplied by header
+    uId           number type -- number supplied by user
+    permissionId  number type -- number supplied by user
 
   Exceptions:
     FORBIDDEN   - Invalid Session ID or Token
+    BADREQUEST  - User Id is invalid
+    BADREQUEST  - Permission Id is invalid
+    BADREQUEST  - authorised user is not global owner
+    BADREQUEST  - user already has permissionId
+    BADREQUEST  - Cannot demote only global owner to member
 
   Return Value:
     Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
@@ -46,7 +51,7 @@ async function adminUserpermissionChange(token: string, authUserId: number,
 
   const userPermissionId: number = findPermissionId(uId);
   if (userPermissionId === permissionId) {
-    throw HTTPError(BADREQUEST, 'user already has permissionId~');
+    throw HTTPError(BADREQUEST, 'user already has permissionId');
   }
 
   if (userPermissionId === GLOBAL && permissionId === MEMBER) {
