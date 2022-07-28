@@ -524,7 +524,6 @@ app.post('/message/share/v1', validateJwtToken, async(req: Request, res: Respons
     const authUserId = res.locals.token.id;
     const { ogMessageId, message, channelId, dmId } = req.body;
     const returnData = await messageShareV1(token, authUserId, ogMessageId, message, channelId, dmId);
-
     return res.json(returnData);
   } catch (err) {
     next(err);
@@ -542,7 +541,7 @@ app.post('/admin/userpermission/change/v1', validateJwtToken,
     } catch (err) {
       next(err);
     }
-});
+  });
 
 app.get('/search/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
@@ -550,6 +549,7 @@ app.get('/search/v1', validateJwtToken, async(req: Request, res: Response, next:
     const authUserId = res.locals.token.id;
     const queryStr = (req.query.queryStr as string);
     const returnData = await searchV1(token, authUserId, queryStr);
+    return res.json(returnData);
   } catch (err) {
     next(err);
   }
