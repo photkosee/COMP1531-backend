@@ -153,6 +153,13 @@ async function channelInviteV1(token: string, authUserId: number, channelId: num
       channelId     number type   -- Input number supplied by user
       uId           number type   -- Input number supplied by user
 
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
+      BADREQUEST  - Invalid channelId
+      BADREQUEST  - Invalid uId
+      BADREQUEST  - uId refers to user who is already in channel
+      FORBIDDEN   - User is not member of the channel
+
     Return Value:
       object: {} when user is added
   */
@@ -211,6 +218,12 @@ async function channelMessagesV1(token: string, authUserId: number, channelId: n
       authUserId  number type   -- number supplied by request header
       channelId   number type   -- Input number supplied by user
       start       number type   -- Input number supplied by user
+
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
+      BADREQUEST  - Invalid channelId
+      BADREQUEST  - Start is invalid
+      FORBIDDEN   - User is not member of the channel
 
     Return Value:
       object: {
@@ -274,6 +287,13 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
       channelId   number type   -- Input number supplied by user
       uId         number type   -- Input number supplied by user
 
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
+      BADREQUEST  - Invalid channelId
+      BADREQUEST  - Invalid uId
+      BADREQUEST  - uId is already owner of channel
+      FORBIDDEN   - User does not have owner permissions in channel
+
     Return Value:
       object: {} when owner is added
   */
@@ -335,6 +355,14 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
       channelId   integer type   -- Input number supplied by user
       uId         integer type   -- Input number supplied by user
 
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
+      BADREQUEST  - Invalid channelId
+      BADREQUEST  - Invalid uId
+      BADREQUEST  - uId is currently not owner of channel
+      BADREQUEST  - uId is currently only owner of channel
+      FORBIDDEN   - User does not have owner permissions in channel
+
     Return Value:
       object: {} when owner is removed
   */
@@ -383,6 +411,12 @@ async function channelLeaveV1(token: string, authUserId: number, channelId: numb
       token       string type   -- string supplied by request header
       authUserId  number type   -- string supplied by request header
       channelId   number type   -- Input number supplied by user
+
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
+      BADREQUEST  - Invalid channelId
+      BADREQUEST  - User is starter of active startup in channel
+      FORBIDDEN   - User is not member of the channel
 
     Return Value:
       object: {} when user is removed

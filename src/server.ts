@@ -53,7 +53,7 @@ import {
   channelLeaveV1
 } from './channel';
 import console from 'console';
-
+import { searchV1 } from './search';
 // Set up web app, use JSON
 const app = express();
 app.use(json());
@@ -514,6 +514,17 @@ app.post('/message/unpin/v1', validateJwtToken, async(req: Request, res: Respons
   }
 });
 
+app.get('/search/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const queryStr = (req.query.queryStr as string);
+    const returnData = await searchV1(token, authUserId, queryStr);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
 // for logging errors
 app.use(morgan('dev'));
 
