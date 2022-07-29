@@ -2,8 +2,7 @@ import { getData } from './dataStore';
 import { checkAuthUserId, checkToken } from './channelHelperFunctions';
 import { checkPermissionId, findPermissionId, isOnlyGlobalOwner,
   replaceUsersMessages, replaceUserDms, removeUserChannelMembers,
-  removeUserChannelOwners, removeUserFromDms, removeFromUsers } from './adminHelperFunctions';
-import { userProfileV1 } from './user';
+  removeUserChannelOwners, removeUserFromDms } from './adminHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -121,6 +120,8 @@ async function adminUserRemove(token: string, authUserId: number, uId: number) {
   for (const user of data.users) {
     if (user.authUserId === uId) {
       user.isActive = false;
+      user.nameFirst = 'Removed';
+      user.nameLast = 'user';
     }
   }
 
@@ -137,9 +138,6 @@ async function adminUserRemove(token: string, authUserId: number, uId: number) {
 
   // Remove from DM's
   removeUserFromDms(uId);
-
-  // Remove from users
-  removeFromUsers(uId);
 
   return {};
 }

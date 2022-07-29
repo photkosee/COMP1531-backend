@@ -178,9 +178,11 @@ function removeUserChannelMembers(userId: number) {
   }
 
   for (const channel of data.channels) {
-    if (channel.allMembers.includes(userId)) {
-      const index: number = channel.allMembers.indexOf(userId);
-      channel.allMembers.splice(index, 1);
+    for (const member of channel.allMembers) {
+      if (userId === member.uId) {
+        const index: number = channel.allMembers.indexOf(member);
+        channel.allMembers.splice(index, 1);
+      }
     }
   }
 }
@@ -202,9 +204,11 @@ function removeUserChannelOwners(userId: number) {
   }
 
   for (const channel of data.channels) {
-    if (channel.ownerMembers.includes(userId)) {
-      const index: number = channel.ownerMembers.indexOf(userId);
-      channel.ownerMembers.splice(index, 1);
+    for (const member of channel.ownerMembers) {
+      if (userId === member.uId) {
+        const index: number = channel.ownerMembers.indexOf(member);
+        channel.ownerMembers.splice(index, 1);
+      }
     }
   }
 }
@@ -233,31 +237,6 @@ function removeUserFromDms(userId: number) {
   }
 }
 
-function removeFromUsers(userId: number) {
-  /*
-  Description:
-    removeUserFromUsers removes the user from users.
-
-  Arguments:
-    userId    number type -- number supplied by user
-
-  Return Value:
-*/
-
-  const data: any = getData();
-
-  if (data.users.length === 0) {
-    return;
-  }
-
-  for (const user of data.users) {
-    if (user.authUserId === userId) {
-      const index: number = data.users.indexOf(user);
-      data.users.splice(index, 1);
-    }
-  }
-}
-
 export {
   checkPermissionId,
   findPermissionId,
@@ -267,6 +246,5 @@ export {
   replaceUserDms,
   removeUserChannelMembers,
   removeUserChannelOwners,
-  removeUserFromDms,
-  removeFromUsers
+  removeUserFromDms
 };
