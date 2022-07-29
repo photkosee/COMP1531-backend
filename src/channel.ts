@@ -297,7 +297,7 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
     Return Value:
       object: {} when owner is added
   */
-
+  const dataStore: any = getData();
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
@@ -317,11 +317,15 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
   if (authIsOwner(channelId, uId)) {
     throw HTTPError(BADREQUEST, 'User to make owner is already owner');
   }
-  if (!authIsOwner(channelId, authUserId)) {
+  let isGlobalOwner = false;
+  for (const user of dataStore.users) {
+    if (user.uId === authUserId && user.permissionId === 1) {
+      isGlobalOwner = true;
+    }
+  }
+  if (!authIsOwner(channelId, authUserId) && !isGlobalOwner) {
     throw HTTPError(FORBIDDEN, 'User does not have owner permissions');
   }
-
-  const dataStore: any = getData();
 
   for (const channel of dataStore.channels) {
     if (channel.channelId === channelId) {
@@ -366,7 +370,7 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
     Return Value:
       object: {} when owner is removed
   */
-
+  const data: any = getData();
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
@@ -381,11 +385,16 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
   if (!authIsOwner(channelId, uId) || !authInChannel(channelId, uId)) {
     throw HTTPError(BADREQUEST, 'User to remove as owner is not a owner');
   }
-  if (!authIsOwner(channelId, authUserId)) {
+  let isGlobalOwner = false;
+  for (const user of data.users) {
+    if (user.uId === authUserId && user.permissionId === 1) {
+      isGlobalOwner = true;
+    }
+  }
+  if (!authIsOwner(channelId, authUserId) && !isGlobalOwner) {
     throw HTTPError(FORBIDDEN, 'User does not have owner permissions');
   }
 
-  const data: any = getData();
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       if (channel.ownerMembers.length === 1) {
