@@ -54,7 +54,7 @@ import {
   channelLeaveV1
 } from './channel';
 import { adminUserpermissionChange, adminUserRemove } from './admin';
-import { standupStart } from './standup';
+import { standupIsActive, standupStart } from './standup';
 
 // Set up web app, use JSON
 const app = express();
@@ -558,6 +558,18 @@ app.post('/standup/start/v1', validateJwtToken, async(req: Request, res: Respons
     const authUserId = res.locals.token.id;
     const { channelId, length } = req.body;
     const returnData = await standupStart(token, authUserId, channelId, length);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/standup/active/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId } = req.body;
+    const returnData = await standupIsActive(token, authUserId, channelId);
     return res.json(returnData);
   } catch (err) {
     next(err);
