@@ -47,7 +47,6 @@
     "nyc": {
         "exclude": [
             "echo.*"
-        ],
-        "sourceMap": false
+        ]
     }
 }
