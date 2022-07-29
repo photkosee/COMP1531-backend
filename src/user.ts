@@ -1,6 +1,7 @@
 import { getData } from './dataStore';
-import { checkAuthUserId, checkToken } from './channelHelperFunctions';
+import { checkToken, checkAuthUserIdProfile, checkTokenProfile } from './channelHelperFunctions';
 import { emailValidator } from './authHelperFunctions';
+import { checkRemovedUsers } from './adminHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -24,13 +25,13 @@ async function userProfileV1(token: string, authUserId: number, uId: number) {
     Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
 */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(await checkTokenProfile(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const data: any = getData();
 
-  if (!(checkAuthUserId(uId))) {
+  if (!(checkAuthUserIdProfile(uId))) {
     throw HTTPError(BADREQUEST, 'User Id is invalid');
   }
 

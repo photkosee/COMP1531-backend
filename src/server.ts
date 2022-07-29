@@ -54,7 +54,7 @@ import {
   channelLeaveV1
 } from './channel';
 import {
-  adminUserpermissionChange
+  adminUserpermissionChange, adminUserRemove
 } from './admin';
 import console from 'console';
 
@@ -530,18 +530,29 @@ app.post('/message/share/v1', validateJwtToken, async(req: Request, res: Respons
   }
 });
 
-app.post('/admin/userpermission/change/v1', validateJwtToken,
-  async(req: Request, res: Response, next: NextFunction) => {
-    try {
-      const token = res.locals.token.salt;
-      const authUserId = res.locals.token.id;
-      const { uId, permissionId } = req.body;
-      const returnData = await adminUserpermissionChange(token, authUserId, uId, permissionId);
-      return res.json(returnData);
-    } catch (err) {
-      next(err);
-    }
-  });
+app.delete('/admin/user/remove/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const uId = parseInt(req.query.uId as string);
+    const returnData = await adminUserRemove(token, authUserId, uId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/admin/userpermission/change/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { uId, permissionId } = req.body;
+    const returnData = await adminUserpermissionChange(token, authUserId, uId, permissionId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
 
 // for logging errors
 app.use(morgan('dev'));
