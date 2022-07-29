@@ -240,6 +240,13 @@ async function channelMessagesV1(token: string, authUserId: number, channelId: n
   const messages: any = getMessages(channelId);
 
   for (let i = 0; i < 50 && (start + i < messages.length); i++) {
+    let checkAuthUserReact = false;
+    for (const id of messages[start + i].reacts[0].uIds) {
+      if (id === authUserId) {
+        checkAuthUserReact = true;
+      }
+    }
+    messages[start + i].reacts[0].isThisUserReacted = checkAuthUserReact;
     messagesArray.push(messages[start + i]);
   }
 

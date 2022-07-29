@@ -34,6 +34,17 @@ test('Testing for successful invite - channel/invite/v2', () => {
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
   }
 
+  request('POST', `${url}:${port}/channels/create/v3`, {
+    json: {
+      name: 'channel0',
+      isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[0].token
+    }
+  });
+
   let res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
       name: 'channel1',
@@ -216,6 +227,7 @@ test('Testing for token and uId are same person', () => {
   const reqisteredUser = [
     { email: 'user1@email.com', password: '123456', nameFirst: 'first1', nameLast: 'last1' },
     { email: 'user2@email.com', password: '123456', nameFirst: 'first2', nameLast: 'last2' },
+    { email: 'userasdf2@email.com', password: '123456', nameFirst: 'firdst2', nameLast: 'lafst2' },
   ];
   for (const user of reqisteredUser) {
     const res = request('POST', `${url}:${port}/auth/register/v3`, {
@@ -261,7 +273,19 @@ test('Testing for token and uId are same person', () => {
     },
     headers: {
       'Content-type': 'application/json',
-      token: registrationData[1].token
+      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCQ1Y0QzVjJLN01PU1RHTU1WWVFtbHBlc1UvZWwuTjB3SDZ0d3laY0VhZThjekUvcktkV2F0RyIsImlhdCI6MTY1ODU3NzcyNn0.7AWJbHt9-LMfsQiXHpY0exa9gL0yqsvQoPzIYNQAeUY'
+    }
+  });
+  expect(res.statusCode).toStrictEqual(FORBIDDEN);
+
+  res = request('POST', `${url}:${port}/channel/invite/v3`, {
+    json: {
+      channelId: channel1.channelId,
+      uId: registrationData[1].authUserId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: registrationData[2].token
     }
   });
   expect(res.statusCode).toStrictEqual(FORBIDDEN);

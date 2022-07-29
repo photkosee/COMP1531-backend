@@ -58,7 +58,7 @@ test('Testing for invalid input in channel/leave/v2', () => {
     }
   });
   expect(channelLeave(user1.token, 0.1).statusCode).toStrictEqual(BADREQUEST);
-  expect(channelLeave('randomString', 0.1).statusCode).toStrictEqual(FORBIDDEN);
+  expect(channelLeave('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRESTU4YWh0VnZ2eTRHVzA4MEF5VkxPZDloaHExL3N5OEJxc0NUMjdGQ3JMeXlRR1dLRFRUeSIsImlhdCI6MTY1ODU3NzY3NH0.tHBgizmzQXo1EKTdXoaCkt8DLu8XNFkYVZ8ycLlOLv0', 1).statusCode).toStrictEqual(FORBIDDEN);
 });
 
 test('Testing for user not in channel', () => {
@@ -121,6 +121,17 @@ test('Testing for successful leave', () => {
       nameLast: 'virn',
     }
   });
+  const user3 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
+    json: {
+      name: 'channel0',
+      isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
+    }
+  });
   res = request('POST', `${url}:${port}/channels/create/v3`, {
     json: {
       name: 'channel1',
@@ -141,7 +152,17 @@ test('Testing for successful leave', () => {
       token: user2.token
     }
   });
+  request('POST', `${url}:${port}/channel/join/v3`, {
+    json: {
+      channelId: channel1.channelId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user3.token
+    }
+  });
 
+  expect(channelLeave(user3.token, channel1.channelId).statusCode).toStrictEqual(OK);
   expect(channelLeave(user1.token, channel1.channelId).statusCode).toStrictEqual(OK);
   expect(channelLeave(user2.token, channel1.channelId).statusCode).toStrictEqual(OK);
 });
