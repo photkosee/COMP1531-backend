@@ -564,11 +564,11 @@ app.post('/standup/start/v1', validateJwtToken, async(req: Request, res: Respons
   }
 });
 
-app.post('/standup/active/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+app.get('/standup/active/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
     const authUserId = res.locals.token.id;
-    const { channelId } = req.body;
+    const channelId = parseInt(req.query.channelId as string);
     const returnData = await standupIsActive(token, authUserId, channelId);
     return res.json(returnData);
   } catch (err) {

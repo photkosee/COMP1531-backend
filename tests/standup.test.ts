@@ -152,10 +152,10 @@ describe('Test Cases for HTTP Route: standup/start/v1', () => {
 
 describe('Test Cases for HTTP Route: standup/active/v1', () => {
   test('Test if standup is active', () => {
-    const successRes = request('POST', `${url}:${port}/standup/active/v1`, {
-      body: JSON.stringify({
+    const successRes = request('GET', `${url}:${port}/standup/active/v1`, {
+      qs: {
         channelId: channelId1,
-      }),
+      },
       headers: {
         'Content-type': 'application/json',
         token: registrationData[0].token,
@@ -168,10 +168,10 @@ describe('Test Cases for HTTP Route: standup/active/v1', () => {
   });
 
   test('Test if no-standup is active', () => {
-    const successRes = request('POST', `${url}:${port}/standup/active/v1`, {
-      body: JSON.stringify({
+    const successRes = request('GET', `${url}:${port}/standup/active/v1`, {
+      qs: {
         channelId: channelId2,
-      }),
+      },
       headers: {
         'Content-type': 'application/json',
         token: registrationData[1].token,
@@ -184,10 +184,10 @@ describe('Test Cases for HTTP Route: standup/active/v1', () => {
   });
 
   test('Test for channelId does not refer to a valid channel', () => {
-    const successRes = request('POST', `${url}:${port}/standup/active/v1`, {
-      body: JSON.stringify({
+    const successRes = request('GET', `${url}:${port}/standup/active/v1`, {
+      qs: {
         channelId: -1,
-      }),
+      },
       headers: {
         'Content-type': 'application/json',
         token: registrationData[0].token,
@@ -197,10 +197,10 @@ describe('Test Cases for HTTP Route: standup/active/v1', () => {
   });
 
   test('Test for authorised user is not a member of the channel', () => {
-    const successRes = request('POST', `${url}:${port}/standup/active/v1`, {
-      body: JSON.stringify({
+    const successRes = request('GET', `${url}:${port}/standup/active/v1`, {
+      qs: {
         channelId: channelId2,
-      }),
+      },
       headers: {
         'Content-type': 'application/json',
         token: registrationData[0].token,
@@ -210,10 +210,10 @@ describe('Test Cases for HTTP Route: standup/active/v1', () => {
   });
 
   test('Test for invalid token', () => {
-    const successRes = request('POST', `${url}:${port}/standup/active/v1`, {
-      body: JSON.stringify({
+    const successRes = request('GET', `${url}:${port}/standup/active/v1`, {
+      qs: {
         channelId: channelId2,
-      }),
+      },
       headers: {
         'Content-type': 'application/json',
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRsMVZucmdFaWtJWW9WaTFuMm5IUnh1c0h5RTR2eG91MUpYYVdZQUhxQVpES2ROQkxUOG5CQyIsImlhdCI6MTY1ODU3MTgyMn0.gIEJWGL8CsuXkAodgWWF7jSVleFfR9f60HW-tfao3no'
