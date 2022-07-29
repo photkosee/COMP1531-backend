@@ -58,6 +58,7 @@ async function messageSendV1(token: string, authUserId: number, channelId: numbe
     throw HTTPError(BADREQUEST, 'Invalid channelId');
   }
 
+
   for (const channel of data.channels) {
     for (const member of channel.allMembers) {
       if (channelId === channel.channelId && member.uId === authUserId) {
@@ -826,6 +827,63 @@ async function messageShareV1(token: string, authUserId: number, ogMessageId: nu
   throw HTTPError(BADREQUEST, 'Invalid ogMessageId');
 }
 
+async function messageSendlaterV1(token: string, authUserId: number, channelId: number, message: string, timeSent: number) {
+  /*
+    Description:
+      messageSendlaterV1 send a message from the authorised
+      user to the channel specified by channelId at a given time
+  
+    Arguments:
+      token       string type   -- string supplied by request header
+      authUserId  number type   -- number supplied by request header
+      channelId   number type   -- number supplied by user
+      message     string type   -- string supplied by user
+      timeSent    number type   -- number supplied by user
+  
+    Exceptions:
+      BADREQUEST - Occurs when channelId is invalid.
+      BADREQUEST - Occurs when length of message is not valid.
+      BADREQUEST - Occurs when timeSent is before current time
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
+      FORBIDDEN  - Occurs when the authorised user is not a member of the channel/dm the usre is sharing to.
+  
+    Return Value:
+      object: { messageId: messageId }
+  */
+  
+    if (!(await checkToken(token, authUserId))) {
+      throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+    }
+    if (!checkChannelId(channelId)) {
+      throw HTTPError(BADREQUEST, 'Invalid channelId');
+    }
+    if (!authInChannel(channelId, authUserId)) {
+      throw HTTPError(FORBIDDEN, 'User not member of channel');
+    }
+    if (message.length > 1000 || message.length < 1) {
+      throw HTTPError(BADREQUEST, 'Invalid message length');
+    }
+    if (timeSent < Math.floor(Date.now() / 1000)) {
+      throw HTTPError(BADREQUEST, 'Time sent is before current time');
+    }
+    
+    const now = Math.floor(Date.now() / 1000);
+    const millisecTillSend = 1000 * (timeSent - now);
+
+    // make fcunt
+    // timeout
+    // psuh 
+    
+    
+
+    return { messageId: 1};
+
+
+
+  }
+
+
+
 export {
   messageSendV1,
   messageEditV1,
@@ -835,5 +893,6 @@ export {
   messageUnreactV1,
   messagePinV1,
   messageUnpinV1,
-  messageShareV1
+  messageShareV1,
+  messageSendlaterV1
 };
