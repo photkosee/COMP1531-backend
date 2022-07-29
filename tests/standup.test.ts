@@ -67,7 +67,7 @@ describe('Test Cases for HTTP Route: standup/start/v1', () => {
     const successRes = request('POST', `${url}:${port}/standup/start/v1`, {
       body: JSON.stringify({
         channelId: channelId1,
-        length: 10,
+        length: 5,
       }),
       headers: {
         'Content-type': 'application/json',
@@ -83,7 +83,7 @@ describe('Test Cases for HTTP Route: standup/start/v1', () => {
     const successRes = request('POST', `${url}:${port}/standup/start/v1`, {
       body: JSON.stringify({
         channelId: channelId1,
-        length: 20,
+        length: 5,
       }),
       headers: {
         'Content-type': 'application/json',
@@ -97,7 +97,7 @@ describe('Test Cases for HTTP Route: standup/start/v1', () => {
     const successRes = request('POST', `${url}:${port}/standup/start/v1`, {
       body: JSON.stringify({
         channelId: -1,
-        length: 10,
+        length: 5,
       }),
       headers: {
         'Content-type': 'application/json',
@@ -125,7 +125,7 @@ describe('Test Cases for HTTP Route: standup/start/v1', () => {
     const successRes = request('POST', `${url}:${port}/standup/start/v1`, {
       body: JSON.stringify({
         channelId: channelId2,
-        length: 10,
+        length: 5,
       }),
       headers: {
         'Content-type': 'application/json',
@@ -139,7 +139,80 @@ describe('Test Cases for HTTP Route: standup/start/v1', () => {
     const successRes = request('POST', `${url}:${port}/standup/start/v1`, {
       body: JSON.stringify({
         channelId: channelId2,
-        length: 10,
+        length: 5,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRsMVZucmdFaWtJWW9WaTFuMm5IUnh1c0h5RTR2eG91MUpYYVdZQUhxQVpES2ROQkxUOG5CQyIsImlhdCI6MTY1ODU3MTgyMn0.gIEJWGL8CsuXkAodgWWF7jSVleFfR9f60HW-tfao3no'
+      }
+    });
+    expect(successRes.statusCode).toBe(FORBIDDEN);
+  });
+});
+
+describe('Test Cases for HTTP Route: standup/active/v1', () => {
+  test('Test if standup is active', () => {
+    const successRes = request('POST', `${url}:${port}/standup/active/v1`, {
+      body: JSON.stringify({
+        channelId: channelId1,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token,
+      }
+    });
+    const resData = JSON.parse(successRes.body as string);
+    expect(successRes.statusCode).toBe(OK);
+    expect(resData.isActive).toBe(true);
+    expect(resData.timeFinish).toStrictEqual(expect.any(Number));
+  });
+
+  test('Test if no-standup is active', () => {
+    const successRes = request('POST', `${url}:${port}/standup/active/v1`, {
+      body: JSON.stringify({
+        channelId: channelId2,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[1].token,
+      }
+    });
+    const resData = JSON.parse(successRes.body as string);
+    expect(successRes.statusCode).toBe(OK);
+    expect(resData.isActive).toBe(false);
+    expect(resData.timeFinish).toBe(null);
+  });
+
+  test('Test for channelId does not refer to a valid channel', () => {
+    const successRes = request('POST', `${url}:${port}/standup/active/v1`, {
+      body: JSON.stringify({
+        channelId: -1,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token,
+      }
+    });
+    expect(successRes.statusCode).toBe(BADREQUEST);
+  });
+
+  test('Test for authorised user is not a member of the channel', () => {
+    const successRes = request('POST', `${url}:${port}/standup/active/v1`, {
+      body: JSON.stringify({
+        channelId: channelId2,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token,
+      }
+    });
+    expect(successRes.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Test for invalid token', () => {
+    const successRes = request('POST', `${url}:${port}/standup/active/v1`, {
+      body: JSON.stringify({
+        channelId: channelId2,
       }),
       headers: {
         'Content-type': 'application/json',
