@@ -17,6 +17,30 @@ function checkAuthUserId(authUserId: number) {
   const data: any = getData();
 
   for (const user of data.users) {
+    if (authUserId === user.authUserId && user.isActive === true) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function checkAuthUserIdProfile(authUserId: number) {
+/*
+  Description:
+    checkAuthUserId checks validity and existence of authId, includes inactive accounts
+
+  Arguments:
+    authUserId  number type   -- Input integer supplied by user
+
+  Return Value:
+    boolean:  'true' if valid, 'false' if invalid or non-existent
+
+*/
+
+  const data: any = getData();
+
+  for (const user of data.users) {
     if (authUserId === user.authUserId) {
       return true;
     }
@@ -154,6 +178,35 @@ async function checkToken(token: string, authUserId: number) {
   const data: any = getData();
 
   for (const user of data.users) {
+    if (user.authUserId === authUserId && user.isActive === true) {
+      for (const sessionId of user.sessionList) {
+        if (await bcrypt.compare(sessionId, token)) {
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+async function checkTokenProfile(token: string, authUserId: number) {
+/*
+  Description:
+    checkToken checks validity and existence of sessionId/token, includes inactive users
+
+  Arguments:
+    token       string    -- Input string supplied by user
+    authUserId  number    -- Input integer supplied by user
+
+  Return Value:
+    boolean: 'true' if valid, 'false' if invalid or non-existent
+
+*/
+
+  const data: any = getData();
+
+  for (const user of data.users) {
     if (user.authUserId === authUserId) {
       for (const sessionId of user.sessionList) {
         if (await bcrypt.compare(sessionId, token)) {
@@ -203,4 +256,6 @@ export {
   getMessages,
   checkToken,
   authIsOwner,
+  checkAuthUserIdProfile,
+  checkTokenProfile
 };
