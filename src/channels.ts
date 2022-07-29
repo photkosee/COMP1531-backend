@@ -12,6 +12,11 @@ interface newChannelDetails {
   allMembers: any,
   isPublic: boolean,
   messages: any,
+  standup: {
+    isActive: boolean,
+    timeFinish: number | null,
+    messagesQueue: string,
+  },
 }
 
 async function channelsListallV1(token: string, authUserId: number) {
@@ -141,6 +146,11 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
         }],
         isPublic: isPublic,
         messages: [],
+        standup: {
+          isActive: false,
+          timeFinish: null,
+          messagesQueue: ''
+        },
       };
 
       data.channels.push(newChannelDetails);
