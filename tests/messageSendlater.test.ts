@@ -174,7 +174,7 @@ describe('Testing for error - message/sendlater/v1', () => {
     });
     expect(res.statusCode).toBe(FORBIDDEN);
   });
-});  
+});
 
 test('Successful messageSendlater - message/sendlater', () => {
   let res = request('POST', `${url}:${port}/auth/register/v3`, {
@@ -215,4 +215,3 @@ test('Successful messageSendlater - message/sendlater', () => {
   });
   expect(res.statusCode).toBe(OK);
 });
-

@@ -532,15 +532,15 @@ app.post('/message/share/v1', validateJwtToken, async(req: Request, res: Respons
 });
 
 app.post('/message/sendlater/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
-    try {
-      const token = res.locals.token.salt;
-      const authUserId = res.locals.token.id;
-      const { channelId, message, timeSent } = req.body;
-      const returnData = await messageSendlaterV1(token, authUserId, channelId, message, timeSent);
-      return res.json(returnData);
-    } catch (err) {
-      next(err);
-    }
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId, message, timeSent } = req.body;
+    const returnData = await messageSendlaterV1(token, authUserId, channelId, message, timeSent);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.post('/admin/userpermission/change/v1', validateJwtToken,
@@ -554,7 +554,7 @@ app.post('/admin/userpermission/change/v1', validateJwtToken,
     } catch (err) {
       next(err);
     }
-});
+  });
 
 app.get('/search/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
