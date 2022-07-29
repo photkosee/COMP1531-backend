@@ -11,6 +11,9 @@ import {
   hashPassword,
   sendEmail
 } from './authHelperFunctions';
+import {
+  createUserStats
+} from './userHelperFunctions';
 
 const HOST: string = process.env.IP || 'localhost';
 const PORT: number = parseInt(process.env.PORT || config.port);
@@ -28,7 +31,8 @@ interface newUserDetails {
   profileImgUrl: string,
   permissionId: number,
   isActive: boolean,
-  sessionList: Array<string>
+  sessionList: Array<string>,
+  userStats: object
 }
 
 interface loginDetail {
@@ -102,6 +106,8 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
 
     const defaultProfileImgUrl = `${(HOST === 'localhost') ? 'http://' : 'https://'}${HOST + ':' + PORT}/static/profile.png`;
 
+    const userStats: object = createUserStats();
+
     const newUserDetails: newUserDetails = {
       authUserId: newAuthId,
       nameFirst: nameFirst,
@@ -112,7 +118,8 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
       profileImgUrl: defaultProfileImgUrl,
       permissionId: permissionId,
       isActive: true,
-      sessionList: [newSessionId]
+      sessionList: [newSessionId],
+      userStats: userStats
     };
 
     data.users.push(newUserDetails);

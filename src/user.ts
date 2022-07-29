@@ -163,7 +163,10 @@ async function userProfileSethandleV1(token: string, authUserId: number, handleS
     handleStr   string type  -- Input string supplied by user
 
   Exceptions:
-    FORBIDDEN - Invalid Session ID or Token
+    FORBIDDEN   - Invalid Session ID or Token
+    BADREQUEST  - Invalid handleStr type
+    BADREQUEST  - handleStr must be 3-20 characters
+    BADREQUEST  - handleStr must only be alphanumeric
 
   Return Value:
     Object: {} on success
@@ -204,9 +207,35 @@ async function userProfileSethandleV1(token: string, authUserId: number, handleS
   return {};
 }
 
+async function userStatsV1(token: string, authUserId: number) {
+/*
+  Description:
+    userStatsV1 fetches stats about user's use of UNSW treats
+
+  Arguments:
+    token       string type  -- string supplied by header
+    authUserId  number type  -- number supplied by header
+
+  Exceptions:
+    FORBIDDEN   - Invalid Session ID or Token
+
+  Return Value:
+    Object: {} on success
+*/
+
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
+  
+
+
+}
+
 export {
   userProfileV1,
   userProfileSetnameV1,
   userProfileSethandleV1,
   userProfileSetemailV1,
+  userStatsV1
 };

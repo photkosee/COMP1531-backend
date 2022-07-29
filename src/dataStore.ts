@@ -11,6 +11,27 @@ let data: object = {
     //   permissionId: 'number',
     //   isActive: 'boolean',
     //   sessionList: 'Array<tokens>'
+    //   userStats: {
+    //    channelsJoined: [
+    //      {
+    //        numChannelsJoined: 'number',
+    //        timeStamp: 'number'
+    //      }
+    //    ],
+    //    dmsJoined: [
+    //      {
+    //        numDmsJoined: 'number',
+    //        timeStamp: 'number'
+    //      }
+    //    ],
+    //    messagesSent: [
+    //      {
+    //        numMessagesSent: 'number',
+    //        timeStamp: 'number'
+    //      }
+    //    ],
+    //    involvementRate: 'number'
+    //   }
     // }
   ],
   channels: [
