@@ -1,8 +1,15 @@
 import { getData } from './dataStore';
 import { checkAuthUserId, checkToken } from './channelHelperFunctions';
-import { checkPermissionId, findPermissionId, isOnlyGlobalOwner,
-  replaceUsersMessages, replaceUserDms, removeUserChannelMembers,
-  removeUserChannelOwners, removeUserFromDms } from './adminHelperFunctions';
+import {
+  checkPermissionId,
+  findPermissionId,
+  isOnlyGlobalOwner,
+  replaceUsersMessages,
+  replaceUserDms,
+  removeUserChannelMembers,
+  removeUserChannelOwners,
+  removeUserFromDms
+} from './adminHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -10,15 +17,6 @@ const FORBIDDEN = 403;
 
 const GLOBAL = 1;
 const MEMBER = 2;
-
-interface USER {
-  uId: number,
-  email: string,
-  nameFirst: string,
-  nameLast: string,
-  handleStr: string,
-  profileImgUrl: string
-}
 
 async function adminUserpermissionChange(token: string, authUserId: number,
   uId: number, permissionId: number) {

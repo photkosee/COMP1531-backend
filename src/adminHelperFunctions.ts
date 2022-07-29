@@ -39,10 +39,6 @@ function findPermissionId(userId: number) {
 
   const data: any = getData();
 
-  if (data.users.length === 0) {
-    return 0;
-  }
-
   let foundPermissionId = 0;
   for (const user of data.users) {
     if (userId === user.authUserId) {
@@ -68,10 +64,6 @@ function isOnlyGlobalOwner(userId: number) {
 
   const data: any = getData();
 
-  if (data.users.length === 0) {
-    return false;
-  }
-
   for (const user of data.users) {
     if (userId !== user.authUserId) {
       if (user.permissionId === GLOBAL) {
@@ -81,34 +73,6 @@ function isOnlyGlobalOwner(userId: number) {
   }
 
   return true;
-}
-
-function checkRemovedUsers(uId: number) {
-/*
-  Description:
-    checkRemovedUsers determines if user is in removedUsers
-
-  Arguments:
-    userId    number type -- number supplied by user
-
-  Return Value:
-    boolean:  'true' if user is in removedUsers
-              'false' if not
-*/
-
-  const data: any = getData();
-
-  if (data.removedUsers.length === 0) {
-    return false;
-  }
-
-  for (const removedUser of data.removedUsers) {
-    if (uId === removedUser.uId) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 function replaceUsersMessages(userId: number) {
@@ -235,13 +199,18 @@ function removeUserFromDms(userId: number) {
       dm.uIds.splice(index, 1);
     }
   }
+
+  for (const dm of data.dms) {
+    if (dm.creatorId === userId) {
+      dm.creatorId = -1;
+    }
+  }
 }
 
 export {
   checkPermissionId,
   findPermissionId,
   isOnlyGlobalOwner,
-  checkRemovedUsers,
   replaceUsersMessages,
   replaceUserDms,
   removeUserChannelMembers,

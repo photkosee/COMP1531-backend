@@ -1,7 +1,6 @@
 import { getData } from './dataStore';
 import { checkToken, checkAuthUserIdProfile, checkTokenProfile } from './channelHelperFunctions';
 import { emailValidator } from './authHelperFunctions';
-import { checkRemovedUsers } from './adminHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -139,8 +138,10 @@ async function userProfileSetemailV1(token: string, authUserId: number, email: s
   const data: any = getData();
 
   for (const user of data.users) {
-    if (user.email === email && user.authUserId !== authUserId) {
-      throw HTTPError(BADREQUEST, 'Email is used by another user');
+    if (user.isActive === true) {
+      if (user.email === email && user.authUserId !== authUserId) {
+        throw HTTPError(BADREQUEST, 'Email is used by another user');
+      }
     }
   }
 
@@ -191,8 +192,10 @@ async function userProfileSethandleV1(token: string, authUserId: number, handleS
   const data: any = getData();
 
   for (const user of data.users) {
-    if (user.handleStr === handleStr && user.authUserId !== authUserId) {
-      throw HTTPError(BADREQUEST, 'handleStr is used by another user');
+    if (user.isActive === true) {
+      if (user.handleStr === handleStr && user.authUserId !== authUserId) {
+        throw HTTPError(BADREQUEST, 'handleStr is used by another user');
+      }
     }
   }
 
