@@ -67,7 +67,7 @@ describe('Test Cases for HTTP Route: standup/start/v1', () => {
     const successRes = request('POST', `${url}:${port}/standup/start/v1`, {
       body: JSON.stringify({
         channelId: channelId1,
-        length: 3,
+        length: 5,
       }),
       headers: {
         'Content-type': 'application/json',
@@ -350,7 +350,7 @@ describe('After standup gets over', () => {
     expect(successRes.statusCode).toBe(OK);
     expect(timeFinish).toBeLessThanOrEqual(Math.floor((new Date()).getTime() / 1000) + 10);
 
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 3000));
 
     const channelRes1 = request('GET', `${url}:${port}/channel/messages/v3`,
       {
