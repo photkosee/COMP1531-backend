@@ -67,7 +67,7 @@ describe('Test Cases for HTTP Route: standup/start/v1', () => {
     const successRes = request('POST', `${url}:${port}/standup/start/v1`, {
       body: JSON.stringify({
         channelId: channelId1,
-        length: 5,
+        length: 2.5,
       }),
       headers: {
         'Content-type': 'application/json',
@@ -318,5 +318,25 @@ describe('Test Cases for HTTP Route: standup/send/v1', () => {
       }
     });
     expect(successRes.statusCode).toBe(FORBIDDEN);
+  });
+});
+
+describe('After standup gets over', () => {
+  test('Test message added to channel after standup gets over', async () => {
+    await new Promise((r) => setTimeout(r, 500));
+    const channelRes = request('GET', `${url}:${port}/channel/messages/v3`,
+      {
+        qs: {
+          channelId: channelId1,
+          start: 0,
+        },
+        headers: {
+          'Content-type': 'application/json',
+          token: registrationData[0].token
+        }
+      }
+    );
+    const messageArrLength = JSON.parse(channelRes.body as string).messages.length;
+    expect(messageArrLength).toBeGreaterThan(0);
   });
 });
