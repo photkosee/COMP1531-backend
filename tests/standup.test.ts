@@ -222,3 +222,101 @@ describe('Test Cases for HTTP Route: standup/active/v1', () => {
     expect(successRes.statusCode).toBe(FORBIDDEN);
   });
 });
+
+describe('Test Cases for HTTP Route: standup/send/v1', () => {
+  test('Test for successful standup send', () => {
+    let successRes = request('POST', `${url}:${port}/standup/send/v1`, {
+      body: JSON.stringify({
+        channelId: channelId1,
+        message: 'Message1',
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token,
+      }
+    });
+    expect(successRes.statusCode).toBe(OK);
+
+    successRes = request('POST', `${url}:${port}/standup/send/v1`, {
+      body: JSON.stringify({
+        channelId: channelId1,
+        message: 'Message2',
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token,
+      }
+    });
+    expect(successRes.statusCode).toBe(OK);
+  });
+
+  test('Test for an active standup is not currently running in the channel', () => {
+    const successRes = request('POST', `${url}:${port}/standup/send/v1`, {
+      body: JSON.stringify({
+        channelId: channelId2,
+        message: 'Message',
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[1].token,
+      }
+    });
+    expect(successRes.statusCode).toBe(BADREQUEST);
+  });
+
+  test('Test for channelId does not refer to a valid channel', () => {
+    const successRes = request('POST', `${url}:${port}/standup/send/v1`, {
+      body: JSON.stringify({
+        channelId: -1,
+        message: 'message',
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token,
+      }
+    });
+    expect(successRes.statusCode).toBe(BADREQUEST);
+  });
+
+  test('Test for length of message is over 1000 characters', () => {
+    const successRes = request('POST', `${url}:${port}/standup/send/v1`, {
+      body: JSON.stringify({
+        channelId: channelId1,
+        message: 'qBVoCtdRDWTYhAizpILpSzLVyCxZoiPrIcGIYpTpJulKMONugEcfGfmdmXsCPiRpQyLJKrjNdtpqTKrAlClkYJtPbbFRPXrDaehZiEthtOpMXkkGXJkPQEkwbUwWCgFsDwMLNxeQjEGSxrVjsQqTWjXgDBlNuZstDiHnBCBqXLqdStdbHWiFNAXLFTnquUlXMzHVutgzJBeXFEmgcLFlIgpbAHNtOcOuSHiRtwygkXjSPnSvKguVBobqbxgmBtFOAhxSPoqjxGxTsBgcjWrnEfNeeQfllnkzTRXYdzVVSorTRPuqxUxsqRyXLovPfjTJrQNJEDAFdMCJIPrxmcieBBCKgwpRXePFIxSYRxazlmUqmGWvjbUafgzkjmqTcvJWkvlhyvuRQprXiisAmbUAYxVhgPThqBVoCtdRDWTYhAizpILpSzLVyCxZoiPrIcGIYpTpJulKMONugEcfGfmdmXsCPiRpQyLJKrjNdtpqTKrAlClkYJtPbbFRPXrDaehZiEthtOpMXkkGXJkPQEkwbUwWCgFsDwMLNxeQjEGSxrVjsQqTWjXgDBlNuZstDiHnBCBqXLqdStdbHWiFNAXLFTnquUlXMzHVutgzJBeXFEmgcLFlIgpbAHNtOcOuSHiRtwygkXjSPnSvKguVBobqbxgmBtFOAhxSPoqjxGxTsBgcjWrnEfNeeQfllnkzTRXYdzVVSorTRPuqxUxsqRyXLovPfjTJrQNJEDAFdMCJIPrxmcieBBCKgwpRXePFIxSYRxazlmUqmGWvjbUafgzkjmqTcvJWkvlhyvuRQprXiisAmbUAYxVhgPThqBVoCtdRDWTYhAizpILpSzLVyCxZoiPrIcGIYpTpJulKMONugEcfGfmdmXsCPiRpQyLJKrjNdtpqTKrAlClkYJtPbbFRPXrDaehZiEthtOpMXkkGXJkPQEkwbUwWCgFsDwMLNxeQjEGSxrVjsQqTWjXgDBlNuZstDiHnBCBqXLqdStdbH',
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token,
+      }
+    });
+    expect(successRes.statusCode).toBe(BADREQUEST);
+  });
+
+  test('Test for authorised user is not a member of the channel', () => {
+    const successRes = request('POST', `${url}:${port}/standup/send/v1`, {
+      body: JSON.stringify({
+        channelId: channelId1,
+        message: 'Message',
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[1].token,
+      }
+    });
+    expect(successRes.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Test for invalid token', () => {
+    const successRes = request('POST', `${url}:${port}/standup/send/v1`, {
+      body: JSON.stringify({
+        channelId: channelId1,
+        message: 'Message2',
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRsMVZucmdFaWtJWW9WaTFuMm5IUnh1c0h5RTR2eG91MUpYYVdZQUhxQVpES2ROQkxUOG5CQyIsImlhdCI6MTY1ODU3MTgyMn0.gIEJWGL8CsuXkAodgWWF7jSVleFfR9f60HW-tfao3no'
+      }
+    });
+    expect(successRes.statusCode).toBe(FORBIDDEN);
+  });
+});
