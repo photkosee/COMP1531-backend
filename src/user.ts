@@ -1,5 +1,5 @@
 import { getData } from './dataStore';
-import { checkAuthUserId, checkToken } from './channelHelperFunctions';
+import { checkToken, checkAuthUserIdProfile, checkTokenProfile } from './channelHelperFunctions';
 import { emailValidator } from './authHelperFunctions';
 import HTTPError from 'http-errors';
 
@@ -24,13 +24,13 @@ async function userProfileV1(token: string, authUserId: number, uId: number) {
     Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
 */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(await checkTokenProfile(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const data: any = getData();
 
-  if (!(checkAuthUserId(uId))) {
+  if (!(checkAuthUserIdProfile(uId))) {
     throw HTTPError(BADREQUEST, 'User Id is invalid');
   }
 
@@ -138,8 +138,10 @@ async function userProfileSetemailV1(token: string, authUserId: number, email: s
   const data: any = getData();
 
   for (const user of data.users) {
-    if (user.email === email && user.authUserId !== authUserId) {
-      throw HTTPError(BADREQUEST, 'Email is used by another user');
+    if (user.isActive === true) {
+      if (user.email === email && user.authUserId !== authUserId) {
+        throw HTTPError(BADREQUEST, 'Email is used by another user');
+      }
     }
   }
 
@@ -193,8 +195,10 @@ async function userProfileSethandleV1(token: string, authUserId: number, handleS
   const data: any = getData();
 
   for (const user of data.users) {
-    if (user.handleStr === handleStr && user.authUserId !== authUserId) {
-      throw HTTPError(BADREQUEST, 'handleStr is used by another user');
+    if (user.isActive === true) {
+      if (user.handleStr === handleStr && user.authUserId !== authUserId) {
+        throw HTTPError(BADREQUEST, 'handleStr is used by another user');
+      }
     }
   }
 

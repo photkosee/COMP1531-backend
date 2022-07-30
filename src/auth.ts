@@ -93,7 +93,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
     }
 
     for (const user of data.users) {
-      if (user.email === email) {
+      if (user.email === email && user.isActive === true) {
         throw HTTPError(BADREQUEST, 'Email already in use');
       }
     }
