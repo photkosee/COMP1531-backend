@@ -230,7 +230,6 @@ function standupOver(channelId: number, authUserId: number) {
   }
 
   setData(data);
-  console.log(`Standup over for channel Id: ${channelId}`);
 }
 
 export {

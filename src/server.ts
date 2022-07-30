@@ -75,7 +75,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
     fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
       if (error) {
-        console.log(error);
+        // console.log(error);
       } else {
         // console.log('Succesfully written to database.json');
       }
@@ -112,11 +112,7 @@ app.get('/echo', (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.delete('/clear/v1', (req: Request, res: Response, next: NextFunction) => {
-  try {
-    return res.json(clearV1());
-  } catch (err) {
-    next(err);
-  }
+  return res.json(clearV1());
 });
 
 app.post('/auth/register/v3', async (req: Request, res: Response, next: NextFunction) => {
@@ -601,17 +597,17 @@ const server = app.listen(PORT, HOST, () => {
   // Loads data from database.json to dataStore on server initialization
   fs.readFile(databasePath, 'utf-8', (error, jsonData) => {
     if (error) {
-      console.log(`Error Initialising Datastore -> ${error.message}`);
-      console.log('Creating new Database file');
+      // console.log(`Error Initialising Datastore -> ${error.message}`);
+      // console.log('Creating new Database file');
 
       const newData: any = getData();
 
       fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
         if (error) {
-          console.log(error);
+          // console.log(error);
           return error;
         } else {
-          console.log('Succesfully created database.json file');
+          // console.log('Succesfully created database.json file');
         }
       });
 
@@ -621,10 +617,10 @@ const server = app.listen(PORT, HOST, () => {
     try {
       const database = JSON.parse(jsonData);
       setData(database);
-      console.log('DataStore Initialized Successfully');
+      // console.log('DataStore Initialized Successfully');
       return {};
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return error;
     }
   });

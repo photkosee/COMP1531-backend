@@ -322,9 +322,37 @@ describe('Test Cases for HTTP Route: standup/send/v1', () => {
 });
 
 describe('After standup gets over', () => {
+  test('Test for invalid token (no token passed)', () => {
+    const successRes = request('POST', `${url}:${port}/standup/send/v1`, {
+      body: JSON.stringify({
+        channelId: channelId2,
+        message: 'Message2',
+      }),
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    expect(successRes.statusCode).toBe(FORBIDDEN);
+  });
+
   test('Test message added to channel after standup gets over', async () => {
-    await new Promise((r) => setTimeout(r, 500));
-    const channelRes = request('GET', `${url}:${port}/channel/messages/v3`,
+    const successRes = request('POST', `${url}:${port}/standup/start/v1`, {
+      body: JSON.stringify({
+        channelId: channelId2,
+        length: 0.5,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[1].token,
+      }
+    });
+    const timeFinish = JSON.parse(successRes.body as string).timeFinish;
+    expect(successRes.statusCode).toBe(OK);
+    expect(timeFinish).toBeLessThanOrEqual(Math.floor((new Date()).getTime() / 1000) + 10);
+
+    await new Promise((r) => setTimeout(r, 600));
+
+    const channelRes1 = request('GET', `${url}:${port}/channel/messages/v3`,
       {
         qs: {
           channelId: channelId1,
@@ -336,7 +364,22 @@ describe('After standup gets over', () => {
         }
       }
     );
-    const messageArrLength = JSON.parse(channelRes.body as string).messages.length;
-    expect(messageArrLength).toBeGreaterThan(0);
+    const messageArrLength1 = JSON.parse(channelRes1.body as string).messages.length;
+    expect(messageArrLength1).toBeGreaterThan(0);
+
+    const channelRes2 = request('GET', `${url}:${port}/channel/messages/v3`,
+      {
+        qs: {
+          channelId: channelId2,
+          start: 0,
+        },
+        headers: {
+          'Content-type': 'application/json',
+          token: registrationData[1].token
+        }
+      }
+    );
+    const messageArrLength2 = JSON.parse(channelRes2.body as string).messages.length;
+    expect(messageArrLength2).toBe(0);
   });
 });
