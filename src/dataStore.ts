@@ -89,6 +89,27 @@ let data: object = {
     //   resetCode: 'string',
     // }
   ],
+  workplaceStats: {
+    // channelsExist: [
+    //  {
+    //    numChannelsExist: 'number',
+    //    timeStamp: 'number
+    //  }
+    // ],
+    // dmsExist: [
+    //  {
+    //    numDmsExist: 'number',
+    //    timeStamp: 'number'
+    //  }
+    // ],
+    // messagesExist: [
+    //  {
+    //    numMessagesExist: 'number',
+    //    timeStamp: 'number'
+    //  }
+    // ],
+    // utilizationRate: 'number'
+  },
   messageId: 1,
   dmId: 1
 };

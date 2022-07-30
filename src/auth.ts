@@ -12,7 +12,8 @@ import {
   sendEmail
 } from './authHelperFunctions';
 import {
-  createUserStats
+  createUserStats,
+  createWorkplaceStats
 } from './userHelperFunctions';
 
 const HOST: string = process.env.IP || 'localhost';
@@ -63,6 +64,10 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
   */
 
   const data: any = getData();
+
+  if (data.users.length === 0) {
+    createWorkplaceStats();
+  }
 
   const checkParamType: boolean = paramTypeChecker(email, password, nameFirst, nameLast);
 
