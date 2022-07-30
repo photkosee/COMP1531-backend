@@ -53,10 +53,8 @@ import {
   channelAddownerV1,
   channelLeaveV1
 } from './channel';
-import {
-  adminUserpermissionChange, adminUserRemove
-} from './admin';
-import console from 'console';
+import { adminUserpermissionChange, adminUserRemove } from './admin';
+import { standupStart } from './standup';
 
 // Set up web app, use JSON
 const app = express();
@@ -548,6 +546,18 @@ app.post('/admin/userpermission/change/v1', validateJwtToken, async(req: Request
     const authUserId = res.locals.token.id;
     const { uId, permissionId } = req.body;
     const returnData = await adminUserpermissionChange(token, authUserId, uId, permissionId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/standup/start/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId, length } = req.body;
+    const returnData = await standupStart(token, authUserId, channelId, length);
     return res.json(returnData);
   } catch (err) {
     next(err);

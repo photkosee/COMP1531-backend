@@ -36,6 +36,11 @@ let data: object = {
     //       isPinned: 'boolean',
     //     }
     //   ],
+    //   standup: {
+    //     isActive: 'boolean',
+    //     timeFinish: 'integer',
+    //     messagesQueue: 'string'
+    //   },
     // }
   ],
   dms: [
