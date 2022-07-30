@@ -42,7 +42,8 @@ import {
   userProfileV1,
   userProfileSetnameV1,
   userProfileSetemailV1,
-  userProfileSethandleV1
+  userProfileSethandleV1,
+  userStatsV1
 } from './user';
 import {
   channelJoinV1,
@@ -548,6 +549,17 @@ app.post('/admin/userpermission/change/v1', validateJwtToken, async(req: Request
     const authUserId = res.locals.token.id;
     const { uId, permissionId } = req.body;
     const returnData = await adminUserpermissionChange(token, authUserId, uId, permissionId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/user/stats/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const returnData = await userStatsV1(token, authUserId);
     return res.json(returnData);
   } catch (err) {
     next(err);

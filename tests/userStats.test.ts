@@ -1,8 +1,7 @@
 import request from 'sync-request';
-import config from '../src/config';
+import config from '../src/config.json';
 
 const OK = 200;
-const BADREQUEST = 400;
 const FORBIDDEN = 403;
 
 const port = config.port;
@@ -16,10 +15,11 @@ const registeredUser: any = [
   { email: 'user@gmail.com', password: 'password', nameFirst: 'User', nameLast: 'Last' }
 ];
 
-const userData: any = [];
+let userData: any = [];
 
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
+  userData = [];
   for (const user of registeredUser) {
     const res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
@@ -29,6 +29,7 @@ beforeEach(() => {
         nameLast: user.nameLast,
       }
     });
+    expect(res.statusCode).toEqual(OK);
     const data: any = JSON.parse(res.getBody() as string);
     userData.push({ authUserId: data.authUserId, token: data.token });
   }
@@ -61,14 +62,15 @@ describe('Successful', () => {
           }],
           messagesSent: [{
             numMessagesSent: 0,
-            timeStap: expect.any(Number)
-          }]
+            timeStamp: expect.any(Number)
+          }],
+          involvementRate: 0
         }
       }
     );
   });
 
-  test('Successful: Testinfg channels', () => {
+  test('Successful: Testing channels', () => {
     let res = request('POST', `${url}:${port}/channels/create/v3`, {
       json: {
         name: 'channel1',
@@ -102,6 +104,7 @@ describe('Successful', () => {
         token: userData[USER].token,
       }
     });
+    expect(res.statusCode).toEqual(OK);
 
     res = request('POST', `${url}:${port}/message/send/v2`, {
       body: JSON.stringify({
@@ -160,13 +163,14 @@ describe('Successful', () => {
           messagesSent: [
             {
               numMessagesSent: 0,
-              timeStap: expect.any(Number)
+              timeStamp: expect.any(Number)
             },
             {
               numMessagesSent: 1,
-              timeStap: expect.any(Number)
+              timeStamp: expect.any(Number)
             }
-          ]
+          ],
+          involvementRate: expect.any(Number)
         }
       }
     );
@@ -182,6 +186,7 @@ describe('Successful', () => {
         token: userData[USER].token
       }
     });
+    expect(res.statusCode).toEqual(OK);
     const dmCreate: any = JSON.parse(res.getBody() as string);
     const dmId: number = dmCreate.dmId;
 
@@ -195,6 +200,7 @@ describe('Successful', () => {
         token: userData[USER].token
       }
     });
+    expect(res.statusCode).toEqual(OK);
 
     res = request('POST', `${url}:${port}/dm/leave/v2`, {
       body: JSON.stringify({
@@ -202,9 +208,10 @@ describe('Successful', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: userData[USER]
+        token: userData[USER].token
       }
     });
+    expect(res.statusCode).toEqual(OK);
 
     res = request('GET', `${url}:${port}/user/stats/v1`, {
       headers: {
@@ -217,7 +224,12 @@ describe('Successful', () => {
     expect(data).toEqual(
       {
         userStats: {
-          channelsJoined: [],
+          channelsJoined: [
+            {
+              numChannelsJoined: 0,
+              timeStamp: expect.any(Number)
+            }
+          ],
           dmsJoined: [
             {
               numDmsJoined: 0,
@@ -235,15 +247,28 @@ describe('Successful', () => {
           messagesSent: [
             {
               numMessagesSent: 0,
-              timeStap: expect.any(Number)
+              timeStamp: expect.any(Number)
             },
             {
               numMessagesSent: 1,
-              timeStap: expect.any(Number)
+              timeStamp: expect.any(Number)
             }
-          ]
+          ],
+          involvementRate: expect.any(Number)
         }
       }
     );
+  });
+});
+
+describe('Errors', () => {
+  test('Error: Invalid token', () => {
+    const res = request('GET', `${url}:${port}/user/stats/v1`, {
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCQ1Y0QzVjJLN01PU1RHTU1WWVFtbHBlc1UvZWwuTjB3SDZ0d3laY0VhZThjekUvcktkV2F0RyIsImlhdCI6MTY1ODU3NzcyNn0.7AWJbHt9-LMfsQiXHpY0exa9gL0yqsvQoPzIYNQAeUY'
+      }
+    });
+    expect(res.statusCode).toEqual(FORBIDDEN);
   });
 });

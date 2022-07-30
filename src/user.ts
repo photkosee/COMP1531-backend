@@ -2,9 +2,17 @@ import { getData } from './dataStore';
 import { checkToken, checkAuthUserIdProfile, checkTokenProfile } from './channelHelperFunctions';
 import { emailValidator } from './authHelperFunctions';
 import HTTPError from 'http-errors';
+import { involvementRateCalculator } from './userHelperFunctions';
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
+
+interface USER_STATS {
+    channelsJoined: [],
+    dmsJoined: [],
+    messagesSent: [],
+    involvementRate: number
+}
 
 async function userProfileV1(token: string, authUserId: number, uId: number) {
 /*
@@ -231,9 +239,22 @@ async function userStatsV1(token: string, authUserId: number) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
-  
+  const data:any = getData();
+  let userStats: USER_STATS =
+    {
+      channelsJoined: [],
+      dmsJoined: [],
+      messagesSent: [],
+      involvementRate: 0
+    };
 
-
+  for (const user of data.users) {
+    if (user.authUserId === authUserId) {
+      user.userStats.involvementRate = involvementRateCalculator(authUserId);
+      userStats = user.userStats;
+    }
+  }
+  return { userStats: userStats };
 }
 
 export {

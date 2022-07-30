@@ -90,19 +90,27 @@ function involvementRateCalculator(userId: number) {
 
   for (const user of data.users) {
     if (user.authUserId === userId) {
-      numChannelsJoined = user.userStats.channelsJoined[0].numChannelsJoined;
-      numDmsJoined = user.userStats.dmsJoined[0].numDmsJoined;
-      numMsgsSent = user.userStats.messagesSent[0].numMessagesSent;
+      const numChannelsJoinedLength: number = user.userStats.channelsJoined.length - 1;
+      const numDmsJoinedLength: number = user.userStats.dmsJoined.length - 1;
+      const numMessagesJoinedLength: number = user.userStats.messagesSent.length - 1;
+      numChannelsJoined = user.userStats.channelsJoined[numChannelsJoinedLength].numChannelsJoined;
+      numDmsJoined = user.userStats.dmsJoined[numDmsJoinedLength].numDmsJoined;
+      numMsgsSent = user.userStats.messagesSent[numMessagesJoinedLength].numMessagesSent;
     }
   }
 
-  const numChannels: number = data.workplaceStats.channelsExist[0].numChannelsExist;
-  const numDms: number = data.workplaceStats.dmsExist[0].numDmsExist;
-  const numMsgs: number = data.workplaceStats.messagesExist[0].numMessagesExist;
+  const numChannelsLength: number = data.workplaceStats.channelsExist.length - 1;
+  const numDmsLength: number = data.workplaceStats.dmsExist.length - 1;
+  const numMsgsLength: number = data.workplaceStats.messagesExist.length - 1;
+
+  const numChannels: number = data.workplaceStats.channelsExist[numChannelsLength].numChannelsExist;
+  const numDms: number = data.workplaceStats.dmsExist[numDmsLength].numDmsExist;
+  const numMsgs: number = data.workplaceStats.messagesExist[numMsgsLength].numMessagesExist;
+
   const denominator: number = numChannels + numDms + numMsgs;
 
   if (denominator === 0) {
-    return 1;
+    return 0;
   }
 
   const involvementRate: number =
@@ -127,12 +135,24 @@ function utilizationRateCalculator() {
 
   let numUsers = 0;
   let numUsersJoined = 0;
+
+  // Calculate how many users have joined a channel or dm
   for (const user of data.users) {
     if (user.isActive === true) {
-      numUsers++;
-      if ((user.userStats.channelsJoined.pop().numChannelsJoined !== 0) ||
-           user.userStats.dmsJoined.pop().numDmsJoined !== 0) {
-        numUsersJoined++;
+      numUsers = numUsers + 1;
+
+      let isJoined = false;
+      const channelsLength: number = user.userStats.channelsJoined.length - 1;
+      const dmsLength: number = user.userStats.channelsJoined.length - 1;
+
+      if (user.userStats.channelsJoined[channelsLength].numChannelsJoined !== 0) {
+        isJoined = true;
+      }
+      if (user.userStats.dmsJoined[dmsLength].numDmsJoined !== 0) {
+        isJoined = true;
+      }
+      if (isJoined === true) {
+        numUsersJoined = numUsersJoined + 1;
       }
     }
   }
@@ -157,9 +177,10 @@ function incrementChannelsJoined(authUserId: number) {
 
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
-      currNumChannelsJoined = user.userStats.channelsJoined.pop().numChannelsJoined;
+      const length = user.userStats.channelsJoined.length - 1;
+      currNumChannelsJoined = user.userStats.channelsJoined[length].numChannelsJoined;
       user.userStats.channelsJoined.push({
-        numChannelsJoined: currNumChannelsJoined++,
+        numChannelsJoined: currNumChannelsJoined + 1,
         timeStamp: timeStamp
       });
     }
@@ -177,11 +198,12 @@ function incrementChannelsExist() {
   const data: any = getData();
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
 
-  let currNumChannelsExist: number =
-    data.workplaceStats.channelsExist.pop().numChannelsExist;
+  const length: number = data.workplaceStats.channelsExist.length - 1;
+  const currNumChannelsExist: number =
+    data.workplaceStats.channelsExist[length].numChannelsExist;
 
   data.workplaceStats.channelsExist.push({
-    numChannelsExist: currNumChannelsExist++,
+    numChannelsExist: currNumChannelsExist + 1,
     timeStamp: timeStamp
   });
 }
@@ -201,9 +223,10 @@ function decreaseChannelsJoined(authUserId: number) {
 
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
-      currNumChannelsJoined = user.userStats.channelsJoined.pop().numChannelsJoined;
+      const length: number = user.userStats.channelsJoined.length - 1;
+      currNumChannelsJoined = user.userStats.channelsJoined[length].numChannelsJoined;
       user.userStats.channelsJoined.push({
-        numChannelsJoined: currNumChannelsJoined--,
+        numChannelsJoined: currNumChannelsJoined - 1,
         timeStamp: timeStamp
       });
     }
@@ -223,9 +246,10 @@ function incrementDmsJoined(authUserId: number) {
 
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
-      let currNumDmsJoined: number = user.userStats.dmsJoined.pop().numDmsJoined;
+      const length: number = user.userStats.dmsJoined.length - 1;
+      const currNumDmsJoined: number = user.userStats.dmsJoined[length].numDmsJoined;
       user.userStats.dmsJoined.push({
-        numDmsJoined: currNumDmsJoined++,
+        numDmsJoined: currNumDmsJoined + 1,
         timeStamp: timeStamp
       });
     }
@@ -245,9 +269,10 @@ function decreaseDmsJoined(authUserId: number) {
 
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
-      let currNumDmsJoined: number = user.userStats.dmsJoined.pop().numDmsJoined;
+      const length: number = user.userStats.dmsJoined.length - 1;
+      const currNumDmsJoined: number = user.userStats.dmsJoined[length].numDmsJoined;
       user.userStats.dmsJoined.push({
-        numDmsJoined: currNumDmsJoined--,
+        numDmsJoined: currNumDmsJoined - 1,
         timeStamp: timeStamp
       });
     }
@@ -261,12 +286,14 @@ function incrementDmsExist() {
 */
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
+  const length: number =
+  data.workplaceStats.dmsExist.length - 1;
 
-  let currNumDmsExist: number =
-    data.workplaceStats.dmsExist.pop().numDmsExist;
+  const currNumDmsExist: number =
+    data.workplaceStats.dmsExist[length].numDmsExist;
 
   data.workplaceStats.dmsExist.push({
-    numDmsExist: currNumDmsExist++,
+    numDmsExist: currNumDmsExist + 1,
     timeStamp: timeStamp
   });
 }
@@ -278,12 +305,14 @@ function decreaseDmsExist() {
 */
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
+  const length: number =
+  data.workplaceStats.dmsExist.length - 1;
 
-  let currNumDmsExist: number =
-    data.workplaceStats.dmsExist.pop().numDmsExist;
+  const currNumDmsExist: number =
+    data.workplaceStats.dmsExist[length].numDmsExist;
 
   data.workplaceStats.dmsExist.push({
-    numDmsExist: currNumDmsExist--,
+    numDmsExist: currNumDmsExist - 1,
     timeStamp: timeStamp
   });
 }
@@ -301,9 +330,11 @@ function incrementMessagesSent(authUserId: number) {
 
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
-      let currMessagesSent: number = user.userStats.messagesSent.pop().numMessagesSent;
+      const length: number = user.userStats.messagesSent.length - 1;
+
+      const currMessagesSent: number = user.userStats.messagesSent[length].numMessagesSent;
       user.userStats.messagesSent.push({
-        numMessagesSent: currMessagesSent++,
+        numMessagesSent: currMessagesSent + 1,
         timeStamp: timeStamp
       });
     }
@@ -317,12 +348,14 @@ function incrementMessagesExist() {
 */
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
+  const length: number =
+  data.workplaceStats.messagesExist.length - 1;
 
-  let currNumMessagesExist: number =
-    data.workplaceStats.messagesExist.pop().numMessagesExist;
+  const currNumMessagesExist: number =
+    data.workplaceStats.messagesExist[length].numMessagesExist;
 
   data.workplaceStats.messagesExist.push({
-    numMessagesExist: currNumMessagesExist++,
+    numMessagesExist: currNumMessagesExist + 1,
     timeStamp: timeStamp
   });
 }
@@ -334,12 +367,14 @@ function decreaseMessagesExist() {
 */
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
+  const length: number =
+  data.workplaceStats.messagesExist.length - 1;
 
-  let currNumMessagesExist: number =
-    data.workplaceStats.messagesExist.pop().numMessagesExist;
+  const currNumMessagesExist: number =
+    data.workplaceStats.messagesExist[length].numMessagesExist;
 
   data.workplaceStats.messagesExist.push({
-    numMessagesExist: currNumMessagesExist--,
+    numMessagesExist: currNumMessagesExist - 1,
     timeStamp: timeStamp
   });
 }

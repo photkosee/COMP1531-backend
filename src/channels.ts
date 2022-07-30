@@ -1,5 +1,6 @@
 import { getData, setData } from './dataStore';
 import { checkToken } from './channelHelperFunctions';
+import { incrementChannelsExist, incrementChannelsJoined } from './userHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -142,6 +143,9 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
         isPublic: isPublic,
         messages: [],
       };
+
+      incrementChannelsJoined(authUserId);
+      incrementChannelsExist();
 
       data.channels.push(newChannelDetails);
       setData(data);
