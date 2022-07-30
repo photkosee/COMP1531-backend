@@ -228,7 +228,6 @@ function standupOver(channelId: number, authUserId: number) {
       channel.standup.messagesQueue = [];
     }
   }
-
   setData(data);
 }
 
