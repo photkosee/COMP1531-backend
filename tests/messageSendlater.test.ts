@@ -206,7 +206,7 @@ test('Successful messageSendlater - message/sendlater', () => {
     json: {
       channelId: channel1.channelId,
       message: 'sdfgsdg',
-      timeSent: Math.floor(Date.now() / 1000) + 2000
+      timeSent: Math.floor(Date.now() / 1000) + 1
     },
     headers: {
       'Content-type': 'application/json',
@@ -214,4 +214,16 @@ test('Successful messageSendlater - message/sendlater', () => {
     }
   });
   expect(res.statusCode).toBe(OK);
+
+  res = request('GET', `${url}:${port}/channel/messages/v3`, {
+    qs: {
+      channelId: channel1.channelId,
+      start: 0
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
+    }
+  });
+  console.log(JSON.parse(res.body as string));
 });
