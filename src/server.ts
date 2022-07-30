@@ -55,6 +55,7 @@ import {
 } from './channel';
 import { adminUserpermissionChange, adminUserRemove } from './admin';
 import { standupIsActive, standupSend, standupStart } from './standup';
+import { uploadProfilePhoto } from './uploadProfilePhoto';
 
 // Set up web app, use JSON
 const app = express();
@@ -578,6 +579,18 @@ app.post('/standup/send/v1', validateJwtToken, async(req: Request, res: Response
     const authUserId = res.locals.token.id;
     const { channelId, message } = req.body;
     const returnData = await standupSend(token, authUserId, channelId, message);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/user/profile/uploadphoto/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { imgUrl, xStart, yStart, xEnd, yEnd } = req.body;
+    const returnData = await uploadProfilePhoto(token, authUserId, imgUrl, xStart, yStart, xEnd, yEnd);
     return res.json(returnData);
   } catch (err) {
     next(err);
