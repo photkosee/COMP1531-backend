@@ -13,6 +13,7 @@ import {
 } from './authHelperFunctions';
 
 const HOST: string = process.env.IP || 'localhost';
+const url = config.url;
 const PORT: number = parseInt(process.env.PORT || config.port);
 
 const BADREQUEST = 400;
@@ -100,7 +101,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
 
     const passwordHash = await hashPassword(password);
 
-    const defaultProfileImgUrl = `${(HOST === 'localhost') ? 'http://' : 'https://'}${HOST + ':' + PORT}/static/profile.png`;
+    const defaultProfileImgUrl = `${(HOST === 'localhost') ? `${url}:` : `https://${HOST}:`}${PORT}/static/profile.jpg`;
 
     const newUserDetails: newUserDetails = {
       authUserId: newAuthId,
