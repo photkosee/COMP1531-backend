@@ -7,7 +7,7 @@ import HTTPError from 'http-errors';
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 
-interface newReacts {
+interface newReacts { 
   reactId: number,
   uIds: number[],
   isThisUserReacted: boolean,
@@ -903,6 +903,108 @@ async function messageSendlaterV1(token: string, authUserId: number, channelId: 
   setTimeout(sendMessage, millisecTillSend);
 }
 
+async function messageSendlaterdmV1(token: string, authUserId: number, dmId: number, message: string, timeSent: number) {
+  /*
+    Description:
+      messageSendlaterV1 send a message from the authorised
+      user to the channel specified by channelId at a given time
+
+    Arguments:
+      token       string type   -- string supplied by request header
+      authUserId  number type   -- number supplied by request header
+      channelId   number type   -- number supplied by user
+      message     string type   -- string supplied by user
+      timeSent    number type   -- number supplied by user
+
+    Exceptions:
+      BADREQUEST - Occurs when channelId is invalid.
+      BADREQUEST - Occurs when length of message is not valid.
+      BADREQUEST - Occurs when timeSent is before current time
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
+      FORBIDDEN  - Occurs when the authorised user is not a member of the channel
+
+    Return Value:
+      object: { messageId: messageId }
+  */
+  
+  const data: any = getData();
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+  if (!dmIdValidator(dmId)) {
+    throw HTTPError(BADREQUEST, 'Invalid dmId');
+  }
+  if (!checkDmMember(dmId, authUserId)) {
+    throw HTTPError(FORBIDDEN, 'User not member of dm');
+  }
+  if (message.length > 1000 || message.length < 1) {
+    throw HTTPError(BADREQUEST, 'Invalid message length');
+  }
+  if (timeSent < Math.floor(Date.now() / 1000)) {
+    throw HTTPError(BADREQUEST, 'Time sent is before current time');
+  }
+
+  const now = Math.floor(Date.now() / 1000);
+  const millisecTillSend = 1000 * (timeSent - now);
+
+  let newMessage = { messageId: 1};
+  function sendMessage() {
+    for (const dm of data.dms) {
+      if (dmId === dm.dmId && dm.creatorId === authUserId) {
+        const messageId: number = data.messageId;
+        data.mesageId += 1;
+        const newMessagesDetails: newMessagesDetails = {
+          messageId: messageId,
+          uId: authUserId,
+          message: message,
+          timeSent: timeSent,
+          reacts: [],
+          isPinned: false,
+        };
+        const newReactsDetails: newReacts = {
+          reactId: 1,
+          uIds: [],
+          isThisUserReacted: false,
+        };
+        newMessagesDetails.reacts.push(newReactsDetails);
+  
+        dm.messages.unshift(newMessagesDetails);
+        setData(data);
+  
+        newMessage = { messageId: messageId };
+      }
+      for (const member of dm.uIds) {
+        if (dmId === dm.dmId && member === authUserId) {
+          const messageId: number = data.messageId;
+          data.messageId += 1;
+          const newMessagesDetails: newMessagesDetails = {
+            messageId: messageId,
+            uId: authUserId,
+            message: message,
+            timeSent: timeSent,
+            reacts: [],
+            isPinned: false,
+          };
+  
+          const newReactsDetails: newReacts = {
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          };
+          newMessagesDetails.reacts.push(newReactsDetails);
+  
+          dm.messages.unshift(newMessagesDetails);
+          setData(data);
+  
+          newMessage = { messageId: messageId };
+        }
+      }
+    }
+  }
+  setTimeout(sendMessage, millisecTillSend);
+  return newMessage;
+}
+
 export {
   messageSendV1,
   messageEditV1,
@@ -913,5 +1015,6 @@ export {
   messagePinV1,
   messageUnpinV1,
   messageShareV1,
-  messageSendlaterV1
+  messageSendlaterV1,
+  messageSendlaterdmV1
 };
