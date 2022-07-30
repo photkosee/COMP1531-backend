@@ -34,7 +34,6 @@ async function uploadProfilePhoto(token: string, authUserId: number, imgUrl: str
       BADREQUEST - Occurs when imgUrl returned an HTTP status code other than 200.
       BADREQUEST - Occurs when any of xStart, yStart, xEnd, yEnd are not within the dimensions of the image at the URL.
       BADREQUEST - Occurs when image uploaded is not a JPG.
-      500        - Occurs when there is an internal server error while processing.
 
     Return Value:
       object: {}

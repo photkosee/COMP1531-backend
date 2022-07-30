@@ -66,6 +66,7 @@ describe('Test Cases for HTTP Route: user/profile/uploadphoto/v1', () => {
     );
     const profileImgUrl = JSON.parse(profileData.getBody() as string).user.profileImgUrl;
     expect(profileImgUrl).toEqual(expect.not.stringMatching(`http://127.0.0.1:${port}/static/profile.jpg`));
+    expect(profileImgUrl).toStrictEqual(expect.any(String));
   });
 
   test('Test for imgUrl returns an HTTP status other than 200', () => {
