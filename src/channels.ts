@@ -15,7 +15,7 @@ interface newChannelDetails {
   standup: {
     isActive: boolean,
     timeFinish: number | null,
-    messagesQueue: string,
+    messagesQueue: object[],
   },
 }
 
@@ -149,7 +149,7 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
         standup: {
           isActive: false,
           timeFinish: null,
-          messagesQueue: ''
+          messagesQueue: []
         },
       };
 
