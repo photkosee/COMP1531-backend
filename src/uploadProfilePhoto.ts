@@ -88,31 +88,31 @@ async function uploadProfilePhoto(token: string, authUserId: number, imgUrl: str
   await sharp(path.join(__dirname, `static/${tempFileName}.jpg`))
     .extract({ left: xStart, top: yStart, width: xEnd, height: yEnd })
     .toFile(outputImage)
-    .catch(async function(err: any) {
-      await fsPromises.unlink(path.join(__dirname, `static/${tempFileName}.jpg`));
-      throw HTTPError(500, 'Error occurred while cropping image');
-    })
+    // .catch(async function(err: any) {
+    //   await fsPromises.unlink(path.join(__dirname, `static/${tempFileName}.jpg`));
+    //   throw HTTPError(500, 'Error occurred while cropping image');
+    // })
     .then(async function(newFileInfo: any) {
       await fsPromises.unlink(path.join(__dirname, `static/${tempFileName}.jpg`));
     });
 
   const newProfileImgUrl = `${(HOST === 'localhost') ? 'http://' : 'https://'}${HOST + ':' + PORT}/static/${newFileName}.jpg`;
-  let prevProfileImgUrl: string;
+  // let prevProfileImgUrl: string;
 
   const data: any = getData();
 
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
-      prevProfileImgUrl = user.profileImgUrl;
+      // prevProfileImgUrl = user.profileImgUrl;
       user.profileImgUrl = newProfileImgUrl;
     }
   }
 
   setData(data);
 
-  if (prevProfileImgUrl.split('/static/')[1] !== 'profile.jpg') {
-    await fsPromises.unlink(path.join(__dirname, `static/${prevProfileImgUrl.split('/static/')[1]}`));
-  }
+  // if (prevProfileImgUrl.split('/static/')[1] !== 'profile.jpg') {
+  //   await fsPromises.unlink(path.join(__dirname, `static/${prevProfileImgUrl.split('/static/')[1]}`));
+  // }
 
   return {};
 }
