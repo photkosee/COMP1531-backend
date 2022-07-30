@@ -39,7 +39,12 @@ let data: object = {
     //   standup: {
     //     isActive: 'boolean',
     //     timeFinish: 'integer',
-    //     messagesQueue: 'string'
+    //     messagesQueue: [
+    //       {
+    //         handleStr: 'string',
+    //         message: 'string'
+    //       }
+    //     ]
     //   },
     // }
   ],
