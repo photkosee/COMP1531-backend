@@ -542,6 +542,18 @@ app.post('/message/sendlater/v1', validateJwtToken, async(req: Request, res: Res
   }
 });
 
+app.post('/message/sendlaterdm/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { dmId, message, timeSent } = req.body;
+    const returnData = await messageSendlaterdmV1(token, authUserId, dmId, message, timeSent);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.delete('/admin/user/remove/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
