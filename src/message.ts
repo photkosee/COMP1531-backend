@@ -12,7 +12,7 @@ import HTTPError from 'http-errors';
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 
-interface newReacts { 
+interface newReacts {
   reactId: number,
   uIds: number[],
   isThisUserReacted: boolean,
@@ -1063,7 +1063,7 @@ async function messageSendlaterdmV1(token: string, authUserId: number, dmId: num
     Return Value:
       object: { messageId: messageId }
   */
-  
+
   const data: any = getData();
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -1084,7 +1084,7 @@ async function messageSendlaterdmV1(token: string, authUserId: number, dmId: num
   const now = Math.floor(Date.now() / 1000);
   const millisecTillSend = 1000 * (timeSent - now);
 
-  let newMessage = { messageId: 1};
+  let newMessage = { messageId: 1 };
   function sendMessage() {
     for (const dm of data.dms) {
       if (dmId === dm.dmId && dm.creatorId === authUserId) {
@@ -1104,10 +1104,10 @@ async function messageSendlaterdmV1(token: string, authUserId: number, dmId: num
           isThisUserReacted: false,
         };
         newMessagesDetails.reacts.push(newReactsDetails);
-  
+
         dm.messages.unshift(newMessagesDetails);
         setData(data);
-  
+
         newMessage = { messageId: messageId };
       }
       for (const member of dm.uIds) {
@@ -1122,17 +1122,17 @@ async function messageSendlaterdmV1(token: string, authUserId: number, dmId: num
             reacts: [],
             isPinned: false,
           };
-  
+
           const newReactsDetails: newReacts = {
             reactId: 1,
             uIds: [],
             isThisUserReacted: false,
           };
           newMessagesDetails.reacts.push(newReactsDetails);
-  
+
           dm.messages.unshift(newMessagesDetails);
           setData(data);
-  
+
           newMessage = { messageId: messageId };
         }
       }
