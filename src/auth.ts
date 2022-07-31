@@ -28,7 +28,8 @@ interface newUserDetails {
   profileImgUrl: string,
   permissionId: number,
   isActive: boolean,
-  sessionList: Array<string>
+  sessionList: Array<string>,
+  notifications: Array<any>
 }
 
 interface loginDetail {
@@ -112,7 +113,8 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
       profileImgUrl: defaultProfileImgUrl,
       permissionId: permissionId,
       isActive: true,
-      sessionList: [newSessionId]
+      sessionList: [newSessionId],
+      notifications: []
     };
 
     data.users.push(newUserDetails);

@@ -63,9 +63,10 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
   if (dmName.length !== uIds.length) {
     throw HTTPError(BADREQUEST, 'Any uId in uIds does not refer to a valid user');
   }
-
+  let ownerHandleStr = '';
   for (const user of data.users) {
     if (user.authUserId === newCreatorId) {
+      ownerHandleStr = user.handleStr;
       dmName.push(user.handleStr);
     }
   }
@@ -73,7 +74,17 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
   dmName.sort();
 
   const newNameString: string = dmName.toString().split(',').join(', ');
-
+  for (const id of uIds) {
+    for (const user of data.users) {
+      if (id === user.authUserId) {
+        user.notifications.unshift({
+          channelId: -1,
+          dmId: newDmId,
+          notificationMessage: `${ownerHandleStr} added you to ${newNameString}`
+        });
+      }
+    }
+  }
   data.dms.push({
     dmId: newDmId,
     name: newNameString,

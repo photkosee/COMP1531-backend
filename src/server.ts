@@ -53,7 +53,7 @@ import {
   channelLeaveV1
 } from './channel';
 import console from 'console';
-
+import { notificationsGet } from './notifications';
 // Set up web app, use JSON
 const app = express();
 app.use(json());
@@ -508,6 +508,17 @@ app.post('/message/unpin/v1', validateJwtToken, async(req: Request, res: Respons
     const authUserId = res.locals.token.id;
     const { messageId } = req.body;
     const returnData = await messageUnpinV1(token, authUserId, messageId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/notifications/get/v1', validateJwtToken, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const returnData = await notificationsGet(token, authUserId);
     return res.json(returnData);
   } catch (err) {
     next(err);

@@ -7,6 +7,7 @@ import {
   getMessages,
   checkToken,
   authIsOwner,
+  getHandleStr
 } from './channelHelperFunctions';
 import HTTPError from 'http-errors';
 
@@ -192,7 +193,12 @@ async function channelInviteV1(token: string, authUserId: number, channelId: num
             handleStr: element.handleStr
           };
           channel.allMembers.push(newMember);
-
+          const handleStr = getHandleStr(authUserId);
+          element.notifications.unshift({
+            channelId: channelId,
+            dmId: -1,
+            notificationMessage: `${handleStr} added you to ${channel.name}`
+          });
           setData(dataStore);
           return {};
         }
