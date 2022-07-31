@@ -525,7 +525,7 @@ app.get('/notifications/get/v1', validateJwtToken, async (req: Request, res: Res
     next(err);
   }
 });
-  
+
 app.post('/message/share/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
