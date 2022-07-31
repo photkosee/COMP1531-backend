@@ -39,9 +39,9 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Successful', () => {
-  test('Successfully return userStats initial', () => {
-    const res = request('GET', `${url}:${port}/user/stats/v1`, {
+describe('Successfully return workplaceStats', () => {
+  test('Successfully return workplaceStats initial', () => {
+    const res = request('GET', `${url}:${port}/users/stats/v1`, {
       headers: {
         'Content-type': 'application/json',
         token: userData[AUTH].token
@@ -51,21 +51,27 @@ describe('Successful', () => {
     const data: any = JSON.parse(res.getBody() as string);
     expect(data).toEqual(
       {
-        userStats: {
-          channelsJoined: [{
-            numChannelsJoined: 0,
-            timeStamp: expect.any(Number)
-          }],
-          dmsJoined: [{
-            numDmsJoined: 0,
-            timeStamp: expect.any(Number)
-          }],
-          messagesSent: [{
-            numMessagesSent: 0,
-            timeStamp: expect.any(Number)
-          }],
-          involvementRate: 0
-        }
+        workplaceStats: {
+          channelsExist: [
+            {
+              numChannelsExist: 0,
+              timeStamp: expect.any(Number)
+            }
+          ],
+          dmsExist: [
+            {
+              numDmsExist: 0,
+              timeStamp: expect.any(Number)
+            }
+          ],
+          messagesExist: [
+            {
+              numMessagesExist: 0,
+              timeStamp: expect.any(Number)
+            }
+          ],
+          utilizationRate: 0
+        },
       }
     );
   });
@@ -104,7 +110,6 @@ describe('Successful', () => {
         token: userData[USER].token,
       }
     });
-    expect(res.statusCode).toEqual(OK);
 
     res = request('POST', `${url}:${port}/message/send/v2`, {
       body: JSON.stringify({
@@ -127,50 +132,59 @@ describe('Successful', () => {
       }
     });
 
-    res = request('GET', `${url}:${port}/user/stats/v1`, {
+    res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
+      qs: {
+        uId: userData[USER].authUserId
+      },
       headers: {
         'Content-type': 'application/json',
-        token: userData[USER].token
+        token: userData[AUTH].token
+      }
+    });
+    expect(res.statusCode).toEqual(OK);
+
+    res = request('GET', `${url}:${port}/users/stats/v1`, {
+      headers: {
+        'Content-type': 'application/json',
+        token: userData[AUTH].token
       }
     });
     expect(res.statusCode).toEqual(OK);
     const data: any = JSON.parse(res.getBody() as string);
     expect(data).toEqual(
       {
-        userStats: {
-          channelsJoined: [
+        workplaceStats: {
+          channelsExist: [
             {
-              numChannelsJoined: 0,
+              numChannelsExist: 0,
               timeStamp: expect.any(Number)
             },
             {
-              numChannelsJoined: 1,
+              numChannelsExist: 1,
               timeStamp: expect.any(Number)
             },
             {
-              numChannelsJoined: 2,
-              timeStamp: expect.any(Number)
-            },
-            {
-              numChannelsJoined: 1,
+              numChannelsExist: 2,
               timeStamp: expect.any(Number)
             }
           ],
-          dmsJoined: [{
-            numDmsJoined: 0,
-            timeStamp: expect.any(Number)
-          }],
-          messagesSent: [
+          dmsExist: [
             {
-              numMessagesSent: 0,
-              timeStamp: expect.any(Number)
-            },
-            {
-              numMessagesSent: 1,
+              numDmsExist: 0,
               timeStamp: expect.any(Number)
             }
           ],
-          involvementRate: 0.6666666666666666
+          messagesExist: [
+            {
+              numMessagesExist: 0,
+              timeStamp: expect.any(Number)
+            },
+            {
+              numMessagesExist: 1,
+              timeStamp: expect.any(Number)
+            }
+          ],
+          utilizationRate: 1
         }
       }
     );
@@ -225,19 +239,7 @@ describe('Successful', () => {
         token: userData[USER].token
       }
     });
-
-    for (let i = 0; i < 3; i++) {
-      res = request('POST', `${url}:${port}/message/senddm/v2`, {
-        body: JSON.stringify({
-          dmId: dmId2,
-          message: `hello for the ${i} time`
-        }),
-        headers: {
-          'Content-type': 'application/json',
-          token: userData[USER].token
-        }
-      });
-    }
+    expect(res.statusCode).toEqual(OK);
 
     res = request('POST', `${url}:${port}/dm/leave/v2`, {
       body: JSON.stringify({
@@ -260,7 +262,16 @@ describe('Successful', () => {
       }
     });
 
-    res = request('GET', `${url}:${port}/user/stats/v1`, {
+    res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'extra@email.com',
+        password: 'password',
+        nameFirst: 'Extra',
+        nameLast: 'user',
+      }
+    });
+
+    res = request('GET', `${url}:${port}/users/stats/v1`, {
       headers: {
         'Content-type': 'application/json',
         token: userData[USER].token
@@ -270,63 +281,51 @@ describe('Successful', () => {
     const data: any = JSON.parse(res.getBody() as string);
     expect(data).toEqual(
       {
-        userStats: {
-          channelsJoined: [
+        workplaceStats: {
+          channelsExist: [
             {
-              numChannelsJoined: 0,
+              numChannelsExist: 0,
               timeStamp: expect.any(Number)
             }
           ],
-          dmsJoined: [
+          dmsExist: [
             {
-              numDmsJoined: 0,
+              numDmsExist: 0,
               timeStamp: expect.any(Number)
             },
             {
-              numDmsJoined: 1,
+              numDmsExist: 1,
               timeStamp: expect.any(Number)
             },
             {
-              numDmsJoined: 2,
+              numDmsExist: 2,
               timeStamp: expect.any(Number)
             },
             {
-              numDmsJoined: 1,
-              timeStamp: expect.any(Number)
-            },
-            {
-              numDmsJoined: 0,
+              numDmsExist: 1,
               timeStamp: expect.any(Number)
             }
           ],
-          messagesSent: [
+          messagesExist: [
             {
-              numMessagesSent: 0,
+              numMessagesExist: 0,
               timeStamp: expect.any(Number)
             },
             {
-              numMessagesSent: 1,
+              numMessagesExist: 1,
               timeStamp: expect.any(Number)
             },
             {
-              numMessagesSent: 2,
+              numMessagesExist: 2,
               timeStamp: expect.any(Number)
             },
             {
-              numMessagesSent: 3,
-              timeStamp: expect.any(Number)
-            },
-            {
-              numMessagesSent: 4,
-              timeStamp: expect.any(Number)
-            },
-            {
-              numMessagesSent: 5,
+              numMessagesExist: 1,
               timeStamp: expect.any(Number)
             }
           ],
-          involvementRate: 1
-        }
+          utilizationRate: 0.3333333333333333
+        },
       }
     );
   });
@@ -334,7 +333,7 @@ describe('Successful', () => {
 
 describe('Errors', () => {
   test('Error: Invalid token', () => {
-    const res = request('GET', `${url}:${port}/user/stats/v1`, {
+    const res = request('GET', `${url}:${port}/users/stats/v1`, {
       headers: {
         'Content-type': 'application/json',
         token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCQ1Y0QzVjJLN01PU1RHTU1WWVFtbHBlc1UvZWwuTjB3SDZ0d3laY0VhZThjekUvcktkV2F0RyIsImlhdCI6MTY1ODU3NzcyNn0.7AWJbHt9-LMfsQiXHpY0exa9gL0yqsvQoPzIYNQAeUY'

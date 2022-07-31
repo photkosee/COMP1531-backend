@@ -1,4 +1,3 @@
-import { time } from 'console';
 import { getData } from './dataStore';
 
 function createUserStats() {
@@ -62,7 +61,7 @@ function createWorkplaceStats() {
     messagesExist: [
       {
         numMessagesExist: 0,
-        timeStamp: time
+        timeStamp: timeStamp
       }
     ],
     utilizationRate: 0
@@ -113,55 +112,58 @@ function involvementRateCalculator(userId: number) {
     return 0;
   }
 
-  const involvementRate: number =
+  let involvementRate: number =
     (numChannelsJoined + numDmsJoined + numMsgsSent) /
     (numChannels + numDms + numMsgs);
+
+  if (involvementRate > 1) {
+    involvementRate = 1;
+  }
 
   return involvementRate;
 }
 
-// Use for users/stats
-// function utilizationRateCalculator() {
-// /*
-//   Description:
-//     involvementRateCalculator calculates involvementRate for a user
+function utilizationRateCalculator() {
+/*
+  Description:
+    involvementRateCalculator calculates involvementRate for a user
 
-//   Parameters
-//     userId    - number given by user
+  Parameters
+    userId    - number given by user
 
-//   Return Value:
-//     number:  involvementRate
-// */
-//   const data: any = getData();
+  Return Value:
+    number:  involvementRate
+*/
+  const data: any = getData();
 
-//   let numUsers = 0;
-//   let numUsersJoined = 0;
+  let numUsers = 0;
+  let numUsersJoined = 0;
 
-//   // Calculate how many users have joined a channel or dm
-//   for (const user of data.users) {
-//     if (user.isActive === true) {
-//       numUsers = numUsers + 1;
+  // Calculate how many users have joined a channel or dm
+  for (const user of data.users) {
+    if (user.isActive === true) {
+      numUsers = numUsers + 1;
 
-//       let isJoined = false;
-//       const channelsLength: number = user.userStats.channelsJoined.length - 1;
-//       const dmsLength: number = user.userStats.channelsJoined.length - 1;
+      let isJoined = false;
+      const channelsLength: number = user.userStats.channelsJoined.length - 1;
+      const dmsLength: number = user.userStats.dmsJoined.length - 1;
 
-//       if (user.userStats.channelsJoined[channelsLength].numChannelsJoined !== 0) {
-//         isJoined = true;
-//       }
-//       if (user.userStats.dmsJoined[dmsLength].numDmsJoined !== 0) {
-//         isJoined = true;
-//       }
-//       if (isJoined === true) {
-//         numUsersJoined = numUsersJoined + 1;
-//       }
-//     }
-//   }
+      if (user.userStats.channelsJoined[channelsLength].numChannelsJoined !== 0) {
+        isJoined = true;
+      }
+      if (user.userStats.dmsJoined[dmsLength].numDmsJoined !== 0) {
+        isJoined = true;
+      }
+      if (isJoined === true) {
+        numUsersJoined = numUsersJoined + 1;
+      }
+    }
+  }
 
-//   const utilizationRate: number = numUsersJoined / numUsers;
+  const utilizationRate: number = numUsersJoined / numUsers;
 
-//   return utilizationRate;
-// }
+  return utilizationRate;
+}
 
 function incrementChannelsJoined(authUserId: number) {
 /*
@@ -384,7 +386,7 @@ export {
   createUserStats,
   createWorkplaceStats,
   involvementRateCalculator,
-  // utilizationRateCalculator,
+  utilizationRateCalculator,
   incrementChannelsExist,
   incrementChannelsJoined,
   decreaseChannelsJoined,

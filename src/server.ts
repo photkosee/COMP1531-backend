@@ -9,7 +9,7 @@ import fs from 'fs';
 import { echo } from './echo';
 import { clearV1 } from './other';
 import config from './config.json';
-import { usersAllV1 } from './users';
+import { usersAllV1, usersStatsV1 } from './users';
 import { getData, setData } from './dataStore';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import {
@@ -583,6 +583,17 @@ app.get('/user/stats/v1', validateJwtToken, async(req: Request, res: Response, n
     const token = res.locals.token.salt;
     const authUserId = res.locals.token.id;
     const returnData = await userStatsV1(token, authUserId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/users/stats/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const returnData = await usersStatsV1(token, authUserId);
     return res.json(returnData);
   } catch (err) {
     next(err);
