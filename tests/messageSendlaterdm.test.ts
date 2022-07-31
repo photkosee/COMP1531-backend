@@ -15,7 +15,7 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Testing for error - message/sendlater/v1', () => {
+describe('Testing for error - message/sendlaterdm/v1', () => {
   test('Invalid message length', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
@@ -29,10 +29,21 @@ describe('Testing for error - message/sendlater/v1', () => {
       }
     });
     const user1 = JSON.parse(res.body as string);
-
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
+    res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
-        name: 'channel1',
+        email: 'mal2@email.com',
+        password: 'password2',
+        nameFirst: 'ben',
+        nameLast: 'kiin',
+      },
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const user2 = JSON.parse(res.body as string);
+    res = request('POST', `${url}:${port}/dm/create/v2`, {
+      json: {
+        uIds: [user2.authUserId],
         isPublic: true
       },
       headers: {
@@ -40,12 +51,12 @@ describe('Testing for error - message/sendlater/v1', () => {
         token: user1.token
       }
     });
-    const channel1 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+    const dm1 = JSON.parse(res.body as string);
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
-        channelId: channel1.channelId,
+        dmId: dm1.dmId,
         message: '',
-        timeSent: Math.floor(Date.now() / 1000)
+        timeSent: Math.floor(Date.now() / 1000) + 1
       },
       headers: {
         'Content-type': 'application/json',
@@ -55,7 +66,7 @@ describe('Testing for error - message/sendlater/v1', () => {
     expect(res.statusCode).toBe(BADREQUEST);
   });
 
-  test('Invalid channelId', () => {
+  test('Invalid dmId', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'mail1@email.com',
@@ -69,9 +80,9 @@ describe('Testing for error - message/sendlater/v1', () => {
     });
     const user1 = JSON.parse(res.body as string);
 
-    res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
-        channelId: 1,
+        dmId: 1,
         message: 'asdf',
         timeSent: Math.floor(Date.now() / 1000)
       },
@@ -96,21 +107,31 @@ describe('Testing for error - message/sendlater/v1', () => {
       }
     });
     const user1 = JSON.parse(res.body as string);
-
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
+    res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
-        name: 'channel1',
-        isPublic: true,
+        email: 'mal2@email.com',
+        password: 'password2',
+        nameFirst: 'ben',
+        nameLast: 'kiin',
+      },
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const user2 = JSON.parse(res.body as string);
+    res = request('POST', `${url}:${port}/dm/create/v2`, {
+      json: {
+        uIds: [user2.authUserId],
       },
       headers: {
         'Content-type': 'application/json',
         token: user1.token
       }
     });
-
-    res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+    const dm1 = JSON.parse(res.body as string);
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
-        channelId: 1,
+        dmId: dm1.dmId,
         message: 'asdf',
         timeSent: Math.floor(Date.now() / 1000)
       },
@@ -122,7 +143,7 @@ describe('Testing for error - message/sendlater/v1', () => {
     expect(res.statusCode).toBe(FORBIDDEN);
   });
 
-  test('Not a member', () => {
+  test('Not a member of dm', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'mal1@email.com',
@@ -148,34 +169,45 @@ describe('Testing for error - message/sendlater/v1', () => {
       }
     });
     const user2 = JSON.parse(res.body as string);
-
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
+    res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
-        name: 'channel1',
-        isPublic: true
+        email: 'mal3@email.com',
+        password: 'password3',
+        nameFirst: 'matt',
+        nameLast: 'parr',
+      },
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const user3 = JSON.parse(res.body as string);
+    res = request('POST', `${url}:${port}/dm/create/v2`, {
+      json: {
+        uIds: [user2.authUserId]
       },
       headers: {
         'Content-type': 'application/json',
         token: user1.token
       }
     });
-    const channel1 = JSON.parse(res.body as string);
+    const dm1 = JSON.parse(res.body as string);
 
-    res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
-        channelId: channel1.channelId,
+        dmId: dm1.dmId,
         message: 'sdfgsdg',
         timeSent: Math.floor(Date.now() / 1000)
       },
       headers: {
         'Content-type': 'application/json',
-        token: user2.token
+        token: user3.token
       }
     });
     expect(res.statusCode).toBe(FORBIDDEN);
   });
 });
-test('timeSent is before current time - message/sendlater', () => {
+
+test('Successful messageSendlaterdm - message/sendlaterdm', () => {
   let res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'mal1@email.com',
@@ -188,62 +220,32 @@ test('timeSent is before current time - message/sendlater', () => {
     }
   });
   const user1 = JSON.parse(res.body as string);
-
-  res = request('POST', `${url}:${port}/channels/create/v3`, {
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
-      name: 'channel1',
-      isPublic: true
+      email: 'mal2@email.com',
+      password: 'password2',
+      nameFirst: 'ben',
+      nameLast: 'kiin',
+    },
+    headers: {
+      'Content-type': 'application/json',
+    }
+  });
+  const user2 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/dm/create/v2`, {
+    json: {
+      uIds: [user2.authUserId],
     },
     headers: {
       'Content-type': 'application/json',
       token: user1.token
     }
   });
-  const channel1 = JSON.parse(res.body as string);
+  const dm1 = JSON.parse(res.body as string);
 
-  res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+  res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
     json: {
-      channelId: channel1.channelId,
-      message: 'sdfgsdg',
-      timeSent: Math.floor(Date.now() / 1000) - 1000
-    },
-    headers: {
-      'Content-type': 'application/json',
-      token: user1.token
-    }
-  });
-  expect(res.statusCode).toBe(BADREQUEST);
-});
-
-test('Successful messageSendlater - message/sendlater', () => {
-  let res = request('POST', `${url}:${port}/auth/register/v3`, {
-    json: {
-      email: 'mal1@email.com',
-      password: 'password1',
-      nameFirst: 'John',
-      nameLast: 'Smith',
-    },
-    headers: {
-      'Content-type': 'application/json',
-    }
-  });
-  const user1 = JSON.parse(res.body as string);
-
-  res = request('POST', `${url}:${port}/channels/create/v3`, {
-    json: {
-      name: 'channel1',
-      isPublic: true
-    },
-    headers: {
-      'Content-type': 'application/json',
-      token: user1.token
-    }
-  });
-  const channel1 = JSON.parse(res.body as string);
-
-  res = request('POST', `${url}:${port}/message/sendlater/v1`, {
-    json: {
-      channelId: channel1.channelId,
+      dmId: dm1.dmId,
       message: 'sdfgsdg',
       timeSent: Math.floor(Date.now() / 1000) + 1
     },
@@ -253,4 +255,54 @@ test('Successful messageSendlater - message/sendlater', () => {
     }
   });
   expect(res.statusCode).toBe(OK);
+});
+
+test('Timesent is before current time - message/sendlaterdm', () => {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
+    json: {
+      email: 'mal1@email.com',
+      password: 'password1',
+      nameFirst: 'John',
+      nameLast: 'Smith',
+    },
+    headers: {
+      'Content-type': 'application/json',
+    }
+  });
+  const user1 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
+    json: {
+      email: 'mal2@email.com',
+      password: 'password2',
+      nameFirst: 'ben',
+      nameLast: 'kiin',
+    },
+    headers: {
+      'Content-type': 'application/json',
+    }
+  });
+  const user2 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/dm/create/v2`, {
+    json: {
+      uIds: [user2.authUserId],
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
+    }
+  });
+  const dm1 = JSON.parse(res.body as string);
+
+  res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+    json: {
+      dmId: dm1.dmId,
+      message: 'sdfgsdg',
+      timeSent: Math.floor(Date.now() / 1000) - 100
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
+    }
+  });
+  expect(res.statusCode).toBe(BADREQUEST);
 });

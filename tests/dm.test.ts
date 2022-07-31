@@ -508,8 +508,6 @@ describe('Test Cases for HTTP Route: dm/leave/v2', () => {
   test('Test for successful dm leave - dm/leave/v2', () => {
     const validData = [
       { token: registrationData[0].token, dmId: dmIdList[0] },
-      // { token: registrationData[2].token, dmId: dmIdList[0] },
-      // { token: registrationData[0].token, dmId: dmIdList[1] },
       { token: registrationData[1].token, dmId: dmIdList[1] }
     ];
 
