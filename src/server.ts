@@ -56,7 +56,6 @@ import {
   channelAddownerV1,
   channelLeaveV1
 } from './channel';
-import console from 'console';
 import { searchV1 } from './search';
 import { notificationsGet } from './notifications';
 import { adminUserpermissionChange, adminUserRemove } from './admin';
