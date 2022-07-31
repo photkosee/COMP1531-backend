@@ -29,7 +29,8 @@ import {
   messagePinV1,
   messageUnpinV1,
   messageShareV1,
-  messageSendlaterV1
+  messageSendlaterV1,
+  messageSendlaterdmV1
 } from './message';
 import {
   dmCreateV1,
@@ -535,6 +536,18 @@ app.post('/message/sendlater/v1', validateJwtToken, async(req: Request, res: Res
     const authUserId = res.locals.token.id;
     const { channelId, message, timeSent } = req.body;
     const returnData = await messageSendlaterV1(token, authUserId, channelId, message, timeSent);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/message/sendlaterdm/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { dmId, message, timeSent } = req.body;
+    const returnData = await messageSendlaterdmV1(token, authUserId, dmId, message, timeSent);
     return res.json(returnData);
   } catch (err) {
     next(err);
