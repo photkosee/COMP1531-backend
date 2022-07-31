@@ -987,25 +987,32 @@ async function messageSendlaterV1(token: string, authUserId: number, channelId: 
     Return Value:
       object: { messageId: messageId }
   */
+
   const data: any = getData();
+
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channelId');
   }
+
   if (!authInChannel(channelId, authUserId)) {
     throw HTTPError(FORBIDDEN, 'User not member of channel');
   }
+
   if (message.length > 1000 || message.length < 1) {
     throw HTTPError(BADREQUEST, 'Invalid message length');
   }
-  if (timeSent < Math.floor(Date.now() / 1000)) {
+
+  const timeNow = Math.floor(Date.now() / 1000);
+
+  if (timeSent < timeNow) {
     throw HTTPError(BADREQUEST, 'Time sent is before current time');
   }
 
-  const now = Math.floor(Date.now() / 1000);
-  const millisecTillSend = 1000 * (timeSent - now);
+  const sendLaterTime = 1000 * (timeSent - timeNow);
 
   const messageId: number = data.messageId;
   data.messageId += 1;
@@ -1026,18 +1033,20 @@ async function messageSendlaterV1(token: string, authUserId: number, channelId: 
   };
   newMessagesDetails.reacts.push(newReactsDetails);
 
-  function addMessage() {
-    for (const channel of data.channels) {
-      if (channelId === channel.channelId) {
-        channel.messages.unshift(newMessagesDetails);
-        setData(data);
-      }
+  setTimeout(() => sendMessageLater(channelId, newMessagesDetails), sendLaterTime);
+
+  return { messageId: messageId };
+}
+
+function sendMessageLater(channelId: number, newMessagesDetails: newMessagesDetails) {
+  const data: any = getData();
+
+  for (const channel of data.channels) {
+    if (channel.channelId === channelId) {
+      channel.messages.unshift(newMessagesDetails);
+      setData(data);
     }
   }
-
-  setTimeout(addMessage, millisecTillSend);
-
-  return { messageId: newMessagesDetails.messageId };
 }
 
 async function messageSendlaterdmV1(token: string, authUserId: number, dmId: number, message: string, timeSent: number) {
@@ -1065,81 +1074,66 @@ async function messageSendlaterdmV1(token: string, authUserId: number, dmId: num
   */
 
   const data: any = getData();
+
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
   if (!dmIdValidator(dmId)) {
     throw HTTPError(BADREQUEST, 'Invalid dmId');
   }
+
   if (!checkDmMember(dmId, authUserId)) {
     throw HTTPError(FORBIDDEN, 'User not member of dm');
   }
+
   if (message.length > 1000 || message.length < 1) {
     throw HTTPError(BADREQUEST, 'Invalid message length');
   }
-  if (timeSent < Math.floor(Date.now() / 1000)) {
+
+  const timeNow = Math.floor(Date.now() / 1000);
+
+  if (timeSent < timeNow) {
     throw HTTPError(BADREQUEST, 'Time sent is before current time');
   }
 
-  const now = Math.floor(Date.now() / 1000);
-  const millisecTillSend = 1000 * (timeSent - now);
+  const sendLaterTime = 1000 * (timeSent - timeNow);
 
-  let newMessage = { messageId: 1 };
-  function sendMessage() {
-    for (const dm of data.dms) {
-      if (dmId === dm.dmId && dm.creatorId === authUserId) {
-        const messageId: number = data.messageId;
-        data.mesageId += 1;
-        const newMessagesDetails: newMessagesDetails = {
-          messageId: messageId,
-          uId: authUserId,
-          message: message,
-          timeSent: timeSent,
-          reacts: [],
-          isPinned: false,
-        };
-        const newReactsDetails: newReacts = {
-          reactId: 1,
-          uIds: [],
-          isThisUserReacted: false,
-        };
-        newMessagesDetails.reacts.push(newReactsDetails);
+  const messageId: number = data.messageId;
+  data.messageId += 1;
 
-        dm.messages.unshift(newMessagesDetails);
-        setData(data);
+  setData(data);
 
-        newMessage = { messageId: messageId };
-      }
-      for (const member of dm.uIds) {
-        if (dmId === dm.dmId && member === authUserId) {
-          const messageId: number = data.messageId;
-          data.messageId += 1;
-          const newMessagesDetails: newMessagesDetails = {
-            messageId: messageId,
-            uId: authUserId,
-            message: message,
-            timeSent: timeSent,
-            reacts: [],
-            isPinned: false,
-          };
+  const newMessagesDetails: newMessagesDetails = {
+    messageId: messageId,
+    uId: authUserId,
+    message: message,
+    timeSent: timeSent,
+    reacts: [],
+    isPinned: false,
+  };
 
-          const newReactsDetails: newReacts = {
-            reactId: 1,
-            uIds: [],
-            isThisUserReacted: false,
-          };
-          newMessagesDetails.reacts.push(newReactsDetails);
+  const newReactsDetails: newReacts = {
+    reactId: 1,
+    uIds: [],
+    isThisUserReacted: false,
+  };
+  newMessagesDetails.reacts.push(newReactsDetails);
 
-          dm.messages.unshift(newMessagesDetails);
-          setData(data);
+  setTimeout(() => sendMsgLater(dmId, newMessagesDetails), sendLaterTime);
 
-          newMessage = { messageId: messageId };
-        }
-      }
+  return { messageId: messageId };
+}
+
+function sendMsgLater(dmId: number, newMessagesDetails: newMessagesDetails) {
+  const data: any = getData();
+
+  for (const dm of data.dms) {
+    if (dm.dmId === dmId) {
+      dm.messages.unshift(newMessagesDetails);
+      setData(data);
     }
   }
-  setTimeout(sendMessage, millisecTillSend);
-  return newMessage;
 }
 
 export {
