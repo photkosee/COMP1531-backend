@@ -34,6 +34,7 @@ interface newUserDetails {
   permissionId: number,
   isActive: boolean,
   sessionList: Array<string>,
+  notifications: Array<any>
   userStats: object
 }
 
@@ -125,6 +126,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
       permissionId: permissionId,
       isActive: true,
       sessionList: [newSessionId],
+      notifications: [],
       userStats: userStats
     };
 

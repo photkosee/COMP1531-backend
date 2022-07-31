@@ -1,9 +1,189 @@
 {
-  "users": [],
+  "users": [
+    {
+      "authUserId": 1,
+      "nameFirst": "Mjghridul",
+      "nameLast": "Anand",
+      "email": "mridul@gmail.com",
+      "password": "$2a$10$phmIX8j81ArR8jkZeeIKvubXOuS.FFyxM1HR3fJ3qbyi7T2Zpa8Oq",
+      "handleStr": "mjghridulanand",
+      "profileImgUrl": "http://127.0.0.1:5000/static/profile.jpg",
+      "permissionId": 1,
+      "isActive": true,
+      "sessionList": [
+        "2801324381"
+      ],
+      "notifications": [],
+      "userStats": {
+        "channelsJoined": [
+          {
+            "numChannelsJoined": 0,
+            "timeStamp": 1659293525
+          }
+        ],
+        "dmsJoined": [
+          {
+            "numDmsJoined": 0,
+            "timeStamp": 1659293525
+          },
+          {
+            "numDmsJoined": 1,
+            "timeStamp": 1659293526
+          }
+        ],
+        "messagesSent": [
+          {
+            "numMessagesSent": 0,
+            "timeStamp": 1659293525
+          },
+          {
+            "numMessagesSent": 1,
+            "timeStamp": 1659293526
+          }
+        ],
+        "involvementRate": 0
+      }
+    },
+    {
+      "authUserId": 2,
+      "nameFirst": "anand",
+      "nameLast": "Singh",
+      "email": "anand@gmail.com",
+      "password": "$2a$10$URpBYh4gnUfggpuULGeikOyUbQnm9HUm8utueFniWIAeH2QHVVQ4a",
+      "handleStr": "anandsingh",
+      "profileImgUrl": "http://127.0.0.1:5000/static/profile.jpg",
+      "permissionId": 2,
+      "isActive": true,
+      "sessionList": [
+        "5094857441"
+      ],
+      "notifications": [
+        {
+          "channelId": -1,
+          "dmId": 1,
+          "notificationMessage": "mjghridulanand added you to anandsingh, mjghridulanand"
+        }
+      ],
+      "userStats": {
+        "channelsJoined": [
+          {
+            "numChannelsJoined": 0,
+            "timeStamp": 1659293525
+          }
+        ],
+        "dmsJoined": [
+          {
+            "numDmsJoined": 0,
+            "timeStamp": 1659293525
+          },
+          {
+            "numDmsJoined": 1,
+            "timeStamp": 1659293526
+          }
+        ],
+        "messagesSent": [
+          {
+            "numMessagesSent": 0,
+            "timeStamp": 1659293525
+          }
+        ],
+        "involvementRate": 0
+      }
+    },
+    {
+      "authUserId": 3,
+      "nameFirst": "Mriuffhdul",
+      "nameLast": "Rathor",
+      "email": "mrjgidul907@gmail.com",
+      "password": "$2a$10$HQ4zppFsAoJga5b.3UnLX.dOy7J9Tb7bgJfklLwFGhDRD4SVDnw.u",
+      "handleStr": "mriuffhdulrathor",
+      "profileImgUrl": "http://127.0.0.1:5000/static/profile.jpg",
+      "permissionId": 2,
+      "isActive": true,
+      "sessionList": [
+        "1572498388"
+      ],
+      "notifications": [],
+      "userStats": {
+        "channelsJoined": [
+          {
+            "numChannelsJoined": 0,
+            "timeStamp": 1659293525
+          }
+        ],
+        "dmsJoined": [
+          {
+            "numDmsJoined": 0,
+            "timeStamp": 1659293525
+          }
+        ],
+        "messagesSent": [
+          {
+            "numMessagesSent": 0,
+            "timeStamp": 1659293525
+          }
+        ],
+        "involvementRate": 0
+      }
+    }
+  ],
   "channels": [],
-  "dms": [],
+  "dms": [
+    {
+      "dmId": 1,
+      "name": "anandsingh, mjghridulanand",
+      "uIds": [
+        2
+      ],
+      "creatorId": 1,
+      "messages": [
+        {
+          "messageId": 1,
+          "uId": 1,
+          "message": "abc",
+          "timeSent": 1659293526,
+          "reacts": [
+            {
+              "reactId": 1,
+              "uIds": [],
+              "isThisUserReacted": false
+            }
+          ],
+          "isPinned": false
+        }
+      ]
+    }
+  ],
   "passwordReset": [],
-  "workplaceStats": {},
-  "messageId": 1,
-  "dmId": 1
+  "workplaceStats": {
+    "channelsExist": [
+      {
+        "numChannelsExist": 0,
+        "timeStamp": 1659293525
+      }
+    ],
+    "dmsExist": [
+      {
+        "numDmsExist": 0,
+        "timeStamp": 1659293525
+      },
+      {
+        "numDmsExist": 1,
+        "timeStamp": 1659293526
+      }
+    ],
+    "messagesExist": [
+      {
+        "numMessagesExist": 0,
+        "timeStamp": 1659293525
+      },
+      {
+        "numMessagesExist": 1,
+        "timeStamp": 1659293526
+      }
+    ],
+    "utilizationRate": 0
+  },
+  "messageId": 2,
+  "dmId": 2
 }

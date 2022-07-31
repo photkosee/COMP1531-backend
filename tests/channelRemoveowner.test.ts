@@ -304,3 +304,74 @@ test('Testing for successful remove owner', () => {
 
   expect(removeOwner(user1.token, channel1.channelId, user2.authUserId).statusCode).toStrictEqual(OK);
 });
+
+test('Testing successful global owner removeowner', () => {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
+    json: {
+      email: 'user1@email.com',
+      password: 'password1',
+      nameFirst: 'john',
+      nameLast: 'smith',
+    }
+  });
+  const user1 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
+    json: {
+      email: 'user2@email.com',
+      password: 'password2',
+      nameFirst: 'ben',
+      nameLast: 'mitchel',
+    }
+  });
+  const user2 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
+    json: {
+      email: 'user3@email.com',
+      password: 'password3',
+      nameFirst: 'van',
+      nameLast: 'ban',
+    }
+  });
+  const user3 = JSON.parse(res.body as string);
+
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
+    json: {
+      name: 'channel1',
+      isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user2.token
+    }
+  });
+  const channel1 = JSON.parse(res.body as string);
+  request('POST', `${url}:${port}/channel/join/v3`, {
+    json: {
+      channelId: channel1.channelId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
+    }
+  });
+  request('POST', `${url}:${port}/channel/join/v3`, {
+    json: {
+      channelId: channel1.channelId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user3.token
+    }
+  });
+  request('POST', `${url}:${port}/channel/addowner/v2`, {
+    json: {
+      channelId: channel1.channelId,
+      uId: user3.authUserId,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user2.token
+    }
+  });
+  expect(removeOwner(user1.token, channel1.channelId, user3.authUserId).statusCode).toStrictEqual(OK);
+});
