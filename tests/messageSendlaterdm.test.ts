@@ -247,7 +247,7 @@ test('Successful messageSendlaterdm - message/sendlaterdm', () => {
     json: {
       dmId: dm1.dmId,
       message: 'sdfgsdg',
-      timeSent: Math.floor(Date.now() / 1000) + 0.001
+      timeSent: Math.floor(Date.now() / 1000) + 1
     },
     headers: {
       'Content-type': 'application/json',
