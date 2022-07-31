@@ -476,6 +476,5 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
-    console.log(JSON.parse(res.body as string));
   });
 });
