@@ -190,9 +190,34 @@ describe('Successful', () => {
     const dmCreate: any = JSON.parse(res.getBody() as string);
     const dmId: number = dmCreate.dmId;
 
+    res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [userData[USER].authUserId]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: userData[AUTH].token
+      }
+    });
+    expect(res.statusCode).toEqual(OK);
+    const dmCreate2: any = JSON.parse(res.getBody() as string);
+    const dmId2: number = dmCreate2.dmId;
+
     res = request('POST', `${url}:${port}/message/senddm/v2`, {
       body: JSON.stringify({
         dmId: dmId,
+        message: 'abc'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: userData[USER].token
+      }
+    });
+    expect(res.statusCode).toEqual(OK);
+
+    res = request('POST', `${url}:${port}/message/senddm/v2`, {
+      body: JSON.stringify({
+        dmId: dmId2,
         message: 'abc'
       }),
       headers: {
@@ -212,6 +237,16 @@ describe('Successful', () => {
       }
     });
     expect(res.statusCode).toEqual(OK);
+
+    res = request('DELETE', `${url}:${port}/dm/remove/v2`, {
+      qs: {
+        dmId: dmId2
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: userData[AUTH].token
+      }
+    });
 
     res = request('GET', `${url}:${port}/user/stats/v1`, {
       headers: {
@@ -240,6 +275,14 @@ describe('Successful', () => {
               timeStamp: expect.any(Number)
             },
             {
+              numDmsJoined: 2,
+              timeStamp: expect.any(Number)
+            },
+            {
+              numDmsJoined: 1,
+              timeStamp: expect.any(Number)
+            },
+            {
               numDmsJoined: 0,
               timeStamp: expect.any(Number)
             }
@@ -251,6 +294,10 @@ describe('Successful', () => {
             },
             {
               numMessagesSent: 1,
+              timeStamp: expect.any(Number)
+            },
+            {
+              numMessagesSent: 2,
               timeStamp: expect.any(Number)
             }
           ],

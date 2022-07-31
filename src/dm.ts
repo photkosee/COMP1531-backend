@@ -187,16 +187,12 @@ async function dmRemoveV1(token: string, authUserId: number, dmId: number) {
         data.dms.splice(dmIndex, 1);
 
         decreaseDmsJoined(authUserId);
-        for (const dm of data.dms) {
-          if (dm.dmId === dmId) {
-            for (const user of dm.uIds) {
-              decreaseDmsJoined(user);
-            }
-            // eslint-disable-next-line no-unused-vars
-            for (const message of dm.messages) {
-              decreaseMessagesExist();
-            }
-          }
+        for (const userId of dm.uIds) {
+          decreaseDmsJoined(userId);
+        }
+        // eslint-disable-next-line no-unused-vars
+        for (const message of dm.messages) {
+          decreaseMessagesExist();
         }
         decreaseDmsExist();
 
