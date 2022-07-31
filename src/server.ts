@@ -57,7 +57,6 @@ import {
   channelLeaveV1
 } from './channel';
 import { searchV1 } from './search';
-import { searchV1 } from './search';
 import { notificationsGet } from './notifications';
 import { adminUserpermissionChange, adminUserRemove } from './admin';
 import { standupIsActive, standupSend, standupStart } from './standup';
