@@ -1,7 +1,7 @@
 import { getData, setData } from './dataStore';
 import { checkToken } from './channelHelperFunctions';
-import { checkIfMember, checkChannelId, getHandleStr } from './channelHelperFunctions';
-import { checkDmMember } from './dmHelperFunctions';
+import { checkIfMember, checkChannelId, authInChannel, getHandleStr } from './channelHelperFunctions';
+import { checkDmMember, dmIdValidator } from './dmHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -335,7 +335,7 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
 
   Arguments:
     token       string type -- Input string supplied by request header
-    authUserId  string type -- Input string supplied by request header
+    authUserId  numer  type -- Input number supplied by request header
     messageId   number type -- Input number supplied by user
 
   Exceptions:
@@ -400,7 +400,7 @@ async function messageReactV1(token: string, authUserId: number, messageId: numb
 
   Arguments:
     token       string type -- Input string supplied by request header
-    authUserId  string type -- Input string supplied by request header
+    authUserId  number type -- Input number supplied by request header
     messageId   number type -- Input number supplied by user
     reactId     number type -- Input number supplied by user
 
@@ -485,7 +485,7 @@ async function messageUnreactV1(token: string, authUserId: number, messageId: nu
 
   Arguments:
     token       string type -- Input string supplied by request header
-    authUserId  string type -- Input string supplied by request header
+    authUserId  number type -- Input number supplied by request header
     messageId   number type -- Input number supplied by user
     reactId     number type -- Input number supplied by user
 
@@ -547,7 +547,7 @@ async function messagePinV1(token: string, authUserId: number, messageId: number
 
   Arguments:
     token       string type -- Input string supplied by request header
-    authUserId  string type -- Input string supplied by request header
+    authUserId  number type -- Input number supplied by request header
     messageId   number type -- Input number supplied by user
 
   Exceptions:
@@ -575,10 +575,10 @@ async function messagePinV1(token: string, authUserId: number, messageId: number
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
-      if (channel.messages[index].isPinned === true) {
-        throw HTTPError(BADREQUEST, 'Already pinned');
-      }
       if (permissionId === 1 || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
+        if (channel.messages[index].isPinned === true) {
+          throw HTTPError(BADREQUEST, 'Already pinned');
+        }
         channel.messages[index].isPinned = true;
         return {};
       }
@@ -589,10 +589,10 @@ async function messagePinV1(token: string, authUserId: number, messageId: number
   for (const dm of data.dms) {
     const index: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkDmMember(dm.dmId, authUserId))) {
-      if (dm.messages[index].isPinned === true) {
-        throw HTTPError(BADREQUEST, 'Already pinned');
-      }
       if (dm.creatorId === authUserId) {
+        if (dm.messages[index].isPinned === true) {
+          throw HTTPError(BADREQUEST, 'Already pinned');
+        }
         dm.messages[index].isPinned = true;
         return {};
       }
@@ -614,7 +614,7 @@ async function messageUnpinV1(token: string, authUserId: number, messageId: numb
 
   Arguments:
     token       string type -- Input string supplied by request header
-    authUserId  string type -- Input string supplied by request header
+    authUserId  number type -- Input number supplied by request header
     messageId   number type -- Input number supplied by user
 
   Exceptions:
@@ -642,10 +642,10 @@ async function messageUnpinV1(token: string, authUserId: number, messageId: numb
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
-      if (channel.messages[index].isPinned === false) {
-        throw HTTPError(BADREQUEST, 'Not already pinned');
-      }
       if (permissionId === 1 || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
+        if (channel.messages[index].isPinned === false) {
+          throw HTTPError(BADREQUEST, 'Not already pinned');
+        }
         channel.messages[index].isPinned = false;
         return {};
       }
@@ -656,10 +656,10 @@ async function messageUnpinV1(token: string, authUserId: number, messageId: numb
   for (const dm of data.dms) {
     const index: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkDmMember(dm.dmId, authUserId))) {
-      if (dm.messages[index].isPinned === false) {
-        throw HTTPError(BADREQUEST, 'Not already pinned');
-      }
       if (dm.creatorId === authUserId) {
+        if (dm.messages[index].isPinned === false) {
+          throw HTTPError(BADREQUEST, 'Not already pinned');
+        }
         dm.messages[index].isPinned = false;
         return {};
       }
@@ -673,6 +673,373 @@ async function messageUnpinV1(token: string, authUserId: number, messageId: numb
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
+async function messageShareV1(token: string, authUserId: number, ogMessageId: number, message: string, channelId: number, dmId: number) {
+/*
+  Description:
+    messageSendV1 send a message from the authorised
+    user to the channel specified by channelId
+
+  Arguments:
+    token       string type   -- string supplied by request header
+    authUserId  number type   -- number supplied by request header
+    ogMessageId number type   -- Input number supplied by user
+    message     string type   -- Input string supplied by user
+    channelId   number type   -- Input number supplied by user
+    dmId        number type   -- Input number supplied by user
+
+  Exceptions:
+    BADREQUEST - Occurs when channelId and dmId are not valid.
+    BADREQUEST - Occurs when neither channelId nor dmId are -1.
+    BADREQUEST - Occurs when length of message is not valid.
+    BADREQUEST - Occurs when ogMessageId is not valid.
+    FORBIDDEN  - Occurs when sessionId/token is not found in database.
+    FORBIDDEN  - Occurs when the authorised user is not a member of the channel/dm the usre is sharing to.
+
+  Return Value:
+    object: { shareMessageId: messageId }
+*/
+
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+  if (channelId !== -1 && dmId !== -1) {
+    throw HTTPError(BADREQUEST, 'One of them has to be -1');
+  }
+  if (message.length > 1000) {
+    throw HTTPError(BADREQUEST, 'Invalid message length');
+  }
+  if (!checkChannelId(channelId) && dmId === -1) {
+    throw HTTPError(BADREQUEST, 'Invalid channelId');
+  }
+  if (!dmIdValidator(dmId) && channelId === -1) {
+    throw HTTPError(BADREQUEST, 'Invalid dmId');
+  }
+  if (!authInChannel(channelId, authUserId) && dmId === -1) {
+    throw HTTPError(FORBIDDEN, 'Not a member of the channel you are sharing to');
+  }
+  if (!checkDmMember(dmId, authUserId) && channelId === -1) {
+    throw HTTPError(FORBIDDEN, 'Not a member of the dm you are sharing to');
+  }
+
+  const data: any = getData();
+  // share between channel to channel
+  for (const channel of data.channels) {
+    const index1: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
+    if (index1 > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
+      const ogMessage1: string = channel.messages[index1].message;
+      for (const shareChannel of data.channels) {
+        if (shareChannel.channelId === channelId) {
+          const mentions = message.match(/@\w+/gi) || [];
+          const shortMsg = message.slice(0, 20);
+          const usersToNotif = [];
+          let channelName = '';
+          for (const noChannel of data.channels) {
+            if (channelId === noChannel.channelId) {
+              for (const member of noChannel.allMembers) {
+                const tag = '@' + getHandleStr(member.uId);
+                if (mentions.includes(tag)) {
+                  usersToNotif.push(member.uId);
+                  channelName = noChannel.name;
+                }
+              }
+            }
+          }
+          for (const user of data.users) {
+            if (usersToNotif.includes(user.authUserId)) {
+              user.notifications.unshift({
+                channelId: channelId,
+                dmId: -1,
+                notificationMessage: `${getHandleStr(authUserId)} tagged you in ${channelName}: ${shortMsg}`
+              });
+            }
+          }
+
+          const messageId: number = data.messageId;
+          data.messageId += 1;
+
+          const newMessagesDetails: newMessagesDetails = {
+            messageId: messageId,
+            uId: authUserId,
+            message: ogMessage1 + message,
+            timeSent: Math.floor((new Date()).getTime() / 1000),
+            reacts: [],
+            isPinned: false,
+          };
+
+          const newReactsDetails: newReacts = {
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          };
+          newMessagesDetails.reacts.push(newReactsDetails);
+
+          channel.messages.unshift(newMessagesDetails);
+          setData(data);
+
+          return { shareMessageId: messageId };
+        }
+      }
+    }
+  }
+  // share between dm to dm
+  for (const dm of data.dms) {
+    const index2: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
+    if (index2 > -1 && checkDmMember(dm.dmId, authUserId)) {
+      const ogMessage2: string = dm.messages[index2].message;
+      for (const shareDm of data.dms) {
+        const mentions = message.match(/@\w+/gi) || [];
+        const shortMsg = message.slice(0, 20);
+        const usersToNotif = [];
+        let dmName = '';
+        for (const noDm of data.dms) {
+          if (dmId === noDm.dmId) {
+            dmName = noDm.name;
+            for (const member of noDm.uIds) {
+              const tag = '@' + getHandleStr(member);
+              if (mentions.includes(tag)) {
+                usersToNotif.push(member);
+              }
+            }
+            if (mentions.includes('@' + getHandleStr(noDm.creatorId))) {
+              usersToNotif.push(noDm.creatorId);
+            }
+          }
+        }
+
+        if (shareDm.dmId === dmId && shareDm.creatorId === authUserId) {
+          for (const user of data.users) {
+            if (usersToNotif.includes(user.authUserId)) {
+              user.notifications.unshift({
+                channelId: -1,
+                dmId: dmId,
+                notificationMessage: `${getHandleStr(authUserId)} tagged you in ${dmName}: ${shortMsg}`
+              });
+            }
+          }
+
+          const messageId: number = data.messageId;
+          data.messageId += 1;
+          const newMessagesDetails: newMessagesDetails = {
+            messageId: messageId,
+            uId: authUserId,
+            message: ogMessage2 + message,
+            timeSent: Math.floor((new Date()).getTime() / 1000),
+            reacts: [],
+            isPinned: false,
+          };
+
+          const newReactsDetails: newReacts = {
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          };
+          newMessagesDetails.reacts.push(newReactsDetails);
+
+          dm.messages.unshift(newMessagesDetails);
+          setData(data);
+
+          return { shareMessageId: messageId };
+        }
+        for (const member of shareDm.uIds) {
+          if (dmId === shareDm.dmId && member === authUserId) {
+            for (const user of data.users) {
+              if (usersToNotif.includes(user.authUserId)) {
+                user.notifications.unshift({
+                  channelId: -1,
+                  dmId: dmId,
+                  notificationMessage: `${getHandleStr(authUserId)} tagged you in ${dmName}: ${shortMsg}`
+                });
+              }
+            }
+
+            const messageId: number = data.messageId;
+            data.messageId += 1;
+            const newMessagesDetails: newMessagesDetails = {
+              messageId: messageId,
+              uId: authUserId,
+              message: ogMessage2 + message,
+              timeSent: Math.floor((new Date()).getTime() / 1000),
+              reacts: [],
+              isPinned: false,
+            };
+
+            const newReactsDetails: newReacts = {
+              reactId: 1,
+              uIds: [],
+              isThisUserReacted: false,
+            };
+            newMessagesDetails.reacts.push(newReactsDetails);
+
+            dm.messages.unshift(newMessagesDetails);
+            setData(data);
+
+            return { shareMessageId: messageId };
+          }
+        }
+      }
+    }
+  }
+  // share from dm to channel
+  for (const dm of data.dms) {
+    const index3: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
+    if (index3 > -1 && checkDmMember(dm.dmId, authUserId)) {
+      const ogMessage3: string = dm.messages[index3].message;
+      for (const shareChannel of data.channels) {
+        if (shareChannel.channelId === channelId) {
+          const mentions = message.match(/@\w+/gi) || [];
+          const shortMsg = message.slice(0, 20);
+          const usersToNotif = [];
+          let channelName = '';
+          for (const noChannel of data.channels) {
+            if (channelId === noChannel.channelId) {
+              for (const member of noChannel.allMembers) {
+                const tag = '@' + getHandleStr(member.uId);
+                if (mentions.includes(tag)) {
+                  usersToNotif.push(member.uId);
+                  channelName = noChannel.name;
+                }
+              }
+            }
+          }
+          for (const user of data.users) {
+            if (usersToNotif.includes(user.authUserId)) {
+              user.notifications.unshift({
+                channelId: channelId,
+                dmId: -1,
+                notificationMessage: `${getHandleStr(authUserId)} tagged you in ${channelName}: ${shortMsg}`
+              });
+            }
+          }
+
+          const messageId: number = data.messageId;
+          data.messageId += 1;
+
+          const newMessagesDetails: newMessagesDetails = {
+            messageId: messageId,
+            uId: authUserId,
+            message: ogMessage3 + message,
+            timeSent: Math.floor((new Date()).getTime() / 1000),
+            reacts: [],
+            isPinned: false,
+          };
+
+          const newReactsDetails: newReacts = {
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          };
+          newMessagesDetails.reacts.push(newReactsDetails);
+
+          dm.messages.unshift(newMessagesDetails);
+          setData(data);
+
+          return { shareMessageId: messageId };
+        }
+      }
+    }
+  }
+  // share from channel to dm
+  for (const channel of data.channels) {
+    const index4: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
+    if (index4 > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
+      const ogMessage4: string = channel.messages[index4].message;
+      const mentions = message.match(/@\w+/gi) || [];
+      const shortMsg = message.slice(0, 20);
+      const usersToNotif = [];
+      let dmName = '';
+      for (const noDm of data.dms) {
+        if (dmId === noDm.dmId) {
+          dmName = noDm.name;
+          for (const member of noDm.uIds) {
+            const tag = '@' + getHandleStr(member);
+            if (mentions.includes(tag)) {
+              usersToNotif.push(member);
+            }
+          }
+          if (mentions.includes('@' + getHandleStr(noDm.creatorId))) {
+            usersToNotif.push(noDm.creatorId);
+          }
+        }
+      }
+
+      for (const shareDm of data.dms) {
+        if (shareDm.dmId === dmId && shareDm.creatorId === authUserId) {
+          for (const user of data.users) {
+            if (usersToNotif.includes(user.authUserId)) {
+              user.notifications.unshift({
+                channelId: -1,
+                dmId: dmId,
+                notificationMessage: `${getHandleStr(authUserId)} tagged you in ${dmName}: ${shortMsg}`
+              });
+            }
+          }
+
+          const messageId: number = data.messageId;
+          data.messageId += 1;
+          const newMessagesDetails: newMessagesDetails = {
+            messageId: messageId,
+            uId: authUserId,
+            message: ogMessage4 + message,
+            timeSent: Math.floor((new Date()).getTime() / 1000),
+            reacts: [],
+            isPinned: false,
+          };
+
+          const newReactsDetails: newReacts = {
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          };
+          newMessagesDetails.reacts.push(newReactsDetails);
+
+          channel.messages.unshift(newMessagesDetails);
+          setData(data);
+
+          return { shareMessageId: messageId };
+        }
+        for (const member of shareDm.uIds) {
+          if (dmId === shareDm.dmId && member === authUserId) {
+            for (const user of data.users) {
+              if (usersToNotif.includes(user.authUserId)) {
+                user.notifications.unshift({
+                  channelId: -1,
+                  dmId: dmId,
+                  notificationMessage: `${getHandleStr(authUserId)} tagged you in ${dmName}: ${shortMsg}`
+                });
+              }
+            }
+
+            const messageId: number = data.messageId;
+            data.messageId += 1;
+            const newMessagesDetails: newMessagesDetails = {
+              messageId: messageId,
+              uId: authUserId,
+              message: ogMessage4 + message,
+              timeSent: Math.floor((new Date()).getTime() / 1000),
+              reacts: [],
+              isPinned: false,
+            };
+
+            const newReactsDetails: newReacts = {
+              reactId: 1,
+              uIds: [],
+              isThisUserReacted: false,
+            };
+            newMessagesDetails.reacts.push(newReactsDetails);
+
+            channel.messages.unshift(newMessagesDetails);
+            setData(data);
+
+            return { shareMessageId: messageId };
+          }
+        }
+      }
+    }
+  }
+
+  throw HTTPError(BADREQUEST, 'Invalid ogMessageId');
+}
+
 export {
   messageSendV1,
   messageEditV1,
@@ -681,5 +1048,6 @@ export {
   messageReactV1,
   messageUnreactV1,
   messagePinV1,
-  messageUnpinV1
+  messageUnpinV1,
+  messageShareV1
 };
