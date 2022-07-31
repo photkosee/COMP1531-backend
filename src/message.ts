@@ -868,41 +868,6 @@ async function messageSendlaterV1(token: string, authUserId: number, channelId: 
 
   const now = Math.floor(Date.now() / 1000);
   const millisecTillSend = 1000 * (timeSent - now);
-  /*let newMessage = { messageId: 2};
-  function sendMessage () {
-    for (const channel of data.channels) {
-      for (const member of channel.allMembers) {
-        if (channelId === channel.channelId && member.uId === authUserId) {
-          const messageId: number = data.messageId;
-          data.messageId += 1;
-
-          const newMessagesDetails: newMessagesDetails = {
-            messageId: messageId,
-            uId: authUserId,
-            message: message,
-            timeSent: timeSent,
-            reacts: [],
-            isPinned: false,
-          };
-
-          const newReactsDetails: newReacts = {
-            reactId: 1,
-            uIds: [],
-            isThisUserReacted: false,
-          };
-          newMessagesDetails.reacts.push(newReactsDetails);
-
-          channel.messages.unshift(newMessagesDetails);
-          setData(data);
-
-          return { messageId: messageId };
-        }
-      }
-    }
-  }
-  //setTimeout(sendMessage, millisecTillSend);
-  return sendMessage();
-  */
 
   const messageId: number = data.messageId;
   data.messageId += 1;
@@ -924,21 +889,19 @@ async function messageSendlaterV1(token: string, authUserId: number, channelId: 
   newMessagesDetails.reacts.push(newReactsDetails);
 
 
-  async function addMessage() {
+  function addMessage() {
     for (const channel of data.channels) {
       for (const member of channel.allMembers) {
         if (channelId === channel.channelId && member.uId === authUserId) {
           channel.messages.unshift(newMessagesDetails);
-          await setData(data);
+          setData(data);
         }
       }
     }
-    return 1;
   }
 
   setTimeout(addMessage, millisecTillSend);
 
-  console.log('Hi');
   return { messageId: newMessagesDetails.messageId };
 }
 
