@@ -402,7 +402,7 @@ describe('Testing successful notification get - notifications/get', () => {
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
-  test.only('successful notif message edit in channel', () => {
+  test('successful notif message edit in dm', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'user1@email.com',
@@ -423,41 +423,25 @@ describe('Testing successful notification get - notifications/get', () => {
     const user2 = JSON.parse(res.body as string);
     res = request('POST', `${url}:${port}/dm/create/v2`, {
       json: {
-        uIds: [user2.authUserId],
+        uIds: [user2.authUserId]
       },
       headers: {
         'Content-type': 'application/json',
         token: user1.token
       }
     });
+    const dm1 = JSON.parse(res.body as string);
     res = request('POST', `${url}:${port}/message/senddm/v2`, {
       json: {
-        dmId: 1,
+        dmId: dm1.dmId,
         message: 'hello'
       },
       headers: {
         'Content-type': 'application/json',
-        token: user2.token
-      }
-    });
-    const message = JSON.parse(res.body as string);
-    res = request('PUT', `${url}:${port}/message/edit/v2`, {
-      json: {
-        messageId: message.messageId,
-        message: '@johnsmith/'
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user2.token
-      }
-    });
-    res = request('GET', `${url}:${port}/notifications/get/v1`, {
-      headers: {
-        'Content-type': 'application/json',
         token: user1.token
       }
     });
-    expect(res.statusCode).toStrictEqual(OK);
+    const message = JSON.parse(res.body as string);
     res = request('PUT', `${url}:${port}/message/edit/v2`, {
       json: {
         messageId: message.messageId,
@@ -468,12 +452,30 @@ describe('Testing successful notification get - notifications/get', () => {
         token: user1.token
       }
     });
+    res = request('PUT', `${url}:${port}/message/edit/v2`, {
+      json: {
+        messageId: message.messageId,
+        message: '@johnsmith/'
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: user1.token
+      }
+    });
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
         token: user2.token
       }
     });
-    expect(res.statusCode).toStrictEqual(OK); 
+    expect(res.statusCode).toStrictEqual(OK);
+    res = request('GET', `${url}:${port}/notifications/get/v1`, {
+      headers: {
+        'Content-type': 'application/json',
+        token: user1.token
+      }
+    });
+    expect(res.statusCode).toStrictEqual(OK);
+    console.log(JSON.parse(res.body as string));
   });
 });

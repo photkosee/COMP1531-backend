@@ -34,7 +34,6 @@ async function notificationsGet(token: string, authUserId: number) {
       }
     }
   }
-  // console.log(notificationArray);
   return { notifications: notificationArray };
 }
 

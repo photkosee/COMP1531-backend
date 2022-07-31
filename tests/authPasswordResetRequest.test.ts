@@ -12,7 +12,7 @@ beforeAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
   const res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
-      email: 'mriduls907@gmail.com',
+      email: 'f09acrunchie@gmail.com',
       password: 'mriduls907',
       nameFirst: 'Mridul',
       nameLast: 'Singh'
@@ -42,7 +42,7 @@ test('Test with invalid email - auth/passwordreset/request/v1', () => {
 test('Successful password Reset Request - auth/passwordreset/request/v1', () => {
   const res = request('POST', `${url}:${port}/auth/passwordreset/request/v1`, {
     body: JSON.stringify({
-      email: 'mriduls907@gmail.com'
+      email: 'f09acrunchie@gmail.com'
     }),
     headers: {
       'Content-type': 'application/json'

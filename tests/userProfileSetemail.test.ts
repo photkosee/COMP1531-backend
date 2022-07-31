@@ -15,7 +15,6 @@ interface authRegisterObj {
 beforeEach(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
-
 afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });

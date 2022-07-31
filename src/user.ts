@@ -1,10 +1,18 @@
 import { getData } from './dataStore';
-import { checkAuthUserId, checkToken } from './channelHelperFunctions';
+import { checkToken, checkAuthUserIdProfile, checkTokenProfile } from './channelHelperFunctions';
 import { emailValidator } from './authHelperFunctions';
 import HTTPError from 'http-errors';
+import { involvementRateCalculator } from './userHelperFunctions';
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
+
+interface USER_STATS {
+    channelsJoined: [],
+    dmsJoined: [],
+    messagesSent: [],
+    involvementRate: number
+}
 
 async function userProfileV1(token: string, authUserId: number, uId: number) {
 /*
@@ -24,13 +32,13 @@ async function userProfileV1(token: string, authUserId: number, uId: number) {
     Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
 */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(await checkTokenProfile(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const data: any = getData();
 
-  if (!(checkAuthUserId(uId))) {
+  if (!(checkAuthUserIdProfile(uId))) {
     throw HTTPError(BADREQUEST, 'User Id is invalid');
   }
 
@@ -138,8 +146,10 @@ async function userProfileSetemailV1(token: string, authUserId: number, email: s
   const data: any = getData();
 
   for (const user of data.users) {
-    if (user.email === email && user.authUserId !== authUserId) {
-      throw HTTPError(BADREQUEST, 'Email is used by another user');
+    if (user.isActive === true) {
+      if (user.email === email && user.authUserId !== authUserId) {
+        throw HTTPError(BADREQUEST, 'Email is used by another user');
+      }
     }
   }
 
@@ -163,7 +173,10 @@ async function userProfileSethandleV1(token: string, authUserId: number, handleS
     handleStr   string type  -- Input string supplied by user
 
   Exceptions:
-    FORBIDDEN - Invalid Session ID or Token
+    FORBIDDEN   - Invalid Session ID or Token
+    BADREQUEST  - Invalid handleStr type
+    BADREQUEST  - handleStr must be 3-20 characters
+    BADREQUEST  - handleStr must only be alphanumeric
 
   Return Value:
     Object: {} on success
@@ -190,8 +203,10 @@ async function userProfileSethandleV1(token: string, authUserId: number, handleS
   const data: any = getData();
 
   for (const user of data.users) {
-    if (user.handleStr === handleStr && user.authUserId !== authUserId) {
-      throw HTTPError(BADREQUEST, 'handleStr is used by another user');
+    if (user.isActive === true) {
+      if (user.handleStr === handleStr && user.authUserId !== authUserId) {
+        throw HTTPError(BADREQUEST, 'handleStr is used by another user');
+      }
     }
   }
 
@@ -204,9 +219,48 @@ async function userProfileSethandleV1(token: string, authUserId: number, handleS
   return {};
 }
 
+async function userStatsV1(token: string, authUserId: number) {
+/*
+  Description:
+    userStatsV1 fetches stats about user's use of UNSW treats
+
+  Arguments:
+    token       string type  -- string supplied by header
+    authUserId  number type  -- number supplied by header
+
+  Exceptions:
+    FORBIDDEN   - Invalid Session ID or Token
+
+  Return Value:
+    Object: {} on success
+*/
+
+  if (!(await checkToken(token, authUserId))) {
+    throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
+  }
+
+  const data:any = getData();
+  let userStats: USER_STATS =
+    {
+      channelsJoined: [],
+      dmsJoined: [],
+      messagesSent: [],
+      involvementRate: 0
+    };
+
+  for (const user of data.users) {
+    if (user.authUserId === authUserId) {
+      user.userStats.involvementRate = involvementRateCalculator(authUserId);
+      userStats = user.userStats;
+    }
+  }
+  return { userStats: userStats };
+}
+
 export {
   userProfileV1,
   userProfileSetnameV1,
   userProfileSethandleV1,
   userProfileSetemailV1,
+  userStatsV1
 };

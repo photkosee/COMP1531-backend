@@ -11,6 +11,27 @@ let data: object = {
     //   permissionId: 'number',
     //   isActive: 'boolean',
     //   sessionList: 'Array<tokens>'
+    //   userStats: {
+    //    channelsJoined: [
+    //      {
+    //        numChannelsJoined: 'number',
+    //        timeStamp: 'number'
+    //      }
+    //    ],
+    //    dmsJoined: [
+    //      {
+    //        numDmsJoined: 'number',
+    //        timeStamp: 'number'
+    //      }
+    //    ],
+    //    messagesSent: [
+    //      {
+    //        numMessagesSent: 'number',
+    //        timeStamp: 'number'
+    //      }
+    //    ],
+    //    involvementRate: 'number'
+    //   }
     // }
   ],
   channels: [
@@ -36,6 +57,16 @@ let data: object = {
     //       isPinned: 'boolean',
     //     }
     //   ],
+    //   standup: {
+    //     isActive: 'boolean',
+    //     timeFinish: 'integer',
+    //     messagesQueue: [
+    //       {
+    //         handleStr: 'string',
+    //         message: 'string'
+    //       }
+    //     ]
+    //   },
     // }
   ],
   dms: [
@@ -68,6 +99,27 @@ let data: object = {
     //   resetCode: 'string',
     // }
   ],
+  workplaceStats: {
+    // channelsExist: [
+    //  {
+    //    numChannelsExist: 'number',
+    //    timeStamp: 'number
+    //  }
+    // ],
+    // dmsExist: [
+    //  {
+    //    numDmsExist: 'number',
+    //    timeStamp: 'number'
+    //  }
+    // ],
+    // messagesExist: [
+    //  {
+    //    numMessagesExist: 'number',
+    //    timeStamp: 'number'
+    //  }
+    // ],
+    // utilizationRate: 'number'
+  },
   messageId: 1,
   dmId: 1
 };
