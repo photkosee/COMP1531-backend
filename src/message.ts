@@ -2,6 +2,11 @@ import { getData, setData } from './dataStore';
 import { checkToken } from './channelHelperFunctions';
 import { checkIfMember, checkChannelId, authInChannel } from './channelHelperFunctions';
 import { checkDmMember, dmIdValidator } from './dmHelperFunctions';
+import {
+  incrementMessagesSent,
+  incrementMessagesExist,
+  decreaseMessagesExist
+} from './userHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -81,6 +86,9 @@ async function messageSendV1(token: string, authUserId: number, channelId: numbe
         newMessagesDetails.reacts.push(newReactsDetails);
 
         channel.messages.unshift(newMessagesDetails);
+
+        incrementMessagesExist();
+        incrementMessagesSent(authUserId);
         setData(data);
 
         return { messageId: messageId };
@@ -231,6 +239,8 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
       newMessagesDetails.reacts.push(newReactsDetails);
 
       dm.messages.unshift(newMessagesDetails);
+      incrementMessagesExist();
+      incrementMessagesSent(authUserId);
       setData(data);
 
       return { messageId: messageId };
@@ -256,6 +266,9 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
         newMessagesDetails.reacts.push(newReactsDetails);
 
         dm.messages.unshift(newMessagesDetails);
+
+        incrementMessagesExist();
+        incrementMessagesSent(authUserId);
         setData(data);
 
         return { messageId: messageId };
@@ -307,6 +320,7 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
       const msgSenderId: number = channel.messages[index].uId;
       if (permissionId === 1 || msgSenderId === authUserId || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
         channel.messages.splice(index, 1);
+        decreaseMessagesExist();
         return {};
       }
       checkErrorPermission = true;
@@ -319,6 +333,7 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
       const msgSenderId: number = dm.messages[index].uId;
       if (msgSenderId === authUserId || dm.creatorId === authUserId) {
         dm.messages.splice(index, 1);
+        decreaseMessagesExist();
         return {};
       }
       checkErrorPermission = true;

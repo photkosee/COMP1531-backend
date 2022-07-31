@@ -11,6 +11,10 @@ import {
   hashPassword,
   sendEmail
 } from './authHelperFunctions';
+import {
+  createUserStats,
+  createWorkplaceStats
+} from './userHelperFunctions';
 
 const HOST: string = process.env.IP || 'localhost';
 const url = config.url;
@@ -29,7 +33,8 @@ interface newUserDetails {
   profileImgUrl: string,
   permissionId: number,
   isActive: boolean,
-  sessionList: Array<string>
+  sessionList: Array<string>,
+  userStats: object
 }
 
 interface loginDetail {
@@ -60,6 +65,10 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
   */
 
   const data: any = getData();
+
+  if (data.users.length === 0) {
+    createWorkplaceStats();
+  }
 
   const checkParamType: boolean = paramTypeChecker(email, password, nameFirst, nameLast);
 
@@ -103,6 +112,8 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
 
     const defaultProfileImgUrl = `${(HOST === 'localhost') ? `${url}:` : `https://${HOST}:`}${PORT}/static/profile.jpg`;
 
+    const userStats: object = createUserStats();
+
     const newUserDetails: newUserDetails = {
       authUserId: newAuthId,
       nameFirst: nameFirst,
@@ -113,7 +124,8 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
       profileImgUrl: defaultProfileImgUrl,
       permissionId: permissionId,
       isActive: true,
-      sessionList: [newSessionId]
+      sessionList: [newSessionId],
+      userStats: userStats
     };
 
     data.users.push(newUserDetails);
