@@ -29,13 +29,15 @@ async function usersAllV1(token: string, authUserId: number) {
   const users: any = [];
 
   for (const user of data.users) {
-    users.push({
-      uId: user.authUserId,
-      email: user.email,
-      nameFirst: user.nameFirst,
-      nameLast: user.nameLast,
-      handleStr: user.handleStr
-    });
+    if (user.isActive === true) {
+      users.push({
+        uId: user.authUserId,
+        email: user.email,
+        nameFirst: user.nameFirst,
+        nameLast: user.nameLast,
+        handleStr: user.handleStr
+      });
+    }
   }
 
   return { users: users };

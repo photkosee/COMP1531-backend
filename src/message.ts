@@ -2,6 +2,11 @@ import { getData, setData } from './dataStore';
 import { checkToken } from './channelHelperFunctions';
 import { checkIfMember, checkChannelId, authInChannel, getHandleStr } from './channelHelperFunctions';
 import { checkDmMember, dmIdValidator } from './dmHelperFunctions';
+import {
+  incrementMessagesSent,
+  incrementMessagesExist,
+  decreaseMessagesExist
+} from './userHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -18,7 +23,7 @@ interface newMessagesDetails {
   uId: number,
   message: string,
   timeSent: number,
-  reacts: object[],
+  reacts: newReacts[],
   isPinned: boolean,
 }
 
@@ -96,7 +101,8 @@ async function messageSendV1(token: string, authUserId: number, channelId: numbe
           };
           newMessagesDetails.reacts.push(newReactsDetails);
           channel.messages.unshift(newMessagesDetails);
-
+          incrementMessagesExist();
+          incrementMessagesSent(authUserId);
           for (const user of data.users) {
             if (usersToNotif.includes(user.authUserId)) {
               user.notifications.unshift({
@@ -156,6 +162,10 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
       permissionId = user.permissionId;
     }
   }
+  const mentions = message.match(/@\w+/gi) || [];
+  const shortMsg = message.slice(0, 20);
+  const usersToNotif = [];
+
   let checkErrorPermission = false;
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
@@ -166,6 +176,23 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
           channel.messages[index].message = message;
         } else {
           channel.messages.splice(index, 1);
+        }
+
+        for (const member of channel.allMembers) {
+          const tag = '@' + getHandleStr(member.uId);
+          if (mentions.includes(tag)) {
+            usersToNotif.push(member.uId);
+          }
+        }
+
+        for (const user of data.users) {
+          if (usersToNotif.includes(user.authUserId)) {
+            user.notifications.unshift({
+              channelId: channel.channelId,
+              dmId: -1,
+              notificationMessage: `${getHandleStr(authUserId)} tagged you in ${channel.name}: ${shortMsg}`
+            });
+          }
         }
         return {};
       }
@@ -182,6 +209,24 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
           dm.messages[index].message = message;
         } else {
           dm.messages.splice(index, 1);
+        }
+        for (const member of dm.uIds) {
+          const tag = '@' + getHandleStr(member);
+          if (mentions.includes(tag)) {
+            usersToNotif.push(member);
+          }
+        }
+        if (mentions.includes('@' + getHandleStr(dm.creatorId))) {
+          usersToNotif.push(dm.creatorId);
+        }
+        for (const user of data.users) {
+          if (usersToNotif.includes(user.authUserId)) {
+            user.notifications.unshift({
+              channelId: -1,
+              dmId: dm.dmId,
+              notificationMessage: `${getHandleStr(authUserId)} tagged you in ${dm.name}: ${shortMsg}`
+            });
+          }
         }
         return {};
       }
@@ -284,6 +329,8 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
         }
       }
       dm.messages.unshift(newMessagesDetails);
+      incrementMessagesExist();
+      incrementMessagesSent(authUserId);
       setData(data);
 
       return { messageId: messageId };
@@ -317,6 +364,9 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
           }
         }
         dm.messages.unshift(newMessagesDetails);
+
+        incrementMessagesExist();
+        incrementMessagesSent(authUserId);
         setData(data);
 
         return { messageId: messageId };
@@ -368,6 +418,7 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
       const msgSenderId: number = channel.messages[index].uId;
       if (permissionId === 1 || msgSenderId === authUserId || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
         channel.messages.splice(index, 1);
+        decreaseMessagesExist();
         return {};
       }
       checkErrorPermission = true;
@@ -380,6 +431,7 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
       const msgSenderId: number = dm.messages[index].uId;
       if (msgSenderId === authUserId || dm.creatorId === authUserId) {
         dm.messages.splice(index, 1);
+        decreaseMessagesExist();
         return {};
       }
       checkErrorPermission = true;

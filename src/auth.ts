@@ -11,8 +11,13 @@ import {
   hashPassword,
   sendEmail
 } from './authHelperFunctions';
+import {
+  createUserStats,
+  createWorkplaceStats
+} from './userHelperFunctions';
 
 const HOST: string = process.env.IP || 'localhost';
+const url = config.url;
 const PORT: number = parseInt(process.env.PORT || config.port);
 
 const BADREQUEST = 400;
@@ -30,6 +35,7 @@ interface newUserDetails {
   isActive: boolean,
   sessionList: Array<string>,
   notifications: Array<any>
+  userStats: object
 }
 
 interface loginDetail {
@@ -61,6 +67,10 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
 
   const data: any = getData();
 
+  if (data.users.length === 0) {
+    createWorkplaceStats();
+  }
+
   const checkParamType: boolean = paramTypeChecker(email, password, nameFirst, nameLast);
 
   if (checkParamType) {
@@ -85,7 +95,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
     }
 
     for (const user of data.users) {
-      if (user.email === email) {
+      if (user.email === email && user.isActive === true) {
         throw HTTPError(BADREQUEST, 'Email already in use');
       }
     }
@@ -101,7 +111,9 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
 
     const passwordHash = await hashPassword(password);
 
-    const defaultProfileImgUrl = `${(HOST === 'localhost') ? 'http://' : 'https://'}${HOST + ':' + PORT}/static/profile.png`;
+    const defaultProfileImgUrl = `${(HOST === 'localhost') ? `${url}:` : `https://${HOST}:`}${PORT}/static/profile.jpg`;
+
+    const userStats: object = createUserStats();
 
     const newUserDetails: newUserDetails = {
       authUserId: newAuthId,
@@ -114,7 +126,8 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
       permissionId: permissionId,
       isActive: true,
       sessionList: [newSessionId],
-      notifications: []
+      notifications: [],
+      userStats: userStats
     };
 
     data.users.push(newUserDetails);
