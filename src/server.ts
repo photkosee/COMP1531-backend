@@ -54,10 +54,9 @@ import {
   channelAddownerV1,
   channelLeaveV1
 } from './channel';
-import {
-  adminUserpermissionChange, adminUserRemove
-} from './admin';
-import console from 'console';
+import { adminUserpermissionChange, adminUserRemove } from './admin';
+import { standupIsActive, standupSend, standupStart } from './standup';
+import { uploadProfilePhoto } from './uploadProfilePhoto';
 
 // Set up web app, use JSON
 const app = express();
@@ -78,7 +77,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
     fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
       if (error) {
-        console.log(error);
+        // console.log(error);
       } else {
         // console.log('Succesfully written to database.json');
       }
@@ -115,11 +114,7 @@ app.get('/echo', (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.delete('/clear/v1', (req: Request, res: Response, next: NextFunction) => {
-  try {
-    return res.json(clearV1());
-  } catch (err) {
-    next(err);
-  }
+  return res.json(clearV1());
 });
 
 app.post('/auth/register/v3', async (req: Request, res: Response, next: NextFunction) => {
@@ -566,6 +561,54 @@ app.get('/user/stats/v1', validateJwtToken, async(req: Request, res: Response, n
   }
 });
 
+app.post('/standup/start/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId, length } = req.body;
+    const returnData = await standupStart(token, authUserId, channelId, length);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/standup/active/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const channelId = parseInt(req.query.channelId as string);
+    const returnData = await standupIsActive(token, authUserId, channelId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/standup/send/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId, message } = req.body;
+    const returnData = await standupSend(token, authUserId, channelId, message);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/user/profile/uploadphoto/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { imgUrl, xStart, yStart, xEnd, yEnd } = req.body;
+    const returnData = await uploadProfilePhoto(token, authUserId, imgUrl, xStart, yStart, xEnd, yEnd);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // for logging errors
 app.use(morgan('dev'));
 
@@ -578,33 +621,22 @@ const server = app.listen(PORT, HOST, () => {
 
   // Loads data from database.json to dataStore on server initialization
   fs.readFile(databasePath, 'utf-8', (error, jsonData) => {
-    if (error) {
-      console.log(`Error Initialising Datastore -> ${error.message}`);
-      console.log('Creating new Database file');
+    // if (error) {
+    //   const newData: any = getData();
 
-      const newData: any = getData();
+    //   fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
+    //     if (error) {
+    //       // console.log(error);
+    //       return error;
+    //     } else {
+    //       // console.log('Succesfully created database.json file');
+    //     }
+    //   });
 
-      fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
-        if (error) {
-          console.log(error);
-          return error;
-        } else {
-          console.log('Succesfully created database.json file');
-        }
-      });
-
-      return {};
-    }
-
-    try {
-      const database = JSON.parse(jsonData);
-      setData(database);
-      console.log('DataStore Initialized Successfully');
-      return {};
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
+    //   return {};
+    // }
+    const database = JSON.parse(jsonData);
+    setData(database);
   });
 });
 

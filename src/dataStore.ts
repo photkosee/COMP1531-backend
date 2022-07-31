@@ -57,6 +57,16 @@ let data: object = {
     //       isPinned: 'boolean',
     //     }
     //   ],
+    //   standup: {
+    //     isActive: 'boolean',
+    //     timeFinish: 'integer',
+    //     messagesQueue: [
+    //       {
+    //         handleStr: 'string',
+    //         message: 'string'
+    //       }
+    //     ]
+    //   },
     // }
   ],
   dms: [

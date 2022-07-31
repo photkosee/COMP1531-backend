@@ -23,7 +23,7 @@ interface newMessagesDetails {
   uId: number,
   message: string,
   timeSent: number,
-  reacts: object[],
+  reacts: newReacts[],
   isPinned: boolean,
 }
 
