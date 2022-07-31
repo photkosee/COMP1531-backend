@@ -1,5 +1,6 @@
 import { getData, setData } from './dataStore';
 import { checkToken } from './channelHelperFunctions';
+import { incrementChannelsExist, incrementChannelsJoined } from './userHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -12,6 +13,11 @@ interface newChannelDetails {
   allMembers: any,
   isPublic: boolean,
   messages: any,
+  standup: {
+    isActive: boolean,
+    timeFinish: number | null,
+    messagesQueue: object[],
+  },
 }
 
 async function channelsListallV1(token: string, authUserId: number) {
@@ -141,7 +147,15 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
         }],
         isPublic: isPublic,
         messages: [],
+        standup: {
+          isActive: false,
+          timeFinish: null,
+          messagesQueue: []
+        },
       };
+
+      incrementChannelsJoined(authUserId);
+      incrementChannelsExist();
 
       data.channels.push(newChannelDetails);
       setData(data);

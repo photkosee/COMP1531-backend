@@ -175,6 +175,45 @@ describe('Testing for error - message/sendlater/v1', () => {
     expect(res.statusCode).toBe(FORBIDDEN);
   });
 });
+test('timeSent is before current time - message/sendlater', () => {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
+    json: {
+      email: 'mal1@email.com',
+      password: 'password1',
+      nameFirst: 'John',
+      nameLast: 'Smith',
+    },
+    headers: {
+      'Content-type': 'application/json',
+    }
+  });
+  const user1 = JSON.parse(res.body as string);
+
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
+    json: {
+      name: 'channel1',
+      isPublic: true
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
+    }
+  });
+  const channel1 = JSON.parse(res.body as string);
+
+  res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+    json: {
+      channelId: channel1.channelId,
+      message: 'sdfgsdg',
+      timeSent: Math.floor(Date.now() / 1000) - 1000
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
+    }
+  });
+  expect(res.statusCode).toBe(BADREQUEST);
+});
 
 test('Successful messageSendlater - message/sendlater', () => {
   let res = request('POST', `${url}:${port}/auth/register/v3`, {
@@ -206,7 +245,7 @@ test('Successful messageSendlater - message/sendlater', () => {
     json: {
       channelId: channel1.channelId,
       message: 'sdfgsdg',
-      timeSent: Math.floor(Date.now() / 1000) + 2000
+      timeSent: Math.floor(Date.now() / 1000) + 0.001
     },
     headers: {
       'Content-type': 'application/json',

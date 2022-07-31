@@ -43,7 +43,7 @@ describe('Testing for error - message/sendlaterdm/v1', () => {
     const user2 = JSON.parse(res.body as string);
     res = request('POST', `${url}:${port}/dm/create/v2`, {
       json: {
-        uIds: [user2.uId],
+        uIds: [user2.authUserId],
         isPublic: true
       },
       headers: {
@@ -56,7 +56,7 @@ describe('Testing for error - message/sendlaterdm/v1', () => {
       json: {
         dmId: dm1.dmId,
         message: '',
-        timeSent: Math.floor(Date.now() / 1000)
+        timeSent: Math.floor(Date.now() / 1000) + 1
       },
       headers: {
         'Content-type': 'application/json',
@@ -121,7 +121,7 @@ describe('Testing for error - message/sendlaterdm/v1', () => {
     const user2 = JSON.parse(res.body as string);
     res = request('POST', `${url}:${port}/dm/create/v2`, {
       json: {
-        uIds: [user2.userId],
+        uIds: [user2.authUserId],
       },
       headers: {
         'Content-type': 'application/json',
@@ -207,7 +207,7 @@ describe('Testing for error - message/sendlaterdm/v1', () => {
   });
 });
 
-test('Successful messageSendlater - message/sendlater', () => {
+test('Successful messageSendlaterdm - message/sendlaterdm', () => {
   let res = request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
       email: 'mal1@email.com',
@@ -247,7 +247,7 @@ test('Successful messageSendlater - message/sendlater', () => {
     json: {
       dmId: dm1.dmId,
       message: 'sdfgsdg',
-      timeSent: Math.floor(Date.now() / 1000) + 100
+      timeSent: Math.floor(Date.now() / 1000) + 0.001
     },
     headers: {
       'Content-type': 'application/json',
@@ -255,4 +255,54 @@ test('Successful messageSendlater - message/sendlater', () => {
     }
   });
   expect(res.statusCode).toBe(OK);
+});
+
+test('Timesent is before current time - message/sendlaterdm', () => {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
+    json: {
+      email: 'mal1@email.com',
+      password: 'password1',
+      nameFirst: 'John',
+      nameLast: 'Smith',
+    },
+    headers: {
+      'Content-type': 'application/json',
+    }
+  });
+  const user1 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/auth/register/v3`, {
+    json: {
+      email: 'mal2@email.com',
+      password: 'password2',
+      nameFirst: 'ben',
+      nameLast: 'kiin',
+    },
+    headers: {
+      'Content-type': 'application/json',
+    }
+  });
+  const user2 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/dm/create/v2`, {
+    json: {
+      uIds: [user2.authUserId],
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
+    }
+  });
+  const dm1 = JSON.parse(res.body as string);
+
+  res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+    json: {
+      dmId: dm1.dmId,
+      message: 'sdfgsdg',
+      timeSent: Math.floor(Date.now() / 1000) - 100
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
+    }
+  });
+  expect(res.statusCode).toBe(BADREQUEST);
 });
