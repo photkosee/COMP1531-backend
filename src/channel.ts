@@ -8,6 +8,10 @@ import {
   checkToken,
   authIsOwner,
 } from './channelHelperFunctions';
+import {
+  incrementChannelsJoined,
+  decreaseChannelsJoined
+} from './userHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -84,6 +88,8 @@ async function channelJoinV1(token: string, authUserId: number, channelId: numbe
     nameLast: chosenUser.nameLast,
     handleStr: chosenUser.handleStr
   });
+
+  incrementChannelsJoined(authUserId);
 
   return {};
 }
@@ -199,7 +205,7 @@ async function channelInviteV1(token: string, authUserId: number, channelId: num
             handleStr: element.handleStr
           };
           channel.allMembers.push(newMember);
-
+          incrementChannelsJoined(uId);
           setData(dataStore);
           return {};
         }
@@ -455,6 +461,7 @@ async function channelLeaveV1(token: string, authUserId: number, channelId: numb
       for (let i = 0; i < channel.allMembers.length; i++) {
         if (channel.allMembers[i].uId === uId) {
           channel.allMembers.splice(i, 1);
+          decreaseChannelsJoined(authUserId);
           setData(dataStore);
           return {};
         }

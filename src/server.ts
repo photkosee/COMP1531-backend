@@ -9,7 +9,7 @@ import fs from 'fs';
 import { echo } from './echo';
 import { clearV1 } from './other';
 import config from './config.json';
-import { usersAllV1 } from './users';
+import { usersAllV1, usersStatsV1 } from './users';
 import { getData, setData } from './dataStore';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import {
@@ -42,7 +42,8 @@ import {
   userProfileV1,
   userProfileSetnameV1,
   userProfileSetemailV1,
-  userProfileSethandleV1
+  userProfileSethandleV1,
+  userStatsV1
 } from './user';
 import {
   channelJoinV1,
@@ -53,11 +54,10 @@ import {
   channelAddownerV1,
   channelLeaveV1
 } from './channel';
-import {
-  adminUserpermissionChange
-} from './admin';
-import console from 'console';
 import { searchV1 } from './search';
+import { adminUserpermissionChange, adminUserRemove } from './admin';
+import { standupIsActive, standupSend, standupStart } from './standup';
+import { uploadProfilePhoto } from './uploadProfilePhoto';
 // Set up web app, use JSON
 const app = express();
 app.use(json());
@@ -77,7 +77,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
     fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
       if (error) {
-        console.log(error);
+        // console.log(error);
       } else {
         // console.log('Succesfully written to database.json');
       }
@@ -114,11 +114,7 @@ app.get('/echo', (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.delete('/clear/v1', (req: Request, res: Response, next: NextFunction) => {
-  try {
-    return res.json(clearV1());
-  } catch (err) {
-    next(err);
-  }
+  return res.json(clearV1());
 });
 
 app.post('/auth/register/v3', async (req: Request, res: Response, next: NextFunction) => {
@@ -530,18 +526,99 @@ app.post('/message/share/v1', validateJwtToken, async(req: Request, res: Respons
   }
 });
 
-app.post('/admin/userpermission/change/v1', validateJwtToken,
-  async(req: Request, res: Response, next: NextFunction) => {
-    try {
-      const token = res.locals.token.salt;
-      const authUserId = res.locals.token.id;
-      const { uId, permissionId } = req.body;
-      const returnData = await adminUserpermissionChange(token, authUserId, uId, permissionId);
-      return res.json(returnData);
-    } catch (err) {
-      next(err);
-    }
-  });
+app.delete('/admin/user/remove/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const uId = parseInt(req.query.uId as string);
+    const returnData = await adminUserRemove(token, authUserId, uId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/admin/userpermission/change/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { uId, permissionId } = req.body;
+    const returnData = await adminUserpermissionChange(token, authUserId, uId, permissionId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/user/stats/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const returnData = await userStatsV1(token, authUserId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/users/stats/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const returnData = await usersStatsV1(token, authUserId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/standup/start/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId, length } = req.body;
+    const returnData = await standupStart(token, authUserId, channelId, length);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/standup/active/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const channelId = parseInt(req.query.channelId as string);
+    const returnData = await standupIsActive(token, authUserId, channelId);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/standup/send/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { channelId, message } = req.body;
+    const returnData = await standupSend(token, authUserId, channelId, message);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/user/profile/uploadphoto/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { imgUrl, xStart, yStart, xEnd, yEnd } = req.body;
+    const returnData = await uploadProfilePhoto(token, authUserId, imgUrl, xStart, yStart, xEnd, yEnd);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
 
 app.get('/search/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
@@ -567,33 +644,22 @@ const server = app.listen(PORT, HOST, () => {
 
   // Loads data from database.json to dataStore on server initialization
   fs.readFile(databasePath, 'utf-8', (error, jsonData) => {
-    if (error) {
-      console.log(`Error Initialising Datastore -> ${error.message}`);
-      console.log('Creating new Database file');
+    // if (error) {
+    //   const newData: any = getData();
 
-      const newData: any = getData();
+    //   fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
+    //     if (error) {
+    //       // console.log(error);
+    //       return error;
+    //     } else {
+    //       // console.log('Succesfully created database.json file');
+    //     }
+    //   });
 
-      fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
-        if (error) {
-          console.log(error);
-          return error;
-        } else {
-          console.log('Succesfully created database.json file');
-        }
-      });
-
-      return {};
-    }
-
-    try {
-      const database = JSON.parse(jsonData);
-      setData(database);
-      console.log('DataStore Initialized Successfully');
-      return {};
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
+    //   return {};
+    // }
+    const database = JSON.parse(jsonData);
+    setData(database);
   });
 });
 

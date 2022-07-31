@@ -58,7 +58,7 @@ function genHandleStr(nameFirst: string, nameLast: string, userData: string[] | 
   let numToAppend = 0;
 
   for (let i = 0; i < userData.length; i++) {
-    if (userData[i].handleStr === newUserHandle) {
+    if (userData[i].handleStr === newUserHandle && userData[i].isActive === true) {
       newUserHandle = `${newUserHandle.substring(0, lenHandleStr) + numToAppend.toString()}`;
 
       i = 0;
