@@ -248,6 +248,26 @@ function authIsOwner(channelId: number, uId: number) {
   return false;
 }
 
+function getHandleStr(uId: number) {
+  /*
+  Description:
+    getHandleStr gets handleStr of user
+
+  Arguments:
+    uId       integer type  --  Input integer supplied by user
+
+  Return Value:
+    handleStr: success
+
+*/
+  const data: any = getData();
+  for (const user of data.users) {
+    if (user.authUserId === uId) {
+      return user.handleStr;
+    }
+  }
+}
+
 export {
   checkAuthUserId,
   checkChannelId,
@@ -256,6 +276,7 @@ export {
   getMessages,
   checkToken,
   authIsOwner,
+  getHandleStr,
   checkAuthUserIdProfile,
   checkTokenProfile
 };

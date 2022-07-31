@@ -7,6 +7,7 @@ import {
   getMessages,
   checkToken,
   authIsOwner,
+  getHandleStr
 } from './channelHelperFunctions';
 import {
   incrementChannelsJoined,
@@ -205,6 +206,12 @@ async function channelInviteV1(token: string, authUserId: number, channelId: num
             handleStr: element.handleStr
           };
           channel.allMembers.push(newMember);
+          const handleStr = getHandleStr(authUserId);
+          element.notifications.unshift({
+            channelId: channelId,
+            dmId: -1,
+            notificationMessage: `${handleStr} added you to ${channel.name}`
+          });
           incrementChannelsJoined(uId);
           setData(dataStore);
           return {};
@@ -325,10 +332,11 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
   }
   let isGlobalOwner = false;
   for (const user of dataStore.users) {
-    if (user.uId === authUserId && user.permissionId === 1) {
+    if (user.authUserId === authUserId && user.permissionId === 1) {
       isGlobalOwner = true;
     }
   }
+
   if (!authIsOwner(channelId, authUserId) && !isGlobalOwner) {
     throw HTTPError(FORBIDDEN, 'User does not have owner permissions');
   }
@@ -393,7 +401,7 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
   }
   let isGlobalOwner = false;
   for (const user of data.users) {
-    if (user.uId === authUserId && user.permissionId === 1) {
+    if (user.authUserId === authUserId && user.permissionId === 1) {
       isGlobalOwner = true;
     }
   }
