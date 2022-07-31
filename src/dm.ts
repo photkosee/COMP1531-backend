@@ -1,6 +1,13 @@
 import HTTPError from 'http-errors';
 import { getData, setData } from './dataStore';
 import { checkToken } from './channelHelperFunctions';
+import {
+  incrementDmsJoined,
+  decreaseDmsJoined,
+  incrementDmsExist,
+  decreaseDmsExist,
+  decreaseMessagesExist
+} from './userHelperFunctions';
 import { dmIdValidator, checkDmMember, getDmMessages } from './dmHelperFunctions';
 
 const BADREQUEST = 400;
@@ -63,9 +70,10 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
   if (dmName.length !== uIds.length) {
     throw HTTPError(BADREQUEST, 'Any uId in uIds does not refer to a valid user');
   }
-
+  let ownerHandleStr = '';
   for (const user of data.users) {
     if (user.authUserId === newCreatorId) {
+      ownerHandleStr = user.handleStr;
       dmName.push(user.handleStr);
     }
   }
@@ -73,7 +81,17 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
   dmName.sort();
 
   const newNameString: string = dmName.toString().split(',').join(', ');
-
+  for (const id of uIds) {
+    for (const user of data.users) {
+      if (id === user.authUserId) {
+        user.notifications.unshift({
+          channelId: -1,
+          dmId: newDmId,
+          notificationMessage: `${ownerHandleStr} added you to ${newNameString}`
+        });
+      }
+    }
+  }
   data.dms.push({
     dmId: newDmId,
     name: newNameString,
@@ -81,6 +99,14 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
     creatorId: newCreatorId,
     messages: []
   });
+
+  incrementDmsJoined(authUserId);
+
+  for (const user of uIds) {
+    incrementDmsJoined(user);
+  }
+
+  incrementDmsExist();
 
   setData(data);
   return { dmId: newDmId };
@@ -170,6 +196,17 @@ async function dmRemoveV1(token: string, authUserId: number, dmId: number) {
       if (dm.creatorId === authUserId) {
         const dmIndex = data.dms.indexOf(dm);
         data.dms.splice(dmIndex, 1);
+
+        decreaseDmsJoined(authUserId);
+        for (const userId of dm.uIds) {
+          decreaseDmsJoined(userId);
+        }
+        // eslint-disable-next-line no-unused-vars
+        for (const message of dm.messages) {
+          decreaseMessagesExist();
+        }
+        decreaseDmsExist();
+
         return {};
       } else {
         throw HTTPError(FORBIDDEN, 'Authorised user is not the original DM creator');
@@ -279,9 +316,11 @@ async function dmLeaveV1(token: string, authUserId: number, dmId: number) {
       const index: number = dm.uIds.indexOf(authUserId);
       if (index > -1) {
         dm.uIds.splice(index, 1);
+        decreaseDmsJoined(authUserId);
         return {};
       } else if (dm.creatorId === authUserId) {
         dm.creatorId = -1;
+        decreaseDmsJoined(authUserId);
         return {};
       } else {
         throw HTTPError(FORBIDDEN, 'Authorised user is not a member of the DM');

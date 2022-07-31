@@ -1,7 +1,12 @@
 import { getData, setData } from './dataStore';
 import { checkToken } from './channelHelperFunctions';
-import { checkIfMember, checkChannelId, authInChannel } from './channelHelperFunctions';
+import { checkIfMember, checkChannelId, authInChannel, getHandleStr } from './channelHelperFunctions';
 import { checkDmMember, dmIdValidator } from './dmHelperFunctions';
+import {
+  incrementMessagesSent,
+  incrementMessagesExist,
+  decreaseMessagesExist
+} from './userHelperFunctions';
 import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
@@ -18,7 +23,7 @@ interface newMessagesDetails {
   uId: number,
   message: string,
   timeSent: number,
-  reacts: object[],
+  reacts: newReacts[],
   isPinned: boolean,
 }
 
@@ -58,32 +63,59 @@ async function messageSendV1(token: string, authUserId: number, channelId: numbe
     throw HTTPError(BADREQUEST, 'Invalid channelId');
   }
 
+  const mentions = message.match(/@\w+/gi) || [];
+  const shortMsg = message.slice(0, 20);
+  const usersToNotif = [];
+
   for (const channel of data.channels) {
-    for (const member of channel.allMembers) {
-      if (channelId === channel.channelId && member.uId === authUserId) {
-        const messageId: number = data.messageId;
-        data.messageId += 1;
+    if (channelId === channel.channelId) {
+      for (const member of channel.allMembers) {
+        const tag = '@' + getHandleStr(member.uId);
+        if (mentions.includes(tag)) {
+          usersToNotif.push(member.uId);
+        }
+      }
+    }
+  }
 
-        const newMessagesDetails: newMessagesDetails = {
-          messageId: messageId,
-          uId: authUserId,
-          message: message,
-          timeSent: Math.floor((new Date()).getTime() / 1000),
-          reacts: [],
-          isPinned: false,
-        };
+  for (const channel of data.channels) {
+    if (channelId === channel.channelId) {
+      for (const member of channel.allMembers) {
+        if (member.uId === authUserId) {
+          const messageId: number = data.messageId;
+          data.messageId += 1;
 
-        const newReactsDetails: newReacts = {
-          reactId: 1,
-          uIds: [],
-          isThisUserReacted: false,
-        };
-        newMessagesDetails.reacts.push(newReactsDetails);
+          const newMessagesDetails: newMessagesDetails = {
+            messageId: messageId,
+            uId: authUserId,
+            message: message,
+            timeSent: Math.floor((new Date()).getTime() / 1000),
+            reacts: [],
+            isPinned: false,
+          };
 
-        channel.messages.unshift(newMessagesDetails);
-        setData(data);
+          const newReactsDetails: newReacts = {
+            reactId: 1,
+            uIds: [],
+            isThisUserReacted: false,
+          };
+          newMessagesDetails.reacts.push(newReactsDetails);
+          channel.messages.unshift(newMessagesDetails);
+          incrementMessagesExist();
+          incrementMessagesSent(authUserId);
+          for (const user of data.users) {
+            if (usersToNotif.includes(user.authUserId)) {
+              user.notifications.unshift({
+                channelId: channelId,
+                dmId: -1,
+                notificationMessage: `${getHandleStr(authUserId)} tagged you in ${channel.name}: ${shortMsg}`
+              });
+            }
+          }
 
-        return { messageId: messageId };
+          setData(data);
+          return { messageId: messageId };
+        }
       }
     }
   }
@@ -130,6 +162,10 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
       permissionId = user.permissionId;
     }
   }
+  const mentions = message.match(/@\w+/gi) || [];
+  const shortMsg = message.slice(0, 20);
+  const usersToNotif = [];
+
   let checkErrorPermission = false;
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
@@ -140,6 +176,23 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
           channel.messages[index].message = message;
         } else {
           channel.messages.splice(index, 1);
+        }
+
+        for (const member of channel.allMembers) {
+          const tag = '@' + getHandleStr(member.uId);
+          if (mentions.includes(tag)) {
+            usersToNotif.push(member.uId);
+          }
+        }
+
+        for (const user of data.users) {
+          if (usersToNotif.includes(user.authUserId)) {
+            user.notifications.unshift({
+              channelId: channel.channelId,
+              dmId: -1,
+              notificationMessage: `${getHandleStr(authUserId)} tagged you in ${channel.name}: ${shortMsg}`
+            });
+          }
         }
         return {};
       }
@@ -156,6 +209,24 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
           dm.messages[index].message = message;
         } else {
           dm.messages.splice(index, 1);
+        }
+        for (const member of dm.uIds) {
+          const tag = '@' + getHandleStr(member);
+          if (mentions.includes(tag)) {
+            usersToNotif.push(member);
+          }
+        }
+        if (mentions.includes('@' + getHandleStr(dm.creatorId))) {
+          usersToNotif.push(dm.creatorId);
+        }
+        for (const user of data.users) {
+          if (usersToNotif.includes(user.authUserId)) {
+            user.notifications.unshift({
+              channelId: -1,
+              dmId: dm.dmId,
+              notificationMessage: `${getHandleStr(authUserId)} tagged you in ${dm.name}: ${shortMsg}`
+            });
+          }
         }
         return {};
       }
@@ -210,6 +281,25 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
     throw HTTPError(BADREQUEST, 'Invalid dmId');
   }
 
+  const mentions = message.match(/@\w+/gi) || [];
+  const shortMsg = message.slice(0, 20);
+  const usersToNotif = [];
+  let dmName = '';
+  for (const dm of data.dms) {
+    if (dmId === dm.dmId) {
+      dmName = dm.name;
+      for (const member of dm.uIds) {
+        const tag = '@' + getHandleStr(member);
+        if (mentions.includes(tag)) {
+          usersToNotif.push(member);
+        }
+      }
+      if (mentions.includes('@' + getHandleStr(dm.creatorId))) {
+        usersToNotif.push(dm.creatorId);
+      }
+    }
+  }
+
   for (const dm of data.dms) {
     if (dmId === dm.dmId && dm.creatorId === authUserId) {
       const messageId: number = data.messageId;
@@ -229,8 +319,18 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
         isThisUserReacted: false,
       };
       newMessagesDetails.reacts.push(newReactsDetails);
-
+      for (const user of data.users) {
+        if (usersToNotif.includes(user.authUserId)) {
+          user.notifications.unshift({
+            channelId: -1,
+            dmId: dmId,
+            notificationMessage: `${getHandleStr(authUserId)} tagged you in ${dmName}: ${shortMsg}`
+          });
+        }
+      }
       dm.messages.unshift(newMessagesDetails);
+      incrementMessagesExist();
+      incrementMessagesSent(authUserId);
       setData(data);
 
       return { messageId: messageId };
@@ -254,8 +354,19 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
           isThisUserReacted: false,
         };
         newMessagesDetails.reacts.push(newReactsDetails);
-
+        for (const user of data.users) {
+          if (usersToNotif.includes(user.authUserId)) {
+            user.notifications.unshift({
+              channelId: -1,
+              dmId: dmId,
+              notificationMessage: `${getHandleStr(authUserId)} tagged you in ${dmName}: ${shortMsg}`
+            });
+          }
+        }
         dm.messages.unshift(newMessagesDetails);
+
+        incrementMessagesExist();
+        incrementMessagesSent(authUserId);
         setData(data);
 
         return { messageId: messageId };
@@ -307,6 +418,7 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
       const msgSenderId: number = channel.messages[index].uId;
       if (permissionId === 1 || msgSenderId === authUserId || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
         channel.messages.splice(index, 1);
+        decreaseMessagesExist();
         return {};
       }
       checkErrorPermission = true;
@@ -319,6 +431,7 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
       const msgSenderId: number = dm.messages[index].uId;
       if (msgSenderId === authUserId || dm.creatorId === authUserId) {
         dm.messages.splice(index, 1);
+        decreaseMessagesExist();
         return {};
       }
       checkErrorPermission = true;
@@ -371,6 +484,20 @@ async function messageReactV1(token: string, authUserId: number, messageId: numb
         }
       }
       channel.messages[index].reacts[reactId - 1].uIds.push(authUserId);
+      const handleStr = getHandleStr(authUserId);
+      const messageSender = channel.messages[index].uId;
+      if (checkIfMember(messageSender, channel.channelId)) {
+        for (const user of data.users) {
+          if (user.authUserId === messageSender) {
+            user.notifications.unshift({
+              channelId: channel.channelId,
+              dmId: -1,
+              notificationMessage: `${handleStr} reacted to your message in ${channel.name}`
+            });
+          }
+        }
+      }
+
       return {};
     }
   }
@@ -381,6 +508,17 @@ async function messageReactV1(token: string, authUserId: number, messageId: numb
       for (const id of dm.messages[index].reacts[reactId - 1].uIds) {
         if (id === authUserId) {
           throw HTTPError(BADREQUEST, 'Already reacted');
+        }
+      }
+      const handleStr = getHandleStr(authUserId);
+      const messageSender = dm.messages[index].uId;
+      for (const user of data.users) {
+        if (user.authUserId === messageSender) {
+          user.notifications.unshift({
+            channelId: -1,
+            dmId: dm.dmId,
+            notificationMessage: `${handleStr} reacted to your message in ${dm.name}`
+          });
         }
       }
       dm.messages[index].reacts[reactId - 1].uIds.push(authUserId);
