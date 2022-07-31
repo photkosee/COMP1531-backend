@@ -170,7 +170,7 @@ describe('Successful', () => {
               timeStamp: expect.any(Number)
             }
           ],
-          involvementRate: expect.any(Number)
+          involvementRate: 0.6666666666666666
         }
       }
     );
@@ -301,7 +301,7 @@ describe('Successful', () => {
               timeStamp: expect.any(Number)
             }
           ],
-          involvementRate: expect.any(Number)
+          involvementRate: 1
         }
       }
     );
