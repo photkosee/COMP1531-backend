@@ -332,10 +332,11 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
   }
   let isGlobalOwner = false;
   for (const user of dataStore.users) {
-    if (user.uId === authUserId && user.permissionId === 1) {
+    if (user.authUserId === authUserId && user.permissionId === 1) {
       isGlobalOwner = true;
     }
   }
+
   if (!authIsOwner(channelId, authUserId) && !isGlobalOwner) {
     throw HTTPError(FORBIDDEN, 'User does not have owner permissions');
   }
@@ -400,7 +401,7 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
   }
   let isGlobalOwner = false;
   for (const user of data.users) {
-    if (user.uId === authUserId && user.permissionId === 1) {
+    if (user.authUserId === authUserId && user.permissionId === 1) {
       isGlobalOwner = true;
     }
   }

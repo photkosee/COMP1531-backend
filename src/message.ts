@@ -1026,14 +1026,11 @@ async function messageSendlaterV1(token: string, authUserId: number, channelId: 
   };
   newMessagesDetails.reacts.push(newReactsDetails);
 
-
   function addMessage() {
     for (const channel of data.channels) {
-      for (const member of channel.allMembers) {
-        if (channelId === channel.channelId && member.uId === authUserId) {
-          channel.messages.unshift(newMessagesDetails);
-          setData(data);
-        }
+      if (channelId === channel.channelId) {
+        channel.messages.unshift(newMessagesDetails);
+        setData(data);
       }
     }
   }
