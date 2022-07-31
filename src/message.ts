@@ -627,10 +627,10 @@ async function messagePinV1(token: string, authUserId: number, messageId: number
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
-      if (channel.messages[index].isPinned === true) {
-        throw HTTPError(BADREQUEST, 'Already pinned');
-      }
       if (permissionId === 1 || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
+        if (channel.messages[index].isPinned === true) {
+          throw HTTPError(BADREQUEST, 'Already pinned');
+        }
         channel.messages[index].isPinned = true;
         return {};
       }
@@ -641,10 +641,10 @@ async function messagePinV1(token: string, authUserId: number, messageId: number
   for (const dm of data.dms) {
     const index: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkDmMember(dm.dmId, authUserId))) {
-      if (dm.messages[index].isPinned === true) {
-        throw HTTPError(BADREQUEST, 'Already pinned');
-      }
       if (dm.creatorId === authUserId) {
+        if (dm.messages[index].isPinned === true) {
+          throw HTTPError(BADREQUEST, 'Already pinned');
+        }
         dm.messages[index].isPinned = true;
         return {};
       }
@@ -694,10 +694,10 @@ async function messageUnpinV1(token: string, authUserId: number, messageId: numb
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
-      if (channel.messages[index].isPinned === false) {
-        throw HTTPError(BADREQUEST, 'Not already pinned');
-      }
       if (permissionId === 1 || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
+        if (channel.messages[index].isPinned === false) {
+          throw HTTPError(BADREQUEST, 'Not already pinned');
+        }
         channel.messages[index].isPinned = false;
         return {};
       }
@@ -708,10 +708,10 @@ async function messageUnpinV1(token: string, authUserId: number, messageId: numb
   for (const dm of data.dms) {
     const index: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
     if (index > -1 && (checkDmMember(dm.dmId, authUserId))) {
-      if (dm.messages[index].isPinned === false) {
-        throw HTTPError(BADREQUEST, 'Not already pinned');
-      }
       if (dm.creatorId === authUserId) {
+        if (dm.messages[index].isPinned === false) {
+          throw HTTPError(BADREQUEST, 'Not already pinned');
+        }
         dm.messages[index].isPinned = false;
         return {};
       }

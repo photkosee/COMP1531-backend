@@ -9,7 +9,7 @@ beforeAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
   request('POST', `${url}:${port}/auth/register/v3`, {
     json: {
-      email: 'f09acrunchie@gmail.com',
+      email: 'mriduls907@gmail.com',
       password: 'mriduls907',
       nameFirst: 'Mridul',
       nameLast: 'Singh'
@@ -24,7 +24,7 @@ afterAll(() => {
 test('Test with invalid password/resetCode - auth/passwordreset/reset/v1', () => {
   request('POST', `${url}:${port}/auth/passwordreset/request/v1`, {
     body: JSON.stringify({
-      email: 'f09acrunchie@gmail.com'
+      email: 'mriduls907@gmail.com'
     }),
     headers: {
       'Content-type': 'application/json'
