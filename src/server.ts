@@ -29,7 +29,8 @@ import {
   messagePinV1,
   messageUnpinV1,
   messageShareV1,
-  messageSendlaterV1
+  messageSendlaterV1,
+  messageSendlaterdmV1
 } from './message';
 import {
   dmCreateV1,
@@ -553,6 +554,18 @@ app.delete('/admin/user/remove/v1', validateJwtToken, async(req: Request, res: R
   }
 });
 
+app.post('/message/sendlaterdm/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = res.locals.token.salt;
+    const authUserId = res.locals.token.id;
+    const { dmId, message, timeSent } = req.body;
+    const returnData = await messageSendlaterdmV1(token, authUserId, dmId, message, timeSent);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.post('/admin/userpermission/change/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
@@ -644,6 +657,18 @@ app.get('/notifications/get/v1', validateJwtToken, async (req: Request, res: Res
     next(err);
   }
 });
+app.post('/admin/userpermission/change/v1', validateJwtToken,
+  async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const token = res.locals.token.salt;
+      const authUserId = res.locals.token.id;
+      const { uId, permissionId } = req.body;
+      const returnData = await adminUserpermissionChange(token, authUserId, uId, permissionId);
+      return res.json(returnData);
+    } catch (err) {
+      next(err);
+    }
+  });
 
 app.get('/search/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
