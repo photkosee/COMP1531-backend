@@ -1,7 +1,6 @@
 import request from 'sync-request';
 import config from '../src/config.json';
 
-const OK = 200;
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 const port = config.port;
@@ -37,202 +36,22 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Testing success removing message - message/remove/v2', () => {
-  test('Channel', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'mal1@email.com',
-        password: '1234567',
-        nameFirst: 'One',
-        nameLast: 'Number',
-      }
-    });
-    const user = JSON.parse(res.getBody() as string);
-    const token = user.token;
-
-    res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'mal2@email.com',
-        password: '1234567',
-        nameFirst: 'Onse',
-        nameLast: 'Numdber',
-      }
-    });
-    const user2 = JSON.parse(res.getBody() as string);
-    const token2 = user2.token;
-
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
-      body: JSON.stringify({
-        name: 'DOTA2',
-        isPublic: true
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
-    });
-
-    res = request(
-      'POST', `${url}:${port}/channel/join/v3`, {
-        json: {
-          channelId: 1
-        },
-        headers: {
-          'Content-type': 'application/json',
-          token: token2
-        }
-      }
-    );
-
-    res = request('POST', `${url}:${port}/message/send/v2`, {
-      body: JSON.stringify({
-        channelId: 1,
-        message: 'abc'
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
-    });
-
-    res = request('POST', `${url}:${port}/message/send/v2`, {
-      body: JSON.stringify({
-        channelId: 1,
-        message: 'asdf'
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token2
-      }
-    });
-
-    res = request('DELETE', `${url}:${port}/message/remove/v2`, {
-      qs: {
-        messageId: 1
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
-    });
-    const message3 = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(message3).toStrictEqual({});
-
-    res = request('DELETE', `${url}:${port}/message/remove/v2`, {
-      qs: {
-        messageId: 2
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
-    });
-    const message4 = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(message4).toStrictEqual({});
-  });
-
-  test('Dm', () => {
+describe('Testing for error - message/remove/v2', () => {
+  test('Invalid messageId', () => {
     const validData: any = [
       { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
       { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
       { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
     ];
 
-    let res = request('POST', `${url}:${port}/dm/create/v2`, {
-      body: JSON.stringify({
-        uIds: [...validData[0].uIds]
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[0].token
-      }
-    });
-    const bodyObj0 = JSON.parse(res.body as string);
-
-    res = request('POST', `${url}:${port}/dm/create/v2`, {
-      body: JSON.stringify({
-        uIds: [...validData[2].uIds]
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[2].token
-      }
-    });
-    const bodyObj2 = JSON.parse(res.body as string);
-
-    res = request('POST', `${url}:${port}/message/senddm/v2`, {
-      body: JSON.stringify({
-        dmId: bodyObj0.dmId,
-        message: 'abc'
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[0].token
-      }
-    });
-
-    res = request('POST', `${url}:${port}/message/senddm/v2`, {
-      body: JSON.stringify({
-        dmId: bodyObj2.dmId,
-        message: 'asdf'
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[0].token
-      }
-    });
-
-    res = request('DELETE', `${url}:${port}/message/remove/v2`, {
-      qs: {
-        messageId: 1
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[0].token
-      }
-    });
-    const message3 = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(message3).toStrictEqual({});
-
-    res = request('DELETE', `${url}:${port}/message/remove/v2`, {
-      qs: {
-        messageId: 2
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[2].token
-      }
-    });
-    const message4 = JSON.parse(res.getBody() as string);
-    expect(res.statusCode).toBe(OK);
-    expect(message4).toStrictEqual({});
-  });
-});
-
-describe('Testing for error - message/remove/v2', () => {
-  test('Invalid messageId', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'mal2@email.com',
-        password: '1234567',
-        nameFirst: 'One',
-        nameLast: 'Number',
-      }
-    });
-    const user = JSON.parse(res.getBody() as string);
-    const token = user.token;
-
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
+    let res = request('POST', `${url}:${port}/channels/create/v3`, {
       body: JSON.stringify({
         name: 'DOTA2',
         isPublic: true
       }),
       headers: {
         'Content-type': 'application/json',
-        token: token
+        token: validData[0].token
       }
     });
 
@@ -242,47 +61,14 @@ describe('Testing for error - message/remove/v2', () => {
       },
       headers: {
         'Content-type': 'application/json',
-        token: token
+        token: validData[0].token
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
   });
 
   test('Invalid token', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'mal2@email.com',
-        password: '1234567',
-        nameFirst: 'One',
-        nameLast: 'Number',
-      }
-    });
-    const user = JSON.parse(res.getBody() as string);
-    const token = user.token;
-
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
-      body: JSON.stringify({
-        name: 'DOTA2',
-        isPublic: true
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
-    });
-
-    res = request('POST', `${url}:${port}/message/send/v2`, {
-      body: JSON.stringify({
-        channelId: 1,
-        message: 'abc'
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
-    });
-
-    res = request('DELETE', `${url}:${port}/message/remove/v2`, {
+    const res = request('DELETE', `${url}:${port}/message/remove/v2`, {
       qs: {
         messageId: 1
       },
@@ -295,36 +81,20 @@ describe('Testing for error - message/remove/v2', () => {
   });
 
   test('No permission channel', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'mal1@email.com',
-        password: '1234567',
-        nameFirst: 'One',
-        nameLast: 'Number',
-      }
-    });
-    const user = JSON.parse(res.getBody() as string);
-    const token = user.token;
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
 
-    res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'mal2@email.com',
-        password: '1234567',
-        nameFirst: 'One',
-        nameLast: 'Number',
-      }
-    });
-    const user2 = JSON.parse(res.getBody() as string);
-    const token2 = user2.token;
-
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
+    let res = request('POST', `${url}:${port}/channels/create/v3`, {
       body: JSON.stringify({
         name: 'DOTA2',
         isPublic: true
       }),
       headers: {
         'Content-type': 'application/json',
-        token: token
+        token: validData[0].token
       }
     });
 
@@ -335,7 +105,7 @@ describe('Testing for error - message/remove/v2', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: token
+        token: validData[0].token
       }
     });
 
@@ -345,7 +115,7 @@ describe('Testing for error - message/remove/v2', () => {
       },
       headers: {
         'Content-type': 'application/json',
-        token: token2
+        token: validData[1].token
       }
     });
     expect(res.statusCode).toBe(FORBIDDEN);

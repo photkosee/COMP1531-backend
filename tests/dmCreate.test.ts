@@ -1,7 +1,6 @@
 import request from 'sync-request';
 import config from '../src/config.json';
 
-const OK = 200;
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 const port = config.port;
@@ -35,27 +34,6 @@ beforeEach(() => {
 
 afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
-});
-
-test('Test for successful dm creation - dm/create/v2', () => {
-  const validData: any = [
-    { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
-    { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
-    { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
-  ];
-
-  for (let i = 0; i < validData.length; i++) {
-    const res = request('POST', `${url}:${port}/dm/create/v2`, {
-      body: JSON.stringify({
-        uIds: [...validData[i].uIds]
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[i].token
-      }
-    });
-    expect(res.statusCode).toBe(OK);
-  }
 });
 
 test('Test for any uId in uIds does not refer to a valid user - dm/create/v2', () => {
