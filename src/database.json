@@ -1,9 +1,104 @@
 {
-  "users": [],
-  "channels": [],
+  "users": [
+    {
+      "authUserId": 1,
+      "nameFirst": "first",
+      "nameLast": "last",
+      "email": "email@email.com",
+      "password": "$2a$10$QUq8iSXvtPRWXShqxIB41.YVN03r1kIfIyUbKBIPt3ZbdujbBlx0y",
+      "handleStr": "firstlast",
+      "profileImgUrl": "http://127.0.0.1:5000/static/profile.jpg",
+      "permissionId": 1,
+      "isActive": true,
+      "sessionList": [
+        "1545381532"
+      ],
+      "notifications": [],
+      "userStats": {
+        "channelsJoined": [
+          {
+            "numChannelsJoined": 0,
+            "timeStamp": 1659356392
+          },
+          {
+            "numChannelsJoined": 1,
+            "timeStamp": 1659356392
+          }
+        ],
+        "dmsJoined": [
+          {
+            "numDmsJoined": 0,
+            "timeStamp": 1659356392
+          }
+        ],
+        "messagesSent": [
+          {
+            "numMessagesSent": 0,
+            "timeStamp": 1659356392
+          }
+        ],
+        "involvementRate": 0
+      }
+    }
+  ],
+  "channels": [
+    {
+      "channelId": 1,
+      "name": "channel name",
+      "ownerMembers": [
+        {
+          "uId": 1,
+          "email": "email@email.com",
+          "nameFirst": "first",
+          "nameLast": "last",
+          "handleStr": "firstlast"
+        }
+      ],
+      "allMembers": [
+        {
+          "uId": 1,
+          "email": "email@email.com",
+          "nameFirst": "first",
+          "nameLast": "last",
+          "handleStr": "firstlast"
+        }
+      ],
+      "isPublic": true,
+      "messages": [],
+      "standup": {
+        "isActive": false,
+        "timeFinish": null,
+        "messagesQueue": []
+      }
+    }
+  ],
   "dms": [],
   "passwordReset": [],
-  "workplaceStats": {},
+  "workplaceStats": {
+    "channelsExist": [
+      {
+        "numChannelsExist": 0,
+        "timeStamp": 1659356391
+      },
+      {
+        "numChannelsExist": 1,
+        "timeStamp": 1659356392
+      }
+    ],
+    "dmsExist": [
+      {
+        "numDmsExist": 0,
+        "timeStamp": 1659356391
+      }
+    ],
+    "messagesExist": [
+      {
+        "numMessagesExist": 0,
+        "timeStamp": 1659356391
+      }
+    ],
+    "utilizationRate": 0
+  },
   "messageId": 1,
   "dmId": 1
 }

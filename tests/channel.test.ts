@@ -2,14 +2,11 @@ import request from 'sync-request';
 import config from '../src/config.json';
 
 const OK = 200;
-const BADREQUEST = 400;
-const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
 
 let registrationData: any = [];
 let channelIdList: any = [];
-let messageIdList: any = [];
 
 const registeredUser: any = [
   { email: 'mridul@gmail.com', password: 'uhunr567T#$%', nameFirst: 'Mridul', nameLast: 'Anand' },
@@ -22,7 +19,6 @@ beforeAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
   registrationData = [];
   channelIdList = [];
-  messageIdList = [];
 
   for (const user of registeredUser) {
     const res = request('POST', `${url}:${port}/auth/register/v3`, {
@@ -36,7 +32,6 @@ beforeAll(() => {
     const bodyObj = JSON.parse(res.body as string);
     registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
   }
-
 
   for (let i = 0; i < 3; i++) {
     const res = request('POST', `${url}:${port}/channels/create/v3`, {
@@ -193,7 +188,7 @@ describe('Successfully removing owners - channel/removeowner/v2', () => {
   test('Testing for successful remove owner', () => {
     expect(removeOwner(registrationData[1].token, channelIdList[1], registrationData[2].authUserId).statusCode).toStrictEqual(OK);
   });
-  
+
   test('Testing successful global owner removeowner', () => {
     expect(removeOwner(registrationData[0].token, channelIdList[0], registrationData[1].authUserId).statusCode).toStrictEqual(OK);
   });
@@ -297,7 +292,7 @@ describe('Successfully leaving channels - channel/leave/v2', () => {
   test('Testing for successful leave', () => {
     expect(channelLeave(registrationData[1].token, channelIdList[0]).statusCode).toStrictEqual(OK);
   });
-  
+
   test('Last person is owner and leaves', () => {
     expect(channelLeave(registrationData[0].token, channelIdList[0]).statusCode).toStrictEqual(OK);
   });

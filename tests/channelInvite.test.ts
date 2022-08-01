@@ -1,7 +1,6 @@
 import request from 'sync-request';
 import config from '../src/config.json';
 
-const OK = 200;
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 const port = config.port;
