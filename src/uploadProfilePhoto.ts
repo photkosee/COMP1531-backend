@@ -9,8 +9,7 @@ import { promisify } from 'util';
 const sizeOf = promisify(require('image-size'));
 import path from 'path';
 
-const HOST: string = process.env.IP || 'localhost';
-const PORT: number = parseInt(process.env.PORT || config.port);
+const deployedUrl = config.deployedUrl;
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 
@@ -95,7 +94,7 @@ async function uploadProfilePhoto(token: string, authUserId: number, imgUrl: str
       await fsPromises.unlink(path.join(__dirname, `static/${tempFileName}.jpg`));
     });
 
-  const newProfileImgUrl = `${(HOST === 'localhost') ? 'http://' : 'https://'}${HOST + ':' + PORT}/static/${newFileName}.jpg`;
+  const newProfileImgUrl = `${deployedUrl}/static/${newFileName}.jpg`;
   // let prevProfileImgUrl: string;
 
   const data: any = getData();
