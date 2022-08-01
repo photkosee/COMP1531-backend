@@ -526,7 +526,7 @@ describe('Testing for error - message/send/v2', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: registrationData[0]
+        token: registrationData[0].token
       }
     });
     expect(res.statusCode).toBe(FORBIDDEN);
