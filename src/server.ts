@@ -68,7 +68,6 @@ app.use(json());
 app.use(cors());
 
 const PORT: number = parseInt(process.env.PORT || config.port);
-const HOST: string = process.env.IP || 'localhost';
 const databasePath: string = __dirname + '/database.json';
 
 app.use('/static', express.static(path.join(__dirname, 'static')));
@@ -701,8 +700,8 @@ app.use(morgan('dev'));
 app.use(errorHandler());
 
 // start server
-const server = app.listen(PORT, HOST, () => {
-  console.log(`⚡️ Server listening on port ${PORT} at ${HOST}`);
+const server = app.listen(process.env.PORT || PORT, () => {
+  console.log(`⚡️ Server listening on port ${PORT}`);
 
   // Loads data from database.json to dataStore on server initialization
   fs.readFile(databasePath, 'utf-8', (error, jsonData) => {
