@@ -14,7 +14,7 @@ const registeredUser: any = [
   { email: 'mrjgidul907@gmail.com', password: 'uhudfnr567T#$%', nameFirst: 'Mriuffhdul', nameLast: 'Rathor' },
 ];
 
-beforeEach(() => {
+beforeAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
   registrationData = [];
 
