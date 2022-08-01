@@ -69,6 +69,7 @@ async function standupStart(token: string, authUserId: number, channelId: number
         const timeNow = Math.floor((new Date()).getTime() / 1000);
         const timeFinish = (timeNow + length);
         channel.standup.timeFinish = timeFinish;
+        channel.standup.creatorId = authUserId;
         setData(data);
         setTimeout(() => standupOver(channelId, authUserId), (timeFinish - timeNow) * 1000);
         return { timeFinish: timeFinish };
@@ -184,13 +185,14 @@ async function standupSend(token: string, authUserId: number, channelId: number,
   }
 }
 
-function standupOver(channelId: number, authUserId: number) {
+function standupOver(channelId: number, authUserId: number): null {
   const data: any = getData();
 
   for (const channel of data.channels) {
     if (channel.channelId === channelId && channel.standup.messagesQueue.length !== 0) {
       channel.standup.isActive = false;
       channel.standup.timeFinish = null;
+      channel.standup.creatorId = null;
 
       let message = '';
       for (let i = 0; i < channel.standup.messagesQueue.length; i++) {
@@ -222,13 +224,17 @@ function standupOver(channelId: number, authUserId: number) {
       newMessagesDetails.reacts.push(newReactsDetails);
       channel.messages.unshift(newMessagesDetails);
       channel.standup.messagesQueue = [];
+      setData(data);
+      return null;
     } else if (channel.channelId === channelId) {
       channel.standup.isActive = false;
       channel.standup.timeFinish = null;
+      channel.standup.creatorId = null;
       channel.standup.messagesQueue = [];
+      setData(data);
+      return null;
     }
   }
-  setData(data);
 }
 
 export {
