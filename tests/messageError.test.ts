@@ -1,7 +1,6 @@
 import request from 'sync-request';
 import config from '../src/config.json';
 
-const OK = 200;
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 const port = config.port;
@@ -262,8 +261,6 @@ describe('Testing for error - message/pin/v1', () => {
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
-
-    request('DELETE', `${url}:${port}/clear/v1`);
   });
 
   test('Already pinned dm', () => {
@@ -287,8 +284,6 @@ describe('Testing for error - message/pin/v1', () => {
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
-
-    request('DELETE', `${url}:${port}/clear/v1`);
   });
 
   test('No permission channel', () => {
@@ -398,8 +393,6 @@ describe('Testing for error - message/react/v1', () => {
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
-
-    request('DELETE', `${url}:${port}/clear/v1`);
   });
 
   test('Already reacted dm', () => {
@@ -425,8 +418,6 @@ describe('Testing for error - message/react/v1', () => {
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
-
-    request('DELETE', `${url}:${port}/clear/v1`);
   });
 });
 
@@ -493,7 +484,7 @@ describe('Testing for error - message/send/v2', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: registrationData[1]
+        token: registrationData[1].token
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
@@ -507,7 +498,7 @@ describe('Testing for error - message/send/v2', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: registrationData[0]
+        token: registrationData[0].token
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
@@ -766,20 +757,30 @@ describe('Testing for error - message/unpin/v1', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: registrationData[0]
+        token: registrationData[0].token
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
   });
 
   test('Not a member', () => {
-    const res = request('POST', `${url}:${port}/message/unpin/v1`, {
+    request('POST', `${url}:${port}/message/pin/v1`, {
       body: JSON.stringify({
-        messageId: messageIdList[2]
+        messageId: messageIdList[1]
       }),
       headers: {
         'Content-type': 'application/json',
-        token: registrationData[1].token
+        token: registrationData[0].token
+      }
+    });
+
+    const res = request('POST', `${url}:${port}/message/unpin/v1`, {
+      body: JSON.stringify({
+        messageId: messageIdList[1]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[2].token
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
@@ -799,19 +800,39 @@ describe('Testing for error - message/unpin/v1', () => {
   });
 
   test('Not already pinned channel', () => {
+    request('POST', `${url}:${port}/message/unpin/v1`, {
+      body: JSON.stringify({
+        messageId: messageIdList[0],
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+
     const res = request('POST', `${url}:${port}/message/unpin/v1`, {
       body: JSON.stringify({
         messageId: messageIdList[0],
       }),
       headers: {
         'Content-type': 'application/json',
-        token: registrationData[0]
+        token: registrationData[0].token
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
   });
 
   test('Not already pinned dm', () => {
+    request('POST', `${url}:${port}/message/unpin/v1`, {
+      body: JSON.stringify({
+        messageId: messageIdList[1]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+
     const res = request('POST', `${url}:${port}/message/unpin/v1`, {
       body: JSON.stringify({
         messageId: messageIdList[1]
@@ -831,7 +852,7 @@ describe('Testing for error - message/unpin/v1', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: registrationData[0]
+        token: registrationData[0].token
       }
     });
 
@@ -841,7 +862,7 @@ describe('Testing for error - message/unpin/v1', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: registrationData[1]
+        token: registrationData[1].token
       }
     });
     expect(res.statusCode).toBe(FORBIDDEN);
@@ -880,7 +901,7 @@ describe('Testing for error - message/unreact/v1', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: registrationData[0]
+        token: registrationData[0].token
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
@@ -922,7 +943,7 @@ describe('Testing for error - message/unreact/v1', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: registrationData[0]
+        token: registrationData[0].token
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
@@ -936,7 +957,7 @@ describe('Testing for error - message/unreact/v1', () => {
       }),
       headers: {
         'Content-type': 'application/json',
-        token: registrationData[1]
+        token: registrationData[1].token
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
