@@ -60,6 +60,7 @@ let data: object = {
     //   standup: {
     //     isActive: 'boolean',
     //     timeFinish: 'integer',
+    //     creatorId: 'number',
     //     messagesQueue: [
     //       {
     //         handleStr: 'string',
