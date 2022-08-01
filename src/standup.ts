@@ -185,7 +185,7 @@ async function standupSend(token: string, authUserId: number, channelId: number,
   }
 }
 
-function standupOver(channelId: number, authUserId: number) {
+function standupOver(channelId: number, authUserId: number): null {
   const data: any = getData();
 
   for (const channel of data.channels) {
