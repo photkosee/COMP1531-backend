@@ -16,9 +16,7 @@ import {
   createWorkplaceStats
 } from './userHelperFunctions';
 
-const HOST: string = process.env.IP || 'localhost';
-const url = config.url;
-const PORT: number = parseInt(process.env.PORT || config.port);
+const deployedUrl = config.deployedUrl;
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
@@ -111,7 +109,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
 
     const passwordHash = await hashPassword(password);
 
-    const defaultProfileImgUrl = `${(HOST === 'localhost') ? `${url}:` : `https://${HOST}:`}${PORT}/static/profile.jpg`;
+    const defaultProfileImgUrl = `${deployedUrl}/static/profile.jpg`;
 
     const userStats: object = createUserStats();
 
