@@ -55,17 +55,5 @@ describe('Testing with invalid inputs - channels/create/v3', () => {
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
-
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
-      body: JSON.stringify({
-        name: '1234567891011121314151617',
-        isPublic: false
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: token
-      }
-    });
-    expect(res.statusCode).toBe(BADREQUEST);
   });
 });
