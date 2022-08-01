@@ -15,61 +15,6 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-test('Testing for successful invite - channel/invite/v2', () => {
-  const registrationData = [];
-  const registeredUsers = [
-    { email: 'user1@email.com', password: 'password1', nameFirst: 'john', nameLast: 'smith' },
-    { email: 'user2@email.com', password: 'password2', nameFirst: 'ben', nameLast: 'affleck' },
-  ];
-  for (const users of registeredUsers) {
-    const res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: users.email,
-        password: users.password,
-        nameFirst: users.nameFirst,
-        nameLast: users.nameLast,
-      }
-    });
-    const bodyObj = JSON.parse(res.body as string);
-    registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
-  }
-
-  request('POST', `${url}:${port}/channels/create/v3`, {
-    json: {
-      name: 'channel0',
-      isPublic: true,
-    },
-    headers: {
-      'Content-type': 'application/json',
-      token: registrationData[0].token
-    }
-  });
-
-  let res = request('POST', `${url}:${port}/channels/create/v3`, {
-    json: {
-      name: 'channel1',
-      isPublic: true,
-    },
-    headers: {
-      'Content-type': 'application/json',
-      token: registrationData[0].token
-    }
-  });
-  const channel1 = JSON.parse(res.body as string);
-
-  res = request('POST', `${url}:${port}/channel/invite/v3`, {
-    json: {
-      channelId: channel1.channelId,
-      uId: registrationData[1].authUserId,
-    },
-    headers: {
-      'Content-type': 'application/json',
-      token: registrationData[0].token
-    }
-  });
-  expect(res.statusCode).toBe(OK);
-});
-
 test('Testing for cases where user already in channel', () => {
   const registrationData = [];
   const registeredUsers = [
