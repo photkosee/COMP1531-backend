@@ -11,6 +11,13 @@ let data: object = {
     //   permissionId: 'number',
     //   isActive: 'boolean',
     //   sessionList: 'Array<tokens>'
+    //   notifications: [
+    //    {
+    //      channelId: 'number',
+    //      dmId: 'number',
+    //      notificationMessage: 'string'
+    //    },
+    //   ]
     //   userStats: {
     //    channelsJoined: [
     //      {

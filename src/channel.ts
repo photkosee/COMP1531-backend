@@ -330,14 +330,7 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
   if (authIsOwner(channelId, uId)) {
     throw HTTPError(BADREQUEST, 'User to make owner is already owner');
   }
-  let isGlobalOwner = false;
-  for (const user of dataStore.users) {
-    if (user.authUserId === authUserId && user.permissionId === 1) {
-      isGlobalOwner = true;
-    }
-  }
-
-  if (!authIsOwner(channelId, authUserId) && !isGlobalOwner) {
+  if (!authIsOwner(channelId, authUserId)) {
     throw HTTPError(FORBIDDEN, 'User does not have owner permissions');
   }
 
@@ -399,16 +392,9 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
   if (!authIsOwner(channelId, uId) || !authInChannel(channelId, uId)) {
     throw HTTPError(BADREQUEST, 'User to remove as owner is not a owner');
   }
-  let isGlobalOwner = false;
-  for (const user of data.users) {
-    if (user.authUserId === authUserId && user.permissionId === 1) {
-      isGlobalOwner = true;
-    }
-  }
-  if (!authIsOwner(channelId, authUserId) && !isGlobalOwner) {
+  if (!authIsOwner(channelId, authUserId)) {
     throw HTTPError(FORBIDDEN, 'User does not have owner permissions');
   }
-
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       if (channel.ownerMembers.length === 1) {
@@ -460,6 +446,9 @@ async function channelLeaveV1(token: string, authUserId: number, channelId: numb
   const uId: number = authUserId;
   for (const channel of dataStore.channels) {
     if (channel.channelId === channelId) {
+      if (channel.standup.isActive && channel.standup.creatorId === authUserId) {
+        throw HTTPError(BADREQUEST, 'User is starter of current standup in channel');
+      }
       for (let i = 0; i < channel.ownerMembers.length; i++) {
         if (channel.ownerMembers[i].uId === uId) {
           channel.ownerMembers.splice(i, 1);

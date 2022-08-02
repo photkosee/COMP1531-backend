@@ -1013,7 +1013,6 @@ async function messageSendlaterV1(token: string, authUserId: number, channelId: 
   }
 
   const sendLaterTime = 1000 * (timeSent - timeNow);
-
   const messageId: number = data.messageId;
   data.messageId += 1;
 
@@ -1033,17 +1032,36 @@ async function messageSendlaterV1(token: string, authUserId: number, channelId: 
   };
   newMessagesDetails.reacts.push(newReactsDetails);
 
-  setTimeout(() => sendMessageLater(channelId, newMessagesDetails), sendLaterTime);
-
+  setTimeout(() => sendMessageLater(authUserId, message, channelId, newMessagesDetails), sendLaterTime);
   return { messageId: messageId };
 }
 
-function sendMessageLater(channelId: number, newMessagesDetails: newMessagesDetails) {
+function sendMessageLater(authUserId: number, message: string, channelId: number, newMessagesDetails: newMessagesDetails) {
   const data: any = getData();
+
+  const mentions = message.match(/@\w+/gi) || [];
+  const shortMsg = message.slice(0, 20);
+  const usersToNotif = [];
 
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
+      for (const member of channel.allMembers) {
+        const tag = '@' + getHandleStr(member.uId);
+        if (mentions.includes(tag)) {
+          usersToNotif.push(member.uId);
+        }
+      }
+
       channel.messages.unshift(newMessagesDetails);
+      for (const user of data.users) {
+        if (usersToNotif.includes(user.authUserId)) {
+          user.notifications.unshift({
+            channelId: channelId,
+            dmId: -1,
+            notificationMessage: `${getHandleStr(authUserId)} tagged you in ${channel.name}: ${shortMsg}`
+          });
+        }
+      }
       setData(data);
     }
   }
@@ -1120,16 +1138,36 @@ async function messageSendlaterdmV1(token: string, authUserId: number, dmId: num
   };
   newMessagesDetails.reacts.push(newReactsDetails);
 
-  setTimeout(() => sendMsgLater(dmId, newMessagesDetails), sendLaterTime);
+  setTimeout(() => sendMsgLater(authUserId, message, dmId, newMessagesDetails), sendLaterTime);
 
   return { messageId: messageId };
 }
 
-function sendMsgLater(dmId: number, newMessagesDetails: newMessagesDetails) {
+function sendMsgLater(authUserId: number, message: string, dmId: number, newMessagesDetails: newMessagesDetails) {
   const data: any = getData();
-
+  const mentions = message.match(/@\w+/gi) || [];
+  const shortMsg = message.slice(0, 20);
+  const usersToNotif = [];
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
+      for (const user of dm.uIds) {
+        const tag = '@' + getHandleStr(user);
+        if (mentions.includes(tag)) {
+          usersToNotif.push(user);
+        }
+      }
+      if (mentions.includes('@' + getHandleStr(dm.creatorId))) {
+        usersToNotif.push(dm.creatorId);
+      }
+      for (const user of data.users) {
+        if (usersToNotif.includes(user.authUserId)) {
+          user.notifications.unshift({
+            channelId: -1,
+            dmId: dmId,
+            notificationMessage: `${getHandleStr(authUserId)} tagged you in ${dm.name}: ${shortMsg}`
+          });
+        }
+      }
       dm.messages.unshift(newMessagesDetails);
       setData(data);
     }
