@@ -483,7 +483,6 @@ describe('Test Cases for HTTP Route: dm/messages/v2', () => {
       }
     });
 
-
     const response = request(
       'GET', `${url}:${port}/dm/messages/v2`,
       {

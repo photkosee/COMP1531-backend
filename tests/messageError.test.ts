@@ -995,7 +995,7 @@ describe('Testing for error - message/sendlater/v1', () => {
   });
 
   test('Invalid channelId', () => {
-    let res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+    const res = request('POST', `${url}:${port}/message/sendlater/v1`, {
       json: {
         channelId: 1000,
         message: 'asdf',
@@ -1070,7 +1070,7 @@ describe('Testing for error - message/sendlaterdm/v1', () => {
     });
     expect(res.statusCode).toBe(BADREQUEST);
   });
-  
+
   test('Invalid dmId', () => {
     const res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
@@ -1085,7 +1085,7 @@ describe('Testing for error - message/sendlaterdm/v1', () => {
     });
     expect(res.statusCode).toBe(BADREQUEST);
   });
-  
+
   test('Invalid token', () => {
     const res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
@@ -1100,7 +1100,7 @@ describe('Testing for error - message/sendlaterdm/v1', () => {
     });
     expect(res.statusCode).toBe(FORBIDDEN);
   });
-  
+
   test('Not a member of dm', () => {
     const res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
@@ -1115,7 +1115,7 @@ describe('Testing for error - message/sendlaterdm/v1', () => {
     });
     expect(res.statusCode).toBe(FORBIDDEN);
   });
-  
+
   test('Timesent is before current time - message/sendlaterdm', () => {
     const res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
