@@ -829,7 +829,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           channel.messages.unshift(newMessagesDetails);
           setData(data);
 
-          return { shareMessageId: messageId };
+          return { sharedMessageId: messageId };
         }
       }
     }
@@ -863,7 +863,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           dm.messages.unshift(newMessagesDetails);
           setData(data);
 
-          return { shareMessageId: messageId };
+          return { sharedMessageId: messageId };
         }
         for (const member of shareDm.uIds) {
           if (dmId === shareDm.dmId && member === authUserId) {
@@ -888,7 +888,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             dm.messages.unshift(newMessagesDetails);
             setData(data);
 
-            return { shareMessageId: messageId };
+            return { sharedMessageId: messageId };
           }
         }
       }
@@ -924,7 +924,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           dm.messages.unshift(newMessagesDetails);
           setData(data);
 
-          return { shareMessageId: messageId };
+          return { sharedMessageId: messageId };
         }
       }
     }
@@ -958,7 +958,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           channel.messages.unshift(newMessagesDetails);
           setData(data);
 
-          return { shareMessageId: messageId };
+          return { sharedMessageId: messageId };
         }
         for (const member of shareDm.uIds) {
           if (dmId === shareDm.dmId && member === authUserId) {
@@ -983,7 +983,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             channel.messages.unshift(newMessagesDetails);
             setData(data);
 
-            return { shareMessageId: messageId };
+            return { sharedMessageId: messageId };
           }
         }
       }
