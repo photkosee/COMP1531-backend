@@ -446,6 +446,9 @@ async function channelLeaveV1(token: string, authUserId: number, channelId: numb
   const uId: number = authUserId;
   for (const channel of dataStore.channels) {
     if (channel.channelId === channelId) {
+      if (channel.standup.isActive && channel.standup.creatorId === authUserId) {
+        throw HTTPError(BADREQUEST, 'User is starter of current standup in channel');
+      }
       for (let i = 0; i < channel.ownerMembers.length; i++) {
         if (channel.ownerMembers[i].uId === uId) {
           channel.ownerMembers.splice(i, 1);
