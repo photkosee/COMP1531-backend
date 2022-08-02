@@ -1,7 +1,7 @@
+import HTTPError from 'http-errors';
 import { getData, setData } from './dataStore';
 import { checkToken } from './channelHelperFunctions';
 import { incrementChannelsExist, incrementChannelsJoined } from './userHelperFunctions';
-import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
@@ -16,26 +16,27 @@ interface newChannelDetails {
   standup: {
     isActive: boolean,
     timeFinish: number | null,
+    creatorId: number | null,
     messagesQueue: object[],
   },
 }
 
 async function channelsListallV1(token: string, authUserId: number) {
-/*
-  Description:
-    channelsListallV1  returning all existing
-    channels if the given authUserId is valid
+  /*
+    Description:
+      channelsListallV1  returning all existing
+      channels if the given authUserId is valid
 
-  Arguments:
-    token       string type   -- string supplied by request header
-    authUserId  number type   -- string supplied by request header
+    Arguments:
+      token       string type   -- string supplied by request header
+      authUserId  number type   -- string supplied by request header
 
-  Exceptions:
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
+    Exceptions:
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
-  Return Value:
-    array of object: having details of channelId and name
-*/
+    Return Value:
+      array of object: having details of channelId and name
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -56,21 +57,21 @@ async function channelsListallV1(token: string, authUserId: number) {
 }
 
 async function channelsListV1(token: string, authUserId: number) {
-/*
-  Description:
-    channelsListV1 returning all channels that the
-    given authUserId is part of the channels
+  /*
+    Description:
+      channelsListV1 returning all channels that the
+      given authUserId is part of the channels
 
-  Arguments:
-    token       string type -- Input string supplied by request header
-    authUserId  string type -- Input string supplied by request header
+    Arguments:
+      token       string type -- Input string supplied by request header
+      authUserId  string type -- Input string supplied by request header
 
-  Exceptions:
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
+    Exceptions:
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
-  Return Value:
-    array of object: having details of channelId and name
-*/
+    Return Value:
+      array of object: having details of channelId and name
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -95,24 +96,24 @@ async function channelsListV1(token: string, authUserId: number) {
 }
 
 async function channelsCreateV1(token: string, authUserId: number, name: string, isPublic: boolean) {
-/*
-  Description:
-    channelsCreateV1  creating a new channel from given authUserId,
-    name and set if the channel is private or public.
+  /*
+    Description:
+      channelsCreateV1  creating a new channel from given authUserId,
+      name and set if the channel is private or public.
 
-  Arguments:
-    token       string type   -- Input string supplied by request header
-    authUserId  string type   -- Input string supplied by request header
-    name        string type   -- Input string supplied by user
-    isPublic    boolean type  -- Input boolean supplied by user
+    Arguments:
+      token       string type   -- Input string supplied by request header
+      authUserId  string type   -- Input string supplied by request header
+      name        string type   -- Input string supplied by user
+      isPublic    boolean type  -- Input boolean supplied by user
 
-  Exceptions:
-    BADREQUEST - Occurs when length of name is not valid.
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
+    Exceptions:
+      BADREQUEST - Occurs when length of name is not valid.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
-  Return Value:
-    interger: channelId
-*/
+    Return Value:
+      interger: channelId
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -150,6 +151,7 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
         standup: {
           isActive: false,
           timeFinish: null,
+          creatorId: null,
           messagesQueue: []
         },
       };
@@ -166,7 +168,7 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
 }
 
 export {
+  channelsListallV1,
   channelsCreateV1,
-  channelsListV1,
-  channelsListallV1
+  channelsListV1
 };

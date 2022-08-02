@@ -190,3 +190,37 @@ test('Last person is owner and leaves', () => {
   const channel1 = JSON.parse(res.body as string);
   expect(channelLeave(user1.token, channel1.channelId).statusCode).toStrictEqual(OK);
 });
+
+test('Test for user is starter of current standup', () => {
+  let res = request('POST', `${url}:${port}/auth/register/v3`, {
+    json: {
+      email: 'user1@email.com',
+      password: 'password1',
+      nameFirst: 'john',
+      nameLast: 'smith',
+    }
+  });
+  const user1 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/channels/create/v3`, {
+    json: {
+      name: 'channel1',
+      isPublic: true,
+    },
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token
+    }
+  });
+  const channel1 = JSON.parse(res.body as string);
+  res = request('POST', `${url}:${port}/standup/start/v1`, {
+    body: JSON.stringify({
+      channelId: channel1.channelId,
+      length: 5,
+    }),
+    headers: {
+      'Content-type': 'application/json',
+      token: user1.token,
+    }
+  });
+  expect(channelLeave(user1.token, channel1.channelId).statusCode).toStrictEqual(BADREQUEST);
+});

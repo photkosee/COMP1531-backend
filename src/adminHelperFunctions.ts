@@ -4,15 +4,15 @@ const GLOBAL = 1;
 
 function checkPermissionId(permissionId: number) {
   /*
-  Description:
-    checkPermissionId checks validity of given permission id
+    Description:
+      checkPermissionId checks validity of given permission id
 
-  Arguments:
-    permissionId  number type -- number supplied by user
+    Arguments:
+      permissionId  number type -- number supplied by user
 
-  Return Value:
-    boolean:  'true' if valid, 'false' if invalid
-*/
+    Return Value:
+      boolean:  'true' if valid, 'false' if invalid
+  */
 
   if (typeof (permissionId) !== 'number') {
     return false;
@@ -26,16 +26,16 @@ function checkPermissionId(permissionId: number) {
 }
 
 function findPermissionId(userId: number) {
-/*
-  Description:
-    findPermissionId finds the permission id given a valid user Id
+  /*
+    Description:
+      findPermissionId finds the permission id given a valid user Id
 
-  Arguments:
-    userId    number type -- number supplied by header
+    Arguments:
+      userId    number type -- number supplied by header
 
-  Return Value:
-    number: 1 if global owner, 2 if member
-*/
+    Return Value:
+      number: 1 if global owner, 2 if member
+  */
 
   const data: any = getData();
 
@@ -50,17 +50,17 @@ function findPermissionId(userId: number) {
 }
 
 function isOnlyGlobalOwner(userId: number) {
-/*
-  Description:
-    isOnlyGlobalOwner determines if user is the only global owner in Treats
+  /*
+    Description:
+      isOnlyGlobalOwner determines if user is the only global owner in Treats
 
-  Arguments:
-    userId    number type -- number supplied by header
+    Arguments:
+      userId    number type -- number supplied by header
 
-  Return Value:
-    boolean:  'true' if they're the only global owner
-              'false' if other global owners exist
-*/
+    Return Value:
+      boolean:  'true' if they're the only global owner
+                'false' if other global owners exist
+  */
 
   const data: any = getData();
 
@@ -76,15 +76,13 @@ function isOnlyGlobalOwner(userId: number) {
 }
 
 function replaceUsersMessages(userId: number) {
-/*
-  Description:
-    replaceUserMessages replaces the user's messages to 'Removed user'
+  /*
+    Description:
+      replaceUserMessages replaces the user's messages to 'Removed user'
 
-  Arguments:
-    userId    number type -- number supplied by user
-
-  Return Value:
-*/
+    Arguments:
+      userId    number type -- number supplied by user
+  */
   const data: any = getData();
 
   if (data.channels.length === 0) {
@@ -101,15 +99,13 @@ function replaceUsersMessages(userId: number) {
 }
 
 function replaceUserDms(userId: number) {
-/*
-  Description:
-    replaceUserDms replaces the user's dms to 'Removed user'
+  /*
+    Description:
+      replaceUserDms replaces the user's dms to 'Removed user'
 
-  Arguments:
-    userId    number type -- number supplied by user
-
-  Return Value:
-*/
+    Arguments:
+      userId    number type -- number supplied by user
+  */
   const data: any = getData();
 
   if (data.dms.length === 0) {
@@ -127,14 +123,13 @@ function replaceUserDms(userId: number) {
 
 function removeUserChannelMembers(userId: number) {
   /*
-  Description:
-    removeUserChannelMembers removes the user from channel members.
+    Description:
+      removeUserChannelMembers removes the user from channel members.
 
-  Arguments:
-    userId    number type -- number supplied by user
+    Arguments:
+      userId    number type -- number supplied by user
+  */
 
-  Return Value:
-*/
   const data: any = getData();
 
   if (data.channels.length === 0) {
@@ -153,14 +148,13 @@ function removeUserChannelMembers(userId: number) {
 
 function removeUserChannelOwners(userId: number) {
   /*
-  Description:
-    removeUserChannelOwners removes the user from channel owners.
+    Description:
+      removeUserChannelOwners removes the user from channel owners.
 
-  Arguments:
-    userId    number type -- number supplied by user
+    Arguments:
+      userId    number type -- number supplied by user
+  */
 
-  Return Value:
-*/
   const data: any = getData();
 
   if (data.channels.length === 0) {
@@ -179,14 +173,13 @@ function removeUserChannelOwners(userId: number) {
 
 function removeUserFromDms(userId: number) {
   /*
-  Description:
-    removeUserFromDMs removes the user from dms.
+    Description:
+      removeUserFromDMs removes the user from dms.
 
-  Arguments:
-    userId    number type -- number supplied by user
+    Arguments:
+      userId    number type -- number supplied by user
+  */
 
-  Return Value:
-*/
   const data: any = getData();
 
   if (data.dms.length === 0) {
@@ -208,12 +201,12 @@ function removeUserFromDms(userId: number) {
 }
 
 export {
-  checkPermissionId,
-  findPermissionId,
-  isOnlyGlobalOwner,
-  replaceUsersMessages,
-  replaceUserDms,
   removeUserChannelMembers,
   removeUserChannelOwners,
-  removeUserFromDms
+  replaceUsersMessages,
+  removeUserFromDms,
+  isOnlyGlobalOwner,
+  checkPermissionId,
+  findPermissionId,
+  replaceUserDms
 };

@@ -37,10 +37,10 @@ function createUserStats() {
 }
 
 function createWorkplaceStats() {
-/*
-    Description:
-      createWorkplaceStats creates inital for Treats
-*/
+  /*
+      Description:
+        createWorkplaceStats creates inital for Treats
+  */
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
 
   const data: any = getData();
@@ -71,16 +71,17 @@ function createWorkplaceStats() {
 }
 
 function involvementRateCalculator(userId: number) {
-/*
-    Description:
-      involvementRateCalculator calculates involvementRate for a user
+  /*
+      Description:
+        involvementRateCalculator calculates involvementRate for a user
 
-    Parameters
-      userId    - number given by user
+      Parameters
+        userId    - number given by user
 
-    Return Value:
-      number:  involvementRate
-*/
+      Return Value:
+        number:  involvementRate
+  */
+
   const data: any = getData();
 
   let numChannelsJoined = 0;
@@ -124,16 +125,17 @@ function involvementRateCalculator(userId: number) {
 }
 
 function utilizationRateCalculator() {
-/*
-  Description:
-    involvementRateCalculator calculates involvementRate for a user
+  /*
+    Description:
+      involvementRateCalculator calculates involvementRate for a user
 
-  Parameters
-    userId    - number given by user
+    Parameters
+      userId    - number given by user
 
-  Return Value:
-    number:  involvementRate
-*/
+    Return Value:
+      number:  involvementRate
+  */
+
   const data: any = getData();
 
   let numUsers = 0;
@@ -166,13 +168,14 @@ function utilizationRateCalculator() {
 }
 
 function incrementChannelsJoined(authUserId: number) {
-/*
-  Description:
-    incrementChannelsJoined increments userStats
+  /*
+    Description:
+      incrementChannelsJoined increments userStats
 
-  Parameters
-    authUserId    - number given by user
-*/
+    Parameters
+      authUserId    - number given by user
+  */
+
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
 
   const data: any = getData();
@@ -191,13 +194,13 @@ function incrementChannelsJoined(authUserId: number) {
 }
 
 function incrementChannelsExist() {
-/*
-  Description:
-    increaseChannelsExist increments workplaceStats
+  /*
+    Description:
+      increaseChannelsExist increments workplaceStats
 
-  Parameters
-    authUserId    - number given by user
-*/
+    Parameters
+      authUserId    - number given by user
+  */
   const data: any = getData();
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
 
@@ -237,13 +240,14 @@ function decreaseChannelsJoined(authUserId: number) {
 }
 
 function incrementDmsJoined(authUserId: number) {
-/*
-  Description:
-    incrementDmsJoined increases userStats
+  /*
+    Description:
+      incrementDmsJoined increases userStats
 
-  Parameters
-    authUserId    - number given by user
-*/
+    Parameters
+      authUserId    - number given by user
+  */
+
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
 
@@ -260,13 +264,14 @@ function incrementDmsJoined(authUserId: number) {
 }
 
 function decreaseDmsJoined(authUserId: number) {
-/*
-  Description:
-    decreaseDmsJoined decreases userStats
+  /*
+    Description:
+      decreaseDmsJoined decreases userStats
 
-  Parameters
-    authUserId    - number given by user
-*/
+    Parameters
+      authUserId    - number given by user
+  */
+
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
 
@@ -283,10 +288,11 @@ function decreaseDmsJoined(authUserId: number) {
 }
 
 function incrementDmsExist() {
-/*
-  Description:
-    incrementDmsExist increments workplaceStats
-*/
+  /*
+    Description:
+      incrementDmsExist increments workplaceStats
+  */
+
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
   const length: number =
@@ -302,10 +308,11 @@ function incrementDmsExist() {
 }
 
 function decreaseDmsExist() {
-/*
-  Description:
-    decreaseDmsExist decreases workplaceStats
-*/
+  /*
+    Description:
+      decreaseDmsExist decreases workplaceStats
+  */
+
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
   const length: number =
@@ -321,13 +328,14 @@ function decreaseDmsExist() {
 }
 
 function incrementMessagesSent(authUserId: number) {
-/*
-  Description:
-    incrementMessagesSent increases userStats
+  /*
+    Description:
+      incrementMessagesSent increases userStats
 
-  Parameters
-    authUserId    - number given by user
-*/
+    Parameters
+      authUserId    - number given by user
+  */
+
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
 
@@ -345,10 +353,11 @@ function incrementMessagesSent(authUserId: number) {
 }
 
 function incrementMessagesExist() {
-/*
-  Description:
-    incrementMessagesExist increments workplaceStats
-*/
+  /*
+    Description:
+      incrementMessagesExist increments workplaceStats
+  */
+
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
   const length: number =
@@ -364,10 +373,11 @@ function incrementMessagesExist() {
 }
 
 function decreaseMessagesExist() {
-/*
-  Description:
-    decreaseMessagesExist decreases workplaceStats
-*/
+  /*
+    Description:
+      decreaseMessagesExist decreases workplaceStats
+  */
+
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
   const length: number =
@@ -383,18 +393,18 @@ function decreaseMessagesExist() {
 }
 
 export {
-  createUserStats,
-  createWorkplaceStats,
   involvementRateCalculator,
   utilizationRateCalculator,
-  incrementChannelsExist,
   incrementChannelsJoined,
   decreaseChannelsJoined,
+  incrementChannelsExist,
+  incrementMessagesExist,
+  decreaseMessagesExist,
+  incrementMessagesSent,
+  createWorkplaceStats,
   incrementDmsJoined,
   decreaseDmsJoined,
   incrementDmsExist,
   decreaseDmsExist,
-  incrementMessagesSent,
-  incrementMessagesExist,
-  decreaseMessagesExist
+  createUserStats
 };

@@ -25,7 +25,7 @@ test('Testing invalid token - notifications/get', () => {
 });
 
 describe('Testing successful notification get - notifications/get', () => {
-  test('successful tagging notification in channel', () => {
+  test('successful tagging notification in channel', async () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'user1@email.com',
@@ -37,7 +37,7 @@ describe('Testing successful notification get - notifications/get', () => {
     const user = JSON.parse(res.body as string);
     const token = user.token;
     res = request('POST', `${url}:${port}/channels/create/v3`, {
-      body: JSON.stringify({
+      json: ({
         name: 'DOTA2',
         isPublic: true
       }),
@@ -47,7 +47,7 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     });
     res = request('POST', `${url}:${port}/message/send/v2`, {
-      body: JSON.stringify({
+      json: ({
         channelId: 1,
         message: '@johnsmith@ hello'
       }),
@@ -56,6 +56,19 @@ describe('Testing successful notification get - notifications/get', () => {
         token: token
       }
     });
+    res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+      json: ({
+        channelId: 1,
+        message: '@johnsmith@ again',
+        timeSent: (Math.floor(Date.now() / 1000) + 2)
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    });
+    await new Promise((r) => setTimeout(r, 2000));
+
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
@@ -63,6 +76,7 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
+    expect(JSON.parse(res.body as string).notifications.length).toStrictEqual(2);
   });
   test('successful notif for add to dm', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
@@ -101,7 +115,7 @@ describe('Testing successful notification get - notifications/get', () => {
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
-  test('successful tagging notification in dm', () => {
+  test('successful tagging notification in dm', async () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
       json: {
         email: 'user1@email.com',
@@ -150,6 +164,30 @@ describe('Testing successful notification get - notifications/get', () => {
         token: user1.token
       }
     });
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: 1,
+        message: '@johnsmith@ hello again',
+        timeSent: (Math.floor(Date.now() / 1000) + 1)
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: user2.token
+      }
+    });
+    await new Promise((r) => setTimeout(r, 1000));
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: 1,
+        message: '@benaffleck@ again',
+        timeSent: (Math.floor(Date.now() / 1000) + 1)
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: user2.token
+      }
+    });
+    await new Promise((r) => setTimeout(r, 1000));
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
@@ -157,6 +195,7 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
+    expect(JSON.parse(res.body as string).notifications.length).toStrictEqual(3);
   });
   test('successful notif for message react in channel', () => {
     let res = request('POST', `${url}:${port}/auth/register/v3`, {
@@ -178,7 +217,7 @@ describe('Testing successful notification get - notifications/get', () => {
     });
     const user2 = JSON.parse(res.body as string);
     res = request('POST', `${url}:${port}/channels/create/v3`, {
-      body: JSON.stringify({
+      json: ({
         name: 'DOTA2',
         isPublic: true
       }),
@@ -210,7 +249,7 @@ describe('Testing successful notification get - notifications/get', () => {
     }
     );
     res = request('POST', `${url}:${port}/message/react/v1`, {
-      body: JSON.stringify({
+      json: ({
         messageId: message.messageId,
         reactId: 1
       }),
@@ -269,7 +308,7 @@ describe('Testing successful notification get - notifications/get', () => {
     const message = JSON.parse(res.body as string);
 
     res = request('POST', `${url}:${port}/message/react/v1`, {
-      body: JSON.stringify({
+      json: ({
         messageId: message.messageId,
         reactId: 1
       }),
