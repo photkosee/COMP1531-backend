@@ -5,7 +5,7 @@ import { utilizationRateCalculator } from './userHelperFunctions';
 
 const FORBIDDEN = 403;
 
-async function usersAllV1(token: string, authUserId: number) {
+function usersAllV1(token: string, authUserId: number) {
   /*
     Description:
       usersAllV1 returns information about all users' userId,
@@ -22,7 +22,7 @@ async function usersAllV1(token: string, authUserId: number) {
       Object: { users: users } on success
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -44,7 +44,7 @@ async function usersAllV1(token: string, authUserId: number) {
   return { users: users };
 }
 
-async function usersStatsV1 (token: string, authUserId: number) {
+function usersStatsV1 (token: string, authUserId: number) {
   /*
     Description:
       usersAllV1 returns information about all users' userId,
@@ -61,7 +61,7 @@ async function usersStatsV1 (token: string, authUserId: number) {
       Object: { users: users } on success
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

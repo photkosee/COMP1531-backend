@@ -21,7 +21,7 @@ interface newChannelDetails {
   },
 }
 
-async function channelsListallV1(token: string, authUserId: number) {
+function channelsListallV1(token: string, authUserId: number) {
   /*
     Description:
       channelsListallV1  returning all existing
@@ -38,7 +38,7 @@ async function channelsListallV1(token: string, authUserId: number) {
       array of object: having details of channelId and name
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -56,7 +56,7 @@ async function channelsListallV1(token: string, authUserId: number) {
   return { channels: channels };
 }
 
-async function channelsListV1(token: string, authUserId: number) {
+function channelsListV1(token: string, authUserId: number) {
   /*
     Description:
       channelsListV1 returning all channels that the
@@ -73,7 +73,7 @@ async function channelsListV1(token: string, authUserId: number) {
       array of object: having details of channelId and name
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -95,7 +95,7 @@ async function channelsListV1(token: string, authUserId: number) {
   return { channels: channels };
 }
 
-async function channelsCreateV1(token: string, authUserId: number, name: string, isPublic: boolean) {
+function channelsCreateV1(token: string, authUserId: number, name: string, isPublic: boolean) {
   /*
     Description:
       channelsCreateV1  creating a new channel from given authUserId,
@@ -115,7 +115,7 @@ async function channelsCreateV1(token: string, authUserId: number, name: string,
       interger: channelId
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

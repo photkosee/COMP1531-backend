@@ -58,6 +58,7 @@ describe('Testing successful notification get - notifications/get', () => {
         token: registrationData[0].token
       }
     });
+
     res = request('POST', `${url}:${port}/message/send/v2`, {
       json: ({
         channelId: 1,
@@ -68,6 +69,7 @@ describe('Testing successful notification get - notifications/get', () => {
         token: registrationData[0].token
       }
     });
+
     res = request('POST', `${url}:${port}/message/sendlater/v1`, {
       json: ({
         channelId: 1,
@@ -79,6 +81,7 @@ describe('Testing successful notification get - notifications/get', () => {
         token: registrationData[0].token
       }
     });
+
     await new Promise((r) => setTimeout(r, 2000));
 
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
@@ -89,6 +92,7 @@ describe('Testing successful notification get - notifications/get', () => {
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
+
   test('successful notif for add to dm', () => {
     let res = request('POST', `${url}:${port}/dm/create/v2`, {
       json: {
@@ -108,6 +112,7 @@ describe('Testing successful notification get - notifications/get', () => {
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
+
   test('successful tagging notification in dm', async () => {
     let res = request('POST', `${url}:${port}/message/senddm/v2`, {
       json: {
@@ -130,6 +135,7 @@ describe('Testing successful notification get - notifications/get', () => {
         token: registrationData[0].token
       }
     });
+
     res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
         dmId: 1,
@@ -141,7 +147,9 @@ describe('Testing successful notification get - notifications/get', () => {
         token: registrationData[0].token
       }
     });
+
     await new Promise((r) => setTimeout(r, 1000));
+
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
@@ -150,6 +158,7 @@ describe('Testing successful notification get - notifications/get', () => {
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
+
   test('successful notif for message react in channel', () => {
     request('POST', `${url}:${port}/channel/join/v3`, {
       json: {
@@ -161,6 +170,7 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     }
     );
+
     let res = request('POST', `${url}:${port}/message/react/v1`, {
       json: ({
         messageId: 1,
@@ -171,6 +181,7 @@ describe('Testing successful notification get - notifications/get', () => {
         token: registrationData[2].token
       }
     });
+
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
@@ -179,6 +190,7 @@ describe('Testing successful notification get - notifications/get', () => {
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
+
   test('successful notif for message react in dm', () => {
     let res = request('POST', `${url}:${port}/message/react/v1`, {
       json: ({
@@ -190,6 +202,7 @@ describe('Testing successful notification get - notifications/get', () => {
         token: registrationData[1].token
       }
     });
+
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
@@ -210,6 +223,7 @@ describe('Testing successful notification get - notifications/get', () => {
         token: registrationData[0].token
       }
     });
+
     const res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
@@ -218,6 +232,7 @@ describe('Testing successful notification get - notifications/get', () => {
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
+
   test('successful notif message edit in channel', () => {
     let res = request('PUT', `${url}:${port}/message/edit/v2`, {
       json: {
@@ -229,6 +244,7 @@ describe('Testing successful notification get - notifications/get', () => {
         token: registrationData[0].token
       }
     });
+
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
@@ -237,6 +253,7 @@ describe('Testing successful notification get - notifications/get', () => {
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
+
   test('successful notif message edit in dm', () => {
     let res = request('PUT', `${url}:${port}/message/edit/v2`, {
       json: {
@@ -249,6 +266,7 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
+
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',

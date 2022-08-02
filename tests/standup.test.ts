@@ -67,7 +67,7 @@ describe('Test Cases for HTTP Route: standup/start/v1', () => {
     const successRes = request('POST', `${url}:${port}/standup/start/v1`, {
       body: JSON.stringify({
         channelId: channelId1,
-        length: 5,
+        length: 4,
       }),
       headers: {
         'Content-type': 'application/json',

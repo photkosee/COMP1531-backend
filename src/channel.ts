@@ -26,7 +26,7 @@ interface newUser {
   handleStr: string
 }
 
-async function channelJoinV1(token: string, authUserId: number, channelId: number) {
+function channelJoinV1(token: string, authUserId: number, channelId: number) {
   /*
     Description:
       channelJoinV1 helps user join a channel
@@ -46,7 +46,7 @@ async function channelJoinV1(token: string, authUserId: number, channelId: numbe
       object: {}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -95,7 +95,7 @@ async function channelJoinV1(token: string, authUserId: number, channelId: numbe
   return {};
 }
 
-async function channelDetailsV1(token: string, authUserId: number, channelId: number) {
+function channelDetailsV1(token: string, authUserId: number, channelId: number) {
   /*
     Description:
       channelDetailsV1 provide basic details about the channel
@@ -122,7 +122,7 @@ async function channelDetailsV1(token: string, authUserId: number, channelId: nu
       }
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -150,7 +150,7 @@ async function channelDetailsV1(token: string, authUserId: number, channelId: nu
   };
 }
 
-async function channelInviteV1(token: string, authUserId: number, channelId: number, uId: number) {
+function channelInviteV1(token: string, authUserId: number, channelId: number, uId: number) {
   /*
     Description:
       channelInviteV1 Will invite and add a user into a channel
@@ -172,7 +172,7 @@ async function channelInviteV1(token: string, authUserId: number, channelId: num
       object: {} when user is added
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -222,7 +222,7 @@ async function channelInviteV1(token: string, authUserId: number, channelId: num
   }
 }
 
-async function channelMessagesV1(token: string, authUserId: number, channelId: number, start: number) {
+function channelMessagesV1(token: string, authUserId: number, channelId: number, start: number) {
   /*
     Description:
       channelMessagesV1 checks the message history of a given channel
@@ -247,7 +247,7 @@ async function channelMessagesV1(token: string, authUserId: number, channelId: n
       }
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -289,7 +289,7 @@ async function channelMessagesV1(token: string, authUserId: number, channelId: n
   };
 }
 
-async function channelAddownerV1(token: string, authUserId: number, channelId: number, uId: number) {
+function channelAddownerV1(token: string, authUserId: number, channelId: number, uId: number) {
   /*
     Description:
       channelAddownerV1 adds owner to a channel
@@ -311,7 +311,7 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
       object: {} when owner is added
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -362,7 +362,7 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
   }
 }
 
-async function channelRemoveownerV1(token: string, authUserId: number, channelId: number, uId: number) {
+function channelRemoveownerV1(token: string, authUserId: number, channelId: number, uId: number) {
   /*
     Description:
       channelRemoveownerV1: user of token removes owner of uId from channel of channelId
@@ -385,7 +385,7 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
       object: {} when owner is removed
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -423,7 +423,7 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
   }
 }
 
-async function channelLeaveV1(token: string, authUserId: number, channelId: number) {
+function channelLeaveV1(token: string, authUserId: number, channelId: number) {
   /*
     Description:
       channelLeaveV1 makes a user of token leave channel of channelId
@@ -443,7 +443,7 @@ async function channelLeaveV1(token: string, authUserId: number, channelId: numb
       object: {} when user is removed
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

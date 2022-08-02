@@ -42,7 +42,7 @@ async function uploadProfilePhoto(token: string, authUserId: number, imgUrl: str
       object: {}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

@@ -6,7 +6,7 @@ import { checkDmMember } from './dmHelperFunctions';
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 
-async function searchV1(token: string, authUserId:number, queryStr: string) {
+function searchV1(token: string, authUserId:number, queryStr: string) {
   /*
     Description:
       searchV1 searches for messages from channel/dm
@@ -24,7 +24,7 @@ async function searchV1(token: string, authUserId:number, queryStr: string) {
       object: { messages: messages }
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

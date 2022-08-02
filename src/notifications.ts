@@ -4,7 +4,7 @@ import { checkToken } from './channelHelperFunctions';
 
 const FORBIDDEN = 403;
 
-async function notificationsGet(token: string, authUserId: number) {
+function notificationsGet(token: string, authUserId: number) {
   /*
     Description:
       notificationGet returns most recent 20 notifications
@@ -20,7 +20,7 @@ async function notificationsGet(token: string, authUserId: number) {
       Object: { notifications: notifications } on success
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
