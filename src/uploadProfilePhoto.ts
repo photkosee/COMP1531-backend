@@ -1,16 +1,19 @@
-import { getData, setData } from './dataStore';
-import { checkToken } from './channelHelperFunctions';
-import { promises as fsPromises } from 'fs';
-import HTTPError from 'http-errors';
-import request from 'then-request';
-import config from './config.json';
-import sharp from 'sharp';
-import { promisify } from 'util';
-const sizeOf = promisify(require('image-size'));
 import path from 'path';
+import sharp from 'sharp';
+import env from './env.json';
+import { promisify } from 'util';
+import config from './config.json';
+import request from 'then-request';
+import HTTPError from 'http-errors';
+import { promises as fsPromises } from 'fs';
+import { getData, setData } from './dataStore';
+const sizeOf = promisify(require('image-size'));
+import { checkToken } from './channelHelperFunctions';
 
-const HOST: string = process.env.IP || 'localhost';
-const PORT: number = parseInt(process.env.PORT || config.port);
+const deployedUrl: string = env.deployedUrl;
+const port = config.port;
+const url = config.url;
+
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 
@@ -87,32 +90,21 @@ async function uploadProfilePhoto(token: string, authUserId: number, imgUrl: str
   await sharp(path.join(__dirname, `static/${tempFileName}.jpg`))
     .extract({ left: xStart, top: yStart, width: xEnd, height: yEnd })
     .toFile(outputImage)
-    // .catch(async function(err: any) {
-    //   await fsPromises.unlink(path.join(__dirname, `static/${tempFileName}.jpg`));
-    //   throw HTTPError(500, 'Error occurred while cropping image');
-    // })
     .then(async function(newFileInfo: any) {
       await fsPromises.unlink(path.join(__dirname, `static/${tempFileName}.jpg`));
     });
 
-  const newProfileImgUrl = `${(HOST === 'localhost') ? 'http://' : 'https://'}${HOST + ':' + PORT}/static/${newFileName}.jpg`;
-  // let prevProfileImgUrl: string;
+  const newProfileImgUrl = `${process.env.PORT ? deployedUrl : `${url}:${port}`}/static/${newFileName}.jpg`;
 
   const data: any = getData();
 
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
-      // prevProfileImgUrl = user.profileImgUrl;
       user.profileImgUrl = newProfileImgUrl;
     }
   }
 
   setData(data);
-
-  // if (prevProfileImgUrl.split('/static/')[1] !== 'profile.jpg') {
-  //   await fsPromises.unlink(path.join(__dirname, `static/${prevProfileImgUrl.split('/static/')[1]}`));
-  // }
-
   return {};
 }
 

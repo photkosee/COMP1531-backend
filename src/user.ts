@@ -1,8 +1,8 @@
-import { getData } from './dataStore';
-import { checkToken, checkAuthUserIdProfile, checkTokenProfile } from './channelHelperFunctions';
-import { emailValidator } from './authHelperFunctions';
 import HTTPError from 'http-errors';
+import { getData } from './dataStore';
+import { emailValidator } from './authHelperFunctions';
 import { involvementRateCalculator } from './userHelperFunctions';
+import { checkToken, checkAuthUserIdProfile, checkTokenProfile } from './channelHelperFunctions';
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
@@ -15,22 +15,22 @@ interface USER_STATS {
 }
 
 async function userProfileV1(token: string, authUserId: number, uId: number) {
-/*
-  Description:
-    userProfileV1 returns information about uId's userId,
-    email, first name, last name, and handle
+  /*
+    Description:
+      userProfileV1 returns information about uId's userId,
+      email, first name, last name, and handle
 
-  Arguments:
-    token       string type -- string supplied by header
-    authUserId  number type -- number supplied by header
-    uId         number type -- Input number supplied by user
+    Arguments:
+      token       string type -- string supplied by header
+      authUserId  number type -- number supplied by header
+      uId         number type -- Input number supplied by user
 
-  Exceptions:
-    FORBIDDEN   - Invalid Session ID or Token
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
 
-  Return Value:
-    Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
-*/
+    Return Value:
+      Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
+  */
 
   if (!(await checkTokenProfile(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -127,7 +127,7 @@ async function userProfileSetemailV1(token: string, authUserId: number, email: s
 
     Return Value:
       Object: {} on success
-*/
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -163,24 +163,24 @@ async function userProfileSetemailV1(token: string, authUserId: number, email: s
 }
 
 async function userProfileSethandleV1(token: string, authUserId: number, handleStr: string) {
-/*
-  Description:
-    userProfileSethandleV1 updates user's handleStr
+  /*
+    Description:
+      userProfileSethandleV1 updates user's handleStr
 
-  Arguments:
-    token       string type  -- string supplied by header
-    authUserId  number type  -- number supplied by header
-    handleStr   string type  -- Input string supplied by user
+    Arguments:
+      token       string type  -- string supplied by header
+      authUserId  number type  -- number supplied by header
+      handleStr   string type  -- Input string supplied by user
 
-  Exceptions:
-    FORBIDDEN   - Invalid Session ID or Token
-    BADREQUEST  - Invalid handleStr type
-    BADREQUEST  - handleStr must be 3-20 characters
-    BADREQUEST  - handleStr must only be alphanumeric
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
+      BADREQUEST  - Invalid handleStr type
+      BADREQUEST  - handleStr must be 3-20 characters
+      BADREQUEST  - handleStr must only be alphanumeric
 
-  Return Value:
-    Object: {} on success
-*/
+    Return Value:
+      Object: {} on success
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -220,26 +220,27 @@ async function userProfileSethandleV1(token: string, authUserId: number, handleS
 }
 
 async function userStatsV1(token: string, authUserId: number) {
-/*
-  Description:
-    userStatsV1 fetches stats about user's use of UNSW treats
+  /*
+    Description:
+      userStatsV1 fetches stats about user's use of UNSW treats
 
-  Arguments:
-    token       string type  -- string supplied by header
-    authUserId  number type  -- number supplied by header
+    Arguments:
+      token       string type  -- string supplied by header
+      authUserId  number type  -- number supplied by header
 
-  Exceptions:
-    FORBIDDEN   - Invalid Session ID or Token
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
 
-  Return Value:
-    Object: {} on success
-*/
+    Return Value:
+      Object: {} on success
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const data:any = getData();
+
   let userStats: USER_STATS =
     {
       channelsJoined: [],
@@ -254,13 +255,14 @@ async function userStatsV1(token: string, authUserId: number) {
       userStats = user.userStats;
     }
   }
+
   return { userStats: userStats };
 }
 
 export {
-  userProfileV1,
-  userProfileSetnameV1,
   userProfileSethandleV1,
   userProfileSetemailV1,
+  userProfileSetnameV1,
+  userProfileV1,
   userStatsV1
 };

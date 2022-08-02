@@ -1,5 +1,5 @@
-import { getData } from './dataStore';
 import HTTPError from 'http-errors';
+import { getData } from './dataStore';
 import { checkToken, authInChannel } from './channelHelperFunctions';
 import { checkDmMember } from './dmHelperFunctions';
 
@@ -60,4 +60,6 @@ async function searchV1(token: string, authUserId:number, queryStr: string) {
   return { messages: queryMessages };
 }
 
-export { searchV1 };
+export {
+  searchV1
+};

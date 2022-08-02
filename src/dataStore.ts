@@ -10,27 +10,34 @@ let data: object = {
     //   profileImgUrl: 'string',
     //   permissionId: 'number',
     //   isActive: 'boolean',
-    //   sessionList: 'Array<tokens>'
+    //   sessionList: 'Array',
+    //   notifications: [
+    //     {
+    //       channelId: 'number',
+    //       dmId: 'number',
+    //       notificationMessage: 'string'
+    //     },
+    //   ],
     //   userStats: {
-    //    channelsJoined: [
-    //      {
-    //        numChannelsJoined: 'number',
-    //        timeStamp: 'number'
-    //      }
-    //    ],
-    //    dmsJoined: [
-    //      {
-    //        numDmsJoined: 'number',
-    //        timeStamp: 'number'
-    //      }
-    //    ],
-    //    messagesSent: [
-    //      {
-    //        numMessagesSent: 'number',
-    //        timeStamp: 'number'
-    //      }
-    //    ],
-    //    involvementRate: 'number'
+    //     channelsJoined: [
+    //       {
+    //         numChannelsJoined: 'number',
+    //         timeStamp: 'number'
+    //       }
+    //     ],
+    //     dmsJoined: [
+    //       {
+    //         numDmsJoined: 'number',
+    //         timeStamp: 'number'
+    //       }
+    //     ],
+    //     messagesSent: [
+    //       {
+    //         numMessagesSent: 'number',
+    //         timeStamp: 'number'
+    //       }
+    //     ],
+    //     involvementRate: 'number'
     //   }
     // }
   ],
@@ -60,6 +67,7 @@ let data: object = {
     //   standup: {
     //     isActive: 'boolean',
     //     timeFinish: 'integer',
+    //     creatorId: 'number',
     //     messagesQueue: [
     //       {
     //         handleStr: 'string',
@@ -87,7 +95,7 @@ let data: object = {
     //           uIds: 'Array',
     //           isThisUserReacted: 'boolean'
     //         },
-    //       ]
+    //       ],
     //       isPinned: 'boolean',
     //     },
     //   ],
@@ -101,22 +109,22 @@ let data: object = {
   ],
   workplaceStats: {
     // channelsExist: [
-    //  {
-    //    numChannelsExist: 'number',
-    //    timeStamp: 'number
-    //  }
+    //   {
+    //     numChannelsExist: 'number',
+    //     timeStamp: 'number',
+    //   }
     // ],
     // dmsExist: [
-    //  {
-    //    numDmsExist: 'number',
-    //    timeStamp: 'number'
-    //  }
+    //   {
+    //     numDmsExist: 'number',
+    //     timeStamp: 'number'
+    //   }
     // ],
     // messagesExist: [
-    //  {
-    //    numMessagesExist: 'number',
-    //    timeStamp: 'number'
-    //  }
+    //   {
+    //     numMessagesExist: 'number',
+    //     timeStamp: 'number'
+    //   }
     // ],
     // utilizationRate: 'number'
   },
