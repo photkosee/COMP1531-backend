@@ -14,7 +14,7 @@ interface USER_STATS {
     involvementRate: number
 }
 
-async function userProfileV1(token: string, authUserId: number, uId: number) {
+function userProfileV1(token: string, authUserId: number, uId: number) {
   /*
     Description:
       userProfileV1 returns information about uId's userId,
@@ -32,7 +32,7 @@ async function userProfileV1(token: string, authUserId: number, uId: number) {
       Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
   */
 
-  if (!(await checkTokenProfile(token, authUserId))) {
+  if (!(checkTokenProfile(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -58,7 +58,7 @@ async function userProfileV1(token: string, authUserId: number, uId: number) {
   }
 }
 
-async function userProfileSetnameV1(token: string, authUserId: number, nameFirst: string, nameLast: string) {
+function userProfileSetnameV1(token: string, authUserId: number, nameFirst: string, nameLast: string) {
   /*
     Description:
       userProfileSetnameV1 updates user's nameFirst and nameLast
@@ -78,7 +78,7 @@ async function userProfileSetnameV1(token: string, authUserId: number, nameFirst
       Object: {} on success
 */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -109,7 +109,7 @@ async function userProfileSetnameV1(token: string, authUserId: number, nameFirst
   return {};
 }
 
-async function userProfileSetemailV1(token: string, authUserId: number, email: string) {
+function userProfileSetemailV1(token: string, authUserId: number, email: string) {
   /*
     Description:
       userProfileSetemailV1 updates user's email
@@ -129,7 +129,7 @@ async function userProfileSetemailV1(token: string, authUserId: number, email: s
       Object: {} on success
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -162,7 +162,7 @@ async function userProfileSetemailV1(token: string, authUserId: number, email: s
   return {};
 }
 
-async function userProfileSethandleV1(token: string, authUserId: number, handleStr: string) {
+function userProfileSethandleV1(token: string, authUserId: number, handleStr: string) {
   /*
     Description:
       userProfileSethandleV1 updates user's handleStr
@@ -182,7 +182,7 @@ async function userProfileSethandleV1(token: string, authUserId: number, handleS
       Object: {} on success
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -219,7 +219,7 @@ async function userProfileSethandleV1(token: string, authUserId: number, handleS
   return {};
 }
 
-async function userStatsV1(token: string, authUserId: number) {
+function userStatsV1(token: string, authUserId: number) {
   /*
     Description:
       userStatsV1 fetches stats about user's use of UNSW treats
@@ -235,7 +235,7 @@ async function userStatsV1(token: string, authUserId: number) {
       Object: {} on success
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

@@ -2,8 +2,8 @@ import HTTPError from 'http-errors';
 import sgMail from '@sendgrid/mail';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
 import env from './env.json';
+import crypto from 'crypto';
 
 function paramTypeChecker(email: string, password: string, nameFirst: string, nameLast: string) {
   /*
@@ -94,7 +94,11 @@ function emailValidator(email: string) {
   }
 }
 
-async function loginVerifier(email: string, password: string, userData: string[] | any[]) {
+function getHashOf(plaintext: string) {
+  return crypto.createHash('sha256').update(plaintext).digest('hex');
+}
+
+function loginVerifier(email: string, password: string, userData: string[] | any[]) {
   /*
     Description:
       Helper function to validate user Email and password for login
@@ -114,13 +118,13 @@ async function loginVerifier(email: string, password: string, userData: string[]
 
   for (const user of userData) {
     if (user.email === email && user.isActive) {
-      if (await bcrypt.compare(password, user.password)) {
+      if (user.password === getHashOf(password + env.secret)) {
         let newSessionId = `${(Math.floor(Math.random() * Date.now())).toString()}`;
         newSessionId = newSessionId.substring(0, 10);
 
         user.sessionList.push(newSessionId);
 
-        const newToken = await generateJwtToken(user.authUserId, newSessionId);
+        const newToken = generateJwtToken(user.authUserId, newSessionId);
 
         return { token: newToken, authUserId: user.authUserId };
       } else {
@@ -131,7 +135,7 @@ async function loginVerifier(email: string, password: string, userData: string[]
   throw HTTPError(400, 'Invalid Email');
 }
 
-async function tryLogout(token: string, authUserId:number, userData: string[] | any[]) {
+function tryLogout(token: string, authUserId:number, userData: string[] | any[]) {
   /*
     Description:
       Helper function to invalidate the sessionId to log the user out
@@ -148,7 +152,7 @@ async function tryLogout(token: string, authUserId:number, userData: string[] | 
   for (const user of userData) {
     if (user.authUserId === authUserId) {
       for (const sessionId of user.sessionList) {
-        if (await bcrypt.compare(sessionId, token)) {
+        if (getHashOf(sessionId + env.secret) === token) {
           const index: number = user.sessionList.indexOf(sessionId);
           user.sessionList.splice(index, 1);
           return true;
@@ -159,24 +163,7 @@ async function tryLogout(token: string, authUserId:number, userData: string[] | 
   return false;
 }
 
-async function hashPassword(password: string) {
-  /*
-    Description:
-      hashPassword Helper function to hash user Password
-
-    Arguments:
-      password  string type   -- Input string supplied by authRegisterV1
-
-    Return Value:
-      string: hashPassword
-  */
-
-  const salt = await bcrypt.genSalt();
-  const passwordHash = await bcrypt.hash(password, salt);
-  return passwordHash.toString();
-}
-
-async function generateJwtToken(authUserId: number, newSessionId: string) {
+function generateJwtToken(authUserId: number, newSessionId: string) {
   /*
     Description:
       generateJwtToken Helper function to generate JWT Token
@@ -189,8 +176,7 @@ async function generateJwtToken(authUserId: number, newSessionId: string) {
       string: token
   */
 
-  const salt = await bcrypt.genSalt();
-  const sessionHash = await bcrypt.hash(newSessionId, salt);
+  const sessionHash = getHashOf(newSessionId + env.secret);
 
   const payload = { id: authUserId, salt: sessionHash };
   return jwt.sign(payload, env.jwtSecret);
@@ -233,8 +219,8 @@ export {
   generateJwtToken,
   emailValidator,
   loginVerifier,
-  hashPassword,
   genHandleStr,
   tryLogout,
+  getHashOf,
   sendEmail
 };

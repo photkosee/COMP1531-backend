@@ -13,7 +13,7 @@ const registeredUser: any = [
   { email: 'mrjgidul907@gmail.com', password: 'uhudfnr567T#$%', nameFirst: 'Mriuffhdul', nameLast: 'Rathor' },
 ];
 
-beforeEach(() => {
+beforeAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
   registrationData = [];
 
@@ -64,6 +64,16 @@ describe('Testing message - message', () => {
       }
     });
     const dm2 = JSON.parse(res.body as string);
+
+    res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [registrationData[0].authUserId]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[2].token
+      }
+    });
 
     res = request('POST', `${url}:${port}/channels/create/v3`, {
       body: JSON.stringify({
@@ -505,5 +515,66 @@ describe('Testing message - message', () => {
       }
     });
     expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: dm1.dmId,
+        message: 'sdfgsdg',
+        timeSent: (Math.floor(Date.now() / 1000) + 1000)
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: dm2.dmId,
+        message: 'sdfgsdg',
+        timeSent: (Math.floor(Date.now() / 1000) + 1000)
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[1].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+      json: {
+        channelId: ch1.channelId,
+        message: 'sdfgsdg',
+        timeSent: (Math.floor(Date.now() / 1000) + 1000)
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[1].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
+      qs: {
+        uId: registrationData[1].authUserId
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    expect(res.statusCode).toEqual(OK);
+
+    res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
+      qs: {
+        uId: registrationData[2].authUserId
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    expect(res.statusCode).toEqual(OK);
   });
 });

@@ -32,7 +32,7 @@ interface newMessagesDetails {
   isPinned: boolean,
 }
 
-async function messageSendV1(token: string, authUserId: number, channelId: number, message: string) {
+function messageSendV1(token: string, authUserId: number, channelId: number, message: string) {
   /*
     Description:
       messageSendV1 send a message from the authorised
@@ -54,7 +54,7 @@ async function messageSendV1(token: string, authUserId: number, channelId: numbe
       object: { messageId: messageId }
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -128,7 +128,7 @@ async function messageSendV1(token: string, authUserId: number, channelId: numbe
   throw HTTPError(FORBIDDEN, 'You are not a member');
 }
 
-async function messageEditV1(token: string, authUserId: number, messageId: number, message: string) {
+function messageEditV1(token: string, authUserId: number, messageId: number, message: string) {
   /*
     Description:
       messageEditV1 given a message, update its text with new text.
@@ -150,7 +150,7 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
       object: {}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -248,7 +248,7 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
-async function messageSenddmV1(token: string, authUserId: number, dmId: number, message: string) {
+function messageSenddmV1(token: string, authUserId: number, dmId: number, message: string) {
   /*
     Description:
       messageSenddmV1 send a message from authorisedUser to the DM specified by dmId
@@ -269,7 +269,7 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
       object: { messageId: messageId }
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -387,7 +387,7 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
   throw HTTPError(FORBIDDEN, 'Not a member');
 }
 
-async function messageRemoveV1(token: string, authUserId: number, messageId: number) {
+function messageRemoveV1(token: string, authUserId: number, messageId: number) {
   /*
     Description:
       messageRemoveV1 given a messageId for a message,
@@ -407,7 +407,7 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
       object: {}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -455,7 +455,7 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
-async function messageReactV1(token: string, authUserId: number, messageId: number, reactId: number) {
+function messageReactV1(token: string, authUserId: number, messageId: number, reactId: number) {
   /*
     Description:
       messageReactV1 given a messageId for a message and a reactId,
@@ -477,7 +477,7 @@ async function messageReactV1(token: string, authUserId: number, messageId: numb
       object: {}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -541,7 +541,7 @@ async function messageReactV1(token: string, authUserId: number, messageId: numb
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
-async function messageUnreactV1(token: string, authUserId: number, messageId: number, reactId: number) {
+function messageUnreactV1(token: string, authUserId: number, messageId: number, reactId: number) {
   /*
     Description:
       messageUnreactV1 given a messageId for a message and a reactId,
@@ -563,7 +563,7 @@ async function messageUnreactV1(token: string, authUserId: number, messageId: nu
       object: {}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -604,7 +604,7 @@ async function messageUnreactV1(token: string, authUserId: number, messageId: nu
   throw HTTPError(BADREQUEST, 'Invalid messageId or no reacts');
 }
 
-async function messagePinV1(token: string, authUserId: number, messageId: number) {
+function messagePinV1(token: string, authUserId: number, messageId: number) {
   /*
     Description:
       messagePinV1 given a messageId for a message,
@@ -625,7 +625,7 @@ async function messagePinV1(token: string, authUserId: number, messageId: number
       object: {}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -674,7 +674,7 @@ async function messagePinV1(token: string, authUserId: number, messageId: number
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
-async function messageUnpinV1(token: string, authUserId: number, messageId: number) {
+function messageUnpinV1(token: string, authUserId: number, messageId: number) {
   /*
     Description:
       messageUnpinV1 given a messageId for a message,
@@ -695,7 +695,7 @@ async function messageUnpinV1(token: string, authUserId: number, messageId: numb
       object: {}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -744,7 +744,7 @@ async function messageUnpinV1(token: string, authUserId: number, messageId: numb
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
-async function messageShareV1(token: string, authUserId: number, ogMessageId: number, message: string, channelId: number, dmId: number) {
+function messageShareV1(token: string, authUserId: number, ogMessageId: number, message: string, channelId: number, dmId: number) {
   /*
     Description:
       messageSendV1 send a message from the authorised
@@ -770,7 +770,7 @@ async function messageShareV1(token: string, authUserId: number, ogMessageId: nu
       object: { shareMessageId: messageId }
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -993,7 +993,7 @@ async function messageShareV1(token: string, authUserId: number, ogMessageId: nu
   throw HTTPError(BADREQUEST, 'Invalid ogMessageId');
 }
 
-async function messageSendlaterV1(token: string, authUserId: number, channelId: number, message: string, timeSent: number) {
+function messageSendlaterV1(token: string, authUserId: number, channelId: number, message: string, timeSent: number) {
   /*
     Description:
       messageSendlaterV1 send a message from the authorised
@@ -1019,7 +1019,7 @@ async function messageSendlaterV1(token: string, authUserId: number, channelId: 
 
   const data: any = getData();
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -1111,7 +1111,7 @@ function sendMessageLater(authUserId: number, message: string, channelId: number
   incrementMessagesExist();
 }
 
-async function messageSendlaterdmV1(token: string, authUserId: number, dmId: number, message: string, timeSent: number) {
+function messageSendlaterdmV1(token: string, authUserId: number, dmId: number, message: string, timeSent: number) {
   /*
     Description:
       messageSendlaterV1 send a message from the authorised
@@ -1137,7 +1137,7 @@ async function messageSendlaterdmV1(token: string, authUserId: number, dmId: num
 
   const data: any = getData();
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

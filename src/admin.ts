@@ -18,7 +18,7 @@ const FORBIDDEN = 403;
 const GLOBAL = 1;
 const MEMBER = 2;
 
-async function adminUserpermissionChange(token: string, authUserId: number, uId: number, permissionId: number) {
+function adminUserpermissionChange(token: string, authUserId: number, uId: number, permissionId: number) {
   /*
     Description:
       adminUserpermissionChange changes the user's permissionId to GLOBAL or MEMBER
@@ -41,7 +41,7 @@ async function adminUserpermissionChange(token: string, authUserId: number, uId:
       Object: { user: { uId, email, nameFirst, nameLast, handleStr } }
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -82,7 +82,7 @@ async function adminUserpermissionChange(token: string, authUserId: number, uId:
   return {};
 }
 
-async function adminUserRemove(token: string, authUserId: number, uId: number) {
+function adminUserRemove(token: string, authUserId: number, uId: number) {
   /*
     Description:
       adminUserRemove removes a user from treats
@@ -102,7 +102,7 @@ async function adminUserRemove(token: string, authUserId: number, uId: number) {
   */
 
   // Checking parameter validity
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

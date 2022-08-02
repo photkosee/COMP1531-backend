@@ -1,5 +1,6 @@
+import env from './env.json';
 import { getData } from './dataStore';
-import bcrypt from 'bcryptjs';
+import { getHashOf } from './authHelperFunctions';
 
 function checkAuthUserId(authUserId: number) {
   /*
@@ -155,7 +156,7 @@ function getMessages(channelId: number) {
   }
 }
 
-async function checkToken(token: string, authUserId: number) {
+function checkToken(token: string, authUserId: number) {
   /*
     Description:
       checkToken checks validity and existence of sessionId/token
@@ -173,7 +174,7 @@ async function checkToken(token: string, authUserId: number) {
   for (const user of data.users) {
     if (user.authUserId === authUserId && user.isActive === true) {
       for (const sessionId of user.sessionList) {
-        if (await bcrypt.compare(sessionId, token)) {
+        if (getHashOf(sessionId + env.secret) === token) {
           return true;
         }
       }
@@ -183,7 +184,7 @@ async function checkToken(token: string, authUserId: number) {
   return false;
 }
 
-async function checkTokenProfile(token: string, authUserId: number) {
+function checkTokenProfile(token: string, authUserId: number) {
   /*
     Description:
       checkToken checks validity and existence of sessionId/token, includes inactive users
@@ -201,7 +202,7 @@ async function checkTokenProfile(token: string, authUserId: number) {
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
       for (const sessionId of user.sessionList) {
-        if (await bcrypt.compare(sessionId, token)) {
+        if (getHashOf(sessionId + env.secret) === token) {
           return true;
         }
       }

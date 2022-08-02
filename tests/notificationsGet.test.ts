@@ -6,8 +6,30 @@ const FORBIDDEN = 403;
 const port = config.port;
 const url = config.url;
 
-beforeEach(() => {
+let registrationData: any = [];
+
+const registeredUser: any = [
+  { email: 'mridul@gmail.com', password: 'uhunr567T#$%', nameFirst: 'a', nameLast: 'a' },
+  { email: 'anand@gmail.com', password: 'uhunr56ef7T#$%', nameFirst: 'b', nameLast: 'b' },
+  { email: 'mrjgidul907@gmail.com', password: 'uhudfnr567T#$%', nameFirst: 'c', nameLast: 'c' },
+];
+
+beforeAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
+  registrationData = [];
+
+  for (const user of registeredUser) {
+    const res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: user.email,
+        password: user.password,
+        nameFirst: user.nameFirst,
+        nameLast: user.nameLast,
+      }
+    });
+    const bodyObj = JSON.parse(res.body as string);
+    registrationData.push({ token: bodyObj.token, authUserId: bodyObj.authUserId });
+  }
 });
 
 afterAll(() => {
@@ -25,493 +47,240 @@ test('Testing invalid token - notifications/get', () => {
 });
 
 describe('Testing successful notification get - notifications/get', () => {
-  test('successful tagging notification in channel', async () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user1@email.com',
-        password: '123456',
-        nameFirst: 'john',
-        nameLast: 'smith',
-      }
-    });
-    const user = JSON.parse(res.body as string);
-    const token = user.token;
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
+  test('successful tagging notification in channel', async() => {
+    let res = request('POST', `${url}:${port}/channels/create/v3`, {
       json: ({
         name: 'DOTA2',
         isPublic: true
       }),
       headers: {
         'Content-type': 'application/json',
-        token: token
+        token: registrationData[0].token
       }
     });
+
     res = request('POST', `${url}:${port}/message/send/v2`, {
       json: ({
         channelId: 1,
-        message: '@johnsmith@ hello'
+        message: '@aa@ hello'
       }),
       headers: {
         'Content-type': 'application/json',
-        token: token
+        token: registrationData[0].token
       }
     });
+
     res = request('POST', `${url}:${port}/message/sendlater/v1`, {
       json: ({
         channelId: 1,
-        message: '@johnsmith@ again',
-        timeSent: (Math.floor(Date.now() / 1000) + 2)
+        message: '@aa@ again',
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
       }),
       headers: {
         'Content-type': 'application/json',
-        token: token
+        token: registrationData[0].token
       }
     });
-    await new Promise((r) => setTimeout(r, 2000));
+
+    await new Promise((r) => setTimeout(r, 2500));
 
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
-        token: token
+        token: registrationData[0].token
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
-    expect(JSON.parse(res.body as string).notifications.length).toStrictEqual(2);
   });
+
   test('successful notif for add to dm', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+    let res = request('POST', `${url}:${port}/dm/create/v2`, {
       json: {
-        email: 'user1@email.com',
-        password: '123456',
-        nameFirst: 'john',
-        nameLast: 'smith',
-      }
-    });
-    const user1 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user2@email.com',
-        password: '123456',
-        nameFirst: 'ben',
-        nameLast: 'affleck',
-      }
-    });
-    const user2 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/dm/create/v2`, {
-      json: {
-        uIds: [user2.authUserId],
+        uIds: [registrationData[1].authUserId],
       },
       headers: {
         'Content-type': 'application/json',
-        token: user1.token
+        token: registrationData[0].token
       }
     });
 
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
-        token: user2.token
+        token: registrationData[1].token
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
-  test('successful tagging notification in dm', async () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user1@email.com',
-        password: '123456',
-        nameFirst: 'john',
-        nameLast: 'smith',
-      }
-    });
-    const user1 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user2@email.com',
-        password: '123456',
-        nameFirst: 'ben',
-        nameLast: 'affleck',
-      }
-    });
-    const user2 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/dm/create/v2`, {
-      json: {
-        uIds: [user2.authUserId],
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
-    res = request('POST', `${url}:${port}/message/senddm/v2`, {
+
+  test('successful tagging notification in dm', async() => {
+    let res = request('POST', `${url}:${port}/message/senddm/v2`, {
       json: {
         dmId: 1,
-        message: '@johnsmith@ hello1'
+        message: '@bb@ hello1'
       },
       headers: {
         'Content-type': 'application/json',
-        token: user2.token
+        token: registrationData[0].token
       }
     });
 
     res = request('POST', `${url}:${port}/message/senddm/v2`, {
       json: {
         dmId: 1,
-        message: '@benaffleck/ hello2'
+        message: '@bb/ hello2'
       },
       headers: {
         'Content-type': 'application/json',
-        token: user1.token
+        token: registrationData[0].token
       }
     });
+
     res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
         dmId: 1,
-        message: '@johnsmith@ hello again',
-        timeSent: (Math.floor(Date.now() / 1000) + 1)
+        message: '@aa@ hello again',
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
       },
       headers: {
         'Content-type': 'application/json',
-        token: user2.token
+        token: registrationData[0].token
       }
     });
-    await new Promise((r) => setTimeout(r, 1000));
-    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
-      json: {
-        dmId: 1,
-        message: '@benaffleck@ again',
-        timeSent: (Math.floor(Date.now() / 1000) + 1)
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user2.token
-      }
-    });
-    await new Promise((r) => setTimeout(r, 1000));
+
+    await new Promise((r) => setTimeout(r, 2500));
+
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
-        token: user2.token
+        token: registrationData[1].token
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
-    expect(JSON.parse(res.body as string).notifications.length).toStrictEqual(3);
   });
+
   test('successful notif for message react in channel', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user1@email.com',
-        password: '123456',
-        nameFirst: 'john',
-        nameLast: 'smith',
-      }
-    });
-    const user1 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user2@email.com',
-        password: '123456',
-        nameFirst: 'ben',
-        nameLast: 'affleck',
-      }
-    });
-    const user2 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
-      json: ({
-        name: 'DOTA2',
-        isPublic: true
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
-
-    res = request('POST', `${url}:${port}/message/send/v2`, {
-      json: {
-        channelId: 1,
-        message: 'hello'
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
-    const message = JSON.parse(res.body as string);
     request('POST', `${url}:${port}/channel/join/v3`, {
       json: {
         channelId: 1
       },
       headers: {
         'Content-type': 'application/json',
-        token: user2.token
+        token: registrationData[2].token
       }
     }
     );
-    res = request('POST', `${url}:${port}/message/react/v1`, {
+
+    let res = request('POST', `${url}:${port}/message/react/v1`, {
       json: ({
-        messageId: message.messageId,
+        messageId: 1,
         reactId: 1
       }),
       headers: {
         'Content-type': 'application/json',
-        token: user2.token
+        token: registrationData[2].token
       }
     });
+
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
-        token: user1.token
+        token: registrationData[0].token
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
+
+    request('POST', `${url}:${port}/channel/leave/v2`, {
+      json: {
+        channelId: 1,
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[2].token
+      }
+    });
   });
+
   test('successful notif for message react in dm', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user1@email.com',
-        password: '123456',
-        nameFirst: 'john',
-        nameLast: 'smith',
-      }
-    });
-    const user1 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user2@email.com',
-        password: '123456',
-        nameFirst: 'ben',
-        nameLast: 'affleck',
-      }
-    });
-    const user2 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/dm/create/v2`, {
-      json: {
-        uIds: [user2.authUserId],
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
-
-    res = request('POST', `${url}:${port}/message/senddm/v2`, {
-      json: {
-        dmId: 1,
-        message: 'hello'
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
-    const message = JSON.parse(res.body as string);
-
-    res = request('POST', `${url}:${port}/message/react/v1`, {
+    let res = request('POST', `${url}:${port}/message/react/v1`, {
       json: ({
-        messageId: message.messageId,
+        messageId: 3,
         reactId: 1
       }),
       headers: {
         'Content-type': 'application/json',
-        token: user2.token
+        token: registrationData[1].token
       }
     });
+
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
-        token: user1.token
+        token: registrationData[0].token
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
 
   test('successful notif for invite to channel', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user1@email.com',
-        password: '123456',
-        nameFirst: 'john',
-        nameLast: 'smith',
-      }
-    });
-    const user1 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user2@email.com',
-        password: '123456',
-        nameFirst: 'ben',
-        nameLast: 'affleck',
-      }
-    });
-    const user2 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
-      json: {
-        name: 'DOTA2',
-        isPublic: true
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
-
     request('POST', `${url}:${port}/channel/invite/v3`, {
       json: {
         channelId: 1,
-        uId: user2.authUserId
+        uId: registrationData[2].authUserId
       },
       headers: {
         'Content-type': 'application/json',
-        token: user1.token
+        token: registrationData[0].token
       }
     });
-    res = request('GET', `${url}:${port}/notifications/get/v1`, {
+
+    const res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
-        token: user2.token
+        token: registrationData[2].token
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
+
   test('successful notif message edit in channel', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+    let res = request('PUT', `${url}:${port}/message/edit/v2`, {
       json: {
-        email: 'user1@email.com',
-        password: '123456',
-        nameFirst: 'john',
-        nameLast: 'smith',
-      }
-    });
-    const user1 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user2@email.com',
-        password: '123456',
-        nameFirst: 'ben',
-        nameLast: 'affleck',
-      }
-    });
-    const user2 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/channels/create/v3`, {
-      json: {
-        name: 'DOTA2',
-        isPublic: true
+        messageId: 1,
+        message: '@bb/'
       },
       headers: {
         'Content-type': 'application/json',
-        token: user1.token
+        token: registrationData[0].token
       }
     });
-    res = request('POST', `${url}:${port}/channel/join/v3`, {
-      json: {
-        channelId: 1
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user2.token
-      }
-    });
-    res = request('POST', `${url}:${port}/message/send/v2`, {
-      json: {
-        channelId: 1,
-        message: 'hello'
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
-    const message = JSON.parse(res.body as string);
-    res = request('PUT', `${url}:${port}/message/edit/v2`, {
-      json: {
-        messageId: message.messageId,
-        message: '@benaffleck/'
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
+
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
-        token: user2.token
+        token: registrationData[1].token
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
   });
+
   test('successful notif message edit in dm', () => {
-    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+    let res = request('PUT', `${url}:${port}/message/edit/v2`, {
       json: {
-        email: 'user1@email.com',
-        password: '123456',
-        nameFirst: 'john',
-        nameLast: 'smith',
-      }
-    });
-    const user1 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/auth/register/v3`, {
-      json: {
-        email: 'user2@email.com',
-        password: '123456',
-        nameFirst: 'ben',
-        nameLast: 'affleck',
-      }
-    });
-    const user2 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/dm/create/v2`, {
-      json: {
-        uIds: [user2.authUserId]
+        messageId: 3,
+        message: '@bb/'
       },
       headers: {
         'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
-    const dm1 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/message/senddm/v2`, {
-      json: {
-        dmId: dm1.dmId,
-        message: 'hello'
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
-    const message = JSON.parse(res.body as string);
-    res = request('PUT', `${url}:${port}/message/edit/v2`, {
-      json: {
-        messageId: message.messageId,
-        message: '@benaffleck/'
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
-    res = request('PUT', `${url}:${port}/message/edit/v2`, {
-      json: {
-        messageId: message.messageId,
-        message: '@johnsmith/'
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: user1.token
-      }
-    });
-    res = request('GET', `${url}:${port}/notifications/get/v1`, {
-      headers: {
-        'Content-type': 'application/json',
-        token: user2.token
+        token: registrationData[0].token
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
+
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
-        token: user1.token
+        token: registrationData[1].token
       }
     });
     expect(res.statusCode).toStrictEqual(OK);

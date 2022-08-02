@@ -21,7 +21,7 @@ interface newMessagesDetails {
   isPinned: boolean,
 }
 
-async function standupStart(token: string, authUserId: number, channelId: number, length: number) {
+function standupStart(token: string, authUserId: number, channelId: number, length: number) {
   /*
     Description:
       standupStart function will start a standup period lasting "length" seconds.
@@ -43,7 +43,7 @@ async function standupStart(token: string, authUserId: number, channelId: number
       object: {timeFinish: timeFinish}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -79,7 +79,7 @@ async function standupStart(token: string, authUserId: number, channelId: number
   }
 }
 
-async function standupIsActive(token: string, authUserId: number, channelId: number) {
+function standupIsActive(token: string, authUserId: number, channelId: number) {
   /*
     Description:
       standupStart function will start a standup period lasting "length" seconds.
@@ -98,7 +98,7 @@ async function standupIsActive(token: string, authUserId: number, channelId: num
       object: {isActive: boolean, timeFinish: timeFinish}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -122,7 +122,7 @@ async function standupIsActive(token: string, authUserId: number, channelId: num
   }
 }
 
-async function standupSend(token: string, authUserId: number, channelId: number, message: string) {
+function standupSend(token: string, authUserId: number, channelId: number, message: string) {
   /*
     Description:
       standupStart function will start a standup period lasting "length" seconds.
@@ -144,7 +144,7 @@ async function standupSend(token: string, authUserId: number, channelId: number,
       object: {}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

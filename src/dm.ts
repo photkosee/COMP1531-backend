@@ -13,7 +13,7 @@ import { dmIdValidator, checkDmMember, getDmMessages } from './dmHelperFunctions
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 
-async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
+function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
   /*
     Description:
       dmCreateV1 function will create a dm with members: supplied uIds
@@ -34,7 +34,7 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
       object: {dmId: dmId}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -114,7 +114,7 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
   return { dmId: newDmId };
 }
 
-async function dmListV1(token: string, authUserId: number) {
+function dmListV1(token: string, authUserId: number) {
   /*
     Description:
       dmListV1 function will return list of dms that the caller is part of.
@@ -130,7 +130,7 @@ async function dmListV1(token: string, authUserId: number) {
       object: {dms: [{dmId: dmId, name : name}]}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -162,7 +162,7 @@ async function dmListV1(token: string, authUserId: number) {
   };
 }
 
-async function dmRemoveV1(token: string, authUserId: number, dmId: number) {
+function dmRemoveV1(token: string, authUserId: number, dmId: number) {
   /*
     Description:
       dmRemoveV1 function will remove an existing DM, so all members are no longer in the DM,
@@ -183,7 +183,7 @@ async function dmRemoveV1(token: string, authUserId: number, dmId: number) {
       object: {}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -217,7 +217,7 @@ async function dmRemoveV1(token: string, authUserId: number, dmId: number) {
   }
 }
 
-async function dmDetailsV1(token: string, authUserId: number, dmId: number) {
+function dmDetailsV1(token: string, authUserId: number, dmId: number) {
   /*
     Description:
       dmDetailsV1 function will provide basic details about the DM.
@@ -236,7 +236,7 @@ async function dmDetailsV1(token: string, authUserId: number, dmId: number) {
       object: { name: name, members: [user] }
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -284,7 +284,7 @@ async function dmDetailsV1(token: string, authUserId: number, dmId: number) {
   }
 }
 
-async function dmLeaveV1(token: string, authUserId: number, dmId: number) {
+function dmLeaveV1(token: string, authUserId: number, dmId: number) {
   /*
     Description:
       dmLeaveV1 function will remove the user as a member of the DM.
@@ -303,7 +303,7 @@ async function dmLeaveV1(token: string, authUserId: number, dmId: number) {
       object: {}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -331,7 +331,7 @@ async function dmLeaveV1(token: string, authUserId: number, dmId: number) {
   }
 }
 
-async function dmMessages(token: string, authUserId: number, dmId: number, start: number) {
+function dmMessages(token: string, authUserId: number, dmId: number, start: number) {
   /*
     Description:
       dmMessages function will return messages from associated DMs Ids
@@ -352,7 +352,7 @@ async function dmMessages(token: string, authUserId: number, dmId: number, start
       object: { messages: [messagesData], start: start, end: end}
   */
 
-  if (!(await checkToken(token, authUserId))) {
+  if (!(checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 

@@ -3,14 +3,14 @@ import HTTPError from 'http-errors';
 import config from './config.json';
 import env from './env.json';
 import {
+  generateJwtToken,
   paramTypeChecker,
-  genHandleStr,
   emailValidator,
   loginVerifier,
+  genHandleStr,
   tryLogout,
-  generateJwtToken,
-  hashPassword,
-  sendEmail
+  sendEmail,
+  getHashOf
 } from './authHelperFunctions';
 import {
   createUserStats,
@@ -44,7 +44,7 @@ interface loginDetail {
   authUserId: number,
 }
 
-async function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
+function authRegisterV1(email: string, password: string, nameFirst: string, nameLast: string) {
   /*
     Description:
       authRegisterV1 function will register new users with
@@ -110,7 +110,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
     let newSessionId = `${(Math.floor(Math.random() * Date.now())).toString()}`;
     newSessionId = newSessionId.substring(0, 10);
 
-    const passwordHash = await hashPassword(password);
+    const passwordHash = getHashOf(password + env.secret);
 
     const defaultProfileImgUrl = `${process.env.PORT ? deployedUrl : `${url}:${port}`}/static/profile.jpg`;
 
@@ -134,7 +134,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
     data.users.push(newUserDetails);
     setData(data);
 
-    const newToken = await generateJwtToken(newAuthId, newSessionId);
+    const newToken = generateJwtToken(newAuthId, newSessionId);
 
     return { token: newToken, authUserId: newAuthId };
   } else {
@@ -142,7 +142,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
   }
 }
 
-async function authLoginV1(email: string, password: string) {
+function authLoginV1(email: string, password: string) {
   /*
     Description:
       authLoginV1 function will help user to login if the user
@@ -164,14 +164,14 @@ async function authLoginV1(email: string, password: string) {
 
   const data: any = getData();
 
-  const loginDetail: loginDetail = await loginVerifier(email, password, data.users);
+  const loginDetail: loginDetail = loginVerifier(email, password, data.users);
 
   setData(data);
 
   return loginDetail;
 }
 
-async function authLogoutV1(token: string, authUserId: number) {
+function authLogoutV1(token: string, authUserId: number) {
   /*
     Description:
       authLogoutV1 function invalidates the token to log the user out
@@ -188,7 +188,7 @@ async function authLogoutV1(token: string, authUserId: number) {
   */
 
   const data: any = getData();
-  const logoutDetail = await tryLogout(token, authUserId, data.users);
+  const logoutDetail = tryLogout(token, authUserId, data.users);
 
   if (!(logoutDetail)) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -228,7 +228,7 @@ async function authPasswordResetRequestV1(email: string) {
   return {};
 }
 
-async function authPasswordResetV1(resetCode: string, newPassword: string) {
+function authPasswordResetV1(resetCode: string, newPassword: string) {
   /*
     Description:
       authPasswordResetV1 function helps the user reset their password
@@ -251,9 +251,9 @@ async function authPasswordResetV1(resetCode: string, newPassword: string) {
 
   if (index !== -1) {
     for (const user of data.users) {
-      if (data.passwordReset[index].email === user.email) {
+      if (user.email === data.passwordReset[index].email) {
         data.passwordReset.splice(index, 1);
-        user.password = await hashPassword(newPassword);
+        user.password = getHashOf(newPassword + env.secret);
         setData(data);
         return {};
       }

@@ -205,8 +205,7 @@ function incrementChannelsExist() {
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
 
   const length: number = data.workplaceStats.channelsExist.length - 1;
-  const currNumChannelsExist: number =
-    data.workplaceStats.channelsExist[length].numChannelsExist;
+  const currNumChannelsExist: number = data.workplaceStats.channelsExist[length].numChannelsExist;
 
   data.workplaceStats.channelsExist.push({
     numChannelsExist: currNumChannelsExist + 1,
@@ -295,11 +294,9 @@ function incrementDmsExist() {
 
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
-  const length: number =
-  data.workplaceStats.dmsExist.length - 1;
+  const length: number = data.workplaceStats.dmsExist.length - 1;
 
-  const currNumDmsExist: number =
-    data.workplaceStats.dmsExist[length].numDmsExist;
+  const currNumDmsExist: number = data.workplaceStats.dmsExist[length].numDmsExist;
 
   data.workplaceStats.dmsExist.push({
     numDmsExist: currNumDmsExist + 1,
@@ -315,11 +312,9 @@ function decreaseDmsExist() {
 
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
-  const length: number =
-  data.workplaceStats.dmsExist.length - 1;
+  const length: number = data.workplaceStats.dmsExist.length - 1;
 
-  const currNumDmsExist: number =
-    data.workplaceStats.dmsExist[length].numDmsExist;
+  const currNumDmsExist: number = data.workplaceStats.dmsExist[length].numDmsExist;
 
   data.workplaceStats.dmsExist.push({
     numDmsExist: currNumDmsExist - 1,
@@ -359,12 +354,11 @@ function incrementMessagesExist() {
   */
 
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
-  const data: any = getData();
-  const length: number =
-  data.workplaceStats.messagesExist.length - 1;
 
-  const currNumMessagesExist: number =
-    data.workplaceStats.messagesExist[length].numMessagesExist;
+  const data: any = getData();
+  const length: number = data.workplaceStats.messagesExist.length - 1;
+
+  const currNumMessagesExist: number = data.workplaceStats.messagesExist[length].numMessagesExist;
 
   data.workplaceStats.messagesExist.push({
     numMessagesExist: currNumMessagesExist + 1,
@@ -383,8 +377,7 @@ function decreaseMessagesExist() {
   const length: number =
   data.workplaceStats.messagesExist.length - 1;
 
-  const currNumMessagesExist: number =
-    data.workplaceStats.messagesExist[length].numMessagesExist;
+  const currNumMessagesExist: number = data.workplaceStats.messagesExist[length].numMessagesExist;
 
   data.workplaceStats.messagesExist.push({
     numMessagesExist: currNumMessagesExist - 1,
