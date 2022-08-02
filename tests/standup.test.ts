@@ -350,7 +350,7 @@ describe('After standup gets over', () => {
     expect(successRes.statusCode).toBe(OK);
     expect(timeFinish).toBeLessThanOrEqual(Math.floor((new Date()).getTime() / 1000) + 10);
 
-    await new Promise((r) => setTimeout(r, 3000));
+    await new Promise((r) => setTimeout(r, 4000));
 
     const channelRes1 = request('GET', `${url}:${port}/channel/messages/v3`,
       {

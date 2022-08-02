@@ -189,6 +189,16 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
+
+    request('POST', `${url}:${port}/channel/leave/v2`, {
+      json: {
+        channelId: 1,
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[2].token
+      }
+    });
   });
 
   test('successful notif for message react in dm', () => {
