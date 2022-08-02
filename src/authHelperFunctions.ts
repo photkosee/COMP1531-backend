@@ -1,8 +1,9 @@
-import sgMail from '@sendgrid/mail';
 import HTTPError from 'http-errors';
+import sgMail from '@sendgrid/mail';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import env from './env.json';
 
 function paramTypeChecker(email: string, password: string, nameFirst: string, nameLast: string) {
   /*
@@ -169,6 +170,7 @@ async function hashPassword(password: string) {
     Return Value:
       string: hashPassword
   */
+
   const salt = await bcrypt.genSalt();
   const passwordHash = await bcrypt.hash(password, salt);
   return passwordHash.toString();
@@ -186,11 +188,12 @@ async function generateJwtToken(authUserId: number, newSessionId: string) {
     Return Value:
       string: token
   */
+
   const salt = await bcrypt.genSalt();
   const sessionHash = await bcrypt.hash(newSessionId, salt);
 
   const payload = { id: authUserId, salt: sessionHash };
-  return jwt.sign(payload, '4ee66c5740fece1be9fdc0e269dd77ef7ea99874ee617bcfb2dae2c429f18acb');
+  return jwt.sign(payload, env.jwtSecret);
 }
 
 async function sendEmail(email: string, name: string, resetCode: string) {
@@ -202,10 +205,9 @@ async function sendEmail(email: string, name: string, resetCode: string) {
       email       string type   -- string supplied by authPasswordResetRequestV1
       name        string type   -- string supplied by authPasswordResetRequestV1
       resetCode   string type   -- string supplied by authPasswordResetRequestV1
-
   */
 
-  sgMail.setApiKey('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');
+  sgMail.setApiKey(env.sendgridApiKey);
 
   const message = {
     to: {
@@ -228,11 +230,11 @@ async function sendEmail(email: string, name: string, resetCode: string) {
 
 export {
   paramTypeChecker,
-  genHandleStr,
+  generateJwtToken,
   emailValidator,
   loginVerifier,
-  tryLogout,
   hashPassword,
-  generateJwtToken,
+  genHandleStr,
+  tryLogout,
   sendEmail
 };

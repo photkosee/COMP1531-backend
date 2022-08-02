@@ -1,6 +1,7 @@
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
 import config from './config.json';
+import env from './env.json';
 import {
   paramTypeChecker,
   genHandleStr,
@@ -16,7 +17,9 @@ import {
   createWorkplaceStats
 } from './userHelperFunctions';
 
-const deployedUrl = config.deployedUrl;
+const deployedUrl: string = env.deployedUrl;
+const port = config.port;
+const url = config.url;
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
@@ -109,7 +112,7 @@ async function authRegisterV1(email: string, password: string, nameFirst: string
 
     const passwordHash = await hashPassword(password);
 
-    const defaultProfileImgUrl = `${deployedUrl}/static/profile.jpg`;
+    const defaultProfileImgUrl = `${process.env.PORT ? deployedUrl : `${url}:${port}`}/static/profile.jpg`;
 
     const userStats: object = createUserStats();
 
@@ -261,9 +264,9 @@ async function authPasswordResetV1(resetCode: string, newPassword: string) {
 }
 
 export {
-  authRegisterV1,
-  authLoginV1,
-  authLogoutV1,
   authPasswordResetRequestV1,
-  authPasswordResetV1
+  authPasswordResetV1,
+  authRegisterV1,
+  authLogoutV1,
+  authLoginV1
 };

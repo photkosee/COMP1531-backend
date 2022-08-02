@@ -1,5 +1,5 @@
-import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
+import { getData, setData } from './dataStore';
 import { authInChannel, checkChannelId, checkToken } from './channelHelperFunctions';
 import { incrementMessagesSent, incrementMessagesExist } from './userHelperFunctions';
 
@@ -241,7 +241,7 @@ function standupOver(channelId: number, authUserId: number): null {
 }
 
 export {
-  standupStart,
   standupIsActive,
+  standupStart,
   standupSend
 };

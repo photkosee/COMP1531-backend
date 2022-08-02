@@ -70,6 +70,7 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
   if (dmName.length !== uIds.length) {
     throw HTTPError(BADREQUEST, 'Any uId in uIds does not refer to a valid user');
   }
+
   let ownerHandleStr = '';
   for (const user of data.users) {
     if (user.authUserId === newCreatorId) {
@@ -92,6 +93,7 @@ async function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
       }
     }
   }
+
   data.dms.push({
     dmId: newDmId,
     name: newNameString,
@@ -395,10 +397,10 @@ async function dmMessages(token: string, authUserId: number, dmId: number, start
 }
 
 export {
-  dmCreateV1,
-  dmListV1,
-  dmRemoveV1,
   dmDetailsV1,
+  dmMessages,
+  dmCreateV1,
+  dmRemoveV1,
   dmLeaveV1,
-  dmMessages
+  dmListV1
 };

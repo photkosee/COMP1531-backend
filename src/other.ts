@@ -8,6 +8,7 @@ function clearV1() {
     Return Value:
       object: {}
   */
+
   const data: any = getData();
 
   data.users = [];
@@ -22,4 +23,6 @@ function clearV1() {
   return {};
 }
 
-export { clearV1 };
+export {
+  clearV1
+};

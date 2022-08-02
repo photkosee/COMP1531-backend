@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore';
+import HTTPError from 'http-errors';
 import {
   checkAuthUserId,
   checkChannelId,
@@ -13,7 +14,6 @@ import {
   incrementChannelsJoined,
   decreaseChannelsJoined
 } from './userHelperFunctions';
-import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
@@ -27,24 +27,24 @@ interface newUser {
 }
 
 async function channelJoinV1(token: string, authUserId: number, channelId: number) {
-/*
-  Description:
-    channelJoinV1 helps user join a channel
+  /*
+    Description:
+      channelJoinV1 helps user join a channel
 
-  Arguments:
-    token       string type   -- string supplied by request header
-    authUserId  number type   -- number supplied by request header
-    channelId   number type   -- Input integer supplied by user
+    Arguments:
+      token       string type   -- string supplied by request header
+      authUserId  number type   -- number supplied by request header
+      channelId   number type   -- Input integer supplied by user
 
-  Exceptions:
-    FORBIDDEN   - Invalid Session ID or Token
-    BADREQUETS  - Invalid Channel ID
-    BADREQUEST  - User already a member
-    FORBIDDEN   - Channel is private and user not global owner
+    Exceptions:
+      FORBIDDEN   - Invalid Session ID or Token
+      BADREQUETS  - Invalid Channel ID
+      BADREQUEST  - User already a member
+      FORBIDDEN   - Channel is private and user not global owner
 
-  Return Value:
-    object: {}
-*/
+    Return Value:
+      object: {}
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -96,37 +96,38 @@ async function channelJoinV1(token: string, authUserId: number, channelId: numbe
 }
 
 async function channelDetailsV1(token: string, authUserId: number, channelId: number) {
-/*
-  Description:
-    channelDetailsV1 provide basic details about the channel
+  /*
+    Description:
+      channelDetailsV1 provide basic details about the channel
 
-  Arguments:
-    token         string type   -- string supplied by request header
-    authUserId    number type   -- number supplied by request header
-    channelId     number type   -- number supplied by user
+    Arguments:
+      token         string type   -- string supplied by request header
+      authUserId    number type   -- number supplied by request header
+      channelId     number type   -- number supplied by user
 
-  Exeptions:
-    FORBIDDEN   - Invalid Session ID or Token
-    BADREQUETS  - Invalid Channel ID
-    BADREQUETS  - No channels available
-    FORBIDDEN   - User is not a member of the channel
-    BADREQUEST  - User already a member
-    FORBIDDEN   - Channel is private and user not global owner
+    Exeptions:
+      FORBIDDEN   - Invalid Session ID or Token
+      BADREQUETS  - Invalid Channel ID
+      BADREQUETS  - No channels available
+      FORBIDDEN   - User is not a member of the channel
+      BADREQUEST  - User already a member
+      FORBIDDEN   - Channel is private and user not global owner
 
-  Return Value:
-    object: {
-      name: channelDetails.name,
-      isPublic: channelDetails.isPublic,
-      ownerMembers: channelDetails.ownerMembers,
-      allMembers: channelDetails.allMembers,
-    }
-*/
+    Return Value:
+      object: {
+        name: channelDetails.name,
+        isPublic: channelDetails.isPublic,
+        ownerMembers: channelDetails.ownerMembers,
+        allMembers: channelDetails.allMembers,
+      }
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const data: any = getData();
+
   if (data.channels.length === 0) {
     throw HTTPError(BADREQUEST, 'No channels available');
   }
@@ -277,7 +278,6 @@ async function channelMessagesV1(token: string, authUserId: number, channelId: n
   }
 
   let end = -1;
-
   if (start + 50 < messages.length) {
     end = start + 50;
   }
@@ -310,7 +310,7 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
     Return Value:
       object: {} when owner is added
   */
-  const dataStore: any = getData();
+
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
@@ -318,21 +318,28 @@ async function channelAddownerV1(token: string, authUserId: number, channelId: n
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
   }
+
   if (!checkAuthUserId(uId)) {
     throw HTTPError(BADREQUEST, 'User to make owner does not exist');
   }
+
   if (!authInChannel(channelId, uId)) {
     throw HTTPError(BADREQUEST, 'User to make owner is not in channel');
   }
+
   if (!authInChannel(channelId, authUserId)) {
     throw HTTPError(FORBIDDEN, 'User is not in channel');
   }
+
   if (authIsOwner(channelId, uId)) {
     throw HTTPError(BADREQUEST, 'User to make owner is already owner');
   }
+
   if (!authIsOwner(channelId, authUserId)) {
     throw HTTPError(FORBIDDEN, 'User does not have owner permissions');
   }
+
+  const dataStore: any = getData();
 
   for (const channel of dataStore.channels) {
     if (channel.channelId === channelId) {
@@ -377,7 +384,7 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
     Return Value:
       object: {} when owner is removed
   */
-  const data: any = getData();
+
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
@@ -385,6 +392,7 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
   }
+
   if (!checkAuthUserId(uId)) {
     throw HTTPError(BADREQUEST, 'User to make owner does not exist');
   }
@@ -392,9 +400,13 @@ async function channelRemoveownerV1(token: string, authUserId: number, channelId
   if (!authIsOwner(channelId, uId) || !authInChannel(channelId, uId)) {
     throw HTTPError(BADREQUEST, 'User to remove as owner is not a owner');
   }
+
   if (!authIsOwner(channelId, authUserId)) {
     throw HTTPError(FORBIDDEN, 'User does not have owner permissions');
   }
+
+  const data: any = getData();
+
   for (const channel of data.channels) {
     if (channel.channelId === channelId) {
       if (channel.ownerMembers.length === 1) {
@@ -438,11 +450,13 @@ async function channelLeaveV1(token: string, authUserId: number, channelId: numb
   if (!checkChannelId(channelId)) {
     throw HTTPError(BADREQUEST, 'Invalid channel');
   }
+
   if (!authInChannel(channelId, authUserId)) {
     throw HTTPError(FORBIDDEN, 'User is not in channel');
   }
 
   const dataStore: any = getData();
+
   const uId: number = authUserId;
   for (const channel of dataStore.channels) {
     if (channel.channelId === channelId) {
@@ -468,11 +482,11 @@ async function channelLeaveV1(token: string, authUserId: number, channelId: numb
 }
 
 export {
-  channelMessagesV1,
-  channelInviteV1,
-  channelJoinV1,
-  channelDetailsV1,
   channelRemoveownerV1,
   channelAddownerV1,
+  channelMessagesV1,
+  channelDetailsV1,
+  channelInviteV1,
+  channelJoinV1,
   channelLeaveV1
 };

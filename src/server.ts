@@ -1,16 +1,22 @@
 import express, { json, NextFunction, Request, Response } from 'express';
 import errorHandler from 'middleware-http-errors';
 import HTTPError from 'http-errors';
-import path from 'path';
+import config from './config.json';
+import { clearV1 } from './other';
 import jwt from 'jsonwebtoken';
+import { echo } from './echo';
+import env from './env.json';
 import morgan from 'morgan';
+import path from 'path';
 import cors from 'cors';
 import fs from 'fs';
-import { echo } from './echo';
-import { clearV1 } from './other';
-import config from './config.json';
-import { usersAllV1, usersStatsV1 } from './users';
+import { searchV1 } from './search';
 import { getData, setData } from './dataStore';
+import { notificationsGet } from './notifications';
+import { usersAllV1, usersStatsV1 } from './users';
+import { uploadProfilePhoto } from './uploadProfilePhoto';
+import { adminUserpermissionChange, adminUserRemove } from './admin';
+import { standupIsActive, standupSend, standupStart } from './standup';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import {
   authRegisterV1,
@@ -56,27 +62,21 @@ import {
   channelAddownerV1,
   channelLeaveV1
 } from './channel';
-import { searchV1 } from './search';
-import { notificationsGet } from './notifications';
-import { adminUserpermissionChange, adminUserRemove } from './admin';
-import { standupIsActive, standupSend, standupStart } from './standup';
-import { uploadProfilePhoto } from './uploadProfilePhoto';
+
 // Set up web app, use JSON
 const app = express();
 app.use(json());
+
 // Use middleware that allows for access from other domains
 app.use(cors());
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const databasePath: string = __dirname + '/database.json';
 
-app.use('/static', express.static(path.join(__dirname, 'static')));
-
 // Express middleware to save data to database.json on every request end
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.on('finish', function () {
     const newData: any = getData();
-
     fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
       if (error) {
         // console.log(error);
@@ -94,7 +94,7 @@ function validateJwtToken(req: Request, res: Response, next: NextFunction) {
   if (token === undefined || token === null) {
     throw HTTPError(403, 'Invalid Token');
   } else {
-    jwt.verify(token, '4ee66c5740fece1be9fdc0e269dd77ef7ea99874ee617bcfb2dae2c429f18acb', (err, token) => {
+    jwt.verify(token, env.jwtSecret, (err, token) => {
       if (err) {
         throw HTTPError(403, 'Invalid Token');
       } else {
@@ -104,6 +104,8 @@ function validateJwtToken(req: Request, res: Response, next: NextFunction) {
     });
   }
 }
+
+app.use('/static', express.static(path.join(__dirname, 'static')));
 
 // Example get request
 app.get('/echo', (req: Request, res: Response, next: NextFunction) => {
@@ -119,7 +121,7 @@ app.delete('/clear/v1', (req: Request, res: Response, next: NextFunction) => {
   return res.json(clearV1());
 });
 
-app.post('/auth/register/v3', async (req: Request, res: Response, next: NextFunction) => {
+app.post('/auth/register/v3', async(req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password, nameFirst, nameLast } = req.body;
     const returnData = await authRegisterV1(email, password, nameFirst, nameLast);
@@ -129,7 +131,7 @@ app.post('/auth/register/v3', async (req: Request, res: Response, next: NextFunc
   }
 });
 
-app.post('/auth/login/v3', async (req: Request, res: Response, next: NextFunction) => {
+app.post('/auth/login/v3', async(req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
     const returnData = await authLoginV1(email, password);
@@ -281,7 +283,7 @@ app.get('/user/profile/v3', validateJwtToken, async(req: Request, res: Response,
   }
 });
 
-app.get('/users/all/v2', validateJwtToken, async (req: Request, res: Response, next: NextFunction) => {
+app.get('/users/all/v2', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
     const authUserId = res.locals.token.id;
@@ -658,7 +660,7 @@ app.post('/user/profile/uploadphoto/v1', validateJwtToken, async(req: Request, r
   }
 });
 
-app.get('/notifications/get/v1', validateJwtToken, async (req: Request, res: Response, next: NextFunction) => {
+app.get('/notifications/get/v1', validateJwtToken, async(req: Request, res: Response, next: NextFunction) => {
   try {
     const token = res.locals.token.salt;
     const authUserId = res.locals.token.id;
@@ -700,25 +702,11 @@ app.use(morgan('dev'));
 app.use(errorHandler());
 
 // start server
-const server = app.listen(process.env.PORT || PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`⚡️ Server listening on port ${PORT}`);
 
   // Loads data from database.json to dataStore on server initialization
   fs.readFile(databasePath, 'utf-8', (error, jsonData) => {
-    // if (error) {
-    //   const newData: any = getData();
-
-    //   fs.writeFile(databasePath, JSON.stringify(newData, null, 2), (error) => {
-    //     if (error) {
-    //       // console.log(error);
-    //       return error;
-    //     } else {
-    //       // console.log('Succesfully created database.json file');
-    //     }
-    //   });
-
-    //   return {};
-    // }
     const database = JSON.parse(jsonData);
     setData(database);
   });

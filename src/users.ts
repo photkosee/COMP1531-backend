@@ -1,26 +1,26 @@
+import HTTPError from 'http-errors';
 import { getData } from './dataStore';
 import { checkToken } from './channelHelperFunctions';
 import { utilizationRateCalculator } from './userHelperFunctions';
-import HTTPError from 'http-errors';
 
 const FORBIDDEN = 403;
 
 async function usersAllV1(token: string, authUserId: number) {
-/*
-  Description:
-    usersAllV1 returns information about all users' userId,
-    email, first name, last name, and handle
+  /*
+    Description:
+      usersAllV1 returns information about all users' userId,
+      email, first name, last name, and handle
 
-  Arguments:
-    token       string type  -- string supplied by header
-    authUserId  number type  -- number supplied by header
+    Arguments:
+      token       string type  -- string supplied by header
+      authUserId  number type  -- number supplied by header
 
-  Expectations:
-    FORBIDDEN   - Invalid Session ID or Token
+    Expectations:
+      FORBIDDEN   - Invalid Session ID or Token
 
-  Return Value:
-    Object: { users: users } on success
-*/
+    Return Value:
+      Object: { users: users } on success
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -45,21 +45,21 @@ async function usersAllV1(token: string, authUserId: number) {
 }
 
 async function usersStatsV1 (token: string, authUserId: number) {
-/*
-  Description:
-    usersAllV1 returns information about all users' userId,
-    email, first name, last name, and handle
+  /*
+    Description:
+      usersAllV1 returns information about all users' userId,
+      email, first name, last name, and handle
 
-  Arguments:
-    token       string type  -- string supplied by header
-    authUserId  number type  -- number supplied by header
+    Arguments:
+      token       string type  -- string supplied by header
+      authUserId  number type  -- number supplied by header
 
-  Expectations:
-    FORBIDDEN   - Invalid Session ID or Token
+    Expectations:
+      FORBIDDEN   - Invalid Session ID or Token
 
-  Return Value:
-    Object: { users: users } on success
-*/
+    Return Value:
+      Object: { users: users } on success
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -73,6 +73,6 @@ async function usersStatsV1 (token: string, authUserId: number) {
 }
 
 export {
-  usersAllV1,
-  usersStatsV1
+  usersStatsV1,
+  usersAllV1
 };

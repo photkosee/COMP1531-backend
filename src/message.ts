@@ -1,13 +1,18 @@
+import HTTPError from 'http-errors';
 import { getData, setData } from './dataStore';
 import { checkToken } from './channelHelperFunctions';
-import { checkIfMember, checkChannelId, authInChannel, getHandleStr } from './channelHelperFunctions';
 import { checkDmMember, dmIdValidator } from './dmHelperFunctions';
+import {
+  checkIfMember,
+  checkChannelId,
+  authInChannel,
+  getHandleStr
+} from './channelHelperFunctions';
 import {
   incrementMessagesSent,
   incrementMessagesExist,
   decreaseMessagesExist
 } from './userHelperFunctions';
-import HTTPError from 'http-errors';
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
@@ -28,26 +33,26 @@ interface newMessagesDetails {
 }
 
 async function messageSendV1(token: string, authUserId: number, channelId: number, message: string) {
-/*
-  Description:
-    messageSendV1 send a message from the authorised
-    user to the channel specified by channelId
+  /*
+    Description:
+      messageSendV1 send a message from the authorised
+      user to the channel specified by channelId
 
-  Arguments:
-    token       string type   -- string supplied by request header
-    authUserId  number type   -- number supplied by request header
-    channelId   number type   -- Input number supplied by user
-    message     string type   -- Input string supplied by user
+    Arguments:
+      token       string type   -- string supplied by request header
+      authUserId  number type   -- number supplied by request header
+      channelId   number type   -- Input number supplied by user
+      message     string type   -- Input string supplied by user
 
-  Exceptions:
-    BADREQUEST - Occurs when length of message is not valid.
-    BADREQUEST - Occurs when channelId is not valid.
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
-    FORBIDDEN  - Occurs when the authorised user is not a member of the channel.
+    Exceptions:
+      BADREQUEST - Occurs when length of message is not valid.
+      BADREQUEST - Occurs when channelId is not valid.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
+      FORBIDDEN  - Occurs when the authorised user is not a member of the channel.
 
-  Return Value:
-    object: { messageId: messageId }
-*/
+    Return Value:
+      object: { messageId: messageId }
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -124,26 +129,26 @@ async function messageSendV1(token: string, authUserId: number, channelId: numbe
 }
 
 async function messageEditV1(token: string, authUserId: number, messageId: number, message: string) {
-/*
-  Description:
-    messageEditV1 given a message, update its text with new text.
-    If the new message is an empty string, the message is deleted
+  /*
+    Description:
+      messageEditV1 given a message, update its text with new text.
+      If the new message is an empty string, the message is deleted
 
-  Arguments:
-    token       string type   -- string supplied by request header
-    authUserId  number type   -- number supplied by request header
-    messageId   number type   -- Input number supplied by user
-    message     string type   -- Input string supplied by user
+    Arguments:
+      token       string type   -- string supplied by request header
+      authUserId  number type   -- number supplied by request header
+      messageId   number type   -- Input number supplied by user
+      message     string type   -- Input string supplied by user
 
-  Exceptions:
-    BADREQUEST - Occurs when length of message is not valid.
-    BADREQUEST - Occurs when messageId does not refer to a valid message.
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
-    FORBIDDEN  - Occurs when authorised user does not have owner permissions and the message was not sent by them.
+    Exceptions:
+      BADREQUEST - Occurs when length of message is not valid.
+      BADREQUEST - Occurs when messageId does not refer to a valid message.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
+      FORBIDDEN  - Occurs when authorised user does not have owner permissions and the message was not sent by them.
 
-  Return Value:
-    object: {}
-*/
+    Return Value:
+      object: {}
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -156,12 +161,14 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
   }
 
   const data: any = getData();
+
   let permissionId = 0;
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
       permissionId = user.permissionId;
     }
   }
+
   const mentions = message.match(/@\w+/gi) || [];
   const shortMsg = message.slice(0, 20);
   const usersToNotif = [];
@@ -237,29 +244,30 @@ async function messageEditV1(token: string, authUserId: number, messageId: numbe
   if (checkErrorPermission === true) {
     throw HTTPError(FORBIDDEN, 'Have no permission');
   }
+
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
 async function messageSenddmV1(token: string, authUserId: number, dmId: number, message: string) {
-/*
-  Description:
-    messageSenddmV1 send a message from authorisedUser to the DM specified by dmId
+  /*
+    Description:
+      messageSenddmV1 send a message from authorisedUser to the DM specified by dmId
 
-  Arguments:
-    token       string type -- string supplied by request header
-    authUserId  number type -- number supplied by request header
-    dmId        number type -- Input number supplied by user
-    message     string type -- Input string supplied by user
+    Arguments:
+      token       string type -- string supplied by request header
+      authUserId  number type -- number supplied by request header
+      dmId        number type -- Input number supplied by user
+      message     string type -- Input string supplied by user
 
-  Exceptions:
-    BADREQUEST - Occurs when length of message is not valid.
-    BADREQUEST - Occurs when length of dmId is not valid.
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
-    FORBIDDEN  - Occurs when the user is not a member.
+    Exceptions:
+      BADREQUEST - Occurs when length of message is not valid.
+      BADREQUEST - Occurs when length of dmId is not valid.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
+      FORBIDDEN  - Occurs when the user is not a member.
 
-  Return Value:
-    object: { messageId: messageId }
-*/
+    Return Value:
+      object: { messageId: messageId }
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
@@ -277,6 +285,7 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
       checkDm = true;
     }
   }
+
   if (!checkDm) {
     throw HTTPError(BADREQUEST, 'Invalid dmId');
   }
@@ -335,6 +344,7 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
 
       return { messageId: messageId };
     }
+
     for (const member of dm.uIds) {
       if (dmId === dm.dmId && member === authUserId) {
         const messageId: number = data.messageId;
@@ -378,32 +388,32 @@ async function messageSenddmV1(token: string, authUserId: number, dmId: number, 
 }
 
 async function messageRemoveV1(token: string, authUserId: number, messageId: number) {
-/*
-  Description:
-    messageRemoveV1 given a messageId for a message,
-    this message is removed from the channel/DM
+  /*
+    Description:
+      messageRemoveV1 given a messageId for a message,
+      this message is removed from the channel/DM
 
-  Arguments:
-    token       string type -- Input string supplied by request header
-    authUserId  numer  type -- Input number supplied by request header
-    messageId   number type -- Input number supplied by user
+    Arguments:
+      token       string type -- Input string supplied by request header
+      authUserId  numer  type -- Input number supplied by request header
+      messageId   number type -- Input number supplied by user
 
-  Exceptions:
-    BADREQUEST - Occurs when messageId does not refer to a valid message.
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
-    FORBIDDEN  - Occurs when authorised user does not have owner permissions, and the message was not sent by them.
+    Exceptions:
+      BADREQUEST - Occurs when messageId does not refer to a valid message.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
+      FORBIDDEN  - Occurs when authorised user does not have owner permissions, and the message was not sent by them.
 
-  Return Value:
-    object: {}
-*/
+    Return Value:
+      object: {}
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const data: any = getData();
-  let permissionId = 0;
 
+  let permissionId = 0;
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
       permissionId = user.permissionId;
@@ -441,36 +451,38 @@ async function messageRemoveV1(token: string, authUserId: number, messageId: num
   if (checkErrorPermission === true) {
     throw HTTPError(FORBIDDEN, 'Have no permission');
   }
+
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
 async function messageReactV1(token: string, authUserId: number, messageId: number, reactId: number) {
-/*
-  Description:
-    messageReactV1 given a messageId for a message and a reactId,
-    react to that message
+  /*
+    Description:
+      messageReactV1 given a messageId for a message and a reactId,
+      react to that message
 
-  Arguments:
-    token       string type -- Input string supplied by request header
-    authUserId  number type -- Input number supplied by request header
-    messageId   number type -- Input number supplied by user
-    reactId     number type -- Input number supplied by user
+    Arguments:
+      token       string type -- Input string supplied by request header
+      authUserId  number type -- Input number supplied by request header
+      messageId   number type -- Input number supplied by user
+      reactId     number type -- Input number supplied by user
 
-  Exceptions:
-    BADREQUEST - Occurs when messageId does not refer to a valid message or the user not being a member.
-    BADREQUEST - Occurs when reactId does not refer to a valid react.
-    BADREQUEST - Occurs when the message is containing user's react.
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
+    Exceptions:
+      BADREQUEST - Occurs when messageId does not refer to a valid message or the user not being a member.
+      BADREQUEST - Occurs when reactId does not refer to a valid react.
+      BADREQUEST - Occurs when the message is containing user's react.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
-  Return Value:
-    object: {}
-*/
+    Return Value:
+      object: {}
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const data: any = getData();
+
   if (reactId < 1 || reactId > data.numReacts) {
     throw HTTPError(BADREQUEST, 'Invalid reactId');
   }
@@ -530,32 +542,33 @@ async function messageReactV1(token: string, authUserId: number, messageId: numb
 }
 
 async function messageUnreactV1(token: string, authUserId: number, messageId: number, reactId: number) {
-/*
-  Description:
-    messageUnreactV1 given a messageId for a message and a reactId,
-    unreact to that message
+  /*
+    Description:
+      messageUnreactV1 given a messageId for a message and a reactId,
+      unreact to that message
 
-  Arguments:
-    token       string type -- Input string supplied by request header
-    authUserId  number type -- Input number supplied by request header
-    messageId   number type -- Input number supplied by user
-    reactId     number type -- Input number supplied by user
+    Arguments:
+      token       string type -- Input string supplied by request header
+      authUserId  number type -- Input number supplied by request header
+      messageId   number type -- Input number supplied by user
+      reactId     number type -- Input number supplied by user
 
-  Exceptions:
-    BADREQUEST - Occurs when messageId does not refer to a valid message or the user not being a member.
-    BADREQUEST - Occurs when reactId does not refer to a valid react.
-    BADREQUEST - Occurs when there's no reacts to unreact.
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
+    Exceptions:
+      BADREQUEST - Occurs when messageId does not refer to a valid message or the user not being a member.
+      BADREQUEST - Occurs when reactId does not refer to a valid react.
+      BADREQUEST - Occurs when there's no reacts to unreact.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
 
-  Return Value:
-    object: {}
-*/
+    Return Value:
+      object: {}
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const data: any = getData();
+
   if (reactId < 1 || reactId > data.numReacts) {
     throw HTTPError(BADREQUEST, 'Invalid reactId');
   }
@@ -592,37 +605,39 @@ async function messageUnreactV1(token: string, authUserId: number, messageId: nu
 }
 
 async function messagePinV1(token: string, authUserId: number, messageId: number) {
-/*
-  Description:
-    messagePinV1 given a messageId for a message,
-    pin that message
+  /*
+    Description:
+      messagePinV1 given a messageId for a message,
+      pin that message
 
-  Arguments:
-    token       string type -- Input string supplied by request header
-    authUserId  number type -- Input number supplied by request header
-    messageId   number type -- Input number supplied by user
+    Arguments:
+      token       string type -- Input string supplied by request header
+      authUserId  number type -- Input number supplied by request header
+      messageId   number type -- Input number supplied by user
 
-  Exceptions:
-    BADREQUEST - Occurs when messageId does not refer to a valid message or the user not being a member.
-    BADREQUEST - Occurs when the message is already pinned.
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
-    FORBIDDEN  - Occurs when authorised user does not have owner permissions.
+    Exceptions:
+      BADREQUEST - Occurs when messageId does not refer to a valid message or the user not being a member.
+      BADREQUEST - Occurs when the message is already pinned.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
+      FORBIDDEN  - Occurs when authorised user does not have owner permissions.
 
-  Return Value:
-    object: {}
-*/
+    Return Value:
+      object: {}
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const data: any = getData();
+
   let permissionId = 0;
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
       permissionId = user.permissionId;
     }
   }
+
   let checkErrorPermission = false;
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
@@ -655,41 +670,44 @@ async function messagePinV1(token: string, authUserId: number, messageId: number
   if (checkErrorPermission === true) {
     throw HTTPError(FORBIDDEN, 'Have no permission');
   }
+
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
 async function messageUnpinV1(token: string, authUserId: number, messageId: number) {
-/*
-  Description:
-    messageUnpinV1 given a messageId for a message,
-    unpin that message
+  /*
+    Description:
+      messageUnpinV1 given a messageId for a message,
+      unpin that message
 
-  Arguments:
-    token       string type -- Input string supplied by request header
-    authUserId  number type -- Input number supplied by request header
-    messageId   number type -- Input number supplied by user
+    Arguments:
+      token       string type -- Input string supplied by request header
+      authUserId  number type -- Input number supplied by request header
+      messageId   number type -- Input number supplied by user
 
-  Exceptions:
-    BADREQUEST - Occurs when messageId does not refer to a valid message or the user not being a member.
-    BADREQUEST - Occurs when the message is not already pinned.
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
-    FORBIDDEN  - Occurs when authorised user does not have owner permissions.
+    Exceptions:
+      BADREQUEST - Occurs when messageId does not refer to a valid message or the user not being a member.
+      BADREQUEST - Occurs when the message is not already pinned.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
+      FORBIDDEN  - Occurs when authorised user does not have owner permissions.
 
-  Return Value:
-    object: {}
-*/
+    Return Value:
+      object: {}
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
   const data: any = getData();
+
   let permissionId = 0;
   for (const user of data.users) {
     if (user.authUserId === authUserId) {
       permissionId = user.permissionId;
     }
   }
+
   let checkErrorPermission = false;
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
@@ -722,58 +740,66 @@ async function messageUnpinV1(token: string, authUserId: number, messageId: numb
   if (checkErrorPermission === true) {
     throw HTTPError(FORBIDDEN, 'Have no permission');
   }
+
   throw HTTPError(BADREQUEST, 'Invalid messageId');
 }
 
 async function messageShareV1(token: string, authUserId: number, ogMessageId: number, message: string, channelId: number, dmId: number) {
-/*
-  Description:
-    messageSendV1 send a message from the authorised
-    user to the channel specified by channelId
+  /*
+    Description:
+      messageSendV1 send a message from the authorised
+      user to the channel specified by channelId
 
-  Arguments:
-    token       string type   -- string supplied by request header
-    authUserId  number type   -- number supplied by request header
-    ogMessageId number type   -- Input number supplied by user
-    message     string type   -- Input string supplied by user
-    channelId   number type   -- Input number supplied by user
-    dmId        number type   -- Input number supplied by user
+    Arguments:
+      token       string type   -- string supplied by request header
+      authUserId  number type   -- number supplied by request header
+      ogMessageId number type   -- Input number supplied by user
+      message     string type   -- Input string supplied by user
+      channelId   number type   -- Input number supplied by user
+      dmId        number type   -- Input number supplied by user
 
-  Exceptions:
-    BADREQUEST - Occurs when channelId and dmId are not valid.
-    BADREQUEST - Occurs when neither channelId nor dmId are -1.
-    BADREQUEST - Occurs when length of message is not valid.
-    BADREQUEST - Occurs when ogMessageId is not valid.
-    FORBIDDEN  - Occurs when sessionId/token is not found in database.
-    FORBIDDEN  - Occurs when the authorised user is not a member of the channel/dm the usre is sharing to.
+    Exceptions:
+      BADREQUEST - Occurs when channelId and dmId are not valid.
+      BADREQUEST - Occurs when neither channelId nor dmId are -1.
+      BADREQUEST - Occurs when length of message is not valid.
+      BADREQUEST - Occurs when ogMessageId is not valid.
+      FORBIDDEN  - Occurs when sessionId/token is not found in database.
+      FORBIDDEN  - Occurs when the authorised user is not a member of the channel/dm the usre is sharing to.
 
-  Return Value:
-    object: { shareMessageId: messageId }
-*/
+    Return Value:
+      object: { shareMessageId: messageId }
+  */
 
   if (!(await checkToken(token, authUserId))) {
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
+
   if (channelId !== -1 && dmId !== -1) {
     throw HTTPError(BADREQUEST, 'One of them has to be -1');
   }
+
   if (message.length > 1000) {
     throw HTTPError(BADREQUEST, 'Invalid message length');
   }
+
   if (!checkChannelId(channelId) && dmId === -1) {
     throw HTTPError(BADREQUEST, 'Invalid channelId');
   }
+
   if (!dmIdValidator(dmId) && channelId === -1) {
     throw HTTPError(BADREQUEST, 'Invalid dmId');
   }
+
   if (!authInChannel(channelId, authUserId) && dmId === -1) {
     throw HTTPError(FORBIDDEN, 'Not a member of the channel you are sharing to');
   }
+
   if (!checkDmMember(dmId, authUserId) && channelId === -1) {
     throw HTTPError(FORBIDDEN, 'Not a member of the dm you are sharing to');
   }
 
   const data: any = getData();
+
   // share between channel to channel
   for (const channel of data.channels) {
     const index1: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
@@ -808,6 +834,7 @@ async function messageShareV1(token: string, authUserId: number, ogMessageId: nu
       }
     }
   }
+
   // share between dm to dm
   for (const dm of data.dms) {
     const index2: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
@@ -867,6 +894,7 @@ async function messageShareV1(token: string, authUserId: number, ogMessageId: nu
       }
     }
   }
+
   // share from dm to channel
   for (const dm of data.dms) {
     const index3: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
@@ -901,6 +929,7 @@ async function messageShareV1(token: string, authUserId: number, ogMessageId: nu
       }
     }
   }
+
   // share from channel to dm
   for (const channel of data.channels) {
     const index4: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
@@ -1048,6 +1077,7 @@ function sendMessageLater(authUserId: number, message: string, channelId: number
       channelId   number type   -- number supplied by user
       newMessagesDetails  newMessagesDetails type   -- number supplied by user
   */
+
   const data: any = getData();
 
   const mentions = message.match(/@\w+/gi) || [];
@@ -1169,10 +1199,13 @@ function sendMsgLater(authUserId: number, message: string, dmId: number, newMess
       dmId        number type   -- number supplied by user
       newMessagesDetails  newMessagesDetails type   -- number supplied by user
   */
+
   const data: any = getData();
+
   const mentions = message.match(/@\w+/gi) || [];
   const shortMsg = message.slice(0, 20);
   const usersToNotif = [];
+
   for (const dm of data.dms) {
     if (dm.dmId === dmId) {
       for (const user of dm.uIds) {
@@ -1203,15 +1236,15 @@ function sendMsgLater(authUserId: number, message: string, dmId: number, newMess
 }
 
 export {
-  messageSendV1,
-  messageEditV1,
-  messageSenddmV1,
-  messageRemoveV1,
-  messageReactV1,
+  messageSendlaterdmV1,
+  messageSendlaterV1,
   messageUnreactV1,
-  messagePinV1,
+  messageRemoveV1,
+  messageSenddmV1,
   messageUnpinV1,
   messageShareV1,
-  messageSendlaterV1,
-  messageSendlaterdmV1
+  messageReactV1,
+  messageEditV1,
+  messageSendV1,
+  messagePinV1
 };

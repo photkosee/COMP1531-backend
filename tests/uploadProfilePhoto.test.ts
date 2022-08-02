@@ -4,7 +4,6 @@ import config from '../src/config.json';
 const OK = 200;
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
-const deployedUrl = config.deployedUrl;
 const port = config.port;
 const url = config.url;
 
@@ -66,7 +65,7 @@ describe('Test Cases for HTTP Route: user/profile/uploadphoto/v1', () => {
       }
     );
     const profileImgUrl = JSON.parse(profileData.getBody() as string).user.profileImgUrl;
-    expect(profileImgUrl).toEqual(expect.not.stringMatching(`${deployedUrl}/static/profile.jpg`));
+    expect(profileImgUrl).toEqual(expect.not.stringMatching(`${url}:${port}/static/profile.jpg`));
     expect(profileImgUrl).toStrictEqual(expect.any(String));
   });
 

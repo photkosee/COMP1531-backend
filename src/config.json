@@ -1,5 +1,4 @@
 { 
     "url": "http://127.0.0.1",
-    "port": "5000",
-    "deployedUrl": "https://f09acrunchie.herokuapp.com"
+    "port": "5000"
 }
