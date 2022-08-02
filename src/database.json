@@ -1,9 +1,152 @@
 {
-  "users": [],
-  "channels": [],
+  "users": [
+    {
+      "authUserId": 1,
+      "nameFirst": "global",
+      "nameLast": "Last",
+      "email": "global@email.com",
+      "password": "$2a$10$5GIHhS3DJKGQomyE.Z2vbOBiav/YOQH93qN6tB3p5Gy3BwnTYtHES",
+      "handleStr": "globallast",
+      "profileImgUrl": "http://127.0.0.1:5000/static/profile.jpg",
+      "permissionId": 1,
+      "isActive": true,
+      "sessionList": [
+        "1647883188"
+      ],
+      "notifications": [],
+      "userStats": {
+        "channelsJoined": [
+          {
+            "numChannelsJoined": 0,
+            "timeStamp": 1659455528
+          },
+          {
+            "numChannelsJoined": 1,
+            "timeStamp": 1659455529
+          }
+        ],
+        "dmsJoined": [
+          {
+            "numDmsJoined": 0,
+            "timeStamp": 1659455528
+          }
+        ],
+        "messagesSent": [
+          {
+            "numMessagesSent": 0,
+            "timeStamp": 1659455528
+          }
+        ],
+        "involvementRate": 0
+      }
+    },
+    {
+      "authUserId": 2,
+      "nameFirst": "user",
+      "nameLast": "Last",
+      "email": "user@email.com",
+      "password": "$2a$10$ZfJjrylJdNoWiNGOFIxUQukKTffhDvq7Jnd2FWYey1NibMJRS4poO",
+      "handleStr": "userlast",
+      "profileImgUrl": "http://127.0.0.1:5000/static/profile.jpg",
+      "permissionId": 2,
+      "isActive": true,
+      "sessionList": [
+        "1336050294"
+      ],
+      "notifications": [],
+      "userStats": {
+        "channelsJoined": [
+          {
+            "numChannelsJoined": 0,
+            "timeStamp": 1659455528
+          },
+          {
+            "numChannelsJoined": 1,
+            "timeStamp": 1659455529
+          }
+        ],
+        "dmsJoined": [
+          {
+            "numDmsJoined": 0,
+            "timeStamp": 1659455528
+          }
+        ],
+        "messagesSent": [
+          {
+            "numMessagesSent": 0,
+            "timeStamp": 1659455528
+          }
+        ],
+        "involvementRate": 0
+      }
+    }
+  ],
+  "channels": [
+    {
+      "channelId": 1,
+      "name": "FO9A_CRUNCHIE",
+      "ownerMembers": [
+        {
+          "uId": 1,
+          "email": "global@email.com",
+          "nameFirst": "global",
+          "nameLast": "Last",
+          "handleStr": "globallast"
+        }
+      ],
+      "allMembers": [
+        {
+          "uId": 1,
+          "email": "global@email.com",
+          "nameFirst": "global",
+          "nameLast": "Last",
+          "handleStr": "globallast"
+        },
+        {
+          "uId": 2,
+          "email": "user@email.com",
+          "nameFirst": "user",
+          "nameLast": "Last",
+          "handleStr": "userlast"
+        }
+      ],
+      "isPublic": true,
+      "messages": [],
+      "standup": {
+        "isActive": false,
+        "timeFinish": null,
+        "creatorId": null,
+        "messagesQueue": []
+      }
+    }
+  ],
   "dms": [],
   "passwordReset": [],
-  "workplaceStats": {},
+  "workplaceStats": {
+    "channelsExist": [
+      {
+        "numChannelsExist": 0,
+        "timeStamp": 1659455528
+      },
+      {
+        "numChannelsExist": 1,
+        "timeStamp": 1659455529
+      }
+    ],
+    "dmsExist": [
+      {
+        "numDmsExist": 0,
+        "timeStamp": 1659455528
+      }
+    ],
+    "messagesExist": [
+      {
+        "numMessagesExist": 0,
+        "timeStamp": 1659455528
+      }
+    ],
+    "utilizationRate": 0
+  },
   "messageId": 1,
   "dmId": 1
 }

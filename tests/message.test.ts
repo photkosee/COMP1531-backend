@@ -13,7 +13,7 @@ const registeredUser: any = [
   { email: 'mrjgidul907@gmail.com', password: 'uhudfnr567T#$%', nameFirst: 'Mriuffhdul', nameLast: 'Rathor' },
 ];
 
-beforeEach(() => {
+beforeAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
   registrationData = [];
 
@@ -498,6 +498,45 @@ describe('Testing message - message', () => {
     res = request('DELETE', `${url}:${port}/message/remove/v2`, {
       qs: {
         messageId: 5
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[1].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: dm1.dmId,
+        message: 'sdfgsdg',
+        timeSent: (Math.floor(Date.now() / 1000) + 1000)
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: dm2.dmId,
+        message: 'sdfgsdg',
+        timeSent: (Math.floor(Date.now() / 1000) + 1000)
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[1].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+      json: {
+        channelId: ch1.channelId,
+        message: 'sdfgsdg',
+        timeSent: (Math.floor(Date.now() / 1000) + 1000)
       },
       headers: {
         'Content-type': 'application/json',
