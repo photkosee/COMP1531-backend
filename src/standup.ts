@@ -1,6 +1,7 @@
 import { getData, setData } from './dataStore';
 import HTTPError from 'http-errors';
 import { authInChannel, checkChannelId, checkToken } from './channelHelperFunctions';
+import { incrementMessagesSent, incrementMessagesExist } from './userHelperFunctions';
 
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
@@ -224,6 +225,8 @@ function standupOver(channelId: number, authUserId: number): null {
       newMessagesDetails.reacts.push(newReactsDetails);
       channel.messages.unshift(newMessagesDetails);
       channel.standup.messagesQueue = [];
+      incrementMessagesSent(authUserId);
+      incrementMessagesExist();
       setData(data);
       return null;
     } else if (channel.channelId === channelId) {

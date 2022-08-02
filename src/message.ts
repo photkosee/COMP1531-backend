@@ -1037,6 +1037,17 @@ async function messageSendlaterV1(token: string, authUserId: number, channelId: 
 }
 
 function sendMessageLater(authUserId: number, message: string, channelId: number, newMessagesDetails: newMessagesDetails) {
+  /*
+    Description:
+      sendMessageLater sends a message after a period of time specified in
+      messageSendlaterV1
+
+    Arguments:
+      authUserId  number type   -- number supplied by request header
+      message     string type   -- string supplied by user
+      channelId   number type   -- number supplied by user
+      newMessagesDetails  newMessagesDetails type   -- number supplied by user
+  */
   const data: any = getData();
 
   const mentions = message.match(/@\w+/gi) || [];
@@ -1065,6 +1076,9 @@ function sendMessageLater(authUserId: number, message: string, channelId: number
       setData(data);
     }
   }
+
+  incrementMessagesSent(authUserId);
+  incrementMessagesExist();
 }
 
 async function messageSendlaterdmV1(token: string, authUserId: number, dmId: number, message: string, timeSent: number) {
@@ -1144,6 +1158,17 @@ async function messageSendlaterdmV1(token: string, authUserId: number, dmId: num
 }
 
 function sendMsgLater(authUserId: number, message: string, dmId: number, newMessagesDetails: newMessagesDetails) {
+  /*
+    Description:
+      sendMsgLater sends a dm after a period of time specified in
+      messageSendlaterdmV1
+
+    Arguments:
+      authUserId  number type   -- number supplied by request header
+      message     string type   -- string supplied by user
+      dmId        number type   -- number supplied by user
+      newMessagesDetails  newMessagesDetails type   -- number supplied by user
+  */
   const data: any = getData();
   const mentions = message.match(/@\w+/gi) || [];
   const shortMsg = message.slice(0, 20);
@@ -1172,6 +1197,9 @@ function sendMsgLater(authUserId: number, message: string, dmId: number, newMess
       setData(data);
     }
   }
+
+  incrementMessagesSent(authUserId);
+  incrementMessagesExist();
 }
 
 export {
