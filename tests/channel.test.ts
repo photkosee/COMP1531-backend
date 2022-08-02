@@ -103,6 +103,22 @@ const removeOwner = (token: string, channelId: number, uId: number) => {
   return res;
 };
 
+const channelMessages = (token: string, channelId: number, start: number) => {
+  const res = request('GET', `${url}:${port}/channel/messages/v3`,
+    {
+      qs: {
+        channelId: channelId,
+        start: start,
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    }
+  );
+  return res;
+};
+
 const channelLeave = (token: string, channelId: number) => {
   const res = request('POST', `${url}:${port}/channel/leave/v2`, {
     json: {
@@ -285,6 +301,46 @@ describe('Successfully inviting - channel/invite/v3', () => {
       }
     });
     expect(res.statusCode).toBe(OK);
+  });
+});
+
+describe('Successfully listing messages channels - channel/messages/v3', () => {
+  test('Testing for correct order of messages returned', () => {
+    expect(channelMessages(registrationData[1].token, channelIdList[0], 0).statusCode).toStrictEqual(OK);
+    for (let i = 0; i < 60; i++) {
+      request('POST', `${url}:${port}/message/send/v2`, {
+        json: {
+          channelId: channelIdList[0],
+          message: 'bye',
+        },
+        headers: {
+          'Content-type': 'application/json',
+          token: registrationData[0].token,
+        }
+      });
+    }
+    request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: 40,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[1].token
+      }
+    });
+    request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: 40,
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+  
+    expect(channelMessages(registrationData[0].token, channelIdList[0], 0).statusCode).toStrictEqual(OK);
   });
 });
 

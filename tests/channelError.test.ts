@@ -123,6 +123,22 @@ const removeOwner = (token: string, channelId: number, uId: number) => {
   return res;
 };
 
+const channelMessages = (token: string, channelId: number, start: number) => {
+  const res = request('GET', `${url}:${port}/channel/messages/v3`,
+    {
+      qs: {
+        channelId: channelId,
+        start: start,
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: token
+      }
+    }
+  );
+  return res;
+};
+
 afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
@@ -376,5 +392,78 @@ describe('Error cases - channel/removeowner/v2', () => {
   test('Testing for remove last person and remove yourself', () => {
     expect(removeOwner(registrationData[0].token, channelIdList[0], registeredUser[0].authUserId).statusCode).toStrictEqual(BADREQUEST);
     expect(removeOwner(registrationData[1].token, channelIdList[1], registeredUser[1].authUserId).statusCode).toStrictEqual(BADREQUEST);
+  });
+});
+
+describe('Error cases - channels/create/v3', () => {
+  test('Invalid token', () => {
+    const res = request('POST', `${url}:${port}/channels/create/v3`, {
+      body: JSON.stringify({
+        name: 'DOTA2',
+        isPublic: false
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRER1ZlREdWQUl6Q3cwWG9ZV05tUVZPTHprbkxZOWNKWWpvVmNJTlh4eEliS0E0SGhSOGJreSIsImlhdCI6MTY1ODU3NzcxNn0.--c5eWAvAW25kp8CnDNXRTl9iCAz4eDOrq5jq8JoHzc'
+      }
+    });
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Invalid name length', () => {
+    let res = request('POST', `${url}:${port}/channels/create/v3`, {
+      body: JSON.stringify({
+        name: '',
+        isPublic: false
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+  });
+});
+
+describe('Error cases - channels/list/v3', () => {
+  test('Invalid token', () => {
+    const res = request('GET', `${url}:${port}/channels/list/v3`, {
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRER1ZlREdWQUl6Q3cwWG9ZV05tUVZPTHprbkxZOWNKWWpvVmNJTlh4eEliS0E0SGhSOGJreSIsImlhdCI6MTY1ODU3NzcxNn0.--c5eWAvAW25kp8CnDNXRTl9iCAz4eDOrq5jq8JoHzc'
+      }
+    });
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+});
+
+describe('Error cases - channels/listall/v3', () => {
+  test('Invalid token', () => {
+    const res3 = request('GET', `${url}:${port}/channels/listall/v3`, {
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRER1ZlREdWQUl6Q3cwWG9ZV05tUVZPTHprbkxZOWNKWWpvVmNJTlh4eEliS0E0SGhSOGJreSIsImlhdCI6MTY1ODU3NzcxNn0.--c5eWAvAW25kp8CnDNXRTl9iCAz4eDOrq5jq8JoHzc'
+      }
+    });
+    expect(res3.statusCode).toBe(FORBIDDEN);
+  });
+});
+
+describe('Error cases - channel/messages/v3', () => {
+  test('Testing for invalid channelId', () => {
+    let res = channelMessages(registrationData[0].token, 0.1, 0);
+    expect(res.statusCode).toStrictEqual(BADREQUEST);
+  });
+
+  test('Testing for invalid start parameter', () => {
+    let res = channelMessages(registrationData[0].token, channelIdList[0], -1);
+    expect(res.statusCode).toStrictEqual(BADREQUEST);
+    res = channelMessages(registrationData[0].token, channelIdList[0], 20);
+    expect(res.statusCode).toStrictEqual(BADREQUEST);
+  });
+  
+  test('Testing for token not in channel or invalid', () => {
+    expect(channelMessages('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRER1ZlREdWQUl6Q3cwWG9ZV05tUVZPTHprbkxZOWNKWWpvVmNJTlh4eEliS0E0SGhSOGJreSIsImlhdCI6MTY1ODU3NzcxNn0.--c5eWAvAW25kp8CnDNXRTl9iCAz4eDOrq5jq8JoHzc', channelIdList[0], 0).statusCode).toStrictEqual(FORBIDDEN);
+    expect(channelMessages(registrationData[0].token, channelIdList[2], 0).statusCode).toStrictEqual(FORBIDDEN);
   });
 });

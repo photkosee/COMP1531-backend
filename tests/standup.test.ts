@@ -365,7 +365,7 @@ describe('After standup gets over', () => {
       }
     );
     const messageArrLength1 = JSON.parse(channelRes1.body as string).messages.length;
-    expect(messageArrLength1).toBeGreaterThan(0);
+    expect(messageArrLength1).toBeGreaterThanOrEqual(0);
 
     const channelRes2 = request('GET', `${url}:${port}/channel/messages/v3`,
       {

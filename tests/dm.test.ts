@@ -483,6 +483,7 @@ describe('Test Cases for HTTP Route: dm/messages/v2', () => {
       }
     });
 
+
     const response = request(
       'GET', `${url}:${port}/dm/messages/v2`,
       {
@@ -496,6 +497,7 @@ describe('Test Cases for HTTP Route: dm/messages/v2', () => {
         }
       }
     );
+
     const resData = JSON.parse(response.body as string);
     expect(response.statusCode).toBe(OK);
     expect(resData.start).toBe(0);

@@ -977,3 +977,157 @@ describe('Testing for error - message/unreact/v1', () => {
     expect(res.statusCode).toBe(BADREQUEST);
   });
 });
+
+describe('Testing for error - message/sendlater/v1', () => {
+  test('Invalid message length', () => {
+    const res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+      json: {
+        channelId: channelIdList[0],
+        message: '',
+        timeSent: Math.floor(Date.now() / 1000) + 10
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+  });
+
+  test('Invalid channelId', () => {
+    let res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+      json: {
+        channelId: 1000,
+        message: 'asdf',
+        timeSent: Math.floor(Date.now() / 1000) + 10
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+  });
+
+  test('Invalid token', () => {
+    const res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+      json: {
+        channelId: 1,
+        message: 'asdf',
+        timeSent: Math.floor(Date.now() / 1000) + 10
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCQxb3NPMG8wb1JrTmVEUllidzRIbUxlRDJXVnRDU0dMTk5yU2FBQm5XVUZJZlhSdHRzZkNJRyIsImlhdCI6MTY1ODU3NzcwNn0.LTPtFI_oV8D4YuSWnWJCMrrYFB6jTt_AOVM3M_c8k3Y'
+      }
+    });
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('Not a member', () => {
+    const res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+      json: {
+        channelId: channelIdList[1],
+        message: 'sdfgsdg',
+        timeSent: Math.floor(Date.now() / 1000) + 10
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+
+  test('timeSent is before current time - message/sendlater', () => {
+    const res = request('POST', `${url}:${port}/message/sendlater/v1`, {
+      json: {
+        channelId: channelIdList[0],
+        message: 'sdfgsdg',
+        timeSent: Math.floor(Date.now() / 1000) - 1000
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+  });
+});
+
+describe('Testing for error - message/sendlaterdm/v1', () => {
+  test('Invalid message length', () => {
+    const res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: dmIdList[0],
+        message: '',
+        timeSent: Math.floor(Date.now() / 1000) + 10
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+  });
+  
+  test('Invalid dmId', () => {
+    const res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: 1000,
+        message: 'asdf',
+        timeSent: Math.floor(Date.now() / 1000) + 10
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+  });
+  
+  test('Invalid token', () => {
+    const res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: dmIdList[0],
+        message: 'asdf',
+        timeSent: Math.floor(Date.now() / 1000) + 10
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCQxb3NPMG8wb1JrTmVEUllidzRIbUxlRDJXVnRDU0dMTk5yU2FBQm5XVUZJZlhSdHRzZkNJRyIsImlhdCI6MTY1ODU3NzcwNn0.LTPtFI_oV8D4YuSWnWJCMrrYFB6jTt_AOVM3M_c8k3Y'
+      }
+    });
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+  
+  test('Not a member of dm', () => {
+    const res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: dmIdList[0],
+        message: 'sdfgsdg',
+        timeSent: Math.floor(Date.now() / 1000) + 100
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[2].token
+      }
+    });
+    expect(res.statusCode).toBe(FORBIDDEN);
+  });
+  
+  test('Timesent is before current time - message/sendlaterdm', () => {
+    const res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: dmIdList[1],
+        message: 'sdfgsdg',
+        timeSent: Math.floor(Date.now() / 1000) - 100
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[1].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+  });
+});
