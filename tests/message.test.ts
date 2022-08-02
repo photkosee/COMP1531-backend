@@ -557,7 +557,7 @@ describe('Testing message - message', () => {
 
     res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
       qs: {
-        uId: registrationData[1].token
+        uId: registrationData[1].authUserId
       },
       headers: {
         'Content-type': 'application/json',
@@ -568,7 +568,7 @@ describe('Testing message - message', () => {
 
     res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
       qs: {
-        uId: registrationData[2].token
+        uId: registrationData[2].authUserId
       },
       headers: {
         'Content-type': 'application/json',
