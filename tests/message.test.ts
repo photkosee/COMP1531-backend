@@ -65,6 +65,16 @@ describe('Testing message - message', () => {
     });
     const dm2 = JSON.parse(res.body as string);
 
+    res = request('POST', `${url}:${port}/dm/create/v2`, {
+      body: JSON.stringify({
+        uIds: [registrationData[0].authUserId]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[2].token
+      }
+    });
+
     res = request('POST', `${url}:${port}/channels/create/v3`, {
       body: JSON.stringify({
         name: 'DOTA2',
@@ -544,5 +554,27 @@ describe('Testing message - message', () => {
       }
     });
     expect(res.statusCode).toBe(OK);
+
+    res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
+      qs: {
+        uId: registrationData[1].token
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    expect(res.statusCode).toEqual(OK);
+
+    res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
+      qs: {
+        uId: registrationData[2].token
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    expect(res.statusCode).toEqual(OK);
   });
 });
