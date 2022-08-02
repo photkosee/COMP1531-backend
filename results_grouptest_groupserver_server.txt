@@ -1,0 +1,9 @@
+(node:31336) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:31336) [DEP0128] DeprecationWarning: Invalid 'main' field in '/usr/lib/nodejs/puka/package.json' of 'dist/index.js'. Please either fix that or report it to the module author
+
+> start
+> ts-node src/server.ts
+
+⚡️ Server listening on port 48237 at localhost
+DataStore Initialized Successfully

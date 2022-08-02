@@ -1,0 +1,45 @@
+
+[4msrc/auth.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/authHelperFunctions.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channel.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channelHelperFunctions.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/channels.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/dataStore.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/dm.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/dmHelperFunctions.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/echo.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/message.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/other.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/server.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/user.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[4msrc/users.ts[24m
+  [2m0:0[22m  [32mpassing[39m  No linting issues  [2msuccess[22m
+
+[32m[1m✔ 14 files successfully linted.[22m[39m
+[32m[1m[22m[39m
