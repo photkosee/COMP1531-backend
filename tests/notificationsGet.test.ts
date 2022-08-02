@@ -47,7 +47,7 @@ test('Testing invalid token - notifications/get', () => {
 });
 
 describe('Testing successful notification get - notifications/get', () => {
-  test('successful tagging notification in channel', async () => {
+  test('successful tagging notification in channel', async() => {
     let res = request('POST', `${url}:${port}/channels/create/v3`, {
       json: ({
         name: 'DOTA2',
@@ -74,7 +74,7 @@ describe('Testing successful notification get - notifications/get', () => {
       json: ({
         channelId: 1,
         message: '@aa@ again',
-        timeSent: (Math.floor(Date.now() / 1000) + 2)
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
       }),
       headers: {
         'Content-type': 'application/json',
@@ -82,7 +82,7 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     });
 
-    await new Promise((r) => setTimeout(r, 2000));
+    await new Promise((r) => setTimeout(r, 2500));
 
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
@@ -113,7 +113,7 @@ describe('Testing successful notification get - notifications/get', () => {
     expect(res.statusCode).toStrictEqual(OK);
   });
 
-  test('successful tagging notification in dm', async () => {
+  test('successful tagging notification in dm', async() => {
     let res = request('POST', `${url}:${port}/message/senddm/v2`, {
       json: {
         dmId: 1,
@@ -140,7 +140,7 @@ describe('Testing successful notification get - notifications/get', () => {
       json: {
         dmId: 1,
         message: '@aa@ hello again',
-        timeSent: (Math.floor(Date.now() / 1000) + 2)
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
       },
       headers: {
         'Content-type': 'application/json',
@@ -148,7 +148,7 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     });
 
-    await new Promise((r) => setTimeout(r, 1000));
+    await new Promise((r) => setTimeout(r, 2500));
 
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
