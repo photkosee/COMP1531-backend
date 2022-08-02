@@ -411,7 +411,7 @@ describe('Error cases - channels/create/v3', () => {
   });
 
   test('Invalid name length', () => {
-    let res = request('POST', `${url}:${port}/channels/create/v3`, {
+    const res = request('POST', `${url}:${port}/channels/create/v3`, {
       body: JSON.stringify({
         name: '',
         isPublic: false
@@ -451,7 +451,7 @@ describe('Error cases - channels/listall/v3', () => {
 
 describe('Error cases - channel/messages/v3', () => {
   test('Testing for invalid channelId', () => {
-    let res = channelMessages(registrationData[0].token, 0.1, 0);
+    const res = channelMessages(registrationData[0].token, 0.1, 0);
     expect(res.statusCode).toStrictEqual(BADREQUEST);
   });
 
@@ -461,7 +461,7 @@ describe('Error cases - channel/messages/v3', () => {
     res = channelMessages(registrationData[0].token, channelIdList[0], 20);
     expect(res.statusCode).toStrictEqual(BADREQUEST);
   });
-  
+
   test('Testing for token not in channel or invalid', () => {
     expect(channelMessages('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwic2FsdCI6IiQyYSQxMCRER1ZlREdWQUl6Q3cwWG9ZV05tUVZPTHprbkxZOWNKWWpvVmNJTlh4eEliS0E0SGhSOGJreSIsImlhdCI6MTY1ODU3NzcxNn0.--c5eWAvAW25kp8CnDNXRTl9iCAz4eDOrq5jq8JoHzc', channelIdList[0], 0).statusCode).toStrictEqual(FORBIDDEN);
     expect(channelMessages(registrationData[0].token, channelIdList[2], 0).statusCode).toStrictEqual(FORBIDDEN);

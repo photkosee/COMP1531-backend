@@ -339,7 +339,7 @@ describe('Successfully listing messages channels - channel/messages/v3', () => {
         token: registrationData[0].token
       }
     });
-  
+
     expect(channelMessages(registrationData[0].token, channelIdList[0], 0).statusCode).toStrictEqual(OK);
   });
 });
