@@ -19,48 +19,49 @@ import { adminUserpermissionChange, adminUserRemove } from './admin';
 import { standupIsActive, standupSend, standupStart } from './standup';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import {
-  authRegisterV1,
-  authLoginV1,
-  authLogoutV1,
   authPasswordResetRequestV1,
-  authPasswordResetV1
+  authPasswordResetV1,
+  authRegisterV1,
+  googleLoginV1,
+  authLogoutV1,
+  authLoginV1,
 } from './auth';
 import {
+  messageSendlaterdmV1,
+  messageSendlaterV1,
+  messageUnreactV1,
+  messageRemoveV1,
+  messageSenddmV1,
+  messageShareV1,
+  messageReactV1,
+  messageUnpinV1,
   messageSendV1,
   messageEditV1,
-  messageSenddmV1,
-  messageRemoveV1,
-  messageReactV1,
-  messageUnreactV1,
-  messagePinV1,
-  messageUnpinV1,
-  messageShareV1,
-  messageSendlaterV1,
-  messageSendlaterdmV1
+  messagePinV1
 } from './message';
 import {
-  dmCreateV1,
-  dmListV1,
-  dmRemoveV1,
   dmDetailsV1,
+  dmRemoveV1,
+  dmMessages,
+  dmCreateV1,
   dmLeaveV1,
-  dmMessages
+  dmListV1
 } from './dm';
 import {
-  userProfileV1,
-  userProfileSetnameV1,
-  userProfileSetemailV1,
   userProfileSethandleV1,
+  userProfileSetemailV1,
+  userProfileSetnameV1,
+  userProfileV1,
   userStatsV1
 } from './user';
 import {
-  channelJoinV1,
+  channelRemoveownerV1,
+  channelMessagesV1,
+  channelAddownerV1,
   channelDetailsV1,
   channelInviteV1,
-  channelMessagesV1,
-  channelRemoveownerV1,
-  channelAddownerV1,
-  channelLeaveV1
+  channelLeaveV1,
+  channelJoinV1
 } from './channel';
 
 // Set up web app, use JSON
@@ -119,6 +120,16 @@ app.get('/echo', (req: Request, res: Response, next: NextFunction) => {
 
 app.delete('/clear/v1', (req: Request, res: Response, next: NextFunction) => {
   return res.json(clearV1());
+});
+
+app.post('/google/login/v1', (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, given_name, family_name, picture } = req.body;
+    const returnData = googleLoginV1(email, given_name, family_name, picture);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.post('/auth/register/v3', (req: Request, res: Response, next: NextFunction) => {
