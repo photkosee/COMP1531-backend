@@ -115,6 +115,13 @@ function adminUserRemove(token: string, authUserId: number, uId: number) {
     throw HTTPError(FORBIDDEN, 'authorised user is not global owner');
   }
 
+  const userPermissionId: number = findPermissionId(uId);
+  if (userPermissionId === GLOBAL) {
+    if (isOnlyGlobalOwner(uId)) {
+      throw HTTPError(BADREQUEST, 'Cannot demote only global owner to member');
+    }
+  }
+
   // Make user inactive
   const data: any = getData();
 

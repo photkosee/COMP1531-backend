@@ -173,4 +173,32 @@ describe('Errors', () => {
     });
     expect(res.statusCode).toEqual(FORBIDDEN);
   });
+
+  test('Error: Removing only global owner', () => {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'auth@gmail.com',
+        password: 'password',
+        nameFirst: 'Auth',
+        nameLast: 'Last',
+      },
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const authUser: any = JSON.parse(res.getBody() as string);
+    const authId: number = authUser.authUserId;
+    const authToken: string = authUser.token;
+
+    res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
+      qs: {
+        uId: authId
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: authToken
+      }
+    });
+    expect(res.statusCode).toEqual(BADREQUEST);
+  });
 });
