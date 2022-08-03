@@ -14,7 +14,7 @@ import {
 } from './authHelperFunctions';
 import {
   createUserStats,
-  createWorkplaceStats
+  createWorkspaceStats
 } from './userHelperFunctions';
 
 const deployedUrl: string = env.deployedUrl;
@@ -69,7 +69,7 @@ function authRegisterV1(email: string, password: string, nameFirst: string, name
   const data: any = getData();
 
   if (data.users.length === 0) {
-    createWorkplaceStats();
+    createWorkspaceStats();
   }
 
   const checkParamType: boolean = paramTypeChecker(email, password, nameFirst, nameLast);
