@@ -799,74 +799,69 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
   }
 
   const data: any = getData();
+  // check if the original message is from dm(1) or channel(0)
+  let checkMessage = -1;
 
-  // share between channel to channel
   for (const channel of data.channels) {
-    const index1: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
-    if (index1 > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
-      const ogMessage1: string = channel.messages[index1].message;
-      for (const shareChannel of data.channels) {
-        if (shareChannel.channelId === channelId) {
-          const messageId: number = data.messageId;
-          data.messageId += 1;
+    const messageIndex: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
+    if (messageIndex > -1) {
+      checkMessage = 0;
+    }
+  }
+  for (const dm of data.dms) {
+    const dmIndex: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
+    if (dmIndex > -1) {
+      checkMessage = 1;
+    }
+  }
 
-          const newMessagesDetails: newMessagesDetails = {
-            messageId: messageId,
-            uId: authUserId,
-            message: ogMessage1 + '\n' + message,
-            timeSent: Math.floor((new Date()).getTime() / 1000),
-            reacts: [],
-            isPinned: false,
-          };
+  if (checkMessage === 0 && dmId === -1) {
+    // share between channel to channel
+    for (const channel of data.channels) {
+      const index1: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
+      if (index1 > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
+        const ogMessage1: string = channel.messages[index1].message;
+        for (const shareChannel of data.channels) {
+          if (shareChannel.channelId === channelId) {
+            const messageId: number = data.messageId;
+            data.messageId += 1;
 
-          const newReactsDetails: newReacts = {
-            reactId: 1,
-            uIds: [],
-            isThisUserReacted: false,
-          };
-          newMessagesDetails.reacts.push(newReactsDetails);
+            const newMessagesDetails: newMessagesDetails = {
+              messageId: messageId,
+              uId: authUserId,
+              message: ogMessage1 + '\n' + message,
+              timeSent: Math.floor((new Date()).getTime() / 1000),
+              reacts: [],
+              isPinned: false,
+            };
 
-          channel.messages.unshift(newMessagesDetails);
-          setData(data);
+            const newReactsDetails: newReacts = {
+              reactId: 1,
+              uIds: [],
+              isThisUserReacted: false,
+            };
+            newMessagesDetails.reacts.push(newReactsDetails);
 
-          return { sharedMessageId: messageId };
+            channel.messages.unshift(newMessagesDetails);
+            incrementMessagesExist();
+            incrementMessagesSent(authUserId);
+            setData(data);
+
+            return { sharedMessageId: messageId };
+          }
         }
       }
     }
   }
 
-  // share between dm to dm
-  for (const dm of data.dms) {
-    const index2: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
-    if (index2 > -1 && checkDmMember(dm.dmId, authUserId)) {
-      const ogMessage2: string = dm.messages[index2].message;
-      for (const shareDm of data.dms) {
-        if (shareDm.dmId === dmId && shareDm.creatorId === authUserId) {
-          const messageId: number = data.messageId;
-          data.messageId += 1;
-          const newMessagesDetails: newMessagesDetails = {
-            messageId: messageId,
-            uId: authUserId,
-            message: ogMessage2 + '\n' + message,
-            timeSent: Math.floor((new Date()).getTime() / 1000),
-            reacts: [],
-            isPinned: false,
-          };
-
-          const newReactsDetails: newReacts = {
-            reactId: 1,
-            uIds: [],
-            isThisUserReacted: false,
-          };
-          newMessagesDetails.reacts.push(newReactsDetails);
-
-          dm.messages.unshift(newMessagesDetails);
-          setData(data);
-
-          return { sharedMessageId: messageId };
-        }
-        for (const member of shareDm.uIds) {
-          if (dmId === shareDm.dmId && member === authUserId) {
+  if (checkMessage === 1 && channelId === -1) {
+    // share between dm to dm
+    for (const dm of data.dms) {
+      const index2: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
+      if (index2 > -1 && checkDmMember(dm.dmId, authUserId)) {
+        const ogMessage2: string = dm.messages[index2].message;
+        for (const shareDm of data.dms) {
+          if (shareDm.dmId === dmId && shareDm.creatorId === authUserId) {
             const messageId: number = data.messageId;
             data.messageId += 1;
             const newMessagesDetails: newMessagesDetails = {
@@ -886,6 +881,75 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             newMessagesDetails.reacts.push(newReactsDetails);
 
             dm.messages.unshift(newMessagesDetails);
+            incrementMessagesExist();
+            incrementMessagesSent(authUserId);
+            setData(data);
+
+            return { sharedMessageId: messageId };
+          }
+          for (const member of shareDm.uIds) {
+            if (dmId === shareDm.dmId && member === authUserId) {
+              const messageId: number = data.messageId;
+              data.messageId += 1;
+              const newMessagesDetails: newMessagesDetails = {
+                messageId: messageId,
+                uId: authUserId,
+                message: ogMessage2 + '\n' + message,
+                timeSent: Math.floor((new Date()).getTime() / 1000),
+                reacts: [],
+                isPinned: false,
+              };
+
+              const newReactsDetails: newReacts = {
+                reactId: 1,
+                uIds: [],
+                isThisUserReacted: false,
+              };
+              newMessagesDetails.reacts.push(newReactsDetails);
+
+              dm.messages.unshift(newMessagesDetails);
+              incrementMessagesExist();
+              incrementMessagesSent(authUserId);
+              setData(data);
+
+              return { sharedMessageId: messageId };
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (checkMessage === 1 && dmId === -1) {
+    // share from dm to channel
+    for (const dm of data.dms) {
+      const index3: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
+      if (index3 > -1 && checkDmMember(dm.dmId, authUserId)) {
+        const ogMessage3: string = dm.messages[index3].message;
+        for (const shareChannel of data.channels) {
+          if (shareChannel.channelId === channelId) {
+            const messageId: number = data.messageId;
+            data.messageId += 1;
+
+            const newMessagesDetails: newMessagesDetails = {
+              messageId: messageId,
+              uId: authUserId,
+              message: ogMessage3 + '\n' + message,
+              timeSent: Math.floor((new Date()).getTime() / 1000),
+              reacts: [],
+              isPinned: false,
+            };
+
+            const newReactsDetails: newReacts = {
+              reactId: 1,
+              uIds: [],
+              isThisUserReacted: false,
+            };
+            newMessagesDetails.reacts.push(newReactsDetails);
+
+            dm.messages.unshift(newMessagesDetails);
+            incrementMessagesExist();
+            incrementMessagesSent(authUserId);
             setData(data);
 
             return { sharedMessageId: messageId };
@@ -895,73 +959,14 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
     }
   }
 
-  // share from dm to channel
-  for (const dm of data.dms) {
-    const index3: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
-    if (index3 > -1 && checkDmMember(dm.dmId, authUserId)) {
-      const ogMessage3: string = dm.messages[index3].message;
-      for (const shareChannel of data.channels) {
-        if (shareChannel.channelId === channelId) {
-          const messageId: number = data.messageId;
-          data.messageId += 1;
-
-          const newMessagesDetails: newMessagesDetails = {
-            messageId: messageId,
-            uId: authUserId,
-            message: ogMessage3 + '\n' + message,
-            timeSent: Math.floor((new Date()).getTime() / 1000),
-            reacts: [],
-            isPinned: false,
-          };
-
-          const newReactsDetails: newReacts = {
-            reactId: 1,
-            uIds: [],
-            isThisUserReacted: false,
-          };
-          newMessagesDetails.reacts.push(newReactsDetails);
-
-          dm.messages.unshift(newMessagesDetails);
-          setData(data);
-
-          return { sharedMessageId: messageId };
-        }
-      }
-    }
-  }
-
-  // share from channel to dm
-  for (const channel of data.channels) {
-    const index4: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
-    if (index4 > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
-      const ogMessage4: string = channel.messages[index4].message;
-      for (const shareDm of data.dms) {
-        if (shareDm.dmId === dmId && shareDm.creatorId === authUserId) {
-          const messageId: number = data.messageId;
-          data.messageId += 1;
-          const newMessagesDetails: newMessagesDetails = {
-            messageId: messageId,
-            uId: authUserId,
-            message: ogMessage4 + '\n' + message,
-            timeSent: Math.floor((new Date()).getTime() / 1000),
-            reacts: [],
-            isPinned: false,
-          };
-
-          const newReactsDetails: newReacts = {
-            reactId: 1,
-            uIds: [],
-            isThisUserReacted: false,
-          };
-          newMessagesDetails.reacts.push(newReactsDetails);
-
-          channel.messages.unshift(newMessagesDetails);
-          setData(data);
-
-          return { sharedMessageId: messageId };
-        }
-        for (const member of shareDm.uIds) {
-          if (dmId === shareDm.dmId && member === authUserId) {
+  if (checkMessage === 0 && channelId === -1) {
+    // share from channel to dm
+    for (const channel of data.channels) {
+      const index4: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
+      if (index4 > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
+        const ogMessage4: string = channel.messages[index4].message;
+        for (const shareDm of data.dms) {
+          if (shareDm.dmId === dmId && shareDm.creatorId === authUserId) {
             const messageId: number = data.messageId;
             data.messageId += 1;
             const newMessagesDetails: newMessagesDetails = {
@@ -981,16 +986,46 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             newMessagesDetails.reacts.push(newReactsDetails);
 
             channel.messages.unshift(newMessagesDetails);
+            incrementMessagesExist();
+            incrementMessagesSent(authUserId);
             setData(data);
 
             return { sharedMessageId: messageId };
+          }
+          for (const member of shareDm.uIds) {
+            if (dmId === shareDm.dmId && member === authUserId) {
+              const messageId: number = data.messageId;
+              data.messageId += 1;
+              const newMessagesDetails: newMessagesDetails = {
+                messageId: messageId,
+                uId: authUserId,
+                message: ogMessage4 + '\n' + message,
+                timeSent: Math.floor((new Date()).getTime() / 1000),
+                reacts: [],
+                isPinned: false,
+              };
+
+              const newReactsDetails: newReacts = {
+                reactId: 1,
+                uIds: [],
+                isThisUserReacted: false,
+              };
+              newMessagesDetails.reacts.push(newReactsDetails);
+
+              channel.messages.unshift(newMessagesDetails);
+              incrementMessagesExist();
+              incrementMessagesSent(authUserId);
+              setData(data);
+
+              return { sharedMessageId: messageId };
+            }
           }
         }
       }
     }
   }
 
-  throw HTTPError(BADREQUEST, 'Invalid ogMessageId');
+  throw HTTPError(BADREQUEST, 'Not a member');
 }
 
 function messageSendlaterV1(token: string, authUserId: number, channelId: number, message: string, timeSent: number) {
