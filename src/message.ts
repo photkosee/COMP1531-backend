@@ -842,7 +842,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             };
             newMessagesDetails.reacts.push(newReactsDetails);
 
-            channel.messages.unshift(newMessagesDetails);
+            shareChannel.messages.unshift(newMessagesDetails);
             incrementMessagesExist();
             incrementMessagesSent(authUserId);
             setData(data);
@@ -880,7 +880,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             };
             newMessagesDetails.reacts.push(newReactsDetails);
 
-            dm.messages.unshift(newMessagesDetails);
+            shareDm.messages.unshift(newMessagesDetails);
             incrementMessagesExist();
             incrementMessagesSent(authUserId);
             setData(data);
@@ -907,7 +907,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
               };
               newMessagesDetails.reacts.push(newReactsDetails);
 
-              dm.messages.unshift(newMessagesDetails);
+              shareDm.messages.unshift(newMessagesDetails);
               incrementMessagesExist();
               incrementMessagesSent(authUserId);
               setData(data);
