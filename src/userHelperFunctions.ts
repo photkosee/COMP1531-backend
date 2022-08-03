@@ -36,16 +36,16 @@ function createUserStats() {
   return userStats;
 }
 
-function createWorkplaceStats() {
+function createWorkspaceStats() {
   /*
       Description:
-        createWorkplaceStats creates inital for Treats
+        createWorkspaceStats creates inital for Treats
   */
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
 
   const data: any = getData();
 
-  const workplaceStats: any = {
+  const workspaceStats: any = {
     channelsExist: [
       {
         numChannelsExist: 0,
@@ -67,7 +67,7 @@ function createWorkplaceStats() {
     utilizationRate: 0
   };
 
-  data.workplaceStats = workplaceStats;
+  data.workspaceStats = workspaceStats;
 }
 
 function involvementRateCalculator(userId: number) {
@@ -99,13 +99,13 @@ function involvementRateCalculator(userId: number) {
     }
   }
 
-  const numChannelsLength: number = data.workplaceStats.channelsExist.length - 1;
-  const numDmsLength: number = data.workplaceStats.dmsExist.length - 1;
-  const numMsgsLength: number = data.workplaceStats.messagesExist.length - 1;
+  const numChannelsLength: number = data.workspaceStats.channelsExist.length - 1;
+  const numDmsLength: number = data.workspaceStats.dmsExist.length - 1;
+  const numMsgsLength: number = data.workspaceStats.messagesExist.length - 1;
 
-  const numChannels: number = data.workplaceStats.channelsExist[numChannelsLength].numChannelsExist;
-  const numDms: number = data.workplaceStats.dmsExist[numDmsLength].numDmsExist;
-  const numMsgs: number = data.workplaceStats.messagesExist[numMsgsLength].numMessagesExist;
+  const numChannels: number = data.workspaceStats.channelsExist[numChannelsLength].numChannelsExist;
+  const numDms: number = data.workspaceStats.dmsExist[numDmsLength].numDmsExist;
+  const numMsgs: number = data.workspaceStats.messagesExist[numMsgsLength].numMessagesExist;
 
   const denominator: number = numChannels + numDms + numMsgs;
 
@@ -196,7 +196,7 @@ function incrementChannelsJoined(authUserId: number) {
 function incrementChannelsExist() {
   /*
     Description:
-      increaseChannelsExist increments workplaceStats
+      increaseChannelsExist increments workspaceStats
 
     Parameters
       authUserId    - number given by user
@@ -204,10 +204,10 @@ function incrementChannelsExist() {
   const data: any = getData();
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
 
-  const length: number = data.workplaceStats.channelsExist.length - 1;
-  const currNumChannelsExist: number = data.workplaceStats.channelsExist[length].numChannelsExist;
+  const length: number = data.workspaceStats.channelsExist.length - 1;
+  const currNumChannelsExist: number = data.workspaceStats.channelsExist[length].numChannelsExist;
 
-  data.workplaceStats.channelsExist.push({
+  data.workspaceStats.channelsExist.push({
     numChannelsExist: currNumChannelsExist + 1,
     timeStamp: timeStamp
   });
@@ -289,16 +289,16 @@ function decreaseDmsJoined(authUserId: number) {
 function incrementDmsExist() {
   /*
     Description:
-      incrementDmsExist increments workplaceStats
+      incrementDmsExist increments workspaceStats
   */
 
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
-  const length: number = data.workplaceStats.dmsExist.length - 1;
+  const length: number = data.workspaceStats.dmsExist.length - 1;
 
-  const currNumDmsExist: number = data.workplaceStats.dmsExist[length].numDmsExist;
+  const currNumDmsExist: number = data.workspaceStats.dmsExist[length].numDmsExist;
 
-  data.workplaceStats.dmsExist.push({
+  data.workspaceStats.dmsExist.push({
     numDmsExist: currNumDmsExist + 1,
     timeStamp: timeStamp
   });
@@ -307,16 +307,16 @@ function incrementDmsExist() {
 function decreaseDmsExist() {
   /*
     Description:
-      decreaseDmsExist decreases workplaceStats
+      decreaseDmsExist decreases workspaceStats
   */
 
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
-  const length: number = data.workplaceStats.dmsExist.length - 1;
+  const length: number = data.workspaceStats.dmsExist.length - 1;
 
-  const currNumDmsExist: number = data.workplaceStats.dmsExist[length].numDmsExist;
+  const currNumDmsExist: number = data.workspaceStats.dmsExist[length].numDmsExist;
 
-  data.workplaceStats.dmsExist.push({
+  data.workspaceStats.dmsExist.push({
     numDmsExist: currNumDmsExist - 1,
     timeStamp: timeStamp
   });
@@ -350,17 +350,17 @@ function incrementMessagesSent(authUserId: number) {
 function incrementMessagesExist() {
   /*
     Description:
-      incrementMessagesExist increments workplaceStats
+      incrementMessagesExist increments workspaceStats
   */
 
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
 
   const data: any = getData();
-  const length: number = data.workplaceStats.messagesExist.length - 1;
+  const length: number = data.workspaceStats.messagesExist.length - 1;
 
-  const currNumMessagesExist: number = data.workplaceStats.messagesExist[length].numMessagesExist;
+  const currNumMessagesExist: number = data.workspaceStats.messagesExist[length].numMessagesExist;
 
-  data.workplaceStats.messagesExist.push({
+  data.workspaceStats.messagesExist.push({
     numMessagesExist: currNumMessagesExist + 1,
     timeStamp: timeStamp
   });
@@ -369,17 +369,17 @@ function incrementMessagesExist() {
 function decreaseMessagesExist() {
   /*
     Description:
-      decreaseMessagesExist decreases workplaceStats
+      decreaseMessagesExist decreases workspaceStats
   */
 
   const timeStamp: number = Math.floor((new Date()).getTime() / 1000);
   const data: any = getData();
   const length: number =
-  data.workplaceStats.messagesExist.length - 1;
+  data.workspaceStats.messagesExist.length - 1;
 
-  const currNumMessagesExist: number = data.workplaceStats.messagesExist[length].numMessagesExist;
+  const currNumMessagesExist: number = data.workspaceStats.messagesExist[length].numMessagesExist;
 
-  data.workplaceStats.messagesExist.push({
+  data.workspaceStats.messagesExist.push({
     numMessagesExist: currNumMessagesExist - 1,
     timeStamp: timeStamp
   });
@@ -394,7 +394,7 @@ export {
   incrementMessagesExist,
   decreaseMessagesExist,
   incrementMessagesSent,
-  createWorkplaceStats,
+  createWorkspaceStats,
   incrementDmsJoined,
   decreaseDmsJoined,
   incrementDmsExist,

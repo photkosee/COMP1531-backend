@@ -813,7 +813,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           const newMessagesDetails: newMessagesDetails = {
             messageId: messageId,
             uId: authUserId,
-            message: ogMessage1 + message,
+            message: ogMessage1 + '\n' + message,
             timeSent: Math.floor((new Date()).getTime() / 1000),
             reacts: [],
             isPinned: false,
@@ -829,7 +829,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           channel.messages.unshift(newMessagesDetails);
           setData(data);
 
-          return { shareMessageId: messageId };
+          return { sharedMessageId: messageId };
         }
       }
     }
@@ -847,7 +847,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           const newMessagesDetails: newMessagesDetails = {
             messageId: messageId,
             uId: authUserId,
-            message: ogMessage2 + message,
+            message: ogMessage2 + '\n' + message,
             timeSent: Math.floor((new Date()).getTime() / 1000),
             reacts: [],
             isPinned: false,
@@ -863,7 +863,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           dm.messages.unshift(newMessagesDetails);
           setData(data);
 
-          return { shareMessageId: messageId };
+          return { sharedMessageId: messageId };
         }
         for (const member of shareDm.uIds) {
           if (dmId === shareDm.dmId && member === authUserId) {
@@ -872,7 +872,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             const newMessagesDetails: newMessagesDetails = {
               messageId: messageId,
               uId: authUserId,
-              message: ogMessage2 + message,
+              message: ogMessage2 + '\n' + message,
               timeSent: Math.floor((new Date()).getTime() / 1000),
               reacts: [],
               isPinned: false,
@@ -888,7 +888,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             dm.messages.unshift(newMessagesDetails);
             setData(data);
 
-            return { shareMessageId: messageId };
+            return { sharedMessageId: messageId };
           }
         }
       }
@@ -908,7 +908,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           const newMessagesDetails: newMessagesDetails = {
             messageId: messageId,
             uId: authUserId,
-            message: ogMessage3 + message,
+            message: ogMessage3 + '\n' + message,
             timeSent: Math.floor((new Date()).getTime() / 1000),
             reacts: [],
             isPinned: false,
@@ -924,7 +924,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           dm.messages.unshift(newMessagesDetails);
           setData(data);
 
-          return { shareMessageId: messageId };
+          return { sharedMessageId: messageId };
         }
       }
     }
@@ -942,7 +942,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           const newMessagesDetails: newMessagesDetails = {
             messageId: messageId,
             uId: authUserId,
-            message: ogMessage4 + message,
+            message: ogMessage4 + '\n' + message,
             timeSent: Math.floor((new Date()).getTime() / 1000),
             reacts: [],
             isPinned: false,
@@ -958,7 +958,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
           channel.messages.unshift(newMessagesDetails);
           setData(data);
 
-          return { shareMessageId: messageId };
+          return { sharedMessageId: messageId };
         }
         for (const member of shareDm.uIds) {
           if (dmId === shareDm.dmId && member === authUserId) {
@@ -967,7 +967,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             const newMessagesDetails: newMessagesDetails = {
               messageId: messageId,
               uId: authUserId,
-              message: ogMessage4 + message,
+              message: ogMessage4 + '\n' + message,
               timeSent: Math.floor((new Date()).getTime() / 1000),
               reacts: [],
               isPinned: false,
@@ -983,7 +983,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             channel.messages.unshift(newMessagesDetails);
             setData(data);
 
-            return { shareMessageId: messageId };
+            return { sharedMessageId: messageId };
           }
         }
       }

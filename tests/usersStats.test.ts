@@ -39,8 +39,8 @@ afterAll(() => {
   request('DELETE', `${url}:${port}/clear/v1`);
 });
 
-describe('Successfully return workplaceStats', () => {
-  test('Successfully return workplaceStats initial', () => {
+describe('Successfully return workspaceStats', () => {
+  test('Successfully return workspaceStats initial', () => {
     const res = request('GET', `${url}:${port}/users/stats/v1`, {
       headers: {
         'Content-type': 'application/json',
@@ -51,7 +51,7 @@ describe('Successfully return workplaceStats', () => {
     const data: any = JSON.parse(res.getBody() as string);
     expect(data).toEqual(
       {
-        workplaceStats: {
+        workspaceStats: {
           channelsExist: [
             {
               numChannelsExist: 0,
@@ -153,7 +153,7 @@ describe('Successfully return workplaceStats', () => {
     const data: any = JSON.parse(res.getBody() as string);
     expect(data).toEqual(
       {
-        workplaceStats: {
+        workspaceStats: {
           channelsExist: [
             {
               numChannelsExist: 0,
@@ -281,7 +281,7 @@ describe('Successfully return workplaceStats', () => {
     const data: any = JSON.parse(res.getBody() as string);
     expect(data).toEqual(
       {
-        workplaceStats: {
+        workspaceStats: {
           channelsExist: [
             {
               numChannelsExist: 0,

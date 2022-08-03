@@ -67,9 +67,9 @@ function usersStatsV1 (token: string, authUserId: number) {
 
   const data: any = getData();
 
-  data.workplaceStats.utilizationRate = utilizationRateCalculator();
+  data.workspaceStats.utilizationRate = utilizationRateCalculator();
 
-  return { workplaceStats: data.workplaceStats };
+  return { workspaceStats: data.workspaceStats };
 }
 
 export {
