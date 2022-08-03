@@ -107,7 +107,7 @@ let data: object = {
     //   resetCode: 'string',
     // }
   ],
-  workplaceStats: {
+  workspaceStats: {
     // channelsExist: [
     //   {
     //     numChannelsExist: 'number',
