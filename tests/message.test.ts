@@ -160,7 +160,7 @@ describe('Testing message - message', () => {
     res = request('POST', `${url}:${port}/message/senddm/v2`, {
       body: JSON.stringify({
         dmId: dm1.dmId,
-        message: 'abc'
+        message: '@mjghridulanand abc '
       }),
       headers: {
         'Content-type': 'application/json',
@@ -449,7 +449,7 @@ describe('Testing message - message', () => {
     res = request('PUT', `${url}:${port}/message/edit/v2`, {
       body: JSON.stringify({
         messageId: 1,
-        message: 'zzz'
+        message: 'zzz @mjghridulanand'
       }),
       headers: {
         'Content-type': 'application/json',
@@ -461,7 +461,7 @@ describe('Testing message - message', () => {
     res = request('PUT', `${url}:${port}/message/edit/v2`, {
       body: JSON.stringify({
         messageId: 5,
-        message: 'zzz'
+        message: 'zzz @mjghridulanand'
       }),
       headers: {
         'Content-type': 'application/json',
@@ -532,7 +532,7 @@ describe('Testing message - message', () => {
     res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
         dmId: dm2.dmId,
-        message: 'sdfgsdg',
+        message: 'sdfgsdg @anandsingh',
         timeSent: (Math.floor(Date.now() / 1000) + 1000)
       },
       headers: {
