@@ -29,7 +29,7 @@ function channelsListallV1(token: string, authUserId: number) {
 
     Arguments:
       token       string type   -- string supplied by request header
-      authUserId  number type   -- string supplied by request header
+      authUserId  number type   -- number supplied by request header
 
     Exceptions:
       FORBIDDEN  - Occurs when sessionId/token is not found in database.
@@ -64,7 +64,7 @@ function channelsListV1(token: string, authUserId: number) {
 
     Arguments:
       token       string type -- Input string supplied by request header
-      authUserId  string type -- Input string supplied by request header
+      authUserId  number type -- Input number supplied by request header
 
     Exceptions:
       FORBIDDEN  - Occurs when sessionId/token is not found in database.
@@ -103,7 +103,7 @@ function channelsCreateV1(token: string, authUserId: number, name: string, isPub
 
     Arguments:
       token       string type   -- Input string supplied by request header
-      authUserId  string type   -- Input string supplied by request header
+      authUserId  number type   -- Input number supplied by request header
       name        string type   -- Input string supplied by user
       isPublic    boolean type  -- Input boolean supplied by user
 

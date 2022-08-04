@@ -173,6 +173,10 @@ describe('Error cases - channel/addowner/v2', () => {
     expect(addowner(registrationData[1].token, channelIdList[0], registrationData[0].authUserId).statusCode).toStrictEqual(BADREQUEST);
     expect(addowner(registrationData[2].token, channelIdList[0], registrationData[0].authUserId).statusCode).toStrictEqual(FORBIDDEN);
   });
+
+  test('Testing for having no permission', () => {
+    expect(addowner(registrationData[1].token, channelIdList[0], registrationData[1].authUserId).statusCode).toStrictEqual(FORBIDDEN);
+  });
 });
 
 describe('Error cases - channel/details/v3', () => {
@@ -371,6 +375,20 @@ describe('Error cases - channel/leave/v2', () => {
   test('Testing for user not in channel', () => {
     expect(channelLeave(registrationData[0].token, channelIdList[2]).statusCode).toStrictEqual(FORBIDDEN);
   });
+
+  test('Testing for unsuccessful leave when standup is active', () => {
+    request('POST', `${url}:${port}/standup/start/v1`, {
+      body: JSON.stringify({
+        channelId: channelIdList[1],
+        length: 4,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[1].token,
+      }
+    });
+    expect(channelLeave(registrationData[1].token, channelIdList[1]).statusCode).toStrictEqual(BADREQUEST);
+  });
 });
 
 describe('Error cases - channel/removeowner/v2', () => {
@@ -392,6 +410,10 @@ describe('Error cases - channel/removeowner/v2', () => {
   test('Testing for remove last person and remove yourself', () => {
     expect(removeOwner(registrationData[0].token, channelIdList[0], registeredUser[0].authUserId).statusCode).toStrictEqual(BADREQUEST);
     expect(removeOwner(registrationData[1].token, channelIdList[1], registeredUser[1].authUserId).statusCode).toStrictEqual(BADREQUEST);
+  });
+
+  test('Testing for removing only global owner', () => {
+    expect(removeOwner(registrationData[1].token, channelIdList[1], registrationData[1].authUserId).statusCode).toStrictEqual(BADREQUEST);
   });
 });
 

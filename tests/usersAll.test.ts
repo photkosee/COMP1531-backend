@@ -50,7 +50,28 @@ describe('Valid returns', () => {
         handleStr: expect.any(String)
       });
     }
-    // ======================== SET UP START ===========================
+
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'user@email.com',
+        password: 'password',
+        nameFirst: 'User',
+        nameLast: 'Last',
+      }
+    });
+    const user2 = JSON.parse(res.getBody() as string);
+    const userId2 = user2.authUserId;
+
+    res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
+      qs: {
+        uId: userId2
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: userData[0].token
+      }
+    });
+    // ======================== SET UP END ===========================
 
     for (const user of userData) {
       const res = request('GET', `${url}:${port}/users/all/v2`, {

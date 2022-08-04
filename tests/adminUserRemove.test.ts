@@ -1,6 +1,7 @@
 import request from 'sync-request';
 import config from '../src/config.json';
 
+const OK = 200;
 const BADREQUEST = 400;
 const FORBIDDEN = 403;
 const port = config.port;
@@ -200,5 +201,84 @@ describe('Errors', () => {
       }
     });
     expect(res.statusCode).toEqual(BADREQUEST);
+  });
+});
+
+describe('Success: Added tests for coverage', () => {
+  test('Removing non global owner with no channels or messages', () => {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'auth@gmail.com',
+        password: 'password',
+        nameFirst: 'Auth',
+        nameLast: 'Last',
+      },
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const authUser: any = JSON.parse(res.getBody() as string);
+    const authToken: string = authUser.token;
+
+    res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'user@gmail.com',
+        password: 'password',
+        nameFirst: 'User',
+        nameLast: 'Last',
+      },
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const user: any = JSON.parse(res.getBody() as string);
+    const userId: number = user.authUserId;
+
+    res = request('POST', `${url}:${port}/admin/userpermission/change/v1`, {
+      json: {
+        uId: userId,
+        permissionId: 1
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: authToken
+      }
+    });
+
+    res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'user2@gmail.com',
+        password: 'password',
+        nameFirst: 'User',
+        nameLast: 'Last',
+      },
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const user2: any = JSON.parse(res.getBody() as string);
+    const userId2: number = user2.authUserId;
+
+    res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
+      qs: {
+        uId: userId
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: authToken
+      }
+    });
+    expect(res.statusCode).toEqual(OK);
+
+    res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
+      qs: {
+        uId: userId2
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: authToken
+      }
+    });
+    expect(res.statusCode).toEqual(OK);
   });
 });
