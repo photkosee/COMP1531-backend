@@ -485,6 +485,18 @@ describe('Testing message - message', () => {
     res = request('PUT', `${url}:${port}/message/edit/v2`, {
       body: JSON.stringify({
         messageId: 6,
+        message: '@mjghridulanand'
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('PUT', `${url}:${port}/message/edit/v2`, {
+      body: JSON.stringify({
+        messageId: 6,
         message: ''
       }),
       headers: {
@@ -501,6 +513,32 @@ describe('Testing message - message', () => {
       headers: {
         'Content-type': 'application/json',
         token: validData[1].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: dm1.dmId,
+        message: '@mriuffhdulrathor',
+        timeSent: (Math.floor(Date.now() / 1000) + 100)
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[0].token
+      }
+    });
+    expect(res.statusCode).toBe(OK);
+
+    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: dm2.dmId,
+        message: '@mriuffhdulrathor',
+        timeSent: (Math.floor(Date.now() / 1000) + 100)
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[0].token
       }
     });
     expect(res.statusCode).toBe(OK);
@@ -546,7 +584,7 @@ describe('Testing message - message', () => {
       json: {
         channelId: ch1.channelId,
         message: 'sdfgsdg',
-        timeSent: (Math.floor(Date.now() / 1000) + 1000)
+        timeSent: (Math.floor(Date.now() / 1000) + 100)
       },
       headers: {
         'Content-type': 'application/json',

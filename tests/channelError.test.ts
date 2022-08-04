@@ -173,6 +173,10 @@ describe('Error cases - channel/addowner/v2', () => {
     expect(addowner(registrationData[1].token, channelIdList[0], registrationData[0].authUserId).statusCode).toStrictEqual(BADREQUEST);
     expect(addowner(registrationData[2].token, channelIdList[0], registrationData[0].authUserId).statusCode).toStrictEqual(FORBIDDEN);
   });
+
+  test('Testing for having no permission', () => {
+    expect(addowner(registrationData[1].token, channelIdList[0], registrationData[1].authUserId).statusCode).toStrictEqual(FORBIDDEN);
+  });
 });
 
 describe('Error cases - channel/details/v3', () => {
