@@ -7,6 +7,8 @@ import jwt from 'jsonwebtoken';
 import { echo } from './echo';
 import env from './env.json';
 import morgan from 'morgan';
+import multer from 'multer';
+import crypto from 'crypto';
 import path from 'path';
 import cors from 'cors';
 import fs from 'fs';
@@ -63,6 +65,7 @@ import {
   channelLeaveV1,
   channelJoinV1
 } from './channel';
+import { sendImageV1 } from './imageUploadHandler';
 
 // Set up web app, use JSON
 const app = express();
@@ -70,6 +73,18 @@ app.use(json());
 
 // Use middleware that allows for access from other domains
 app.use(cors());
+
+// image upload handler for route /send/image/v1
+const storage = multer.diskStorage({
+  destination: './src/uploads/',
+  filename: function (req, file, cb) {
+    crypto.pseudoRandomBytes(16, function (err, raw) {
+      cb(null, raw.toString('hex') + path.extname(file.originalname));
+    });
+  }
+});
+
+const upload = multer({ storage: storage });
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const databasePath: string = __dirname + '/database.json';
@@ -107,6 +122,7 @@ function validateJwtToken(req: Request, res: Response, next: NextFunction) {
 }
 
 app.use('/static', express.static(path.join(__dirname, 'static')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Example get request
 app.get('/echo', (req: Request, res: Response, next: NextFunction) => {
@@ -120,16 +136,6 @@ app.get('/echo', (req: Request, res: Response, next: NextFunction) => {
 
 app.delete('/clear/v1', (req: Request, res: Response, next: NextFunction) => {
   return res.json(clearV1());
-});
-
-app.post('/google/login/v1', (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { email, given_name, family_name, picture } = req.body;
-    const returnData = googleLoginV1(email, given_name, family_name, picture);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
 });
 
 app.post('/auth/register/v3', (req: Request, res: Response, next: NextFunction) => {
@@ -689,6 +695,34 @@ app.get('/search/v1', validateJwtToken, (req: Request, res: Response, next: Next
     const queryStr = (req.query.queryStr as string);
     const returnData = searchV1(token, authUserId, queryStr);
     return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// BONUS-FEATURES
+app.post('/google/login/v1', (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, given_name, family_name, picture } = req.body;
+    const returnData = googleLoginV1(email, given_name, family_name, picture);
+    return res.json(returnData);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/send/image/v1', validateJwtToken, upload.single('image'), (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.file) {
+      throw HTTPError(400, 'Invalid File data');
+    } else {
+      const token = res.locals.token.salt;
+      const authUserId = res.locals.token.id;
+      const { channelId, dmId } = req.body;
+      const { filename } = req.file;
+      const returnData = sendImageV1(token, authUserId, parseInt(channelId), parseInt(dmId), filename);
+      return res.json(returnData);
+    }
   } catch (err) {
     next(err);
   }
