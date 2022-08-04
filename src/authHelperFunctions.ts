@@ -211,8 +211,7 @@ async function sendEmail(email: string, name: string, resetCode: string) {
     }
   };
 
-  return message;
-  // await sgMail.send(message);
+  await sgMail.send(message);
 }
 
 export {
