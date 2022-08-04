@@ -32,9 +32,7 @@ interface newMessagesDetails {
 
 function sendImageV1(token: string, authUserId: number, channelId: number, dmId: number, filename: string) {
   if (!(checkToken(token, authUserId))) {
-    fs.unlink(path.join(__dirname, `uploads/${filename}`), err => {
-      if (err) console.log(err);
-    });
+    fs.unlinkSync(path.join(__dirname, `uploads/${filename}`));
     throw HTTPError(FORBIDDEN, 'Invalid Session ID or Token');
   }
 
@@ -42,9 +40,7 @@ function sendImageV1(token: string, authUserId: number, channelId: number, dmId:
 
   if (channelId !== -1) {
     if (!checkChannelId(channelId)) {
-      fs.unlink(path.join(__dirname, `uploads/${filename}`), err => {
-        if (err) console.log(err);
-      });
+      fs.unlinkSync(path.join(__dirname, `uploads/${filename}`));
       throw HTTPError(BADREQUEST, 'Invalid channelId');
     }
 
@@ -84,9 +80,7 @@ function sendImageV1(token: string, authUserId: number, channelId: number, dmId:
     }
   } else {
     if (!(dmIdValidator(dmId))) {
-      fs.unlink(path.join(__dirname, `uploads/${filename}`), err => {
-        if (err) console.log(err);
-      });
+      fs.unlinkSync(path.join(__dirname, `uploads/${filename}`));
       throw HTTPError(BADREQUEST, 'dmId does not refer to a valid DM');
     }
 
@@ -121,9 +115,7 @@ function sendImageV1(token: string, authUserId: number, channelId: number, dmId:
     }
   }
 
-  fs.unlink(path.join(__dirname, `uploads/${filename}`), err => {
-    if (err) console.log(err);
-  });
+  fs.unlinkSync(path.join(__dirname, `uploads/${filename}`));
 
   throw HTTPError(FORBIDDEN, 'You are not a member');
 }
