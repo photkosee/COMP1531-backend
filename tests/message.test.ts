@@ -6,6 +6,9 @@ const port = config.port;
 const url = config.url;
 
 let registrationData: any = [];
+let channelIdList: any = [];
+let dmIdList: any = [];
+let msgIdList: any = [];
 
 const registeredUser: any = [
   { email: 'mridul@gmail.com', password: 'uhunr567T#$%', nameFirst: 'Mjghridul', nameLast: 'Anand' },
@@ -36,13 +39,16 @@ afterAll(() => {
 });
 
 describe('Testing message - message', () => {
-  test('Combined message', () => {
+  channelIdList = [];
+  dmIdList = [];
+  msgIdList = [];
+
+  test('Create channels and dms', () => {
     const validData: any = [
       { token: registrationData[0].token, uIds: [registrationData[2].authUserId] },
       { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
       { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
     ];
-
     let res = request('POST', `${url}:${port}/dm/create/v2`, {
       body: JSON.stringify({
         uIds: [registrationData[2].authUserId]
@@ -53,6 +59,7 @@ describe('Testing message - message', () => {
       }
     });
     const dm1 = JSON.parse(res.body as string);
+    dmIdList.push(dm1);
 
     res = request('POST', `${url}:${port}/dm/create/v2`, {
       body: JSON.stringify({
@@ -64,6 +71,7 @@ describe('Testing message - message', () => {
       }
     });
     const dm2 = JSON.parse(res.body as string);
+    dmIdList.push(dm2);
 
     res = request('POST', `${url}:${port}/dm/create/v2`, {
       body: JSON.stringify({
@@ -86,10 +94,11 @@ describe('Testing message - message', () => {
       }
     });
     const ch1 = JSON.parse(res.body as string);
+    channelIdList.push(ch1);
 
     request('POST', `${url}:${port}/channel/join/v3`, {
       json: {
-        channelId: ch1.channelId
+        channelId: channelIdList[0].channelId
       },
       headers: {
         'Content-type': 'application/json',
@@ -108,20 +117,28 @@ describe('Testing message - message', () => {
       }
     });
     const ch2 = JSON.parse(res.body as string);
+    channelIdList.push(ch2);
 
     request('POST', `${url}:${port}/channel/join/v3`, {
       json: {
-        channelId: ch2.channelId
+        channelId: channelIdList[1].channelId
       },
       headers: {
         'Content-type': 'application/json',
         token: validData[2].token
       }
     });
+  });
 
-    res = request('POST', `${url}:${port}/message/send/v2`, {
+  test('Sending messages', () => {
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[2].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
+    let res = request('POST', `${url}:${port}/message/send/v2`, {
       body: JSON.stringify({
-        channelId: ch1.channelId,
+        channelId: channelIdList[0].channelId,
         message: 'abc'
       }),
       headers: {
@@ -133,7 +150,7 @@ describe('Testing message - message', () => {
 
     res = request('POST', `${url}:${port}/message/send/v2`, {
       body: JSON.stringify({
-        channelId: ch1.channelId,
+        channelId: channelIdList[0].channelId,
         message: 'abc'
       }),
       headers: {
@@ -143,10 +160,10 @@ describe('Testing message - message', () => {
     });
     expect(res.statusCode).toBe(OK);
     const ms2 = JSON.parse(res.body as string);
-
+    msgIdList.push(ms2);
     res = request('POST', `${url}:${port}/message/send/v2`, {
       body: JSON.stringify({
-        channelId: ch2.channelId,
+        channelId: channelIdList[1].channelId,
         message: 'abc'
       }),
       headers: {
@@ -156,10 +173,10 @@ describe('Testing message - message', () => {
     });
     expect(res.statusCode).toBe(OK);
     const ms3 = JSON.parse(res.body as string);
-
+    msgIdList.push(ms3);
     res = request('POST', `${url}:${port}/message/senddm/v2`, {
       body: JSON.stringify({
-        dmId: dm1.dmId,
+        dmId: dmIdList[0].dmId,
         message: '@mjghridulanand abc '
       }),
       headers: {
@@ -169,8 +186,16 @@ describe('Testing message - message', () => {
     });
     expect(res.statusCode).toBe(OK);
     const ms4 = JSON.parse(res.body as string);
+    msgIdList.push(ms4);
+  });
 
-    res = request('POST', `${url}:${port}/message/react/v1`, {
+  test('react and unreact', () => {
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[2].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
+    let res = request('POST', `${url}:${port}/message/react/v1`, {
       body: JSON.stringify({
         messageId: 1,
         reactId: 1
@@ -205,10 +230,17 @@ describe('Testing message - message', () => {
       }
     });
     expect(res.statusCode).toBe(OK);
+  });
 
-    res = request('POST', `${url}:${port}/message/senddm/v2`, {
+  test('sharing and react to test if it is independent', () => {
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[2].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
+    let res = request('POST', `${url}:${port}/message/senddm/v2`, {
       body: JSON.stringify({
-        dmId: dm2.dmId,
+        dmId: dmIdList[1].dmId,
         message: 'abc'
       }),
       headers: {
@@ -218,10 +250,10 @@ describe('Testing message - message', () => {
     });
     expect(res.statusCode).toBe(OK);
     const ms5 = JSON.parse(res.body as string);
-
+    msgIdList.push(ms5);
     res = request('POST', `${url}:${port}/message/senddm/v2`, {
       body: JSON.stringify({
-        dmId: dm1.dmId,
+        dmId: dmIdList[0].dmId,
         message: 'abc'
       }),
       headers: {
@@ -233,10 +265,10 @@ describe('Testing message - message', () => {
 
     res = request('POST', `${url}:${port}/message/share/v1`, {
       body: JSON.stringify({
-        ogMessageId: ms4.messageId,
+        ogMessageId: msgIdList[2].messageId,
         message: 'asdf',
         channelId: -1,
-        dmId: dm2.dmId
+        dmId: dmIdList[1].dmId
       }),
       headers: {
         'Content-type': 'application/json',
@@ -247,9 +279,9 @@ describe('Testing message - message', () => {
 
     res = request('POST', `${url}:${port}/message/share/v1`, {
       body: JSON.stringify({
-        ogMessageId: ms5.messageId,
+        ogMessageId: msgIdList[3].messageId,
         message: 'asdf',
-        channelId: ch1.channelId,
+        channelId: channelIdList[0].channelId,
         dmId: -1
       }),
       headers: {
@@ -261,9 +293,9 @@ describe('Testing message - message', () => {
 
     res = request('POST', `${url}:${port}/message/share/v1`, {
       body: JSON.stringify({
-        ogMessageId: ms3.messageId,
+        ogMessageId: msgIdList[1].messageId,
         message: 'asdf',
-        channelId: ch1.channelId,
+        channelId: channelIdList[0].channelId,
         dmId: -1
       }),
       headers: {
@@ -323,10 +355,10 @@ describe('Testing message - message', () => {
 
     res = request('POST', `${url}:${port}/message/share/v1`, {
       body: JSON.stringify({
-        ogMessageId: ms2.messageId,
+        ogMessageId: msgIdList[0].messageId,
         message: 'asdf',
         channelId: -1,
-        dmId: dm1.dmId
+        dmId: dmIdList[0].dmId
       }),
       headers: {
         'Content-type': 'application/json',
@@ -337,10 +369,10 @@ describe('Testing message - message', () => {
 
     res = request('POST', `${url}:${port}/message/share/v1`, {
       body: JSON.stringify({
-        ogMessageId: ms4.messageId,
+        ogMessageId: msgIdList[2].messageId,
         message: 'asdf',
         channelId: -1,
-        dmId: dm1.dmId
+        dmId: dmIdList[0].dmId
       }),
       headers: {
         'Content-type': 'application/json',
@@ -351,10 +383,10 @@ describe('Testing message - message', () => {
 
     res = request('POST', `${url}:${port}/message/share/v1`, {
       body: JSON.stringify({
-        ogMessageId: ms3.messageId,
+        ogMessageId: msgIdList[1].messageId,
         message: 'asdf',
         channelId: -1,
-        dmId: dm2.dmId
+        dmId: dmIdList[1].dmId
       }),
       headers: {
         'Content-type': 'application/json',
@@ -365,10 +397,10 @@ describe('Testing message - message', () => {
 
     res = request('POST', `${url}:${port}/message/share/v1`, {
       body: JSON.stringify({
-        ogMessageId: ms3.messageId,
+        ogMessageId: msgIdList[1].messageId,
         message: 'asdf',
         channelId: -1,
-        dmId: dm2.dmId
+        dmId: dmIdList[1].dmId
       }),
       headers: {
         'Content-type': 'application/json',
@@ -379,9 +411,9 @@ describe('Testing message - message', () => {
 
     res = request('POST', `${url}:${port}/message/share/v1`, {
       body: JSON.stringify({
-        ogMessageId: ms5.messageId,
+        ogMessageId: msgIdList[3].messageId,
         message: 'asdf',
-        channelId: ch2.channelId,
+        channelId: channelIdList[1].channelId,
         dmId: -1
       }),
       headers: {
@@ -390,8 +422,15 @@ describe('Testing message - message', () => {
       }
     });
     expect(res.statusCode).toBe(OK);
+  });
 
-    res = request('POST', `${url}:${port}/message/pin/v1`, {
+  test('Pin and unpin', () => {
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[2].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
+    let res = request('POST', `${url}:${port}/message/pin/v1`, {
       body: JSON.stringify({
         messageId: 1
       }),
@@ -445,8 +484,15 @@ describe('Testing message - message', () => {
       }
     });
     expect(res.statusCode).toBe(OK);
+  });
 
-    res = request('PUT', `${url}:${port}/message/edit/v2`, {
+  test('editing and removing', () => {
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[2].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
+    let res = request('PUT', `${url}:${port}/message/edit/v2`, {
       body: JSON.stringify({
         messageId: 1,
         message: 'zzz @mjghridulanand'
@@ -516,31 +562,74 @@ describe('Testing message - message', () => {
       }
     });
     expect(res.statusCode).toBe(OK);
+  });
 
-    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+  test('sendlater', async() => {
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[2].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
+    const res = request('POST', `${url}:${port}/message/sendlater/v1`, {
       json: {
-        dmId: dm1.dmId,
-        message: '@mriuffhdulrathor',
-        timeSent: (Math.floor(Date.now() / 1000) + 100)
+        channelId: channelIdList[0].channelId,
+        message: 'sdfgsdg',
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
       },
       headers: {
         'Content-type': 'application/json',
-        token: validData[0].token
+        token: validData[1].token
       }
     });
+
+    await new Promise((r) => setTimeout(r, 2500));
+
     expect(res.statusCode).toBe(OK);
+  });
 
-    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+  test('sendlaterdm', async() => {
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[2].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
+    const res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
-        dmId: dm2.dmId,
+        dmId: dmIdList[1].dmId,
         message: '@mriuffhdulrathor',
-        timeSent: (Math.floor(Date.now() / 1000) + 100)
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
       },
       headers: {
         'Content-type': 'application/json',
         token: validData[0].token
       }
     });
+
+    await new Promise((r) => setTimeout(r, 2500));
+
+    expect(res.statusCode).toBe(OK);
+  });
+
+  test('sendlaterdm and removing', async() => {
+    const validData: any = [
+      { token: registrationData[0].token, uIds: [registrationData[2].authUserId] },
+      { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
+      { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    ];
+    let res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
+      json: {
+        dmId: dmIdList[0].dmId,
+        message: '@mjghridulanand',
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: validData[2].token
+      }
+    });
+
+    await new Promise((r) => setTimeout(r, 2500));
+
     expect(res.statusCode).toBe(OK);
 
     res = request('DELETE', `${url}:${port}/message/remove/v2`, {
@@ -553,47 +642,10 @@ describe('Testing message - message', () => {
       }
     });
     expect(res.statusCode).toBe(OK);
+  });
 
-    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
-      json: {
-        dmId: dm1.dmId,
-        message: 'sdfgsdg',
-        timeSent: (Math.floor(Date.now() / 1000) + 1000)
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[0].token
-      }
-    });
-    expect(res.statusCode).toBe(OK);
-
-    res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
-      json: {
-        dmId: dm2.dmId,
-        message: 'sdfgsdg @anandsingh',
-        timeSent: (Math.floor(Date.now() / 1000) + 1000)
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[1].token
-      }
-    });
-    expect(res.statusCode).toBe(OK);
-
-    res = request('POST', `${url}:${port}/message/sendlater/v1`, {
-      json: {
-        channelId: ch1.channelId,
-        message: 'sdfgsdg',
-        timeSent: (Math.floor(Date.now() / 1000) + 100)
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: validData[1].token
-      }
-    });
-    expect(res.statusCode).toBe(OK);
-
-    res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
+  test('removing user', () => {
+    let res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
       qs: {
         uId: registrationData[1].authUserId
       },

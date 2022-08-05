@@ -62,10 +62,6 @@ function checkChannelId(channelId: number) {
 
   const data: any = getData();
 
-  if (typeof channelId !== 'number') {
-    return false;
-  }
-
   for (const channel of data.channels) {
     if (channelId === channel.channelId) {
       return true;
