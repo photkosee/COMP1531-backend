@@ -31,7 +31,9 @@ https://accounts.google.com/gsi/client
 
 ### Edited Files in Backend
 src/auth.ts
+
 Function: googleLoginV1
+
 https://gitlab.cse.unsw.edu.au/COMP1531/22T2/groups/F09A_CRUNCHIE/project-backend/-/blob/iter3/bonus-feature/src/auth.ts
 
 ### Links to Edited Frontend Repo
@@ -56,7 +58,10 @@ https://www.npmjs.com/package/multer
 
 ### Edited Files in Backend
 src/imageUploadHandler.ts
+
 Function: sendImageV1
+
+https://gitlab.cse.unsw.edu.au/COMP1531/22T2/groups/F09A_CRUNCHIE/project-backend/-/blob/iter3/bonus-feature/src/imageUploadHandler.ts
 
 ## Links to Edited Frontend Repo
 - https://gitlab.cse.unsw.edu.au/z5343320/project-frontend/-/blob/master/src/components/Message/index.js
