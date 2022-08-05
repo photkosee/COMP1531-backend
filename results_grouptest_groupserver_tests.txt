@@ -1,0 +1,77 @@
+(node:14198) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:14198) [DEP0128] DeprecationWarning: Invalid 'main' field in '/usr/lib/nodejs/puka/package.json' of 'dist/index.js'. Please either fix that or report it to the module author
+npm verb cli [
+npm verb cli   '/usr/bin/node',
+npm verb cli   '/usr/bin/npm',
+npm verb cli   'run',
+npm verb cli   'test',
+npm verb cli   '--verbose',
+npm verb cli   '--testMatch',
+npm verb cli   '**/?(*.)+(test).ts'
+npm verb cli ]
+npm info using npm@7.5.2
+npm info using node@v16.14.2
+npm timing config:load:defaults Completed in 1ms
+npm timing config:load:file:/usr/share/nodejs/npm/npmrc Completed in 2ms
+npm timing config:load:builtin Completed in 2ms
+npm timing config:load:cli Completed in 2ms
+npm timing config:load:env Completed in 1ms
+npm timing config:load:file:/tmp_amd/kamen/export/kamen/3/z5320452/marking/project-automarking/tempstore/.npmrc Completed in 0ms
+npm timing config:load:project Completed in 0ms
+npm timing config:load:file:/import/kamen/3/z5320452/.npmrc Completed in 0ms
+npm timing config:load:user Completed in 1ms
+npm timing config:load:file:/etc/npmrc Completed in 0ms
+npm timing config:load:global Completed in 0ms
+npm timing config:load:cafile Completed in 0ms
+npm timing config:load:validate Completed in 1ms
+npm timing config:load:setUserAgent Completed in 0ms
+npm timing config:load:setEnvs Completed in 1ms
+npm timing config:load Completed in 9ms
+npm verb npm-session c807a04b8a690809
+npm timing npm:load Completed in 20ms
+
+> test
+> jest "**/?(*.)+(test).ts"
+
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+  Invalid testPattern **/?(*.)+(test).ts supplied. Running all tests instead.
+PASS tests/channelRemoveowner.test.ts
+PASS tests/channelInvite.test.ts
+PASS tests/authRegister.test.ts
+PASS tests/channelJoin.test.ts
+PASS tests/channelAddowner.test.ts
+PASS tests/channelDetails.test.ts
+PASS tests/userProfileSethandle.test.ts
+PASS tests/dmDetails.test.ts
+PASS tests/userProfileSetemail.test.ts
+PASS tests/messageSenddm.test.ts
+PASS tests/channelLeave.test.ts
+PASS tests/dmCreate.test.ts
+PASS tests/dmMessages.test.ts
+PASS tests/channelMessages.test.ts
+PASS tests/dmLeave.test.ts
+PASS tests/dmRemove.test.ts
+PASS tests/channelsListall.test.ts
+PASS tests/userProfileSetname.test.ts
+PASS tests/messageEdit.test.ts
+PASS tests/messageRemove.test.ts
+PASS tests/dmList.test.ts
+PASS tests/channelsCreate.test.ts
+PASS tests/authLogin.test.ts
+PASS tests/channelsList.test.ts
+PASS tests/usersAll.test.ts
+PASS tests/messageSend.test.ts
+PASS tests/userProfile.test.ts
+PASS tests/authLogout.test.ts
+PASS tests/other.test.ts
+
+Test Suites: 29 passed, 29 total
+Tests:       132 passed, 132 total
+Snapshots:   0 total
+Time:        38.117 s
+Ran all test suites.
+npm timing command:run-script Completed in 39456ms
+npm verb exit 0
+npm timing npm Completed in 39669ms
+npm info ok 
