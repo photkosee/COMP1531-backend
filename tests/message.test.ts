@@ -36,7 +36,7 @@ afterAll(() => {
 });
 
 describe('Testing message - message', () => {
-  test('Combined message', () => {
+  test('Combined message', async() => {
     const validData: any = [
       { token: registrationData[0].token, uIds: [registrationData[2].authUserId] },
       { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
@@ -521,26 +521,32 @@ describe('Testing message - message', () => {
       json: {
         dmId: dm1.dmId,
         message: '@mriuffhdulrathor',
-        timeSent: (Math.floor(Date.now() / 1000) + 100)
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
       },
       headers: {
         'Content-type': 'application/json',
         token: validData[0].token
       }
     });
+
+    await new Promise((r) => setTimeout(r, 2500));
+
     expect(res.statusCode).toBe(OK);
 
     res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
         dmId: dm2.dmId,
         message: '@mriuffhdulrathor',
-        timeSent: (Math.floor(Date.now() / 1000) + 100)
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
       },
       headers: {
         'Content-type': 'application/json',
         token: validData[0].token
       }
     });
+
+    await new Promise((r) => setTimeout(r, 2500));
+
     expect(res.statusCode).toBe(OK);
 
     res = request('DELETE', `${url}:${port}/message/remove/v2`, {
@@ -558,39 +564,48 @@ describe('Testing message - message', () => {
       json: {
         dmId: dm1.dmId,
         message: 'sdfgsdg',
-        timeSent: (Math.floor(Date.now() / 1000) + 1000)
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
       },
       headers: {
         'Content-type': 'application/json',
         token: validData[0].token
       }
     });
+
+    await new Promise((r) => setTimeout(r, 2500));
+
     expect(res.statusCode).toBe(OK);
 
     res = request('POST', `${url}:${port}/message/sendlaterdm/v1`, {
       json: {
         dmId: dm2.dmId,
         message: 'sdfgsdg @anandsingh',
-        timeSent: (Math.floor(Date.now() / 1000) + 1000)
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
       },
       headers: {
         'Content-type': 'application/json',
         token: validData[1].token
       }
     });
+
+    await new Promise((r) => setTimeout(r, 2500));
+
     expect(res.statusCode).toBe(OK);
 
     res = request('POST', `${url}:${port}/message/sendlater/v1`, {
       json: {
         channelId: ch1.channelId,
         message: 'sdfgsdg',
-        timeSent: (Math.floor(Date.now() / 1000) + 100)
+        timeSent: (Math.floor(Date.now() / 1000) + 1.5)
       },
       headers: {
         'Content-type': 'application/json',
         token: validData[1].token
       }
     });
+
+    await new Promise((r) => setTimeout(r, 2500));
+
     expect(res.statusCode).toBe(OK);
 
     res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
