@@ -64,7 +64,6 @@ describe('Test Cases for HTTP Route: dm/create/v2', () => {
     const invalidUidData: any = [
       { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId, -1] },
       { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, -1] },
-      { token: registrationData[2].token, uIds: [] },
     ];
 
     for (let i = 0; i < invalidUidData.length; i++) {
@@ -141,8 +140,7 @@ describe('Test Cases for HTTP Route: dm/list/v2', () => {
     const validData = [
       { token: registrationData[0].token, expected: [{ dmId: dmIdList[0], name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: dmIdList[1], name: 'anandsingh, mridulanand, mridulrathor' }] },
       { token: registrationData[1].token, expected: [{ dmId: dmIdList[0], name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: dmIdList[1], name: 'anandsingh, mridulanand, mridulrathor' }] },
-      { token: registrationData[2].token, expected: [{ dmId: dmIdList[0], name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: dmIdList[1], name: 'anandsingh, mridulanand, mridulrathor' }] },
-      { token: registrationData[3].token, expected: [] }
+      { token: registrationData[2].token, expected: [{ dmId: dmIdList[0], name: 'anandsingh, mridulanand, mridulrathor' }, { dmId: dmIdList[1], name: 'anandsingh, mridulanand, mridulrathor' }] }
     ];
 
     for (let i = 0; i < validData.length; i++) {
