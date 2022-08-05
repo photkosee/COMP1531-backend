@@ -801,7 +801,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
   const data: any = getData();
   // check if the original message is from dm(1) or channel(0)
   let checkMessage = -1;
-  
+
   for (const channel of data.channels) {
     const messageIndex: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
     if (messageIndex > -1) {
@@ -855,7 +855,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
                   channelId: shareChannel.channelId,
                   dmId: -1,
                   notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareChannel.name}: ${shortMsg}`
-                })
+                });
               }
             }
             shareChannel.messages.unshift(newMessagesDetails);
@@ -937,7 +937,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
                     channelId: -1,
                     dmId: shareDm.dmId,
                     notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareDm.name}: ${shortMsg}`
-                  })
+                  });
                 }
               }
               shareDm.messages.unshift(newMessagesDetails);
@@ -991,7 +991,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
                   channelId: shareChannel.channelId,
                   dmId: -1,
                   notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareChannel.name}: ${shortMsg}`
-                })
+                });
               }
             }
             shareChannel.messages.unshift(newMessagesDetails);
@@ -1046,7 +1046,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
                   channelId: -1,
                   dmId: shareDm.dmId,
                   notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareDm.name}: ${shortMsg}`
-                })
+                });
               }
             }
             shareDm.messages.unshift(newMessagesDetails);
