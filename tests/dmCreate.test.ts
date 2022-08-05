@@ -42,6 +42,7 @@ test('Test for successful dm creation - dm/create/v1', () => {
     { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId] },
     { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId] },
     { token: registrationData[2].token, uIds: [registrationData[0].authUserId, registrationData[1].authUserId] },
+    { token: registrationData[2].token, uIds: [] }
   ];
 
   for (let i = 0; i < validData.length; i++) {
@@ -61,7 +62,6 @@ test('Test for any uId in uIds does not refer to a valid user - dm/create/v1', (
   const invalidUidData: any = [
     { token: registrationData[0].token, uIds: [registrationData[1].authUserId, registrationData[2].authUserId, 4] },
     { token: registrationData[1].token, uIds: [registrationData[0].authUserId, registrationData[2].authUserId, 5] },
-    { token: registrationData[2].token, uIds: [] },
   ];
 
   for (let i = 0; i < invalidUidData.length; i++) {
