@@ -801,7 +801,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
   const data: any = getData();
   // check if the original message is from dm(1) or channel(0)
   let checkMessage = -1;
-  
+
   for (const channel of data.channels) {
     const messageIndex: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
     if (messageIndex > -1) {
@@ -814,6 +814,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
       checkMessage = 1;
     }
   }
+
   const mentions = message.match(/@\w+/gi) || [];
   const shortMsg = message.slice(0, 20);
   const usersToNotif = [];
@@ -844,18 +845,19 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             };
             newMessagesDetails.reacts.push(newReactsDetails);
             for (const member of shareChannel.allMembers) {
-              const tag = '@' + getHandleStr(member.authUserId);
+              const tag = '@' + getHandleStr(member.uId);
               if (mentions.includes(tag)) {
-                usersToNotif.push(member.authUserId);
+                usersToNotif.push(member.uId);
               }
             }
+
             for (const user of data.users) {
               if (usersToNotif.includes(user.authUserId)) {
                 user.notifications.unshift({
                   channelId: shareChannel.channelId,
                   dmId: -1,
                   notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareChannel.name}: ${shortMsg}`
-                })
+                });
               }
             }
             shareChannel.messages.unshift(newMessagesDetails);
@@ -895,7 +897,24 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
               isThisUserReacted: false,
             };
             newMessagesDetails.reacts.push(newReactsDetails);
-
+            for (const member of shareDm.uIds) {
+              const tag = '@' + getHandleStr(member);
+              if (mentions.includes(tag)) {
+                usersToNotif.push(member);
+              }
+            }
+            if (mentions.includes('@' + getHandleStr(shareDm.creatorId))) {
+              usersToNotif.push(shareDm.creatorId);
+            }
+            for (const user of data.users) {
+              if (usersToNotif.includes(user.authUserId)) {
+                user.notifications.unshift({
+                  channelId: -1,
+                  dmId: shareDm.dmId,
+                  notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareDm.name}: ${shortMsg}`
+                });
+              }
+            }
             shareDm.messages.unshift(newMessagesDetails);
             incrementMessagesExist();
             incrementMessagesSent(authUserId);
@@ -922,24 +941,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
                 isThisUserReacted: false,
               };
               newMessagesDetails.reacts.push(newReactsDetails);
-              for (const member of shareDm.uIds) {
-                const tag = '@' + getHandleStr(member);
-                if (mentions.includes(tag)) {
-                  usersToNotif.push(member);
-                }
-              }
-              if (mentions.includes('@' + getHandleStr(shareDm.creatorId))) {
-                usersToNotif.push(shareDm.creatorId);
-              }
-              for (const user of data.users) {
-                if (usersToNotif.includes(user.authUserId)) {
-                  user.notifications.unshift({
-                    channelId: -1,
-                    dmId: shareDm.dmId,
-                    notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareDm.name}: ${shortMsg}`
-                  })
-                }
-              }
+
               shareDm.messages.unshift(newMessagesDetails);
               incrementMessagesExist();
               incrementMessagesSent(authUserId);
@@ -980,9 +982,9 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
             };
             newMessagesDetails.reacts.push(newReactsDetails);
             for (const member of shareChannel.allMembers) {
-              const tag = '@' + getHandleStr(member.authUserId);
+              const tag = '@' + getHandleStr(member.uId);
               if (mentions.includes(tag)) {
-                usersToNotif.push(member.authUserId);
+                usersToNotif.push(member.uId);
               }
             }
             for (const user of data.users) {
@@ -991,7 +993,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
                   channelId: shareChannel.channelId,
                   dmId: -1,
                   notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareChannel.name}: ${shortMsg}`
-                })
+                });
               }
             }
             shareChannel.messages.unshift(newMessagesDetails);
@@ -1046,7 +1048,7 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
                   channelId: -1,
                   dmId: shareDm.dmId,
                   notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareDm.name}: ${shortMsg}`
-                })
+                });
               }
             }
             shareDm.messages.unshift(newMessagesDetails);

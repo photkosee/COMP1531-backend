@@ -58,6 +58,7 @@ describe('Testing successful notification get - notifications/get', () => {
         token: registrationData[0].token
       }
     });
+    const channel1 = JSON.parse(res.body as string);
     res = request('POST', `${url}:${port}/channels/create/v3`, {
       json: ({
         name: 'DOTA3',
@@ -71,7 +72,7 @@ describe('Testing successful notification get - notifications/get', () => {
     const channel2 = JSON.parse(res.body as string);
     res = request('POST', `${url}:${port}/message/send/v2`, {
       json: ({
-        channelId: 1,
+        channelId: channel1.channelId,
         message: '@aa@ hello'
       }),
       headers: {
@@ -82,10 +83,10 @@ describe('Testing successful notification get - notifications/get', () => {
     const message1 = JSON.parse(res.body as string);
     res = request('POST', `${url}:${port}/message/share/v1`, {
       json: ({
-        messageId: message1.messageId,
+        ogMessageId: message1.messageId,
+        message: '@aa@ hello again',
         channelId: channel2.channelId,
         dmId: -1,
-        message: '@aa@ hello again'
       }),
       headers: {
         'Content-type': 'application/json',
@@ -115,6 +116,48 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     });
     const dm1 = JSON.parse(res.body as string);
+    res = request('POST', `${url}:${port}/message/share/v1`, {
+      json: ({
+        ogMessageId: message1.messageId,
+        message: '@aa@bb hello aa and bb',
+        channelId: -1,
+        dmId: dm1.dmId,
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    res = request('GET', `${url}:${port}/notifications/get/v1`, {
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[1].token
+      }
+    });
+    expect(res.statusCode).toStrictEqual(OK);
+  });
+
+  test('successful notif for add to dm and tagging in dm', () => {
+    let res = request('POST', `${url}:${port}/dm/create/v2`, {
+      json: {
+        uIds: [registrationData[1].authUserId],
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    const dm1 = JSON.parse(res.body as string);
+    res = request('POST', `${url}:${port}/dm/create/v2`, {
+      json: {
+        uIds: [registrationData[1].authUserId],
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    const dm2 = JSON.parse(res.body as string);
     res = request('POST', `${url}:${port}/message/senddm/v2`, {
       json: ({
         dmId: dm1.dmId,
@@ -126,12 +169,49 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     });
     const message2 = JSON.parse(res.body as string);
+    res = request('POST', `${url}:${port}/channels/create/v3`, {
+      json: ({
+        name: 'DOTA2',
+        isPublic: true
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    const channel1 = JSON.parse(res.body as string);
     res = request('POST', `${url}:${port}/message/share/v1`, {
       json: ({
-        messageId: message2.messageId,
+        ogMessageId: message2.messageId,
+        message: '@aa hello2 again again',
         channelId: -1,
-        dmId: dm1.dmId,
-        message: '@aa@ hello2 again again'
+        dmId: dm2.dmId,
+
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    res = request('POST', `${url}:${port}/message/share/v1`, {
+      json: ({
+        ogMessageId: message2.messageId,
+        message: '@aa@ hello3',
+        channelId: channel1.channelId,
+        dmId: -1,
+
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+    res = request('POST', `${url}:${port}/message/share/v1`, {
+      json: ({
+        ogMessageId: message2.messageId,
+        message: '@bb@ hello bb',
+        channelId: -1,
+        dmId: dm2.dmId,
       }),
       headers: {
         'Content-type': 'application/json',
@@ -145,52 +225,6 @@ describe('Testing successful notification get - notifications/get', () => {
       }
     });
     expect(res.statusCode).toStrictEqual(OK);
-  });
-
-  test('successful notif for add to dm', () => {
-    let res = request('POST', `${url}:${port}/dm/create/v2`, {
-      json: {
-        uIds: [registrationData[1].authUserId],
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: registrationData[0].token
-      }
-    });
-    res = request('POST', `${url}:${port}/dm/create/v2`, {
-      json: {
-        uIds: [registrationData[1].authUserId],
-      },
-      headers: {
-        'Content-type': 'application/json',
-        token: registrationData[0].token
-      }
-    });
-    const dm1 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/message/senddm/v2`, {
-      json: ({
-        dmId: dm1.dmId,
-        message: '@aa@ hello2'
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: registrationData[0].token
-      }
-    });
-    const message2 = JSON.parse(res.body as string);
-    res = request('POST', `${url}:${port}/message/share/v1`, {
-      json: ({
-        messageId: message2.messageId,
-        channelId: -1,
-        dmId: dm1.dmId,
-        message: '@aa@ hello2 again again'
-      }),
-      headers: {
-        'Content-type': 'application/json',
-        token: registrationData[0].token
-      }
-    });
-
     res = request('GET', `${url}:${port}/notifications/get/v1`, {
       headers: {
         'Content-type': 'application/json',
