@@ -815,6 +815,9 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
     }
   }
 
+  const mentions = message.match(/@\w+/gi) || [];
+  const shortMsg = message.slice(0, 20);
+  const usersToNotif = [];
   if (checkMessage === 0 && dmId === -1) {
     // share between channel to channel
     for (const channel of data.channels) {
@@ -841,7 +844,22 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
               isThisUserReacted: false,
             };
             newMessagesDetails.reacts.push(newReactsDetails);
+            for (const member of shareChannel.allMembers) {
+              const tag = '@' + getHandleStr(member.uId);
+              if (mentions.includes(tag)) {
+                usersToNotif.push(member.uId);
+              }
+            }
 
+            for (const user of data.users) {
+              if (usersToNotif.includes(user.authUserId)) {
+                user.notifications.unshift({
+                  channelId: shareChannel.channelId,
+                  dmId: -1,
+                  notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareChannel.name}: ${shortMsg}`
+                });
+              }
+            }
             shareChannel.messages.unshift(newMessagesDetails);
             incrementMessagesExist();
             incrementMessagesSent(authUserId);
@@ -879,7 +897,24 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
               isThisUserReacted: false,
             };
             newMessagesDetails.reacts.push(newReactsDetails);
-
+            for (const member of shareDm.uIds) {
+              const tag = '@' + getHandleStr(member);
+              if (mentions.includes(tag)) {
+                usersToNotif.push(member);
+              }
+            }
+            if (mentions.includes('@' + getHandleStr(shareDm.creatorId))) {
+              usersToNotif.push(shareDm.creatorId);
+            }
+            for (const user of data.users) {
+              if (usersToNotif.includes(user.authUserId)) {
+                user.notifications.unshift({
+                  channelId: -1,
+                  dmId: shareDm.dmId,
+                  notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareDm.name}: ${shortMsg}`
+                });
+              }
+            }
             shareDm.messages.unshift(newMessagesDetails);
             incrementMessagesExist();
             incrementMessagesSent(authUserId);
@@ -946,7 +981,21 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
               isThisUserReacted: false,
             };
             newMessagesDetails.reacts.push(newReactsDetails);
-
+            for (const member of shareChannel.allMembers) {
+              const tag = '@' + getHandleStr(member.uId);
+              if (mentions.includes(tag)) {
+                usersToNotif.push(member.uId);
+              }
+            }
+            for (const user of data.users) {
+              if (usersToNotif.includes(user.authUserId)) {
+                user.notifications.unshift({
+                  channelId: shareChannel.channelId,
+                  dmId: -1,
+                  notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareChannel.name}: ${shortMsg}`
+                });
+              }
+            }
             shareChannel.messages.unshift(newMessagesDetails);
             incrementMessagesExist();
             incrementMessagesSent(authUserId);
@@ -984,7 +1033,24 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
               isThisUserReacted: false,
             };
             newMessagesDetails.reacts.push(newReactsDetails);
-
+            for (const member of shareDm.uIds) {
+              const tag = '@' + getHandleStr(member);
+              if (mentions.includes(tag)) {
+                usersToNotif.push(member);
+              }
+            }
+            if (mentions.includes('@' + getHandleStr(shareDm.creatorId))) {
+              usersToNotif.push(shareDm.creatorId);
+            }
+            for (const user of data.users) {
+              if (usersToNotif.includes(user.authUserId)) {
+                user.notifications.unshift({
+                  channelId: -1,
+                  dmId: shareDm.dmId,
+                  notificationMessage: `${getHandleStr(authUserId)} tagged you in ${shareDm.name}: ${shortMsg}`
+                });
+              }
+            }
             shareDm.messages.unshift(newMessagesDetails);
             incrementMessagesExist();
             incrementMessagesSent(authUserId);
