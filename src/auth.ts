@@ -263,65 +263,10 @@ function authPasswordResetV1(resetCode: string, newPassword: string) {
   throw HTTPError(BADREQUEST, 'Invalid reset code');
 }
 
-function googleLoginV1(email: string, nameFirst: string, nameLast: string, profileImgUrl: string) {
-  const data: any = getData();
-
-  if (data.users.length === 0) {
-    createWorkspaceStats();
-  }
-
-  const newAuthId: number = (data.users.length) + 1;
-
-  const permissionId: number = (newAuthId === 1) ? 1 : 2;
-
-  for (const user of data.users) {
-    if (user.email === email && user.isActive) {
-      let newSessionId = `${(Math.floor(Math.random() * Date.now())).toString()}`;
-      newSessionId = newSessionId.substring(0, 10);
-
-      user.sessionList.push(newSessionId);
-
-      const newToken = generateJwtToken(user.authUserId, newSessionId);
-
-      return { token: newToken, authUserId: user.authUserId };
-    }
-  }
-
-  const newHandleStr: string = genHandleStr(nameFirst, nameLast, data.users);
-
-  let newSessionId = `${(Math.floor(Math.random() * Date.now())).toString()}`;
-  newSessionId = newSessionId.substring(0, 10);
-
-  const userStats: object = createUserStats();
-
-  const newUserDetails: newUserDetails = {
-    authUserId: newAuthId,
-    nameFirst: nameFirst,
-    nameLast: nameLast,
-    email: email,
-    password: getHashOf('User LoggedIn through google oAuth token' + env.secret),
-    handleStr: newHandleStr,
-    profileImgUrl: profileImgUrl,
-    permissionId: permissionId,
-    isActive: true,
-    sessionList: [newSessionId],
-    notifications: [],
-    userStats: userStats
-  };
-
-  data.users.push(newUserDetails);
-  setData(data);
-
-  const newToken = generateJwtToken(newAuthId, newSessionId);
-
-  return { token: newToken, authUserId: newAuthId };
-}
-
 export {
   authPasswordResetRequestV1,
   authPasswordResetV1,
   authRegisterV1,
-  googleLoginV1,
   authLogoutV1,
   authLoginV1
 };
