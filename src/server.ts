@@ -7,8 +7,6 @@ import jwt from 'jsonwebtoken';
 import { echo } from './echo';
 import env from './env.json';
 import morgan from 'morgan';
-import multer from 'multer';
-import crypto from 'crypto';
 import path from 'path';
 import cors from 'cors';
 import fs from 'fs';
@@ -21,51 +19,49 @@ import { adminUserpermissionChange, adminUserRemove } from './admin';
 import { standupIsActive, standupSend, standupStart } from './standup';
 import { channelsCreateV1, channelsListV1, channelsListallV1 } from './channels';
 import {
-  authPasswordResetRequestV1,
-  authPasswordResetV1,
   authRegisterV1,
-  googleLoginV1,
-  authLogoutV1,
   authLoginV1,
+  authLogoutV1,
+  authPasswordResetRequestV1,
+  authPasswordResetV1
 } from './auth';
 import {
-  messageSendlaterdmV1,
-  messageSendlaterV1,
-  messageUnreactV1,
-  messageRemoveV1,
-  messageSenddmV1,
-  messageShareV1,
-  messageReactV1,
-  messageUnpinV1,
   messageSendV1,
   messageEditV1,
-  messagePinV1
+  messageSenddmV1,
+  messageRemoveV1,
+  messageReactV1,
+  messageUnreactV1,
+  messagePinV1,
+  messageUnpinV1,
+  messageShareV1,
+  messageSendlaterV1,
+  messageSendlaterdmV1
 } from './message';
 import {
-  dmDetailsV1,
-  dmRemoveV1,
-  dmMessages,
   dmCreateV1,
+  dmListV1,
+  dmRemoveV1,
+  dmDetailsV1,
   dmLeaveV1,
-  dmListV1
+  dmMessages
 } from './dm';
 import {
-  userProfileSethandleV1,
-  userProfileSetemailV1,
-  userProfileSetnameV1,
   userProfileV1,
+  userProfileSetnameV1,
+  userProfileSetemailV1,
+  userProfileSethandleV1,
   userStatsV1
 } from './user';
 import {
-  channelRemoveownerV1,
-  channelMessagesV1,
-  channelAddownerV1,
+  channelJoinV1,
   channelDetailsV1,
   channelInviteV1,
-  channelLeaveV1,
-  channelJoinV1
+  channelMessagesV1,
+  channelRemoveownerV1,
+  channelAddownerV1,
+  channelLeaveV1
 } from './channel';
-import { sendImageV1 } from './imageUploadHandler';
 
 // Set up web app, use JSON
 const app = express();
@@ -73,18 +69,6 @@ app.use(json());
 
 // Use middleware that allows for access from other domains
 app.use(cors());
-
-// image upload handler for route /send/image/v1
-const storage = multer.diskStorage({
-  destination: './src/uploads/',
-  filename: function (req, file, cb) {
-    crypto.pseudoRandomBytes(16, function (err, raw) {
-      cb(null, raw.toString('hex') + path.extname(file.originalname));
-    });
-  }
-});
-
-const upload = multer({ storage: storage });
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const databasePath: string = __dirname + '/database.json';
@@ -122,7 +106,6 @@ function validateJwtToken(req: Request, res: Response, next: NextFunction) {
 }
 
 app.use('/static', express.static(path.join(__dirname, 'static')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Example get request
 app.get('/echo', (req: Request, res: Response, next: NextFunction) => {
@@ -695,34 +678,6 @@ app.get('/search/v1', validateJwtToken, (req: Request, res: Response, next: Next
     const queryStr = (req.query.queryStr as string);
     const returnData = searchV1(token, authUserId, queryStr);
     return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-// BONUS-FEATURES
-app.post('/google/login/v1', (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { email, given_name, family_name, picture } = req.body;
-    const returnData = googleLoginV1(email, given_name, family_name, picture);
-    return res.json(returnData);
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.post('/send/image/v1', validateJwtToken, upload.single('image'), (req: Request, res: Response, next: NextFunction) => {
-  try {
-    if (!req.file) {
-      throw HTTPError(400, 'Invalid File data');
-    } else {
-      const token = res.locals.token.salt;
-      const authUserId = res.locals.token.id;
-      const { channelId, dmId } = req.body;
-      const { filename } = req.file;
-      const returnData = sendImageV1(token, authUserId, parseInt(channelId), parseInt(dmId), filename);
-      return res.json(returnData);
-    }
   } catch (err) {
     next(err);
   }
