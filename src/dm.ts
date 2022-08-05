@@ -24,10 +24,6 @@ function dmCreateV1(token: string, uIds: number[]) {
     return ERROR;
   }
 
-  if (typeof uIds !== 'object' || uIds.length === 0) {
-    return ERROR;
-  }
-
   const newCreatorId: number = tokenToAuthUserId(token).authUserId;
   const newDmId: number = parseInt(`${(Math.floor(Math.random() * Date.now())).toString().substring(0, 4)}`);
 
