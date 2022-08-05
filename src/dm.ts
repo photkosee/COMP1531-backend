@@ -40,10 +40,6 @@ function dmCreateV1(token: string, authUserId: number, uIds: number[]) {
 
   const data: any = getData();
 
-  if (typeof uIds !== 'object' || uIds.length === 0) {
-    throw HTTPError(BADREQUEST, 'Received invalid data type');
-  }
-
   const newCreatorId = authUserId;
   const newDmId: number = data.dmId;
 
