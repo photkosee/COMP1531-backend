@@ -1,0 +1,220 @@
+
+> start
+> ts-node src/server.ts
+
+⚡️ Server listening on port 48237
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Token
+Invalid Session ID or Token
+Invalid Email
+Invalid Password
+Invalid email
+Invalid email
+Invalid email
+Invalid password length
+Invalid password length
+Invalid first name length
+Invalid first name length
+Invalid last name length
+Invalid last name length
+Email already in use
+Invalid Session ID or Token
+Invalid Session ID or Token
+Invalid password length
+User to make owner is not in channel
+User to make owner is not in channel
+User to make owner is not in channel
+User to make owner is not in channel
+User does not have owner permissions
+User to make owner is already owner
+User to make owner does not exist
+Invalid channel
+Invalid Session ID or Token
+User is not a member of the channel
+No channels available
+Invalid Session ID or Token
+User to invite already in channel
+User not in channel so cannot invite others
+Invalid channel
+User to invite does not exist
+Invalid Session ID or Token
+Channel is private and user not global owner
+User already a member
+Invalid Channel ID
+Invalid Session ID or Token
+User is not in channel
+Invalid channel
+Invalid Session ID or Token
+Start is invalid or greater than total messages
+User is not member of channel
+Invalid channel
+Invalid Session ID or Token
+User does not have owner permissions
+User does not have owner permissions
+User does not have owner permissions
+User does not have owner permissions
+Cannot remove last owner of channel
+User does not have owner permissions
+User to remove as owner is not a owner
+User to make owner does not exist
+Invalid channel
+Invalid Session ID or Token
+Channel is private and user not global owner
+Invalid name length
+Invalid name length
+Invalid name length
+Invalid name length
+Invalid Session ID or Token
+Invalid Session ID or Token
+Invalid Session ID or Token
+Any uId in uIds does not refer to a valid user
+Any uId in uIds does not refer to a valid user
+There are duplicate 'uId's in uIds
+Invalid Session ID or Token
+Authorised user is not a member of the DM
+dmId does not refer to a valid DM
+Invalid Session ID or Token
+Authorised user is not a member of the DM
+dmId does not refer to a valid DM
+Invalid Session ID or Token
+Invalid Session ID or Token
+Start is greater than the total number of messages in the channel
+Authorised user is not a member of the DM
+dmId does not refer to a valid DM
+Invalid Session ID or Token
+Authorised user is not the original DM creator
+Authorised user is not the original DM creator
+dmId does not refer to a valid DM
+Invalid Session ID or Token
+Have no permission
+Invalid message length
+Invalid messageId
+Have no permission
+Invalid Session ID or Token
+Invalid messageId
+Already pinned
+Have no permission
+Have no permission
+Have no permission
+Have no permission
+Invalid Session ID or Token
+Invalid messageId
+Invalid reactId
+Already reacted
+Invalid Session ID or Token
+Have no permission
+Invalid messageId
+Have no permission
+Invalid Session ID or Token
+You are not a member
+Invalid channelId
+Invalid message length
+Invalid message length
+Invalid Session ID or Token
+Not a member
+Invalid dmId
+Invalid message length
+Invalid message length
+Invalid Session ID or Token
+Invalid messageId
+User not member of channel
+Time sent is before current time
+Invalid message length
+Invalid message length
+Invalid channelId
+Invalid Session ID or Token
+Invalid messageId
+User not member of dm
+Time sent is before current time
+Invalid message length
+Invalid message length
+Invalid dmId
+Invalid Session ID or Token
+Not a member of the dm you are sharing to
+Not a member of the channel you are sharing to
+Not a member
+Not a member
+Invalid message length
+Invalid channelId
+Invalid channelId
+Invalid Session ID or Token
+Invalid messageId
+Not already pinned
+Have no permission
+Have no permission
+Have no permission
+Have no permission
+Invalid Session ID or Token
+Invalid messageId or no reacts
+Invalid reactId
+Invalid messageId or no reacts
+Invalid messageId or no reacts
+Invalid Session ID or Token
+Invalid Session ID or Token
+Invalid Session ID or Token
+Query string with valid length
+Query string with valid length
+Invalid Session ID or Token
+Invalid Session ID or Token
+Invalid channelId
+Invalid Session ID or Token
+Authorised user is not a member of the channel
+No active standup running in the channel
+Length of message is over 1000
+Invalid channelId
+Invalid Session ID or Token
+Authorised user is not a member of the channel
+An active standup is currently running in the channel
+Length must be a positive integer
+Invalid channelId
+Invalid Session ID or Token
+Invalid Session ID or Token
+Invalid Session ID or Token
+User Id is invalid
+Invalid Session ID or Token
+Email is used by another user
+Email is not valid
+Email is not valid
+Email is not valid
+Email is not valid
+Email is not valid
+Invalid Session ID or Token
+handleStr is used by another user
+handleStr must be 3-20 characters
+handleStr must be 3-20 characters
+handleStr must be 3-20 characters
+handleStr must be 3-20 characters
+handleStr must only be alphanumeric
+handleStr must only be alphanumeric
+Invalid Session ID or Token
+Length of name is not 1-50 characters
+Length of name is not 1-50 characters
+Length of name is not 1-50 characters
+Length of name is not 1-50 characters
+Invalid Session ID or Token
+imgUrl returned an HTTP status code other than 200
+Invalid Dimmensions
+Invalid Dimmensions
+Invalid Dimmensions
+Invalid Dimmensions
+Invalid Dimmensions
+Invalid Dimmensions
+imgUrl returned an HTTP status code other than 200
+Invalid Session ID or Token

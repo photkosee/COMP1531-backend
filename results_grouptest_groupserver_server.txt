@@ -1,0 +1,272 @@
+
+> ts-node-coverage
+> nyc --reporter=text --reporter=lcov ts-node src/server.ts
+
+⚡️ Server listening on port 48237
+An active standup is currently running in the channel
+Invalid channelId
+Length must be a positive integer
+Authorised user is not a member of the channel
+Invalid Session ID or Token
+Invalid channelId
+Authorised user is not a member of the channel
+Invalid Session ID or Token
+No active standup running in the channel
+Invalid channelId
+Length of message is over 1000
+Authorised user is not a member of the channel
+Invalid Session ID or Token
+Invalid Token
+Invalid Session ID or Token
+User to invite already in channel
+Any uId in uIds does not refer to a valid user
+Any uId in uIds does not refer to a valid user
+There are duplicate 'uId's in uIds
+There are duplicate 'uId's in uIds
+uIds should not include creator
+uIds should not include creator
+uIds should not include creator
+Invalid Session ID or Token
+Invalid Session ID or Token
+dmId does not refer to a valid DM
+dmId does not refer to a valid DM
+Authorised user is not a member of the DM
+Authorised user is not a member of the DM
+Invalid Session ID or Token
+dmId does not refer to a valid DM
+dmId does not refer to a valid DM
+Start is greater than the total number of messages in the channel
+Start is greater than the total number of messages in the channel
+Authorised user is not a member of the DM
+Authorised user is not a member of the DM
+Invalid Session ID or Token
+dmId does not refer to a valid DM
+dmId does not refer to a valid DM
+Authorised user is not a member of the DM
+Authorised user is not a member of the DM
+Invalid Session ID or Token
+dmId does not refer to a valid DM
+dmId does not refer to a valid DM
+Authorised user is not the original DM creator
+Authorised user is not the original DM creator
+Invalid Session ID or Token
+Invalid message length
+Invalid messageId
+Invalid Session ID or Token
+Have no permission
+Have no permission
+Invalid messageId
+Invalid messageId
+Invalid Session ID or Token
+Already pinned
+Already pinned
+Have no permission
+Have no permission
+Invalid messageId
+Invalid messageId
+Invalid Session ID or Token
+Invalid reactId
+Already reacted
+Already reacted
+Invalid messageId
+Invalid Session ID or Token
+Have no permission
+Have no permission
+Invalid message length
+Invalid channelId
+Invalid Session ID or Token
+You are not a member
+Invalid message length
+Invalid dmId
+Invalid Session ID or Token
+Not a member
+Invalid channelId
+Invalid dmId
+Invalid channelId
+One of them has to be -1
+Not a member
+Not a member
+Invalid message length
+Invalid Session ID or Token
+Not a member of the channel you are sharing to
+Not a member of the dm you are sharing to
+Invalid messageId
+Already pinned
+Invalid messageId
+Invalid Session ID or Token
+Not already pinned
+Not already pinned
+Have no permission
+Have no permission
+Invalid messageId or no reacts
+Invalid messageId or no reacts
+Invalid Session ID or Token
+Invalid reactId
+Invalid messageId or no reacts
+Invalid messageId or no reacts
+Invalid message length
+Invalid channelId
+Invalid Session ID or Token
+User not member of channel
+Time sent is before current time
+Invalid message length
+Invalid dmId
+Invalid Session ID or Token
+User not member of dm
+Time sent is before current time
+No channels available
+Invalid channel
+Invalid Session ID or Token
+User to make owner does not exist
+User to make owner is not in channel
+User to make owner is already owner
+User to make owner is already owner
+User is not in channel
+User does not have owner permissions
+Invalid Session ID or Token
+Invalid Channel ID
+User is not a member of the channel
+User to invite already in channel
+User to invite does not exist
+Invalid Session ID or Token
+Invalid channel
+User to invite already in channel
+User not in channel so cannot invite others
+Invalid Session ID or Token
+Invalid Channel ID
+User already a member
+Channel is private and user not global owner
+Invalid channel
+Invalid Session ID or Token
+User is not in channel
+User is starter of current standup in channel
+Invalid channel
+User to make owner does not exist
+Invalid Session ID or Token
+User to remove as owner is not a owner
+User does not have owner permissions
+User to remove as owner is not a owner
+User to make owner does not exist
+User to make owner does not exist
+Cannot remove last owner of channel
+Invalid Session ID or Token
+Invalid name length
+Invalid Session ID or Token
+Invalid Session ID or Token
+Invalid channel
+Start is invalid or greater than total messages
+Start is invalid or greater than total messages
+Invalid Session ID or Token
+User is not member of channel
+handleStr must be 3-20 characters
+handleStr must only be alphanumeric
+Invalid handleStr type
+handleStr is used by another user
+Invalid Session ID or Token
+Invalid Token
+Invalid Session ID or Token
+Invalid Session ID or Token
+imgUrl returned an HTTP status code other than 200
+Error occurred when attempting to retrieve the image
+image uploaded is not a JPG
+Invalid Dimmensions
+Invalid Dimmensions
+Invalid Dimmensions
+Invalid Dimmensions
+Invalid Dimmensions
+Invalid Dimmensions
+Invalid Dimmensions
+Invalid Dimmensions
+Any of xStart, yStart, xEnd, yEnd are not within the dimensions of the image at the URL
+Any of xStart, yStart, xEnd, yEnd are not within the dimensions of the image at the URL
+Invalid Session ID or Token
+Invalid Session ID or Token
+authorised user is not global owner
+User Id is invalid
+User Id is invalid
+Invalid Session ID or Token
+User Id is invalid
+Permission Id is invalid
+Permission Id is invalid
+User Id is invalid
+user already has permissionId
+Cannot demote only global owner to member
+Invalid first name length
+Received invalid data type
+Received invalid data type
+Received invalid data type
+Received invalid data type
+Invalid password length
+Invalid password length
+Email already in use
+Invalid email
+Invalid email
+Invalid email
+Invalid first name length
+Invalid last name length
+Invalid first name length
+Invalid last name length
+Invalid Session ID or Token
+Invalid Token
+Invalid Token
+User Id is invalid
+User Id is invalid
+User Id is invalid
+Invalid Session ID or Token
+Query string with valid length
+Query string with valid length
+Invalid Session ID or Token
+User Id is invalid
+User Id is invalid
+authorised user is not global owner
+Cannot demote only global owner to member
+Email is not valid
+Email is used by another user
+Invalid email type
+Invalid Session ID or Token
+Invalid Token
+Invalid password length
+Invalid reset code
+Invalid name type
+Invalid name type
+Length of name is not 1-50 characters
+Invalid Session ID or Token
+Invalid Token
+Invalid Password
+Invalid Password
+Invalid Email
+Invalid Email
+Invalid Email
+Invalid Session ID or Token
+Invalid Token
+Invalid Session ID or Token
+Invalid Session ID or Token
+Invalid Session ID or Token
+Cannot echo "echo"
+Shutting down server gracefully.
+---------------------------|---------|----------|---------|---------|-------------------
+File                       | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------------|---------|----------|---------|---------|-------------------
+All files                  |   99.19 |    98.76 |   99.46 |   99.27 |                   
+ admin.ts                  |     100 |      100 |     100 |     100 |                   
+ adminHelperFunctions.ts   |     100 |      100 |     100 |     100 |                   
+ auth.ts                   |   90.32 |    89.18 |     100 |   92.85 | 253-258           
+ authHelperFunctions.ts    |     100 |    95.83 |     100 |     100 | 155               
+ channel.ts                |     100 |    98.07 |     100 |     100 | 80,198            
+ channelHelperFunctions.ts |     100 |      100 |     100 |     100 |                   
+ channels.ts               |     100 |      100 |     100 |     100 |                   
+ dataStore.ts              |     100 |      100 |     100 |     100 |                   
+ dm.ts                     |     100 |      100 |     100 |     100 |                   
+ dmHelperFunctions.ts      |     100 |      100 |     100 |     100 |                   
+ echo.ts                   |     100 |      100 |     100 |     100 |                   
+ message.ts                |     100 |    99.42 |     100 |     100 | 501,1306          
+ notifications.ts          |     100 |      100 |     100 |     100 |                   
+ other.ts                  |     100 |      100 |     100 |     100 |                   
+ search.ts                 |     100 |      100 |     100 |     100 |                   
+ server.ts                 |    97.5 |       90 |   98.36 |    97.9 | 161,169,570-577   
+ standup.ts                |     100 |      100 |     100 |     100 |                   
+ uploadProfilePhoto.ts     |     100 |    96.29 |     100 |     100 | 97                
+ user.ts                   |     100 |      100 |     100 |     100 |                   
+ userHelperFunctions.ts    |     100 |      100 |     100 |     100 |                   
+ users.ts                  |     100 |      100 |     100 |     100 |                   
+---------------------------|---------|----------|---------|---------|-------------------
