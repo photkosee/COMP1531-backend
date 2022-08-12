@@ -489,7 +489,7 @@ function messageReactV1(token: string, authUserId: number, messageId: number, re
 
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
-    if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
+    if (index > -1 && authInChannel(channel.channelId, authUserId)) {
       for (const id of channel.messages[index].reacts[reactId - 1].uIds) {
         if (id === authUserId) {
           throw HTTPError(BADREQUEST, 'Already reacted');
@@ -511,7 +511,7 @@ function messageReactV1(token: string, authUserId: number, messageId: number, re
       }
 
       return {};
-    } else if (index > -1 && !(checkIfMember(authUserId, channel.channelId) !== {})) {
+    } else if (index > -1 && !(authInChannel(channel.channelId, authUserId))) {
       throw HTTPError(BADREQUEST, 'Not a member');
     }
   }
@@ -645,7 +645,7 @@ function messagePinV1(token: string, authUserId: number, messageId: number) {
   let checkErrorPermission = false;
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
-    if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
+    if (index > -1 && authInChannel(channel.channelId, authUserId)) {
       if (permissionId === 1 || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
         if (channel.messages[index].isPinned === true) {
           throw HTTPError(BADREQUEST, 'Already pinned');
@@ -654,7 +654,7 @@ function messagePinV1(token: string, authUserId: number, messageId: number) {
         return {};
       }
       checkErrorPermission = true;
-    } else if (index > -1 && !(checkIfMember(authUserId, channel.channelId) !== {})) {
+    } else if (index > -1 && !(authInChannel(channel.channelId, authUserId))) {
       throw HTTPError(BADREQUEST, 'Not a member');
     }
   }
@@ -719,7 +719,7 @@ function messageUnpinV1(token: string, authUserId: number, messageId: number) {
   let checkErrorPermission = false;
   for (const channel of data.channels) {
     const index: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
-    if (index > -1 && (checkIfMember(authUserId, channel.channelId) !== {})) {
+    if (index > -1 && authInChannel(channel.channelId, authUserId)) {
       if (permissionId === 1 || channel.ownerMembers.some((object: { uId: number; }) => object.uId === authUserId)) {
         if (channel.messages[index].isPinned === false) {
           throw HTTPError(BADREQUEST, 'Not already pinned');
@@ -728,7 +728,7 @@ function messageUnpinV1(token: string, authUserId: number, messageId: number) {
         return {};
       }
       checkErrorPermission = true;
-    } else if (index > -1 && !(checkIfMember(authUserId, channel.channelId) !== {})) {
+    } else if (index > -1 && !(authInChannel(channel.channelId, authUserId))) {
       throw HTTPError(BADREQUEST, 'Not a member');
     }
   }
