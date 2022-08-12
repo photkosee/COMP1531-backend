@@ -511,19 +511,21 @@ function messageReactV1(token: string, authUserId: number, messageId: number, re
       }
 
       return {};
+    } else if (index > -1 && !(checkIfMember(authUserId, channel.channelId) !== {})) {
+      throw HTTPError(BADREQUEST, 'Not a member');
     }
   }
 
   for (const dm of data.dms) {
-    const index: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
-    if (index > -1 && (checkDmMember(dm.dmId, authUserId))) {
-      for (const id of dm.messages[index].reacts[reactId - 1].uIds) {
+    const index2: number = dm.messages.findIndex((object: { messageId: number; }) => object.messageId === messageId);
+    if (index2 > -1 && (checkDmMember(dm.dmId, authUserId))) {
+      for (const id of dm.messages[index2].reacts[reactId - 1].uIds) {
         if (id === authUserId) {
           throw HTTPError(BADREQUEST, 'Already reacted');
         }
       }
       const handleStr = getHandleStr(authUserId);
-      const messageSender = dm.messages[index].uId;
+      const messageSender = dm.messages[index2].uId;
       for (const user of data.users) {
         if (user.authUserId === messageSender) {
           user.notifications.unshift({
@@ -533,8 +535,10 @@ function messageReactV1(token: string, authUserId: number, messageId: number, re
           });
         }
       }
-      dm.messages[index].reacts[reactId - 1].uIds.push(authUserId);
+      dm.messages[index2].reacts[reactId - 1].uIds.push(authUserId);
       return {};
+    } else if (index2 > -1 && !(checkDmMember(dm.dmId, authUserId))) {
+      throw HTTPError(BADREQUEST, 'Not a member');
     }
   }
 
@@ -650,6 +654,8 @@ function messagePinV1(token: string, authUserId: number, messageId: number) {
         return {};
       }
       checkErrorPermission = true;
+    } else if (index > -1 && !(checkIfMember(authUserId, channel.channelId) !== {})) {
+      throw HTTPError(BADREQUEST, 'Not a member');
     }
   }
 
@@ -664,6 +670,8 @@ function messagePinV1(token: string, authUserId: number, messageId: number) {
         return {};
       }
       checkErrorPermission = true;
+    } else if (index > -1 && !(checkDmMember(dm.dmId, authUserId))) {
+      throw HTTPError(BADREQUEST, 'Not a member');
     }
   }
 
@@ -720,6 +728,8 @@ function messageUnpinV1(token: string, authUserId: number, messageId: number) {
         return {};
       }
       checkErrorPermission = true;
+    } else if (index > -1 && !(checkIfMember(authUserId, channel.channelId) !== {})) {
+      throw HTTPError(BADREQUEST, 'Not a member');
     }
   }
 
@@ -734,6 +744,8 @@ function messageUnpinV1(token: string, authUserId: number, messageId: number) {
         return {};
       }
       checkErrorPermission = true;
+    } else if (index > -1 && !(checkDmMember(dm.dmId, authUserId))) {
+      throw HTTPError(BADREQUEST, 'Not a member');
     }
   }
 
@@ -805,6 +817,9 @@ function messageShareV1(token: string, authUserId: number, ogMessageId: number, 
   for (const channel of data.channels) {
     const messageIndex: number = channel.messages.findIndex((object: { messageId: number; }) => object.messageId === ogMessageId);
     if (messageIndex > -1) {
+      if (!authInChannel(channel.channelId, authUserId)) {
+        throw HTTPError(BADREQUEST, 'Not a member');
+      }
       checkMessage = 0;
     }
   }
