@@ -282,3 +282,59 @@ describe('Success: Added tests for coverage', () => {
     expect(res.statusCode).toEqual(OK);
   });
 });
+
+describe('Error: Bug fix', () => {
+  test('Removed User can\'t do anything', () => {
+    let res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'auth@gmail.com',
+        password: 'password',
+        nameFirst: 'Auth',
+        nameLast: 'Last',
+      },
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const authUser: any = JSON.parse(res.getBody() as string);
+    const authToken: string = authUser.token;
+
+    res = request('POST', `${url}:${port}/auth/register/v3`, {
+      json: {
+        email: 'user@gmail.com',
+        password: 'password',
+        nameFirst: 'User',
+        nameLast: 'Last',
+      },
+      headers: {
+        'Content-type': 'application/json',
+      }
+    });
+    const user: any = JSON.parse(res.getBody() as string);
+    const userId: number = user.authUserId;
+    const userToken: string = user.token;
+
+    res = request('DELETE', `${url}:${port}/admin/user/remove/v1`, {
+      qs: {
+        uId: userId
+      },
+      headers: {
+        'Content-type': 'application/json',
+        token: authToken
+      }
+    });
+    expect(res.statusCode).toEqual(OK);
+
+    res = request('POST', `${url}:${port}/channels/create/v3`, {
+      body: JSON.stringify({
+        name: 'DOTA2',
+        isPublic: true
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: userToken
+      }
+    });
+    expect(res.statusCode).toEqual(FORBIDDEN);
+  });
+});
