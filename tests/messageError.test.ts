@@ -213,9 +213,20 @@ describe('Testing for error - message/pin/v1', () => {
   });
 
   test('Not a member', () => {
-    const res = request('POST', `${url}:${port}/message/pin/v1`, {
+    let res = request('POST', `${url}:${port}/message/pin/v1`, {
       body: JSON.stringify({
         messageId: messageIdList[1]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[2].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+
+    res = request('POST', `${url}:${port}/message/pin/v1`, {
+      body: JSON.stringify({
+        messageId: messageIdList[0]
       }),
       headers: {
         'Content-type': 'application/json',
@@ -329,9 +340,21 @@ describe('Testing for error - message/react/v1', () => {
   });
 
   test('Not a member', () => {
-    const res = request('POST', `${url}:${port}/message/react/v1`, {
+    let res = request('POST', `${url}:${port}/message/react/v1`, {
       body: JSON.stringify({
         messageId: messageIdList[1],
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[2].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+
+    res = request('POST', `${url}:${port}/message/react/v1`, {
+      body: JSON.stringify({
+        messageId: messageIdList[0],
         reactId: 1
       }),
       headers: {
@@ -654,6 +677,20 @@ describe('Testing for error - message/share/v1', () => {
       }
     });
     expect(res.statusCode).toBe(BADREQUEST);
+
+    res = request('POST', `${url}:${port}/message/share/v1`, {
+      body: JSON.stringify({
+        ogMessageId: messageIdList[0],
+        message: 'asdf',
+        channelId: channelIdList[1],
+        dmId: -1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[2].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
   });
 
   test('Invalid ogMessageId', () => {
@@ -774,9 +811,30 @@ describe('Testing for error - message/unpin/v1', () => {
       }
     });
 
-    const res = request('POST', `${url}:${port}/message/unpin/v1`, {
+    request('POST', `${url}:${port}/message/pin/v1`, {
+      body: JSON.stringify({
+        messageId: messageIdList[0]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[0].token
+      }
+    });
+
+    let res = request('POST', `${url}:${port}/message/unpin/v1`, {
       body: JSON.stringify({
         messageId: messageIdList[1]
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[2].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+
+    res = request('POST', `${url}:${port}/message/unpin/v1`, {
+      body: JSON.stringify({
+        messageId: messageIdList[0]
       }),
       headers: {
         'Content-type': 'application/json',
@@ -908,9 +966,21 @@ describe('Testing for error - message/unreact/v1', () => {
   });
 
   test('Not a member', () => {
-    const res = request('POST', `${url}:${port}/message/unreact/v1`, {
+    let res = request('POST', `${url}:${port}/message/unreact/v1`, {
       body: JSON.stringify({
         messageId: messageIdList[0],
+        reactId: 1
+      }),
+      headers: {
+        'Content-type': 'application/json',
+        token: registrationData[2].token
+      }
+    });
+    expect(res.statusCode).toBe(BADREQUEST);
+
+    res = request('POST', `${url}:${port}/message/unreact/v1`, {
+      body: JSON.stringify({
+        messageId: messageIdList[1],
         reactId: 1
       }),
       headers: {
